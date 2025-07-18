@@ -1,0 +1,5 @@
+name: SuperMines
+main: io.github.lijinhong11.supermines.SuperMines
+version: 1.0.0
+authors: ["mmmjjkx"]
+description: A mine plugin
