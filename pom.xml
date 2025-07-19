@@ -18,6 +18,20 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>dev.jorel</groupId>
+                            <artifactId>commandapi-annotations</artifactId>
+                            <version>10.1.1</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
@@ -26,6 +40,10 @@
                         <relocation>
                             <pattern>com.tcoded.folialib</pattern>
                             <shadedPattern>io.github.lijinhong11.supermines.libraries.folialib</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>dev.triumphteam.gui</pattern>
+                            <shadedPattern>io.github.lijinhong11.supermines.libraries.gui</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -64,6 +82,26 @@
             <artifactId>FoliaLib</artifactId>
             <version>0.5.1</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.triumphteam</groupId>
+            <artifactId>triumph-gui</artifactId>
+            <version>3.1.11</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- CommandAPI -->
+        <dependency>
+            <groupId>dev.jorel</groupId>
+            <artifactId>commandapi-bukkit-core</artifactId>
+            <version>10.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.jorel</groupId>
+            <artifactId>commandapi-annotations</artifactId>
+            <version>10.1.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

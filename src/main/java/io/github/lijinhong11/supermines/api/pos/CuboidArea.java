@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public record CuboidArea(BlockPos pos1, BlockPos pos2) {
-
-    public static CuboidArea createByLocations(Location loc1, Location loc2) {
+    public static CuboidArea createFromLocation(Location loc1, Location loc2) {
         return new CuboidArea(BlockPos.fromLocation(loc1), BlockPos.fromLocation(loc2));
     }
 

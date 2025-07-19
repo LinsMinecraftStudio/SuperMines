@@ -5,6 +5,7 @@ import io.github.lijinhong11.supermines.api.selectors.single.MaterialSelector;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 public class Treasure {
@@ -12,14 +13,16 @@ public class Treasure {
     private Component displayName;
     private List<Component> description;
     private ItemStack itemStack;
-    private short chance;
+    private int chance;
     private MaterialSelector matchedMaterials;
 
-    public Treasure(String id, Component displayName, List<Component> description, ItemStack itemStack, short chance) {
+    @ParametersAreNonnullByDefault
+    public Treasure(String id, Component displayName, List<Component> description, ItemStack itemStack, int chance) {
         this(id, displayName, description, itemStack, chance, MaterialSelectors.COMMONS);
     }
 
-    public Treasure(String id, Component displayName, List<Component> description, ItemStack itemStack, short chance, MaterialSelector matchedMaterials) {
+    @ParametersAreNonnullByDefault
+    public Treasure(String id, Component displayName, List<Component> description, ItemStack itemStack, int chance, MaterialSelector matchedMaterials) {
         this.id = id;
         this.displayName = displayName;
         this.description = description;
@@ -56,11 +59,11 @@ public class Treasure {
         this.itemStack = itemStack;
     }
 
-    public short getChance() {
+    public int getChance() {
         return chance;
     }
 
-    public void setChance(short chance) {
+    public void setChance(int chance) {
         this.chance = chance;
     }
 

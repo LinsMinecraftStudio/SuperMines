@@ -15,7 +15,7 @@ public abstract class AbstractFileObjectManager<T> {
     private final File configFile;
     private final YamlConfiguration config;
 
-    public AbstractFileObjectManager(@NotNull String configPath) {
+    protected AbstractFileObjectManager(@NotNull String configPath) {
         if (Strings.isNullOrEmpty(configPath)) {
             throw new IllegalArgumentException("configPath cannot be null or empty");
         }
@@ -29,16 +29,17 @@ public abstract class AbstractFileObjectManager<T> {
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public @NotNull final List<T> getAll() {
+    @NotNull
+    public final List<T> getAll() {
         Set<String> keys = config.getKeys(false);
         if (keys.isEmpty()) {
             return new ArrayList<>();
         }
 
-        return keys.stream().map(this::deserialize).toList();
+        return keys.stream().map(this::getObject).toList();
     }
 
-    public final void remove(@NotNull String key) {
+    public void remove(@NotNull String key) {
         config.set(key, null);
 
         try {
@@ -48,20 +49,20 @@ public abstract class AbstractFileObjectManager<T> {
         }
     }
 
-    public final T deserialize(@NotNull String key) {
+    protected final T getObject(@NotNull String key) {
         ConfigurationSection section = config.getConfigurationSection(key);
         if (section == null) {
             return null;
         }
 
-        return deserialize(section);
+        return getObject(section);
     }
 
-    protected abstract T deserialize(@NotNull ConfigurationSection section);
+    protected abstract T getObject(@NotNull ConfigurationSection section);
 
-    public final void serialize(String key, T object) {
+    protected final void putObject(String key, T object) {
         ConfigurationSection section = config.createSection(key);
-        serialize(section, object);
+        putObject(section, object);
 
         try {
             config.save(configFile);
@@ -70,5 +71,5 @@ public abstract class AbstractFileObjectManager<T> {
         }
     }
 
-    protected abstract void serialize(@NotNull ConfigurationSection section, T object);
+    protected abstract void putObject(@NotNull ConfigurationSection section, T object);
 }

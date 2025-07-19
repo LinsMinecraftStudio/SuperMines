@@ -1,6 +1,49 @@
 package io.github.lijinhong11.supermines.api.data;
 
+import com.google.common.base.Preconditions;
+import io.github.lijinhong11.supermines.utils.Constants;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
-public record Rank(int level, String id, Component displayName) {
+public class Rank {
+    public static final Rank DEFAULT = new Rank(1, "default", Constants.Components.RESET.append(Component.text("Default")));
+
+    private final String id;
+    private int level;
+    private Component displayName;
+
+    public Rank(int level, String id, Component displayName) {
+        if (level <= 0) {
+            throw new IllegalArgumentException("Rank level must be greater than 0");
+        }
+
+        this.level = level;
+        this.id = id;
+        this.displayName = displayName;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        if (level <= 0) {
+            throw new IllegalArgumentException("rank level must be greater than 0");
+        }
+
+        this.level = level;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public Component getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(@NotNull Component displayName) {
+        Preconditions.checkNotNull(displayName, "display name cannot be null");
+        this.displayName = displayName;
+    }
 }
