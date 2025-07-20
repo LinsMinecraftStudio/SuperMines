@@ -10,6 +10,8 @@ public class ComponentUtils {
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
 
+    private ComponentUtils() {}
+
     public static Component deserialize(String input) {
         Component component1 = LEGACY.deserialize(input);
         String legacyParsed = MINI_MESSAGE.serialize(component1);

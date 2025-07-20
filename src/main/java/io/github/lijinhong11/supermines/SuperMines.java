@@ -24,11 +24,10 @@ public class SuperMines extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        mineManager = new MineManager();
         treasureManager = new TreasureManager();
+        mineManager = new MineManager();
         languageManager = new LanguageManager(this);
         taskMaker = new TaskMaker(foliaLibImpl);
-
 
         taskMaker.startup();
     }

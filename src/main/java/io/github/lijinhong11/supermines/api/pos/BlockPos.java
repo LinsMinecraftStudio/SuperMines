@@ -77,6 +77,6 @@ public record BlockPos(int x, int y, int z) implements Comparable<BlockPos> {
 
     @Override
     public @NotNull String toString() {
-        return "BlockPos[" + x + ", " + y + ", " + z + "]";
+        return x + ", " + y + ", " + z;
     }
 }

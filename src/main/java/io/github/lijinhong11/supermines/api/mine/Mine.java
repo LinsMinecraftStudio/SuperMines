@@ -3,6 +3,7 @@ package io.github.lijinhong11.supermines.api.mine;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import io.github.lijinhong11.supermines.api.SuperMinesAPI;
+import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
@@ -11,8 +12,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 import org.jetbrains.annotations.Unmodifiable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -28,30 +29,36 @@ public class Mine {
     private final String id;
 
     private final Component displayName;
-    private final ItemStack displayIcon;
+    private final Material displayIcon;
 
     private final World world;
     private final CuboidArea area;
-    private final Map<Material, Integer> blockSpawnEntries;
+    private final Map<Material, Double> blockSpawnEntries;
     private final int regenerateSeconds;
     private final boolean onlyFillAirWhenRegenerate;
     private final List<Treasure> treasures;
+    private final Rank requiredRank;
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, World world, CuboidArea area, Map<Material, Integer> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate) {
+    public Mine(String id, Component displayName, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate) {
         this(id, displayName, Constants.Items.DEFAULT_MINE_ICON, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate);
     }
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, ItemStack displayIcon, World world, CuboidArea area, Map<Material, Integer> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate) {
+    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate) {
         this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, new ArrayList<>());
     }
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, ItemStack displayIcon, World world, CuboidArea area, Map<Material, Integer> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures) {
+    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures) {
+        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasures, Rank.DEFAULT);
+    }
+
+    @ParametersAreNonnullByDefault
+    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, Rank requiredRank) {
         this.onlyFillAirWhenRegenerate = onlyFillAirWhenRegenerate;
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "Mine ID cannot be null or empty");
-        Preconditions.checkArgument(id.matches("^[a-zA-Z0-9_-]$"), "Mine ID cannot contain special characters");
+        Preconditions.checkArgument(id.matches(Constants.StringsAndComponents.ID_PATTERN), "Mine ID cannot contain special characters");
 
         this.id = id;
         this.displayName = displayName;
@@ -61,6 +68,7 @@ public class Mine {
         this.blockSpawnEntries = blockSpawnEntries;
         this.regenerateSeconds = regenerateSeconds;
         this.treasures = treasures;
+        this.requiredRank = requiredRank;
     }
 
     public boolean isPlayerInMine(Player player) {
@@ -100,11 +108,14 @@ public class Mine {
         treasures.clear();
     }
 
-    public void addBlockSpawnEntry(Material material, int chance) {
+    public void addBlockSpawnEntry(Material material, @Range(from = 1, to = 100) double chance) {
+        if (chance < 1 || chance > 100) {
+            throw new IllegalArgumentException("Chance must be between 1 and 100");
+        }
         blockSpawnEntries.put(material, chance);
     }
 
-    public void addBlockSpawnEntries(Map<Material, Integer> blockSpawnEntries) {
+    public void addBlockSpawnEntries(Map<Material, Double> blockSpawnEntries) {
         this.blockSpawnEntries.putAll(blockSpawnEntries);
     }
 
@@ -131,10 +142,10 @@ public class Mine {
     }
 
     public Component getDisplayName() {
-        return displayName;
+        return displayName == null ? Component.text(id) : displayName;
     }
 
-    public ItemStack getDisplayIcon() {
+    public Material getDisplayIcon() {
         return displayIcon;
     }
 
@@ -150,7 +161,7 @@ public class Mine {
         return Collections.unmodifiableList(treasures);
     }
 
-    public @Unmodifiable Map<Material, Integer> getBlockSpawnEntries() {
+    public @Unmodifiable Map<Material, Double> getBlockSpawnEntries() {
         return Collections.unmodifiableMap(blockSpawnEntries);
     }
 
@@ -160,5 +171,9 @@ public class Mine {
 
     public boolean isOnlyFillAirWhenRegenerate() {
         return onlyFillAirWhenRegenerate;
+    }
+
+    public Rank getRequiredRank() {
+        return requiredRank;
     }
 }

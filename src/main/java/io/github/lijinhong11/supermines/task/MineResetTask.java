@@ -6,6 +6,7 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
+import io.github.lijinhong11.supermines.utils.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +27,7 @@ class MineResetTask extends AbstractTask {
     public void run(WrappedTask wrappedTask) {
         CuboidArea ca = mine.getArea();
         List<BlockPos> blockPosList = ca.asPosList();
-        Map<Material, Integer> blockSpawnEntries = mine.getBlockSpawnEntries();
+        Map<Material, Double> blockSpawnEntries = mine.getBlockSpawnEntries();
         Map<BlockPos, Material> generated = new HashMap<>();
         for (BlockPos pos : blockPosList) {
             Location loc = pos.toLocation(mine.getWorld());
@@ -35,25 +36,22 @@ class MineResetTask extends AbstractTask {
                 continue;
             }
 
-            for (Map.Entry<Material, Integer> entry : blockSpawnEntries.entrySet()) {
-                if (matchChance(entry.getValue())) {
+            for (Map.Entry<Material, Double> entry : blockSpawnEntries.entrySet()) {
+                if (NumberUtils.matchChance(entry.getValue())) {
                     generated.put(pos, entry.getKey());
                     break;
                 }
             }
         }
 
+        TaskMaker tm = SuperMines.getInstance().getTaskMaker();
         for (Map.Entry<BlockPos, Material> entry : generated.entrySet()) {
             Location loc = entry.getKey().toLocation(mine.getWorld());
-            loc.getBlock().setType(entry.getValue());
+            tm.runSync(loc, () -> loc.getBlock().setType(entry.getValue()));
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             SuperMines.getInstance().getLanguageManager().sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
         }
-    }
-
-    private boolean matchChance(int chance) {
-        return chance >= 100 || chance >= Math.random() * 100;
     }
 }

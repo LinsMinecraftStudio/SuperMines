@@ -5,8 +5,10 @@ import io.github.lijinhong11.supermines.utils.Constants;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-public class Rank {
-    public static final Rank DEFAULT = new Rank(1, "default", Constants.Components.RESET.append(Component.text("Default")));
+import java.util.Objects;
+
+public final class Rank {
+    public static final Rank DEFAULT = new Rank(1, "default", Constants.StringsAndComponents.RESET.append(Component.text("Default")));
 
     private final String id;
     private int level;
@@ -45,5 +47,19 @@ public class Rank {
     public void setDisplayName(@NotNull Component displayName) {
         Preconditions.checkNotNull(displayName, "display name cannot be null");
         this.displayName = displayName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Rank r)) {
+            return false;
+        }
+
+        return level == r.level && Objects.equals(id, r.id) && Objects.equals(displayName, r.displayName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, level, displayName);
     }
 }

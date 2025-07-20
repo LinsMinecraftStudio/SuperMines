@@ -5,6 +5,7 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.message.LanguageManager;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
+import io.github.lijinhong11.supermines.utils.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -20,8 +21,11 @@ class MineResetWarningTask extends AbstractTask {
     @Override
     public void run(WrappedTask wrappedTask) {
         LanguageManager languageManager = SuperMines.getInstance().getLanguageManager();
+        MessageReplacement mineName = MessageReplacement.replace("%mine%", mine.getRawDisplayName());
         for (Player p : Bukkit.getOnlinePlayers()) {
-            languageManager.sendMessage(p, "mine.reset_warning", MessageReplacement.replace("%mine%", mine.getRawDisplayName()), MessageReplacement.replace("%second%", String.valueOf(second)));
+            languageManager.sendMessage(p, "mine.reset_warning", mineName, MessageReplacement.replace("%time%", NumberUtils.formatSeconds(p, second)));
         }
+
+        languageManager.consoleMessage("mine.reset_warning", mineName, MessageReplacement.replace("%time%", NumberUtils.formatSeconds(second)));
     }
 }

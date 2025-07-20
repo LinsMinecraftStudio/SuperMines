@@ -1,3 +1,19 @@
+# We don't suggest you put color codes here
+time:
+  second: "second"
+  seconds: "seconds"
+  minute: "minute"
+  minutes: "minutes"
+  hour: "hour"
+  hours: "hours"
 mine:
   no-place-permission: "&cYou do not have permission to place blocks!"
   reset: "&aMine &b%mine% &ahas been reset!"
+  reset_warning: "&cMine &b%%mine% will reset in %time%"
+gui:
+  previous: "&ePrevious Page"
+  next: "&eNext Page"
+  mines:
+    title: "&7&lMines"
+  mine-management:
+    title: "&7&lMine Management &8&l- &e%mine%"

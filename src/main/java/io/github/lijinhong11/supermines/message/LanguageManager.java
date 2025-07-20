@@ -9,6 +9,8 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import com.google.common.base.Preconditions;
+import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
 import io.github.lijinhong11.supermines.utils.Constants;
@@ -19,6 +21,7 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -102,6 +105,15 @@ public final class LanguageManager {
         return lang.replace(split[1], split[1].toUpperCase());
     }
 
+    public List<Component> getMineInfo(@NotNull Player p, @NotNull Mine mine) {
+        Preconditions.checkNotNull(mine, "mine cannot be null");
+        MessageReplacement world = MessageReplacement.replace("%world%", mine.getWorld().getName());
+        MessageReplacement regenerateSeconds = MessageReplacement.replace("%regenerate_seconds%", String.valueOf(mine.getRegenerateSeconds()));
+        MessageReplacement pos1 = MessageReplacement.replace("%pos1%", mine.getArea().pos1().toString());
+        MessageReplacement pos2 = MessageReplacement.replace("%pos2%", mine.getArea().pos2().toString());
+        return getMsgComponentList(p, "mine.gui.info", world, regenerateSeconds, pos1, pos2);
+    }
+
     public void sendMessage(CommandSender commandSender, String key, MessageReplacement... args) {
         commandSender.sendMessage(parseToComponent(getMsg(commandSender, key, args)));
     }
@@ -183,7 +195,7 @@ public final class LanguageManager {
     }
 
     public static Component parseToComponent(String msg) {
-        return Constants.Components.RESET.append(ComponentUtils.deserialize(msg));
+        return Constants.StringsAndComponents.RESET.append(ComponentUtils.deserialize(msg));
     }
 
     public static List<Component> parseToComponentList(List<String> msgList) {
