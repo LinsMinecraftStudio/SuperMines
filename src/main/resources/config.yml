@@ -1,1 +1,19 @@
+# The default language
 language: en-US
+
+# Mine settings
+mine:
+  # Allow place blocks in mines
+  allow-place: false
+
+# Storage settings
+storage:
+  # Database type
+  # Support: SQLite, MySQL, MariaDB, PostgreSQL
+  type: sqlite
+  remote:
+    host: localhost
+    port: 3306
+    database: supermines
+    username: root
+    password: PASSWORD

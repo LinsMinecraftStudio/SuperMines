@@ -39,7 +39,7 @@ public abstract class AbstractFileObjectManager<T> {
         return keys.stream().map(this::getObject).toList();
     }
 
-    public void remove(@NotNull String key) {
+    protected final void remove(@NotNull String key) {
         config.set(key, null);
 
         try {
@@ -72,4 +72,6 @@ public abstract class AbstractFileObjectManager<T> {
     }
 
     protected abstract void putObject(@NotNull ConfigurationSection section, T object);
+
+    public abstract void saveAndClose();
 }

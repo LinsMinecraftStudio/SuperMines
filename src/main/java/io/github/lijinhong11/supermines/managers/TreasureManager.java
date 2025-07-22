@@ -63,6 +63,11 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         section.set("matchedMaterials", object.getMatchedMaterials().getMaterials());
     }
 
+    @Override
+    public void saveAndClose() {
+
+    }
+
     public void addTreasure(Treasure treasure) {
         Preconditions.checkNotNull(treasure, "treasure cannot be null");
 
@@ -80,8 +85,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         return treasures.get(id);
     }
 
-    @Override
-    public void remove(@NotNull String key) {
+    public void removeRank(@NotNull String key) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "treasure id cannot be null or empty");
 
         treasures.remove(key);

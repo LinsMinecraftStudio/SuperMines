@@ -20,15 +20,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
-                <configuration>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>dev.jorel</groupId>
-                            <artifactId>commandapi-annotations</artifactId>
-                            <version>10.1.1</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -102,13 +93,7 @@
         <dependency>
             <groupId>dev.jorel</groupId>
             <artifactId>commandapi-bukkit-core</artifactId>
-            <version>10.1.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>dev.jorel</groupId>
-            <artifactId>commandapi-annotations</artifactId>
-            <version>10.1.1</version>
+            <version>10.1.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

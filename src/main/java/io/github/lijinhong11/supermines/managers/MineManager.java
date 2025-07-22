@@ -123,6 +123,13 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("blockSpawnEntries", blockSpawnEntries);
     }
 
+    @Override
+    public void saveAndClose() {
+        for (Mine mine : mines.values()) {
+            super.putObject(mine.getId(), mine);
+        }
+    }
+
     public void addMine(@NotNull Mine mine) {
         Preconditions.checkNotNull(mine, "mine cannot be null");
 
@@ -154,8 +161,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         return null;
     }
 
-    @Override
-    public void remove(@NotNull String id) {
+    public void removeMine(@NotNull String id) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "mine ID cannot be null or empty");
 
         mines.remove(id);

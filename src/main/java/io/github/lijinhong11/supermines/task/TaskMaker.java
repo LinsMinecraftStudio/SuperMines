@@ -41,7 +41,6 @@ public class TaskMaker {
 
         int delaySeconds = mine.getRegenerateSeconds() - warningSeconds;
         if (delaySeconds <= 0) {
-            // 提示时间已过或等于重置时间，直接执行
             scheduler.runNextTick(task);
             return;
         }
@@ -57,6 +56,11 @@ public class TaskMaker {
         MineResetTask task = new MineResetTask(mine);
         scheduler.runTimerAsync(task, 1L, mine.getRegenerateSeconds() * 20L);
         resetTasks.put(mine.getId(), task);
+    }
+
+    public void runMineResetTaskNow(Mine mine) {
+        MineResetTask mrt = new MineResetTask(mine);
+        scheduler.runNextTick(mrt);
     }
 
     public void cancelMineResetTask(Mine mine) {

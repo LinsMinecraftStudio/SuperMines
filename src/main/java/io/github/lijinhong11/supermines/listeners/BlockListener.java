@@ -26,7 +26,7 @@ public class BlockListener implements Listener {
             return;
         }
 
-        if (p.isOp() || p.hasPermission(Constants.Permission.BYPASS_NO_PLACE)) {
+        if (SuperMines.getInstance().getConfig().getBoolean("mine.allow-place", false)) {
             return;
         }
 

@@ -1,10 +1,14 @@
 package io.github.lijinhong11.supermines.command;
 
-import dev.jorel.commandapi.annotations.*;
-import dev.jorel.commandapi.annotations.arguments.ALocationArgument;
-import dev.jorel.commandapi.annotations.arguments.AStringArgument;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
+import dev.jorel.commandapi.arguments.LocationArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
+import dev.jorel.commandapi.executors.CommandExecutor;
+import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.gui.GuiManager;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
@@ -14,200 +18,178 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Command("supermines")
-@Alias({"sm", "mine", "mines"})
 public class SuperMinesCommand {
+
     private final Map<UUID, AreaSelection> selectionMap = new ConcurrentHashMap<>();
 
-    @Default
-    public void showHelp(CommandSender sender) {
+    public void register() {
+        new CommandAPICommand("supermines")
+                .withAliases("sm", "mine", "mines")
+                .executes((CommandExecutor) (sender, args) -> showHelp(sender))
+                .withSubcommand(
+                        new CommandAPICommand("pos1")
+                                .withPermission(Constants.Permission.POS_SET)
+                                .executesPlayer((PlayerCommandExecutor) (player, args) -> handlePos(player, true, null))
+                                .withOptionalArguments(new LocationArgument("loc"))
+                                .executesPlayer((player, args) -> {
+                                    Location loc = (Location) args.get("loc");
+                                    handlePos(player, true, loc);
+                                })
+                )
+                .withSubcommand(
+                        new CommandAPICommand("pos2")
+                                .withPermission(Constants.Permission.POS_SET)
+                                .executesPlayer((PlayerCommandExecutor) (player, args) -> handlePos(player, false, null))
+                                .withOptionalArguments(new LocationArgument("loc"))
+                                .executesPlayer((player, args) -> {
+                                    Location loc = (Location) args.get("loc");
+                                    handlePos(player, false, loc);
+                                })
+                )
+                .withSubcommand(
+                        new CommandAPICommand("create")
+                                .withPermission(Constants.Permission.CREATE)
+                                .withArguments(new StringArgument("id"))
+                                .executesPlayer((PlayerCommandExecutor) (player, args) -> createMine(player, (String) args.get("id"), null))
+                                .withArguments(new StringArgument("id"), new StringArgument("displayName"))
+                                .executesPlayer((PlayerCommandExecutor) (player, args) -> createMine(player, (String) args.get("id"), (String) args.get("displayName")))
+                )
+                .withSubcommand(
+                        new CommandAPICommand("redefine")
+                                .withPermission(Constants.Permission.REDEFINE)
+                                .withArguments(new StringArgument("id")
+                                        .includeSuggestions(ArgumentSuggestions.strings(getMineList()))
+                                .executesPlayer((PlayerCommandExecutor) (player, args) -> redefineMine(player, (String) args.get("id"))))
+                )
+                .withSubcommand(
+                        new CommandAPICommand("remove")
+                                .withPermission(Constants.Permission.REMOVE)
+                                .withArguments(new StringArgument("id")
+                                        .includeSuggestions(ArgumentSuggestions.strings(getMineList()))
+                                .executes((CommandExecutor) (sender, args) -> removeMine(sender, (String) args.get("id"))))
+                )
+                .withSubcommand(
+                        new CommandAPICommand("reset")
+                                .withPermission(Constants.Permission.RESET)
+                                .withArguments(new StringArgument("id")
+                                        .includeSuggestions(ArgumentSuggestions.strings(getMineList())))
+                                .executes((CommandExecutor) (sender, args) -> resetMine(sender, (String) args.get("id")))
+                )
+                .withSubcommand(
+                        new CommandAPICommand("list")
+                                .withPermission(Constants.Permission.LIST)
+                                .executes((CommandExecutor) (sender, args) -> listMines(sender))
+                )
+                .withSubcommand(
+                        new CommandAPICommand("gui")
+                                .withPermission(Constants.Permission.GUI)
+                                .executesPlayer((PlayerCommandExecutor) (player, args) -> GuiManager.openGeneral(player))
+                ).register();
+    }
+
+    private void showHelp(CommandSender sender) {
         SuperMines.getInstance().getLanguageManager().sendMessages(sender, "command.help.general");
     }
 
-    @Subcommand("treasure")
-    public void showTreasureHelp(CommandSender sender) {
-        SuperMines.getInstance().getLanguageManager().sendMessages(sender, "command.help.treasure");
-    }
-
-    @Subcommand("rank")
-    public void showRankHelp(CommandSender sender) {
-        SuperMines.getInstance().getLanguageManager().sendMessages(sender, "command.help.rank");
-    }
-
-    @Subcommand("pos1")
-    @Permission(Constants.Permission.POS_SET)
-    public void setPos1(Player player) {
-        if (SuperMines.getInstance().getMineManager().getMine(player.getLocation()) != null) {
+    private void handlePos(Player player, boolean isPos1, Location forcedLoc) {
+        Location loc = forcedLoc != null ? forcedLoc : player.getLocation();
+        if (SuperMines.getInstance().getMineManager().getMine(loc) != null) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
             return;
         }
-
-        if (selectionMap.get(player.getUniqueId()) != null) {
-            AreaSelection selectionBefore = selectionMap.get(player.getUniqueId());
-            AreaSelection newAfter = new AreaSelection(player.getLocation(), selectionBefore.pos2);
-
-            selectionMap.put(player.getUniqueId(), newAfter);
+        UUID uuid = player.getUniqueId();
+        AreaSelection sel = selectionMap.get(uuid);
+        if (sel != null) {
+            sel = isPos1 ? new AreaSelection(loc, sel.pos2) : new AreaSelection(sel.pos1, loc);
         } else {
-            AreaSelection newAfter = new AreaSelection(player.getLocation(), null);
-            selectionMap.put(player.getUniqueId(), newAfter);
+            sel = isPos1 ? new AreaSelection(loc, null) : new AreaSelection(null, loc);
         }
+        selectionMap.put(uuid, sel);
     }
 
-    @Subcommand("pos1")
-    @Permission(Constants.Permission.POS_SET)
-    public void setPos1(Player player, @ALocationArgument Location loc) {
-        if (SuperMines.getInstance().getMineManager().getMine(player.getLocation()) != null) {
-            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
-            return;
+    private CuboidArea getSelectedArea(Player player, String id, boolean checkExists) {
+        if (checkExists && SuperMines.getInstance().getMineManager().getMine(id) != null) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.exists");
+            return null;
         }
-
-        if (selectionMap.get(player.getUniqueId()) != null) {
-            AreaSelection selectionBefore = selectionMap.get(player.getUniqueId());
-            AreaSelection newAfter = new AreaSelection(loc, selectionBefore.pos2);
-
-            selectionMap.put(player.getUniqueId(), newAfter);
-        } else {
-            AreaSelection newAfter = new AreaSelection(loc, null);
-            selectionMap.put(player.getUniqueId(), newAfter);
+        if (!id.matches(Constants.StringsAndComponents.ID_PATTERN)) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.invalid-id");
+            return null;
         }
+        AreaSelection sel = selectionMap.get(player.getUniqueId());
+        if (sel == null || sel.pos1 == null || sel.pos2 == null) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.selection-not-finished");
+            return null;
+        }
+        return sel.toCuboidArea();
     }
 
-    @Subcommand("pos2")
-    @Permission(Constants.Permission.POS_SET)
-    public void setPos2(Player player) {
-        if (SuperMines.getInstance().getMineManager().getMine(player.getLocation()) != null) {
-            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
-            return;
-        }
-
-        if (selectionMap.get(player.getUniqueId()) != null) {
-            AreaSelection selectionBefore = selectionMap.get(player.getUniqueId());
-            AreaSelection newAfter = new AreaSelection(selectionBefore.pos1, player.getLocation());
-
-            selectionMap.put(player.getUniqueId(), newAfter);
-        } else {
-            AreaSelection newAfter = new AreaSelection(null, player.getLocation());
-            selectionMap.put(player.getUniqueId(), newAfter);
-        }
-    }
-
-    @Subcommand("pos2")
-    @Permission(Constants.Permission.POS_SET)
-    public void setPos2(Player player, @ALocationArgument Location loc) {
-        if (SuperMines.getInstance().getMineManager().getMine(player.getLocation()) != null) {
-            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
-            return;
-        }
-
-        if (selectionMap.get(player.getUniqueId()) != null) {
-            AreaSelection selectionBefore = selectionMap.get(player.getUniqueId());
-            AreaSelection newAfter = new AreaSelection(selectionBefore.pos1, loc);
-
-            selectionMap.put(player.getUniqueId(), newAfter);
-        } else {
-            AreaSelection newAfter = new AreaSelection(null, loc);
-            selectionMap.put(player.getUniqueId(), newAfter);
-        }
-    }
-
-    @Subcommand("create")
-    @Permission(Constants.Permission.CREATE)
-    public void createMine(Player player, @AStringArgument String id) {
-        CuboidArea ca = getAreaSelection(player, id, true);
-        if (ca == null) {
-            return;
-        }
-
-        Mine mine = new Mine(id, Component.text(id), player.getWorld(), ca, new HashMap<>(), 3600, false);
+    private void createMine(Player player, String id, String displayName) {
+        CuboidArea ca = getSelectedArea(player, id, true);
+        if (ca == null) return;
+        Component name = displayName == null ? Component.text(id) : ComponentUtils.deserialize(displayName);
+        Mine mine = new Mine(id, name, player.getWorld(), ca, new HashMap<>(), 3600, false);
         SuperMines.getInstance().getMineManager().addMine(mine);
-
         SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.success");
     }
 
-    @Subcommand("create")
-    @Permission(Constants.Permission.CREATE)
-    public void createMine(Player player, @AStringArgument String id, @AStringArgument String displayName) {
-        CuboidArea ca = getAreaSelection(player, id, true);
-        if (ca == null) {
-            return;
-        }
-
-        Mine mine = new Mine(id, ComponentUtils.deserialize(displayName), player.getWorld(), ca, new HashMap<>(), 3600, false);
-        SuperMines.getInstance().getMineManager().addMine(mine);
-
-        SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.success");
-    }
-
-    @Subcommand("redefine")
-    @Permission(Constants.Permission.REDEFINE)
-    public void redefineMine(Player player, @AStringArgument String id) {
+    private void redefineMine(Player player, String id) {
         Mine mine = SuperMines.getInstance().getMineManager().getMine(id);
         if (mine == null) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.mine-not-exists");
             return;
         }
-
-        CuboidArea ca = getAreaSelection(player, id, false);
-        if (ca == null) {
-            return;
-        }
-
+        CuboidArea ca = getSelectedArea(player, id, false);
+        if (ca == null) return;
         mine.setArea(ca);
         SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.redefine.success");
     }
 
-    @Subcommand("remove")
-    @Permission(Constants.Permission.REMOVE)
-    public void removeMine(Player player, @AStringArgument String id) {
+    private void removeMine(CommandSender sender, String id) {
         Mine mine = SuperMines.getInstance().getMineManager().getMine(id);
         if (mine == null) {
-            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.mine-not-exists");
+            SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.mine-not-exists");
             return;
         }
-
         SuperMines.getInstance().getTaskMaker().cancelMineResetWarningTasks(mine);
         SuperMines.getInstance().getTaskMaker().cancelMineResetTask(mine);
-        SuperMines.getInstance().getMineManager().remove(id);
-
-        SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.remove.success");
+        SuperMines.getInstance().getMineManager().removeMine(id);
+        SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.remove.success");
     }
 
-    @Subcommand("gui")
-    @Permission(Constants.Permission.GUI)
-    public void openGui(Player player) {
-        GuiManager.openGeneral(player);
+    private void resetMine(CommandSender sender, String id) {
+        Mine mine = SuperMines.getInstance().getMineManager().getMine(id);
+        if (mine == null) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.mine-not-exists");
+            return;
+        }
+        SuperMines.getInstance().getTaskMaker().runMineResetTaskNow(mine);
+        SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.reset.success");
     }
 
-    private CuboidArea getAreaSelection(Player player, String id, boolean checkExisting) {
-        if (checkExisting) {
-            if (SuperMines.getInstance().getMineManager().getMine(id) != null) {
-                SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.exists");
-                return null;
-            }
-
-            if (!id.matches(Constants.StringsAndComponents.ID_PATTERN)) {
-                SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.invalid-id");
-                return null;
-            }
+    private void listMines(CommandSender sender) {
+        Component head = SuperMines.getInstance().getLanguageManager().getMsgComponent(sender, "command.list.head");
+        String color = SuperMines.getInstance().getLanguageManager().getMsg(sender, "command.list.color");
+        Component sep = SuperMines.getInstance().getLanguageManager().getMsgComponent(sender, "command.list.separator");
+        List<Mine> mines = SuperMines.getInstance().getMineManager().getAll();
+        Component msg = head;
+        for (int i = 0; i < mines.size(); i++) {
+            Mine m = mines.get(i);
+            msg = msg.append(ComponentUtils.deserialize(color + m.getRawDisplayName() + "(" + m.getId() + ")"));
+            if (i < mines.size() - 1) msg = msg.append(sep);
         }
+        sender.sendMessage(msg);
+    }
 
-        if (selectionMap.get(player.getUniqueId()) == null) {
-            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.no-selection");
-            return null;
-        }
+    private List<String> getMineList() {
+        return SuperMines.getInstance().getMineManager().getAll().stream().map(Mine::getId).toList();
+    }
 
-        AreaSelection selection = selectionMap.get(player.getUniqueId());
-        if (selection.pos1 == null || selection.pos2 == null) {
-            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.selection-not-finished");
-            return null;
-        }
-
-        return selection.toCuboidArea();
+    private List<String> getTreasuresList() {
+        return SuperMines.getInstance().getTreasureManager().getAll().stream().map(Treasure::getId).toList();
     }
 
     private record AreaSelection(Location pos1, Location pos2) {

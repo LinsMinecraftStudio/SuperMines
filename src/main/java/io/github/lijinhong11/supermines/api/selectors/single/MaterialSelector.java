@@ -10,6 +10,15 @@ public class MaterialSelector implements Predicate<Material> {
     private final List<Material> materials;
     private final Predicate<Material> selector;
 
+    private MaterialSelector(Material... materials) {
+        this(List.of(materials));
+    }
+
+    private MaterialSelector(List<Material> materials) {
+        this.materials = materials;
+        this.selector = materials::contains;
+    }
+
     public static MaterialSelector single(Material material) {
         return new MaterialSelector(Collections.singletonList(material));
     }
@@ -18,17 +27,12 @@ public class MaterialSelector implements Predicate<Material> {
         return new MaterialSelector(materials);
     }
 
+    public static MaterialSelector multiple(List<Material> materials) {
+        return new MaterialSelector(materials);
+    }
+
     public static MaterialSelector all() {
         return new MaterialSelector(Material.values());
-    }
-
-    private MaterialSelector(Material... materials) {
-        this(List.of(materials));
-    }
-
-    private MaterialSelector(List<Material> materials) {
-        this.materials = materials;
-        this.selector = materials::contains;
     }
 
     public void appendNewMaterial(Material material) {

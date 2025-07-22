@@ -8,9 +8,4 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
     public PlayerDataManager(DatabaseConnection connection) {
         super(connection, PlayerData.class);
     }
-
-    @Override
-    protected void setup() {
-
-    }
 }

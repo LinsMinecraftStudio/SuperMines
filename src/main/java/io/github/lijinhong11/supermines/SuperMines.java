@@ -1,17 +1,31 @@
 package io.github.lijinhong11.supermines;
 
 import com.tcoded.folialib.FoliaLib;
+import io.github.lijinhong11.mdatabase.DatabaseConnection;
+import io.github.lijinhong11.mdatabase.DatabaseParameters;
+import io.github.lijinhong11.mdatabase.enums.DatabaseType;
+import io.github.lijinhong11.mdatabase.impl.SQLConnections;
+import io.github.lijinhong11.supermines.command.SuperMinesCommand;
 import io.github.lijinhong11.supermines.managers.MineManager;
+import io.github.lijinhong11.supermines.managers.PlayerDataManager;
+import io.github.lijinhong11.supermines.managers.RankManager;
 import io.github.lijinhong11.supermines.managers.TreasureManager;
 import io.github.lijinhong11.supermines.message.LanguageManager;
 import io.github.lijinhong11.supermines.task.TaskMaker;
+import io.github.lijinhong11.supermines.utils.Constants;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 public class SuperMines extends JavaPlugin {
     private static SuperMines instance;
 
     private MineManager mineManager;
     private TreasureManager treasureManager;
+    private RankManager rankManager;
+    private PlayerDataManager playerDataManager;
+
     private LanguageManager languageManager;
     private FoliaLib foliaLibImpl;
     private TaskMaker taskMaker;
@@ -27,7 +41,11 @@ public class SuperMines extends JavaPlugin {
         treasureManager = new TreasureManager();
         mineManager = new MineManager();
         languageManager = new LanguageManager(this);
+        rankManager = new RankManager();
         taskMaker = new TaskMaker(foliaLibImpl);
+
+        setupDatabase();
+        new SuperMinesCommand().register();
 
         taskMaker.startup();
     }
@@ -38,7 +56,33 @@ public class SuperMines extends JavaPlugin {
     }
 
     private void setupDatabase() {
+        ConfigurationSection storage = getConfig().createSection("storage");
+        ConfigurationSection remote = storage.createSection("remote");
 
+        DatabaseType type = DatabaseType.getByName(storage.getString("type", "SQLITE"));
+
+        if (type == null) {
+            getLogger().warning("Invalid storage type, using SQLite instead.");
+            type = DatabaseType.SQLITE;
+        }
+
+        String ip = remote.getString("ip");
+        int port = remote.getInt("port");
+        String database = remote.getString("database");
+        String username = remote.getString("username");
+        String password = remote.getString("password");
+
+        DatabaseConnection conn = switch (type) {
+            case SQLITE -> {
+                String path = new File(getDataFolder(), Constants.StringsAndComponents.DATABASE_FILE).getAbsolutePath();
+                yield SQLConnections.sqlite(path, new DatabaseParameters());
+            }
+            case MYSQL -> SQLConnections.mysql(ip, port, database, username, password, new DatabaseParameters());
+            case MARIADB -> SQLConnections.mariadb(ip, port, database, username, password, new DatabaseParameters());
+            case POSTGRESQL -> SQLConnections.postgresql(ip, port, database, username, password, new DatabaseParameters());
+        };
+
+        playerDataManager = new PlayerDataManager(conn);
     }
 
     public static SuperMines getInstance() {
@@ -51,6 +95,14 @@ public class SuperMines extends JavaPlugin {
 
     public TreasureManager getTreasureManager() {
         return treasureManager;
+    }
+
+    public RankManager getRankManager() {
+        return rankManager;
+    }
+
+    public PlayerDataManager getPlayerDataManager() {
+        return playerDataManager;
     }
 
     public LanguageManager getLanguageManager() {

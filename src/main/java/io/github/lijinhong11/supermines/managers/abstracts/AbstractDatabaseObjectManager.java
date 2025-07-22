@@ -16,12 +16,8 @@ public abstract class AbstractDatabaseObjectManager<T> {
         this.connection = connection;
         this.clazz = clazz;
 
-        setup();
-
         load();
     }
-
-    protected abstract void setup();
 
     private void load() {
         try {
