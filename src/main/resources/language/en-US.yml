@@ -6,6 +6,29 @@ time:
   minutes: "minutes"
   hour: "hour"
   hours: "hours"
+command:
+  help:
+    general:
+      - "&e/sm create &7- &aCreate a mine"
+      - "&e/sm help &7- &aShow this help message"
+      - "&e/sm info <mine> &7- &aShow info of a mine"
+      - "&e/sm list &7- &aList all mines"
+      - "&e/sm gui &7- show gui"
+      - "&e/sm treasures &7- show help about treasures"
+      - "&e/sm ranks &7- show help about ranks"
+      - "&e/sm mine <mine> &7- manage the mine"
+      - "&e/sm reset <mine> &7- &aReset a mine"
+      - "&e/sm pos1 &7- &aSet the position 1 of an area"
+      - "&e/sm pos2 &7- &aSet the position 2 of an area"
+      - "&e/sm remove <mine> &7- &aRemove a mine"
+      - "&e/sm reload &7- &aReload the plugin"
+  create:
+    exists: "&cA mine with that id already existed!"
+    success: "&aThe mine is created successfully!"
+    invalid-id: "&cInvalid characters in the id!"
+    no-selection: "&cYou have not selected a position!"
+    selection-not-finished: "&cYou have not finished selecting a cuboid area!"
+  pos-in-mine: "&cThe location you have chosen is already located in a mine!"
 mine:
   no-place-permission: "&cYou do not have permission to place blocks!"
   reset: "&aMine &b%mine% &ahas been reset!"
@@ -16,4 +39,12 @@ gui:
   mines:
     title: "&7&lMines"
   mine-management:
-    title: "&7&lMine Management &8&l- &e%mine%"
+    title: "&7&lMine Management &8&l- &7%mine%"
+  treasures:
+    title: "&e&lTreasures"
+  treasure-management:
+    title: "&e&lTreasure Management &8&l- &e%treasure%"
+  ranks:
+    title: "&b&lRanks"
+  rank-management:
+    title: "&b&lRank Management &8&l- &b%rank%"

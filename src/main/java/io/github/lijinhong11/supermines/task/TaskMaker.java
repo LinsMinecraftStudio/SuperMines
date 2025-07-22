@@ -38,13 +38,19 @@ public class TaskMaker {
 
     public void startMineWarningTask(Mine mine, int warningSeconds) {
         MineResetWarningTask task = new MineResetWarningTask(mine, warningSeconds);
-        int warnTime = mine.getRegenerateSeconds() - warningSeconds;
-        if (!resetWarningTasks.containsKey(mine.getId())) {
-            resetWarningTasks.put(mine.getId(), new ArrayList<>(List.of(task)));
-        } else {
-            resetWarningTasks.get(mine.getId()).add(task);
+
+        int delaySeconds = mine.getRegenerateSeconds() - warningSeconds;
+        if (delaySeconds <= 0) {
+            // 提示时间已过或等于重置时间，直接执行
+            scheduler.runNextTick(task);
+            return;
         }
-        scheduler.runTimerAsync(task, warnTime * 20L, warnTime * 20L);
+
+        resetWarningTasks
+                .computeIfAbsent(mine.getId(), id -> new ArrayList<>())
+                .add(task);
+
+        scheduler.runLaterAsync(task, delaySeconds * 20L);
     }
 
     public void startMineResetTask(Mine mine) {
@@ -54,12 +60,21 @@ public class TaskMaker {
     }
 
     public void cancelMineResetTask(Mine mine) {
-        AbstractTask task = resetTasks.get(mine.getId());
+        MineResetTask task = resetTasks.get(mine.getId());
         if (task != null) {
             task.cancel();
         }
 
         resetTasks.remove(mine.getId());
+    }
+
+    public void cancelMineResetWarningTasks(Mine mine) {
+        List<MineResetWarningTask> tasks = resetWarningTasks.get(mine.getId());
+        if (tasks != null) {
+            tasks.forEach(AbstractTask::cancel);
+        }
+
+        resetWarningTasks.remove(mine.getId());
     }
 
     public void close() {

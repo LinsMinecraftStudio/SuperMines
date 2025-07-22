@@ -1,10 +1,12 @@
 package io.github.lijinhong11.supermines.command;
 
 import dev.jorel.commandapi.annotations.*;
+import dev.jorel.commandapi.annotations.arguments.ALocationArgument;
 import dev.jorel.commandapi.annotations.arguments.AStringArgument;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
+import io.github.lijinhong11.supermines.gui.GuiManager;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import net.kyori.adventure.text.Component;
@@ -25,6 +27,11 @@ public class SuperMinesCommand {
     @Default
     public void showHelp(CommandSender sender) {
         SuperMines.getInstance().getLanguageManager().sendMessages(sender, "command.help.general");
+    }
+
+    @Subcommand("treasure")
+    public void showTreasureHelp(CommandSender sender) {
+        SuperMines.getInstance().getLanguageManager().sendMessages(sender, "command.help.treasure");
     }
 
     @Subcommand("rank")
@@ -51,6 +58,25 @@ public class SuperMinesCommand {
         }
     }
 
+    @Subcommand("pos1")
+    @Permission(Constants.Permission.POS_SET)
+    public void setPos1(Player player, @ALocationArgument Location loc) {
+        if (SuperMines.getInstance().getMineManager().getMine(player.getLocation()) != null) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
+            return;
+        }
+
+        if (selectionMap.get(player.getUniqueId()) != null) {
+            AreaSelection selectionBefore = selectionMap.get(player.getUniqueId());
+            AreaSelection newAfter = new AreaSelection(loc, selectionBefore.pos2);
+
+            selectionMap.put(player.getUniqueId(), newAfter);
+        } else {
+            AreaSelection newAfter = new AreaSelection(loc, null);
+            selectionMap.put(player.getUniqueId(), newAfter);
+        }
+    }
+
     @Subcommand("pos2")
     @Permission(Constants.Permission.POS_SET)
     public void setPos2(Player player) {
@@ -66,6 +92,25 @@ public class SuperMinesCommand {
             selectionMap.put(player.getUniqueId(), newAfter);
         } else {
             AreaSelection newAfter = new AreaSelection(null, player.getLocation());
+            selectionMap.put(player.getUniqueId(), newAfter);
+        }
+    }
+
+    @Subcommand("pos2")
+    @Permission(Constants.Permission.POS_SET)
+    public void setPos2(Player player, @ALocationArgument Location loc) {
+        if (SuperMines.getInstance().getMineManager().getMine(player.getLocation()) != null) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
+            return;
+        }
+
+        if (selectionMap.get(player.getUniqueId()) != null) {
+            AreaSelection selectionBefore = selectionMap.get(player.getUniqueId());
+            AreaSelection newAfter = new AreaSelection(selectionBefore.pos1, loc);
+
+            selectionMap.put(player.getUniqueId(), newAfter);
+        } else {
+            AreaSelection newAfter = new AreaSelection(null, loc);
             selectionMap.put(player.getUniqueId(), newAfter);
         }
     }
@@ -101,22 +146,41 @@ public class SuperMinesCommand {
     @Subcommand("redefine")
     @Permission(Constants.Permission.REDEFINE)
     public void redefineMine(Player player, @AStringArgument String id) {
+        Mine mine = SuperMines.getInstance().getMineManager().getMine(id);
+        if (mine == null) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.mine-not-exists");
+            return;
+        }
+
         CuboidArea ca = getAreaSelection(player, id, false);
         if (ca == null) {
             return;
         }
+
+        mine.setArea(ca);
+        SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.redefine.success");
     }
 
     @Subcommand("remove")
     @Permission(Constants.Permission.REMOVE)
     public void removeMine(Player player, @AStringArgument String id) {
+        Mine mine = SuperMines.getInstance().getMineManager().getMine(id);
+        if (mine == null) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.mine-not-exists");
+            return;
+        }
 
+        SuperMines.getInstance().getTaskMaker().cancelMineResetWarningTasks(mine);
+        SuperMines.getInstance().getTaskMaker().cancelMineResetTask(mine);
+        SuperMines.getInstance().getMineManager().remove(id);
+
+        SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.remove.success");
     }
 
     @Subcommand("gui")
     @Permission(Constants.Permission.GUI)
     public void openGui(Player player) {
-
+        GuiManager.openGeneral(player);
     }
 
     private CuboidArea getAreaSelection(Player player, String id, boolean checkExisting) {

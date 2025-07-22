@@ -1,11 +1,25 @@
 package io.github.lijinhong11.supermines.api.data;
 
+import io.github.lijinhong11.mdatabase.serialization.annotations.Column;
+import io.github.lijinhong11.mdatabase.serialization.annotations.Converter;
+import io.github.lijinhong11.mdatabase.serialization.annotations.Table;
+import io.github.lijinhong11.supermines.managers.database.RankConverter;
+
 import java.util.UUID;
 
+@Table(name = "player_data")
 public class PlayerData {
-    private final String playerName;
-    private final UUID playerUUID;
+    @Column
+    private String playerName;
+    @Column
+    private UUID playerUUID;
+    @Column
+    private int minedBlocks;
+    @Converter(RankConverter.class)
     private Rank rank;
+
+    public PlayerData() {
+    }
 
     public PlayerData(String playerName, UUID playerUUID, Rank rank) {
         this.playerName = playerName;
@@ -27,5 +41,13 @@ public class PlayerData {
 
     public void setRank(Rank rank) {
         this.rank = rank;
+    }
+
+    public int getMinedBlocks() {
+        return minedBlocks;
+    }
+
+    public void setMinedBlocks(int minedBlocks) {
+        this.minedBlocks = minedBlocks;
     }
 }

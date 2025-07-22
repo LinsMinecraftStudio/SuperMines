@@ -19,8 +19,10 @@ public class Constants {
     }
 
     public static class Items {
-        public static final Material DEFAULT_MINE_ICON =Material.STONE;
+        public static final Material DEFAULT_MINE_ICON = Material.STONE;
+        public static final ItemStack BACKGROUND = ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE).name(Component.space()).build();
 
+        //functional buttons
         public static final Function<Player, ItemStack> PREVIOUS_PAGE = player -> ItemBuilder.from(Material.PAPER)
                 .name(SuperMines
                         .getInstance()
@@ -34,8 +36,37 @@ public class Constants {
                         .getLanguageManager()
                         .getMsgComponent(player, "gui.next"))
                 .build();
+        public static final Function<Player, ItemStack> BACK = player -> ItemBuilder.from(Material.ARROW)
+                .name(SuperMines
+                        .getInstance()
+                        .getLanguageManager()
+                        .getMsgComponent(player, "gui.back"))
+                .build();
+        public static final Function<Player, ItemStack> CLOSE = player -> ItemBuilder.from(Material.BARRIER)
+                .name(SuperMines
+                        .getInstance()
+                        .getLanguageManager()
+                        .getMsgComponent(player, "gui.close"))
+                .build();
 
-        public static final ItemStack BACKGROUND = ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE).name(Component.space()).build();
+        public static final Function<Player, ItemStack> MINES = player -> ItemBuilder.from(Material.STONE)
+                .name(SuperMines
+                        .getInstance()
+                        .getLanguageManager()
+                        .getMsgComponent(player, "gui.mines.title"))
+                .build();
+        public static final Function<Player, ItemStack> TREASURES = player -> ItemBuilder.from(Material.CHEST)
+                .name(SuperMines
+                        .getInstance()
+                        .getLanguageManager()
+                        .getMsgComponent(player, "gui.treasures.title"))
+                .build();
+        public static final Function<Player, ItemStack> RANKS = player -> ItemBuilder.from(Material.CHEST)
+                .name(SuperMines
+                        .getInstance()
+                        .getLanguageManager()
+                        .getMsgComponent(player, "gui.ranks.title"))
+                .build();
     }
 
     public static class Permission {

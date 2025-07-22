@@ -77,6 +77,8 @@
             <version>1.20.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Libraries -->
         <dependency>
             <groupId>com.tcoded</groupId>
             <artifactId>FoliaLib</artifactId>
@@ -88,6 +90,12 @@
             <artifactId>triumph-gui</artifactId>
             <version>3.1.11</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.lijinhong11</groupId>
+            <artifactId>MDatabase</artifactId>
+            <version>1.0.2-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- CommandAPI -->

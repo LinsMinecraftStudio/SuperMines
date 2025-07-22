@@ -37,6 +37,10 @@ public class SuperMines extends JavaPlugin {
 
     }
 
+    private void setupDatabase() {
+
+    }
+
     public static SuperMines getInstance() {
         return instance;
     }

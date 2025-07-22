@@ -1,9 +1,12 @@
 package io.github.lijinhong11.supermines.api.mine;
 
+import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.selectors.MaterialSelectors;
 import io.github.lijinhong11.supermines.api.selectors.single.MaterialSelector;
+import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -35,11 +38,17 @@ public class Treasure {
         return id;
     }
 
+    public String getRawDisplayName() {
+        return ComponentUtils.serialize(displayName);
+    }
+
     public Component getDisplayName() {
         return displayName;
     }
 
-    public void setDisplayName(Component displayName) {
+    public void setDisplayName(@NotNull Component displayName) {
+        Preconditions.checkNotNull(displayName, "display name cannot be null");
+
         this.displayName = displayName;
     }
 

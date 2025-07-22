@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.api.data;
 
 import com.google.common.base.Preconditions;
+import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +39,10 @@ public final class Rank {
 
     public String getId() {
         return id;
+    }
+
+    public String getRawDisplayName() {
+        return ComponentUtils.serialize(displayName);
     }
 
     public Component getDisplayName() {

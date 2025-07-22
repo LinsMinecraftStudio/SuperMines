@@ -11,6 +11,7 @@ import java.util.jar.JarFile;
 
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
 import io.github.lijinhong11.supermines.utils.Constants;
@@ -111,7 +112,13 @@ public final class LanguageManager {
         MessageReplacement regenerateSeconds = MessageReplacement.replace("%regenerate_seconds%", String.valueOf(mine.getRegenerateSeconds()));
         MessageReplacement pos1 = MessageReplacement.replace("%pos1%", mine.getArea().pos1().toString());
         MessageReplacement pos2 = MessageReplacement.replace("%pos2%", mine.getArea().pos2().toString());
-        return getMsgComponentList(p, "mine.gui.info", world, regenerateSeconds, pos1, pos2);
+        return getMsgComponentList(p, "gui.mines.info", world, regenerateSeconds, pos1, pos2);
+    }
+
+    public List<Component> getTreasureInfo(@NotNull Player p, @NotNull Treasure treasure) {
+        MessageReplacement chance = MessageReplacement.replace("%chance%", String.valueOf(treasure.getChance()));
+        MessageReplacement matchedMaterials = MessageReplacement.replace("%matched_materials%", String.valueOf(treasure.getMatchedMaterials().getMaterials().size()));
+        return getMsgComponentList(p, "gui.treasures.info", chance, matchedMaterials);
     }
 
     public void sendMessage(CommandSender commandSender, String key, MessageReplacement... args) {
