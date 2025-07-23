@@ -38,7 +38,7 @@ public class Mine {
     private CuboidArea area;
     private int regenerateSeconds;
     private boolean onlyFillAirWhenRegenerate;
-    private Rank requiredRank;
+    private int requiredRankLevel;
 
     @ParametersAreNonnullByDefault
     public Mine(String id, Component displayName, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate) {
@@ -52,11 +52,11 @@ public class Mine {
 
     @ParametersAreNonnullByDefault
     public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures) {
-        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasures, Rank.DEFAULT);
+        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasures, Rank.DEFAULT.getLevel());
     }
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, Rank requiredRank) {
+    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, int requiredRankLevel) {
         this.onlyFillAirWhenRegenerate = onlyFillAirWhenRegenerate;
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "Mine ID cannot be null or empty");
         Preconditions.checkArgument(id.matches(Constants.StringsAndComponents.ID_PATTERN), "Mine ID cannot contain special characters");
@@ -69,7 +69,7 @@ public class Mine {
         this.blockSpawnEntries = blockSpawnEntries;
         this.regenerateSeconds = regenerateSeconds;
         this.treasures = treasures;
-        this.requiredRank = requiredRank;
+        this.requiredRankLevel = requiredRankLevel;
     }
 
     public boolean isPlayerInMine(@NotNull Player player) {
@@ -200,11 +200,15 @@ public class Mine {
         return onlyFillAirWhenRegenerate;
     }
 
-    public void setRequiredRank(Rank requiredRank) {
-        this.requiredRank = requiredRank;
+    public void setRequiredRankLevel(int requiredRankLevel) {
+        this.requiredRankLevel = requiredRankLevel;
     }
 
-    public Rank getRequiredRank() {
-        return requiredRank;
+    public void setRequiredRankLevel(Rank requiredRank) {
+        this.requiredRankLevel = requiredRank.getLevel();
+    }
+
+    public int getRequiredRankLevel() {
+        return requiredRankLevel;
     }
 }

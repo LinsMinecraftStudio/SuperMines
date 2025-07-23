@@ -11,7 +11,10 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +68,9 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
 
     @Override
     public void saveAndClose() {
-
+        for (Treasure treasure : treasures.values()) {
+            super.putObject(treasure.getId(), treasure);
+        }
     }
 
     public void addTreasure(Treasure treasure) {
@@ -85,10 +90,14 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         return treasures.get(id);
     }
 
-    public void removeRank(@NotNull String key) {
+    public void removeTreasure(@NotNull String key) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "treasure id cannot be null or empty");
 
         treasures.remove(key);
         super.remove(key);
+    }
+
+    public @Unmodifiable Collection<Treasure> getAllTreasures() {
+        return Collections.unmodifiableCollection(treasures.values());
     }
 }

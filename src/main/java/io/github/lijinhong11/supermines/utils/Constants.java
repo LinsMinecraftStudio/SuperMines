@@ -71,7 +71,11 @@ public class Constants {
     }
 
     public static class Permission {
-        public static final String BYPASS_RANK = "supermines.bypass.rank";
+        public static final String TREASURES = "supermines.treasures";
+        public static final String RANKS = "supermines.ranks";
+
+        public static final String SET_REQUIRED_RANK = "supermines.set_required_rank";
+
         public static final String CREATE = "supermines.create";
         public static final String GUI = "supermines.gui";
         public static final String LIST = "supermines.list";
@@ -79,5 +83,7 @@ public class Constants {
         public static final String REDEFINE = "supermines.redefine";
         public static final String REMOVE = "supermines.delete";
         public static final String RESET = "supermines.reset";
+
+        public static final String BYPASS_RANK = "supermines.bypass.rank";
     }
 }

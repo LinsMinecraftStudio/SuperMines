@@ -10,6 +10,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import com.google.common.base.Preconditions;
+import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
@@ -119,6 +120,11 @@ public final class LanguageManager {
         MessageReplacement chance = MessageReplacement.replace("%chance%", String.valueOf(treasure.getChance()));
         MessageReplacement matchedMaterials = MessageReplacement.replace("%matched_materials%", String.valueOf(treasure.getMatchedMaterials().getMaterials().size()));
         return getMsgComponentList(p, "gui.treasures.info", chance, matchedMaterials);
+    }
+
+    public List<Component> getRankInfo(@NotNull Player p, @NotNull Rank rank) {
+        MessageReplacement level = MessageReplacement.replace("%level%", String.valueOf(rank.getLevel()));
+        return getMsgComponentList(p, "gui.ranks.info", level);
     }
 
     public void sendMessage(CommandSender commandSender, String key, MessageReplacement... args) {

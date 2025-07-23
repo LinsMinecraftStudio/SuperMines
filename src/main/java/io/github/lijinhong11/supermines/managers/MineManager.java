@@ -16,6 +16,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
 
@@ -44,6 +45,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         int regenerateSeconds = section.getInt("regenerateSeconds", 0);
         boolean onlyFillAirWhenRegenerate = section.getBoolean("onlyFillAirWhenRegenerate", false);
         Material displayIcon = Material.getMaterial(section.getString("displayIcon", "STONE"));
+        int requiredRankLevel = section.getInt("requiredRankLevel", 1);
 
         if (id == null) {
             return null;
@@ -97,7 +99,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
                 .map(t -> SuperMines.getInstance().getTreasureManager().getTreasure(t))
                 .toList();
 
-        return new Mine(id, MiniMessage.miniMessage().deserialize(displayName), displayIcon, world, new CuboidArea(blockPos1, blockPos2), blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasureList);
+        return new Mine(id, MiniMessage.miniMessage().deserialize(displayName), displayIcon, world, new CuboidArea(blockPos1, blockPos2), blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasureList, requiredRankLevel);
     }
 
     @Override
@@ -109,6 +111,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("regenerateSeconds", object.getRegenerateSeconds());
         section.set("onlyFillAirWhenRegenerate", object.isOnlyFillAirWhenRegenerate());
         section.set("displayIcon", object.getDisplayIcon().toString());
+        section.set("requiredRankLevel", object.getRequiredRankLevel());
 
         List<String> treasures = new ArrayList<>();
         for (Treasure treasure : object.getTreasures()) {
@@ -166,5 +169,9 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
 
         mines.remove(id);
         super.remove(id);
+    }
+
+    public @Unmodifiable Collection<Mine> getAllMines() {
+        return Collections.unmodifiableCollection(mines.values());
     }
 }

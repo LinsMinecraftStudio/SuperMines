@@ -26,12 +26,12 @@ public class BlockListener implements Listener {
             return;
         }
 
-        if (SuperMines.getInstance().getConfig().getBoolean("mine.allow-place", false)) {
+        if (p.isOp() || SuperMines.getInstance().getConfig().getBoolean("mine.allow-place", false)) {
             return;
         }
 
         e.setCancelled(true);
-        SuperMines.getInstance().getLanguageManager().sendMessage(p, "mine.no-place-permission");
+        SuperMines.getInstance().getLanguageManager().sendMessage(p, "mine.no-place");
     }
 
     @EventHandler

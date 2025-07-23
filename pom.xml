@@ -86,7 +86,7 @@
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MDatabase</artifactId>
             <version>1.0.2-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- CommandAPI -->

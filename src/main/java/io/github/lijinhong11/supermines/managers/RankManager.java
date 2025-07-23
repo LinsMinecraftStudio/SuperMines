@@ -6,7 +6,10 @@ import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,5 +68,9 @@ public class RankManager extends AbstractFileObjectManager<Rank> {
 
         ranks.remove(id);
         super.remove(id);
+    }
+
+    public @Unmodifiable Collection<Rank> getAllRanks() {
+        return Collections.unmodifiableCollection(ranks.values());
     }
 }

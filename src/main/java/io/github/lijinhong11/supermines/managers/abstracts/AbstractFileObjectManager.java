@@ -30,7 +30,7 @@ public abstract class AbstractFileObjectManager<T> {
     }
 
     @NotNull
-    public final List<T> getAll() {
+    protected final List<T> getAll() {
         Set<String> keys = config.getKeys(false);
         if (keys.isEmpty()) {
             return new ArrayList<>();

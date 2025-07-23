@@ -23,7 +23,7 @@ public class TaskMaker {
     }
 
     public void startup() {
-        for (Mine mine : SuperMines.getInstance().getMineManager().getAll()) {
+        for (Mine mine : SuperMines.getInstance().getMineManager().getAllMines()) {
             startMineResetTask(mine);
         }
     }
@@ -41,7 +41,6 @@ public class TaskMaker {
 
         int delaySeconds = mine.getRegenerateSeconds() - warningSeconds;
         if (delaySeconds <= 0) {
-            scheduler.runNextTick(task);
             return;
         }
 
