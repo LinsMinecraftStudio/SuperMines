@@ -13,14 +13,15 @@ command:
       - "&e/sm help &7- &aShow this help message"
       - "&e/sm info <mine> &7- &aShow info of a mine"
       - "&e/sm list &7- &aList all mines"
-      - "&e/sm gui &7- Show gui"
-      - "&e/sm treasures &7- Show help about treasures"
-      - "&e/sm ranks &7- Show help about ranks"
-      - "&e/sm addTreasure <mine> <treasure> &7- Add a treasure to the mine"
-      - "&e/sm removeTreasure <mine> <treasure> &7- Remove a treasure from the mine"
-      - "&e/sm setRequiredLevel <mine> <rankLevel> &7- Set the required rank level of a mine"
-      - "&e/sm setBlockGenerate <mine> <material> <chance> &7- Make the block generate in the mine"
-      - "&e/sm removeBlockGenerate <mine> <material> &7- Stop the block generate in the mine"
+      - "&e/sm gui &7- &aShow gui"
+      - "&e/sm treasures &7- &aShow help about treasures"
+      - "&e/sm ranks &7- &aShow help about ranks"
+      - "&e/sm addTreasure <mine> <treasure> &7- &aAdd a treasure to the mine"
+      - "&e/sm removeTreasure <mine> <treasure> &7- &aRemove a treasure from the mine"
+      - "&e/sm setRequiredLevel <mine> <rankLevel> &7- &aSet the required rank level of a mine"
+      - "&e/sm setBlockGenerate <mine> <material> <chance> &7- &aMake the block generate in the mine"
+      - "&e/sm setDisplayName <mine> <displayName> &7- &aSet the display name of the mine"
+      - "&e/sm removeBlockGenerate <mine> <material> &7- &aStop the block generate in the mine"
       - "&e/sm reset <mine> &7- &aReset a mine"
       - "&e/sm pos1 &7- &aSet the position 1 of an area"
       - "&e/sm pos2 &7- &aSet the position 2 of an area"
@@ -41,22 +42,33 @@ command:
   create:
     exists: "&cA mine with that id already existed!"
     success: "&aThe mine is created successfully!"
-    invalid-id: "&cInvalid characters in the id!"
     no-selection: "&cYou have not selected a position!"
     selection-not-finished: "&cYou have not finished selecting a cuboid area!"
   remove:
     success: "&aThe mine is removed successfully!"
+  reset:
+    success: "&aThe mine is reset successfully!"
   block-generate:
     success: "&aNow the block &d%material% &awill be generated in the &b%mine% &amine with a probability of &b%chance%%"
     chance-too-high: "&cThe total probability of generating all blocks should not exceed 100%!"
     removed: "&aThe block generate is removed from &b%mine% &asuccessfully!"
+    invalid-material: "&cInvalid material!"
   list:
     head:
       mine: "&6Mines: "
     separator: "&7, "
     color: "&b"
+  ranks:
+    not-exists: "&cThe rank does not exist!"
+    create:
+      exists: "&cA rank with that id already existed!"
+      success: "&aThe rank &b%rank% &ahas been created successfully!"
+    remove:
+      success: "&aThe rank &b%rank% &ahas been removed successfully!"
+  set-display-name: "&aThe display name of mine &d%mine% &ais set to &b%displayName%"
   pos-in-mine: "&cThe location you have chosen is already located in a mine!"
   mine-not-exists: "&cThe mine does not exist!"
+  invalid-id: "&cInvalid characters in the id!"
 mine:
   no-place: "&cYou can't place blocks in the mine!"
   reset: "&aMine &b%mine% &ahas been reset!"
@@ -66,6 +78,8 @@ gui:
   next: "&eNext Page"
   back: "&cBack"
   close: "&cClose"
+  general:
+    title: "&eSuper&aMines"
   mines:
     title: "&7&lMines"
   mine-management:

@@ -15,13 +15,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
-import org.jetbrains.annotations.Unmodifiable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The mine object.
@@ -114,6 +110,7 @@ public class Mine implements Identified {
         if (chance < 1 || chance > 100) {
             throw new IllegalArgumentException("Chance must be between 1 and 100");
         }
+
         blockSpawnEntries.put(material, chance);
     }
 
@@ -177,12 +174,12 @@ public class Mine implements Identified {
         return area;
     }
 
-    public @Unmodifiable List<Treasure> getTreasures() {
-        return Collections.unmodifiableList(treasures);
+    public List<Treasure> getTreasures() {
+        return new ArrayList<>(treasures);
     }
 
-    public @Unmodifiable Map<Material, Double> getBlockSpawnEntries() {
-        return Collections.unmodifiableMap(blockSpawnEntries);
+    public Map<Material, Double> getBlockSpawnEntries() {
+        return new HashMap<>(blockSpawnEntries);
     }
 
     public void setRegenerateSeconds(@Range(from = 1, to = Integer.MAX_VALUE) int regenerateSeconds) {

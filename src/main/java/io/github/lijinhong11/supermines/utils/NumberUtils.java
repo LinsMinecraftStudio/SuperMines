@@ -9,7 +9,7 @@ public class NumberUtils {
     private NumberUtils() {}
 
     public static boolean matchChance(double chancePercent) {
-        return chancePercent >= 100.0 || ThreadLocalRandom.current().nextDouble(100.0) < chancePercent;
+        return (chancePercent / 100) >= 1 || ThreadLocalRandom.current().nextDouble(1) < (chancePercent / 100);
     }
 
     public static String formatSeconds(int seconds) {

@@ -35,14 +35,19 @@ public class SuperMines extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
+
+        saveDefaultConfig();
+        saveConfig();
+
         foliaLibImpl = new FoliaLib(this);
     }
 
     @Override
     public void onEnable() {
+        languageManager = new LanguageManager(this);
+
         treasureManager = new TreasureManager();
         mineManager = new MineManager();
-        languageManager = new LanguageManager(this);
         rankManager = new RankManager();
         taskMaker = new TaskMaker(foliaLibImpl);
 
@@ -57,6 +62,10 @@ public class SuperMines extends JavaPlugin {
     @Override
     public void onDisable() {
         taskMaker.close();
+
+        mineManager.saveAndClose();
+        treasureManager.saveAndClose();
+        rankManager.saveAndClose();
         playerDataManager.saveAndClose();
     }
 

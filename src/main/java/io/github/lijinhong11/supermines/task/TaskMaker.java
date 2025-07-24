@@ -53,7 +53,7 @@ public class TaskMaker {
 
     public void startMineResetTask(Mine mine) {
         MineResetTask task = new MineResetTask(mine);
-        scheduler.runTimerAsync(task, 1L, mine.getRegenerateSeconds() * 20L);
+        scheduler.runTimerAsync(task, mine.getRegenerateSeconds() * 20L, mine.getRegenerateSeconds() * 20L);
         resetTasks.put(mine.getId(), task);
     }
 

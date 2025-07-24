@@ -1,6 +1,9 @@
 # The default language
 language: en-US
 
+# Whether to use the corresponding language that player uses
+detect-player-locale: true
+
 # Mine settings
 mine:
   # Allow place blocks in mines

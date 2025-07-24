@@ -12,10 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     private final Map<String, Treasure> treasures = new HashMap<>();
@@ -99,4 +96,9 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     public @Unmodifiable Collection<Treasure> getAllTreasures() {
         return Collections.unmodifiableCollection(treasures.values());
     }
+
+    public @Unmodifiable List<String> getAllTreasureIds() {
+        return List.copyOf(treasures.keySet());
+    }
+
 }

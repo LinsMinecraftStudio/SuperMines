@@ -8,10 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class RankManager extends AbstractFileObjectManager<Rank> {
     private final Map<String, Rank> ranks = new HashMap<>();
@@ -72,5 +69,9 @@ public class RankManager extends AbstractFileObjectManager<Rank> {
 
     public @Unmodifiable Collection<Rank> getAllRanks() {
         return Collections.unmodifiableCollection(ranks.values());
+    }
+
+    public @Unmodifiable List<String> getAllRankIds() {
+        return List.copyOf(ranks.keySet());
     }
 }

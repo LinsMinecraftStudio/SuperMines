@@ -15,7 +15,7 @@ public class Constants {
 
     public static class StringsAndComponents {
         public static final String DATABASE_FILE = "data/data.db";
-        public static final String ID_PATTERN = "^[a-zA-Z0-9_-/]{1,20}$";
+        public static final String ID_PATTERN = "^[a-zA-Z0-9_-]+$";
         public static final Component RESET = Component.empty().decoration(TextDecoration.ITALIC, false);
     }
 
@@ -74,8 +74,6 @@ public class Constants {
         public static final String TREASURES = "supermines.treasures";
         public static final String RANKS = "supermines.ranks";
 
-        public static final String SET_REQUIRED_RANK = "supermines.set_required_rank";
-
         public static final String BLOCK_GENERATE = "supermines.block_generates";
         public static final String CREATE = "supermines.create";
         public static final String GUI = "supermines.gui";
@@ -84,6 +82,7 @@ public class Constants {
         public static final String REDEFINE = "supermines.redefine";
         public static final String REMOVE = "supermines.delete";
         public static final String RESET = "supermines.reset";
+        public static final String SET_DISPLAY_NAME = "supermines.set_display_name";
 
         public static final String BYPASS_RANK = "supermines.bypass.rank";
     }

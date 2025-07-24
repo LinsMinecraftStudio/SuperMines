@@ -64,7 +64,6 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
             return null;
         }
 
-
         if (pos2 == null) {
             return null;
         }
@@ -82,14 +81,17 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         BlockPos blockPos2 = new BlockPos(pos2.getInt("x"), pos2.getInt("y"), pos2.getInt("z"));
 
         Map<Material, Double> blockSpawnEntries = new HashMap<>();
-        ConfigurationSection blockSpawn = section.createSection("blockSpawnEntries");
-        for (String m : blockSpawn.getKeys(false)) {
-            Material material = Material.getMaterial(m);
-            if (material == null) {
-                continue;
-            }
 
-            blockSpawnEntries.put(material, section.getDouble(m, 1));
+        ConfigurationSection blockSpawn = section.getConfigurationSection("blockSpawnEntries");
+        if (blockSpawn != null) {
+            for (String m : blockSpawn.getKeys(false)) {
+                Material material = Material.getMaterial(m);
+                if (material == null) {
+                    continue;
+                }
+
+                blockSpawnEntries.put(material, blockSpawn.getDouble(m, 1));
+            }
         }
 
         List<String> treasures = section.getStringList("treasures");
@@ -123,7 +125,11 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         for (Map.Entry<Material, Double> entry : object.getBlockSpawnEntries().entrySet()) {
             blockSpawnEntries.put(entry.getKey().toString(), entry.getValue());
         }
-        section.set("blockSpawnEntries", blockSpawnEntries);
+
+        ConfigurationSection blockSpawn = section.createSection("blockSpawnEntries");
+        for (Map.Entry<String, Double> entry : blockSpawnEntries.entrySet()) {
+            blockSpawn.set(entry.getKey(), entry.getValue());
+        }
     }
 
     @Override
@@ -173,5 +179,9 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
 
     public @Unmodifiable Collection<Mine> getAllMines() {
         return Collections.unmodifiableCollection(mines.values());
+    }
+
+    public @Unmodifiable List<String> getAllMineIds() {
+        return List.copyOf(mines.keySet());
     }
 }

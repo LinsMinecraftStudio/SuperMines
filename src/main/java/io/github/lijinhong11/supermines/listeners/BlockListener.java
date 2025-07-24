@@ -3,7 +3,6 @@ package io.github.lijinhong11.supermines.listeners;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
-import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -50,7 +49,7 @@ public class BlockListener implements Listener {
         }
 
         for (Treasure treasure : treasures) {
-            if (treasure.getMatchedMaterials().test(e.getBlock().getType())) {
+            if (treasure.getMatchedMaterials().contains(e.getBlock().getType())) {
                 int chance = treasure.getChance();
                 if (NumberUtils.matchChance(chance)) {
                     world.dropItemNaturally(loc, treasure.getItemStack().clone());

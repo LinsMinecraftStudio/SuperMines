@@ -24,19 +24,18 @@ public class GuiManager {
                 .create();
 
         gui.setItem(2, 3, ItemBuilder.from(Constants.Items.MINES.apply(p)).asGuiItem(e -> {
-            gui.close(p);
             openMineList(p);
         }));
 
         gui.setItem(2, 5, ItemBuilder.from(Constants.Items.TREASURES.apply(p)).asGuiItem(e -> {
-            gui.close(p);
             openTreasureList(p);
         }));
 
         gui.setItem(2, 7, ItemBuilder.from(Constants.Items.RANKS.apply(p)).asGuiItem(e -> {
-            gui.close(p);
             openRankList(p);
         }));
+
+        gui.open(p);
     }
 
     public static void openMineList(Player p) {
@@ -54,7 +53,6 @@ public class GuiManager {
                     .name(mine.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getMineInfo(p, mine))
                     .asGuiItem(e -> {
-                        gui.close(e.getWhoClicked());
                         openMineManagementGui(p, mine);
                     });
             gui.addItem(guiItem);
@@ -89,7 +87,6 @@ public class GuiManager {
                     .name(treasure.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getTreasureInfo(p, treasure))
                     .asGuiItem(e -> {
-                        gui.close(e.getWhoClicked());
                         openTreasureManagementGui(p, treasure);
                     });
 
@@ -122,7 +119,6 @@ public class GuiManager {
                     .name(rank.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getRankInfo(p, rank))
                     .asGuiItem(e -> {
-                        gui.close(e.getWhoClicked());
                         openRankManagementGui(p, rank);
                     });
             gui.addItem(guiItem);

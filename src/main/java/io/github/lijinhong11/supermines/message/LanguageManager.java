@@ -118,7 +118,7 @@ public final class LanguageManager {
 
     public List<Component> getTreasureInfo(@NotNull Player p, @NotNull Treasure treasure) {
         MessageReplacement chance = MessageReplacement.replace("%chance%", String.valueOf(treasure.getChance()));
-        MessageReplacement matchedMaterials = MessageReplacement.replace("%matched_materials%", String.valueOf(treasure.getMatchedMaterials().getMaterials().size()));
+        MessageReplacement matchedMaterials = MessageReplacement.replace("%matched_materials%", String.valueOf(treasure.getMatchedMaterials().size()));
         return getMsgComponentList(p, "gui.treasures.info", chance, matchedMaterials);
     }
 
