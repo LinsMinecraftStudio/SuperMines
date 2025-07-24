@@ -15,6 +15,15 @@ public class RankConverter implements ObjectConverter<Rank> {
     }
 
     @Override
+    public Object convertBack(Object t) {
+        if (t instanceof Rank r) {
+            return r.getId();
+        }
+
+        return Rank.DEFAULT.getId();
+    }
+
+    @Override
     public String getSqlType() {
         return "TEXT";
     }

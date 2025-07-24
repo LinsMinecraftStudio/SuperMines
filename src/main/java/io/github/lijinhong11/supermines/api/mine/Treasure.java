@@ -1,31 +1,31 @@
 package io.github.lijinhong11.supermines.api.mine;
 
 import com.google.common.base.Preconditions;
-import io.github.lijinhong11.supermines.api.selectors.MaterialSelectors;
-import io.github.lijinhong11.supermines.api.selectors.single.MaterialSelector;
+import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-public class Treasure {
+public class Treasure implements Identified {
     private final String id;
     private Component displayName;
     private List<Component> description;
     private ItemStack itemStack;
     private int chance;
-    private MaterialSelector matchedMaterials;
+    private List<Material> matchedMaterials;
 
     @ParametersAreNonnullByDefault
     public Treasure(String id, Component displayName, List<Component> description, ItemStack itemStack, int chance) {
-        this(id, displayName, description, itemStack, chance, MaterialSelectors.COMMONS);
+        this(id, displayName, description, itemStack, chance, List.of(Material.values()));
     }
 
     @ParametersAreNonnullByDefault
-    public Treasure(String id, Component displayName, List<Component> description, ItemStack itemStack, int chance, MaterialSelector matchedMaterials) {
+    public Treasure(String id, Component displayName, List<Component> description, ItemStack itemStack, int chance, List<Material> matchedMaterials) {
         this.id = id;
         this.displayName = displayName;
         this.description = description;
@@ -76,11 +76,11 @@ public class Treasure {
         this.chance = chance;
     }
 
-    public MaterialSelector getMatchedMaterials() {
+    public List<Material> getMatchedMaterials() {
         return matchedMaterials;
     }
 
-    public void setMatchedMaterials(MaterialSelector matchedMaterials) {
+    public void setMatchedMaterials(List<Material> matchedMaterials) {
         this.matchedMaterials = matchedMaterials;
     }
 }

@@ -3,7 +3,6 @@ package io.github.lijinhong11.supermines.managers;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
-import io.github.lijinhong11.supermines.api.selectors.single.MaterialSelector;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import io.github.lijinhong11.supermines.utils.ItemUtils;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -52,7 +51,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
                 section.getStringList("description").stream().map(MiniMessage.miniMessage()::deserialize).toList(),
                 ItemUtils.deserializeFromBytes(section.getObject("itemStack", byte[].class)),
                 chance,
-                MaterialSelector.multiple(section.getStringList("matchedMaterials").stream().map(Material::getMaterial).toArray(Material[]::new))
+                section.getStringList("matchedMaterials").stream().map(Material::getMaterial).toList()
         );
     }
 
@@ -63,7 +62,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         section.set("description", object.getDescription().stream().map(MiniMessage.miniMessage()::serialize).toList());
         section.set("itemStack", ItemUtils.serializeToBytes(object.getItemStack()));
         section.set("chance", object.getChance());
-        section.set("matchedMaterials", object.getMatchedMaterials().getMaterials());
+        section.set("matchedMaterials", object.getMatchedMaterials());
     }
 
     @Override

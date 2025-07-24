@@ -7,6 +7,7 @@ import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.Rank;
+import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
@@ -70,13 +71,7 @@ public class GuiManager {
                 .rows(6)
                 .create();
 
-        gui.setItem(2, 5, ItemBuilder.from(mine.getDisplayIcon())
-                .name(mine.getDisplayName())
-                .lore(ComponentUtils.deserialize("&7&lID: " + mine.getId()))
-                .asGuiItem(e -> e.setCancelled(true)));
-
-        GuiFiller filler = gui.getFiller();
-        filler.fillBorder(ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem(e -> e.setCancelled(true)));
+        placeDecoration(gui, mine, mine.getDisplayIcon());
     }
 
     public static void openTreasureList(Player p) {
@@ -102,14 +97,6 @@ public class GuiManager {
         }
     }
 
-    private static void fillPageButtons(Player p, PaginatedGui gui) {
-        gui.setItem(6, 3, ItemBuilder.from(Constants.Items.PREVIOUS_PAGE.apply(p)).asGuiItem(event -> gui.previous()));
-        gui.setItem(6, 7, ItemBuilder.from(Constants.Items.NEXT_PAGE.apply(p)).asGuiItem(event -> gui.next()));
-        gui.setItem(6, 9, ItemBuilder.from(Constants.Items.BACK.apply(p)).asGuiItem(e -> openGeneral(p)));
-
-        gui.getFiller().fillBetweenPoints(6, 1, 6, 9, ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem());
-    }
-
     public static void openTreasureManagementGui(Player p, Treasure treasure) {
         MessageReplacement treasureName = MessageReplacement.replace("%treasure%", treasure.getRawDisplayName());
 
@@ -117,6 +104,8 @@ public class GuiManager {
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.treasure-management.title", treasureName))
                 .rows(6)
                 .create();
+
+        placeDecoration(gui, treasure, Material.CHEST);
     }
 
     public static void openRankList(Player p) {
@@ -147,5 +136,26 @@ public class GuiManager {
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.rank-management.title", rankName))
                 .rows(6)
                 .create();
+
+        placeDecoration(gui, rank, Material.NAME_TAG);
+    }
+
+    /* common methods */
+    private static void fillPageButtons(Player p, PaginatedGui gui) {
+        gui.setItem(6, 3, ItemBuilder.from(Constants.Items.PREVIOUS_PAGE.apply(p)).asGuiItem(event -> gui.previous()));
+        gui.setItem(6, 7, ItemBuilder.from(Constants.Items.NEXT_PAGE.apply(p)).asGuiItem(event -> gui.next()));
+        gui.setItem(6, 9, ItemBuilder.from(Constants.Items.BACK.apply(p)).asGuiItem(e -> openGeneral(p)));
+
+        gui.getFiller().fillBetweenPoints(6, 1, 6, 9, ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem());
+    }
+
+    private static <T extends Identified> void placeDecoration(Gui gui, T object, Material icon) {
+        gui.setItem(2, 5, ItemBuilder.from(icon)
+                .name(object.getDisplayName())
+                .lore(ComponentUtils.deserialize("&7&lID: " + object.getId()))
+                .asGuiItem(e -> e.setCancelled(true)));
+
+        GuiFiller filler = gui.getFiller();
+        filler.fillBorder(ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem(e -> e.setCancelled(true)));
     }
 }

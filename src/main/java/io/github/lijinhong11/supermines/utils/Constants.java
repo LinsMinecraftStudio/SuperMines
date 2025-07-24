@@ -76,6 +76,7 @@ public class Constants {
 
         public static final String SET_REQUIRED_RANK = "supermines.set_required_rank";
 
+        public static final String BLOCK_GENERATE = "supermines.block_generates";
         public static final String CREATE = "supermines.create";
         public static final String GUI = "supermines.gui";
         public static final String LIST = "supermines.list";

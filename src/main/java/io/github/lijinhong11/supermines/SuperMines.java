@@ -6,6 +6,8 @@ import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
 import io.github.lijinhong11.mdatabase.impl.SQLConnections;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
+import io.github.lijinhong11.supermines.listeners.BlockListener;
+import io.github.lijinhong11.supermines.listeners.WorldEditListener;
 import io.github.lijinhong11.supermines.managers.MineManager;
 import io.github.lijinhong11.supermines.managers.PlayerDataManager;
 import io.github.lijinhong11.supermines.managers.RankManager;
@@ -44,15 +46,18 @@ public class SuperMines extends JavaPlugin {
         rankManager = new RankManager();
         taskMaker = new TaskMaker(foliaLibImpl);
 
-        setupDatabase();
         new SuperMinesCommand().register();
+
+        setupDatabase();
+        setupListeners();
 
         taskMaker.startup();
     }
 
     @Override
     public void onDisable() {
-
+        taskMaker.close();
+        playerDataManager.saveAndClose();
     }
 
     private void setupDatabase() {
@@ -83,6 +88,14 @@ public class SuperMines extends JavaPlugin {
         };
 
         playerDataManager = new PlayerDataManager(conn);
+    }
+
+    private void setupListeners() {
+        getServer().getPluginManager().registerEvents(new BlockListener(), this);
+
+        if (getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
+            new WorldEditListener();
+        }
     }
 
     public static SuperMines getInstance() {

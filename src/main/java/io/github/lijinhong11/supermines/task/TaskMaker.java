@@ -68,10 +68,12 @@ public class TaskMaker {
             task.cancel();
         }
 
+        cancelMineResetWarningTasks(mine);
+
         resetTasks.remove(mine.getId());
     }
 
-    public void cancelMineResetWarningTasks(Mine mine) {
+    private void cancelMineResetWarningTasks(Mine mine) {
         List<MineResetWarningTask> tasks = resetWarningTasks.get(mine.getId());
         if (tasks != null) {
             tasks.forEach(AbstractTask::cancel);

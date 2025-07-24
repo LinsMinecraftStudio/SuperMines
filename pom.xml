@@ -52,6 +52,10 @@
 
     <repositories>
         <repository>
+            <id>sk89q</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
+        <repository>
             <id>tcoded-releases</id>
             <url>https://repo.tcoded.com/releases</url>
         </repository>
@@ -94,6 +98,14 @@
             <groupId>dev.jorel</groupId>
             <artifactId>commandapi-bukkit-core</artifactId>
             <version>10.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- WorldEdit hook -->
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>7.3.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

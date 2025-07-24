@@ -1,10 +1,7 @@
 package io.github.lijinhong11.supermines.command;
 
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.IntegerArgument;
-import dev.jorel.commandapi.arguments.LocationArgument;
-import dev.jorel.commandapi.arguments.StringArgument;
+import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import io.github.lijinhong11.supermines.SuperMines;
@@ -18,16 +15,17 @@ import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Unmodifiable;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SuperMinesCommand {
 
-    private final Map<UUID, AreaSelection> selectionMap = new ConcurrentHashMap<>();
+    private static final Map<UUID, AreaSelection> selectionMap = new ConcurrentHashMap<>();
 
     public void register() {
         new CommandAPICommand("supermines")
@@ -67,21 +65,24 @@ public class SuperMinesCommand {
                 .withSubcommand(
                         new CommandAPICommand("redefine")
                                 .withPermission(Constants.Permission.REDEFINE)
-                                .withArguments(new StringArgument("id")
+                                .withArguments(
+                                        new StringArgument("id")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList()))
                                         .executesPlayer((PlayerCommandExecutor) (player, args) -> redefineMine(player, (String) args.get("id"))))
                 )
                 .withSubcommand(
                         new CommandAPICommand("remove")
                                 .withPermission(Constants.Permission.REMOVE)
-                                .withArguments(new StringArgument("id")
+                                .withArguments(
+                                        new StringArgument("id")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList()))
                                         .executes((CommandExecutor) (sender, args) -> removeMine(sender, (String) args.get("id"))))
                 )
                 .withSubcommand(
                         new CommandAPICommand("reset")
                                 .withPermission(Constants.Permission.RESET)
-                                .withArguments(new StringArgument("id")
+                                .withArguments(
+                                        new StringArgument("id")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())))
                                 .executes((CommandExecutor) (sender, args) -> resetMine(sender, (String) args.get("id")))
                 )
@@ -100,7 +101,8 @@ public class SuperMinesCommand {
                 .withSubcommand(
                         new CommandAPICommand("addTreasure")
                                 .withPermission(Constants.Permission.TREASURES)
-                                .withArguments(new StringArgument("mineId")
+                                .withArguments(
+                                        new StringArgument("mineId")
                                                 .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
                                         new StringArgument("treasureId")
                                                 .includeSuggestions(ArgumentSuggestions.strings(getTreasuresList())))
@@ -125,7 +127,8 @@ public class SuperMinesCommand {
                 .withSubcommand(
                         new CommandAPICommand("removeTreasure")
                                 .withPermission(Constants.Permission.TREASURES)
-                                .withArguments(new StringArgument("mineId")
+                                .withArguments(
+                                        new StringArgument("mineId")
                                                 .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
                                         new StringArgument("treasureId")
                                                 .includeSuggestions(ArgumentSuggestions.strings(getTreasuresList())))
@@ -150,7 +153,8 @@ public class SuperMinesCommand {
                 .withSubcommand(
                         new CommandAPICommand("setRequiredLevel")
                                 .withPermission(Constants.Permission.RANKS)
-                                .withArguments(new StringArgument("mineId")
+                                .withArguments(
+                                        new StringArgument("mineId")
                                                 .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
                                         new IntegerArgument("level", 1, Integer.MAX_VALUE)
                                 )
@@ -170,6 +174,63 @@ public class SuperMinesCommand {
                                     );
                                 })
                 )
+                .withSubcommand(
+                        new CommandAPICommand("setBlockGenerate")
+                                .withPermission(Constants.Permission.BLOCK_GENERATE)
+                                .withArguments(
+                                        new StringArgument("mineId"),
+                                        new ItemStackArgument("block"),
+                                        new DoubleArgument("chance", 1, 100)
+                                )
+                                .executes((sender, args) -> {
+                                    ItemStack block = (ItemStack) args.get("block");
+                                    String mineId = (String) args.get("mineId");
+                                    double chance = (double) args.get("chance");
+                                    Material mat = block.getType();
+
+                                    Mine mine = SuperMines.getInstance().getMineManager().getMine(mineId);
+                                    if (mine == null) {
+                                        SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.mine-not-exists");
+                                        return;
+                                    }
+
+                                    double rest = mine.calculateRestChance();
+                                    if (chance > rest) {
+                                        SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.block-generate.chance-too-high");
+                                        return;
+                                    }
+
+                                    mine.addBlockSpawnEntry(mat, chance);
+                                    SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.block-generate.success",
+                                            MessageReplacement.replace("%mine%", mine.getRawDisplayName()),
+                                            MessageReplacement.replace("%block%", mat.name()),
+                                            MessageReplacement.replace("%chance%", String.valueOf(chance))
+                                    );
+                                })
+                )
+                .withSubcommand(
+                        new CommandAPICommand("removeBlockGenerate")
+                                .withPermission(Constants.Permission.BLOCK_GENERATE)
+                                .withArguments(
+                                        new StringArgument("mineId"),
+                                        new ItemStackArgument("block")
+                                )
+                                .executes((sender, args) -> {
+                                    ItemStack block = (ItemStack) args.get("block");
+                                    String mineId = (String) args.get("mineId");
+                                    Material mat = block.getType();
+                                    Mine mine = SuperMines.getInstance().getMineManager().getMine(mineId);
+                                    if (mine == null) {
+                                        SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.mine-not-exists");
+                                        return;
+                                    }
+
+                                    mine.removeBlockSpawnEntry(mat);
+                                    SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.block-generate.removed",
+                                            MessageReplacement.replace("%mine%", mine.getRawDisplayName())
+                                    );
+                                })
+                )
                 .register();
     }
 
@@ -177,12 +238,14 @@ public class SuperMinesCommand {
         SuperMines.getInstance().getLanguageManager().sendMessages(sender, "command.help.general");
     }
 
-    private void handlePos(Player player, boolean isPos1, Location forcedLoc) {
+    public static void handlePos(Player player, boolean isPos1, Location forcedLoc) {
         Location loc = forcedLoc != null ? forcedLoc : player.getLocation();
+
         if (SuperMines.getInstance().getMineManager().getMine(loc) != null) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
             return;
         }
+
         UUID uuid = player.getUniqueId();
         AreaSelection sel = selectionMap.get(uuid);
         if (sel != null) {
@@ -190,7 +253,17 @@ public class SuperMinesCommand {
         } else {
             sel = isPos1 ? new AreaSelection(loc, null) : new AreaSelection(null, loc);
         }
+
         selectionMap.put(uuid, sel);
+    }
+
+    public static void handlePos(Player player, Location pos1, Location pos2) {
+        if (SuperMines.getInstance().getMineManager().getMine(pos1) != null || SuperMines.getInstance().getMineManager().getMine(pos2) != null) {
+            return;
+        }
+
+        UUID uuid = player.getUniqueId();
+        selectionMap.put(uuid, new AreaSelection(pos1, pos2));
     }
 
     private CuboidArea getSelectedArea(Player player, String id, boolean checkExists) {
@@ -198,15 +271,23 @@ public class SuperMinesCommand {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.exists");
             return null;
         }
+
         if (!id.matches(Constants.StringsAndComponents.ID_PATTERN)) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.invalid-id");
             return null;
         }
+
         AreaSelection sel = selectionMap.get(player.getUniqueId());
         if (sel == null || sel.pos1 == null || sel.pos2 == null) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.selection-not-finished");
             return null;
         }
+
+        if (sel.isAnyInMine()) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
+            return null;
+        }
+
         return sel.toCuboidArea();
     }
 
@@ -237,7 +318,7 @@ public class SuperMinesCommand {
             SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.mine-not-exists");
             return;
         }
-        SuperMines.getInstance().getTaskMaker().cancelMineResetWarningTasks(mine);
+
         SuperMines.getInstance().getTaskMaker().cancelMineResetTask(mine);
         SuperMines.getInstance().getMineManager().removeMine(id);
         SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.remove.success");
@@ -283,6 +364,10 @@ public class SuperMinesCommand {
     private record AreaSelection(Location pos1, Location pos2) {
         public CuboidArea toCuboidArea() {
             return CuboidArea.createFromLocation(pos1, pos2);
+        }
+
+        public boolean isAnyInMine() {
+            return SuperMines.getInstance().getMineManager().getMine(pos1) != null || SuperMines.getInstance().getMineManager().getMine(pos2) != null;
         }
     }
 }

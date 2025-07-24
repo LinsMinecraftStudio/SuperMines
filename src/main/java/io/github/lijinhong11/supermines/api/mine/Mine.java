@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import io.github.lijinhong11.supermines.api.SuperMinesAPI;
 import io.github.lijinhong11.supermines.api.data.Rank;
+import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
@@ -25,7 +26,7 @@ import java.util.Map;
 /**
  * The mine object.
  */
-public class Mine {
+public class Mine implements Identified {
     private final String id;
 
     private final World world;
@@ -210,5 +211,14 @@ public class Mine {
 
     public int getRequiredRankLevel() {
         return requiredRankLevel;
+    }
+
+    public double calculateRestChance() {
+        double max = 100;
+        for (double chance : blockSpawnEntries.values()) {
+            max -= chance;
+        }
+
+        return max;
     }
 }

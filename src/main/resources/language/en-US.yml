@@ -20,6 +20,7 @@ command:
       - "&e/sm removeTreasure <mine> <treasure> &7- Remove a treasure from the mine"
       - "&e/sm setRequiredLevel <mine> <rankLevel> &7- Set the required rank level of a mine"
       - "&e/sm setBlockGenerate <mine> <material> <chance> &7- Make the block generate in the mine"
+      - "&e/sm removeBlockGenerate <mine> <material> &7- Stop the block generate in the mine"
       - "&e/sm reset <mine> &7- &aReset a mine"
       - "&e/sm pos1 &7- &aSet the position 1 of an area"
       - "&e/sm pos2 &7- &aSet the position 2 of an area"
@@ -45,6 +46,10 @@ command:
     selection-not-finished: "&cYou have not finished selecting a cuboid area!"
   remove:
     success: "&aThe mine is removed successfully!"
+  block-generate:
+    success: "&aNow the block &d%material% &awill be generated in the &b%mine% &amine with a probability of &b%chance%%"
+    chance-too-high: "&cThe total probability of generating all blocks should not exceed 100%!"
+    removed: "&aThe block generate is removed from &b%mine% &asuccessfully!"
   list:
     head:
       mine: "&6Mines: "

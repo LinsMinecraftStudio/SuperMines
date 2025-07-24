@@ -1,8 +1,10 @@
 package io.github.lijinhong11.supermines.managers.abstracts;
 
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
+import io.github.lijinhong11.mdatabase.sql.conditions.Condition;
 import io.github.lijinhong11.supermines.SuperMines;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,12 +18,24 @@ public abstract class AbstractDatabaseObjectManager<T> {
         this.connection = connection;
         this.clazz = clazz;
 
-        load();
+        setup();
     }
 
-    private void load() {
+    private void setup() {
         try {
             connection.createTableByClass(clazz);
+        } catch (SQLException e) {
+            SuperMines.getInstance().getLogger().severe("""
+                    Failed to create/load player data table!
+                    The plugin will disabled...
+                    """);
+            Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
+        }
+    }
+
+    protected void saveObject(@NotNull T t, @NotNull Condition condition) {
+        try {
+            connection.upsertObject(clazz, t, condition);
         } catch (SQLException e) {
             SuperMines.getInstance().getLogger().severe("""
                     Failed to create/load player data table!
@@ -43,5 +57,14 @@ public abstract class AbstractDatabaseObjectManager<T> {
         }
 
         return new ArrayList<>();
+    }
+
+    public abstract void saveAndClose();
+
+    protected void close() {
+        try {
+            connection.close();
+        } catch (SQLException ignored) {
+        }
     }
 }
