@@ -5,8 +5,10 @@ import io.github.lijinhong11.supermines.SuperMines;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.function.Function;
 
@@ -19,9 +21,19 @@ public class Constants {
         public static final Component RESET = Component.empty().decoration(TextDecoration.ITALIC, false);
     }
 
+    public static class Keys {
+        public static final NamespacedKey WAND_KEY = new NamespacedKey(SuperMines.getInstance(), "supermines_wand");
+    }
+
     public static class Items {
         public static final Material DEFAULT_MINE_ICON = Material.STONE;
         public static final ItemStack BACKGROUND = ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE).name(Component.space()).build();
+
+        public static final Function<Player, ItemStack> WAND = player -> ItemBuilder.from(Material.BLAZE_ROD)
+                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "wand.name"))
+                .lore(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "wand.lore"))
+                .pdc(c -> c.set(Keys.WAND_KEY, PersistentDataType.BOOLEAN, true))
+                .build();
 
         //functional buttons
         public static final Function<Player, ItemStack> PREVIOUS_PAGE = player -> ItemBuilder.from(Material.PAPER)
@@ -87,6 +99,5 @@ public class Constants {
         public static final String SET_REQUIRED_LEVEL = "supermines.set_required_level";
 
         public static final String BYPASS_RANK = "supermines.bypass.rank";
-
     }
 }

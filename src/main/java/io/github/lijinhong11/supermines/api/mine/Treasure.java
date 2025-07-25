@@ -50,14 +50,6 @@ public final class Treasure implements Identified {
         this.displayName = displayName;
     }
 
-    public List<Component> getDescription() {
-        return description;
-    }
-
-    public void setDescription(List<Component> description) {
-        this.description = description;
-    }
-
     public ItemStack getItemStack() {
         return itemStack;
     }

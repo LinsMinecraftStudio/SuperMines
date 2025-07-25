@@ -7,6 +7,7 @@ import io.github.lijinhong11.mdatabase.enums.DatabaseType;
 import io.github.lijinhong11.mdatabase.impl.SQLConnections;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
+import io.github.lijinhong11.supermines.listeners.WandListener;
 import io.github.lijinhong11.supermines.listeners.WorldEditListener;
 import io.github.lijinhong11.supermines.managers.MineManager;
 import io.github.lijinhong11.supermines.managers.PlayerDataManager;
@@ -101,6 +102,7 @@ public class SuperMines extends JavaPlugin {
 
     private void setupListeners() {
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
+        getServer().getPluginManager().registerEvents(new WandListener(), this);
 
         if (getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
             new WorldEditListener();

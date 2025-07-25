@@ -9,6 +9,10 @@ mine:
   # Allow place blocks in mines
   allow-place: false
 
+# Special settings for Slimefun
+slimefun:
+  disable-explosion-pickaxe: false
+
 # Storage settings
 storage:
   # Database type

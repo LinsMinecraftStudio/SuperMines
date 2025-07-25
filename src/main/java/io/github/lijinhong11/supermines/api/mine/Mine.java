@@ -11,10 +11,12 @@ import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -38,6 +40,7 @@ public final class Mine implements Identified {
     private int regenerateSeconds;
     private boolean onlyFillAirWhenRegenerate;
     private int requiredRankLevel;
+    private Location tpLoc;
 
     @ParametersAreNonnullByDefault
     public Mine(String id, Component displayName, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate) {
@@ -56,7 +59,11 @@ public final class Mine implements Identified {
 
     @ParametersAreNonnullByDefault
     public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, int requiredRankLevel, Set<String> allowedRankIds) {
-        this.onlyFillAirWhenRegenerate = onlyFillAirWhenRegenerate;
+        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasures, requiredRankLevel, allowedRankIds, null);
+    }
+
+    @ParametersAreNonnullByDefault
+    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, int requiredRankLevel, Set<String> allowedRankIds, @Nullable Location tpLoc) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "Mine ID cannot be null or empty");
         Preconditions.checkArgument(id.matches(Constants.StringsAndComponents.ID_PATTERN), "Mine ID cannot contain special characters");
 
@@ -65,11 +72,13 @@ public final class Mine implements Identified {
         this.displayIcon = displayIcon;
         this.world = world;
         this.area = area;
+        this.onlyFillAirWhenRegenerate = onlyFillAirWhenRegenerate;
         this.blockSpawnEntries = blockSpawnEntries;
         this.regenerateSeconds = regenerateSeconds;
         this.treasures = treasures;
         this.requiredRankLevel = requiredRankLevel;
         this.allowedRankIds = allowedRankIds;
+        this.tpLoc = tpLoc == null ? area.getCenterLocation(world) : tpLoc;
     }
 
     public boolean isPlayerInMine(@NotNull Player player) {
@@ -152,19 +161,14 @@ public final class Mine implements Identified {
         return new HashSet<>(allowedRankIds);
     }
 
-    public boolean canMine(Player p) {
-        PlayerData data = SuperMinesAPI.getOrCreatePlayerData(p.getUniqueId());
-        Rank rank = data.getRank();
+    public void setTeleportLocation(@NotNull Location tpLoc) {
+        Preconditions.checkNotNull(tpLoc, "teleport location cannot be null");
 
-        if (p.hasPermission(Constants.Permission.BYPASS_RANK)) {
-            return true;
-        }
+        this.tpLoc = tpLoc;
+    }
 
-        if (allowedRankIds.contains(rank.getId())) {
-            return true;
-        }
-
-        return rank.getLevel() >= requiredRankLevel;
+    public @Nullable Location getTeleportLocation() {
+        return tpLoc;
     }
 
     public String getId() {
@@ -252,5 +256,20 @@ public final class Mine implements Identified {
         }
 
         return max;
+    }
+
+    public boolean canMine(Player p) {
+        PlayerData data = SuperMinesAPI.getOrCreatePlayerData(p.getUniqueId());
+        Rank rank = data.getRank();
+
+        if (p.hasPermission(Constants.Permission.BYPASS_RANK)) {
+            return true;
+        }
+
+        if (allowedRankIds.contains(rank.getId())) {
+            return true;
+        }
+
+        return rank.getLevel() >= requiredRankLevel;
     }
 }

@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.listeners;
 
 import io.github.lijinhong11.supermines.SuperMines;
+import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
@@ -49,10 +50,14 @@ public class BlockListener implements Listener {
             return;
         }
 
+        PlayerData playerData = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(e.getPlayer().getUniqueId());
+
         List<Treasure> treasures = mine.getTreasures();
         if (treasures.isEmpty()) {
             return;
         }
+
+        playerData.addMinedBlocks(1);
 
         for (Treasure treasure : treasures) {
             if (treasure.getMatchedMaterials().contains(e.getBlock().getType())) {

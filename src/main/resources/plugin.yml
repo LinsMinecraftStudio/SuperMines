@@ -8,3 +8,8 @@ folia-supported: true
 website: https://github.com/LinsMinecraftStudio/SuperMines
 depend:
   - CommandAPI
+softdepend:
+  - WorldEdit
+  - FastAsyncWorldEdit
+  - PlaceholderAPI
+  - Slimefun

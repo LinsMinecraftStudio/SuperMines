@@ -46,6 +46,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         boolean onlyFillAirWhenRegenerate = section.getBoolean("onlyFillAirWhenRegenerate", false);
         Material displayIcon = Material.getMaterial(section.getString("displayIcon", "STONE"));
         int requiredRankLevel = section.getInt("requiredRankLevel", 1);
+        Location loc = section.getLocation("teleportLocation");
 
         if (id == null) {
             return null;
@@ -106,7 +107,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
             allowedRankIds = new HashSet<>(section.getStringList("allowedRankIds"));
         }
 
-        return new Mine(id, MiniMessage.miniMessage().deserialize(displayName), displayIcon, world, new CuboidArea(blockPos1, blockPos2), blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasureList, requiredRankLevel, allowedRankIds);
+        return new Mine(id, MiniMessage.miniMessage().deserialize(displayName), displayIcon, world, new CuboidArea(blockPos1, blockPos2), blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasureList, requiredRankLevel, allowedRankIds, loc);
     }
 
     @Override
@@ -135,6 +136,10 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         ConfigurationSection blockSpawn = section.createSection("blockSpawnEntries");
         for (Map.Entry<String, Double> entry : blockSpawnEntries.entrySet()) {
             blockSpawn.set(entry.getKey(), entry.getValue());
+        }
+
+        if (object.getTeleportLocation() != null) {
+            section.set("teleportLocation", object.getTeleportLocation());
         }
     }
 

@@ -1,4 +1,3 @@
-# We don't suggest you put color codes here
 time:
   second: "second"
   seconds: "seconds"
@@ -6,6 +5,7 @@ time:
   minutes: "minutes"
   hour: "hour"
   hours: "hours"
+location-format: "&fX: &b%x%, &fY: &b%y%, &fZ: &b%z%"
 command:
   help:
     general:
@@ -28,6 +28,7 @@ command:
       - "&e/sm reset <mine> &7- &aReset a mine"
       - "&e/sm pos1 &7- &aSet the position 1 of an area"
       - "&e/sm pos2 &7- &aSet the position 2 of an area"
+      - "&e/sm wand &7- &aGet a wand"
       - "&e/sm remove <mine> &7- &aRemove a mine"
       - "&e/sm reload &7- &aReload the plugin"
     treasures:
@@ -41,9 +42,12 @@ command:
       - "&e/sm ranks list &7- &aList all ranks"
       - "&e/sm ranks create <id> <displayName> <level> &7- &aAdd a rank"
       - "&e/sm ranks remove <rank> &7- &aRemove a rank"
+      - "&e/sm ranks giveRank <player> <rank> &7- &aSet a player's rank"
       - "&e/sm ranks setDisplayName <rank> <displayName> &7- &aSet a rank's display name"
-      - "&e/sm ranks setRank <player> <rank> &7- &aSet a player's rank"
       - "&e/sm ranks setLevel <rank> <level> &7- &aSet a rank's level"
+  pos-set:
+    pos1: "&aPosition 1 has set to &d%loc%"
+    pos2: "&aPosition 2 has set to &d%loc%"
   create:
     exists: "&cA mine with that id already existed!"
     success: "&aThe mine is created successfully!"
@@ -71,7 +75,6 @@ command:
       not-exists: "&cThe treasure does not exist!"
       success: "&aThe treasure &d%treasure% &ahas been removed successfully!"
   ranks:
-    not-exists: "&cThe rank does not exist!"
     allowed: "&aNow mine &b%mine% &aallows rank &d%rank% &ato mine"
     disallowed: "&aNow mine &b%mine% &adoes not allow rank &d%rank% &ato mine"
     create:

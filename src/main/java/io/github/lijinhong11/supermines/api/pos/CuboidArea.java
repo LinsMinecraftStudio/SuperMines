@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.api.pos;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,6 +27,15 @@ public record CuboidArea(BlockPos pos1, BlockPos pos2) {
                 Math.max(pos1.y(), pos2.y()),
                 Math.max(pos1.z(), pos2.z())
         );
+    }
+
+    public Location getCenterLocation(World world) {
+        BlockPos min = getMin();
+        BlockPos max = getMax();
+        double centerX = (min.x() + max.x()) / 2.0 + 0.5;
+        double centerY = (min.y() + max.y()) / 2.0 + 1; // 中心 +1 层
+        double centerZ = (min.z() + max.z()) / 2.0 + 0.5;
+        return new Location(world, centerX, centerY, centerZ);
     }
 
     public CuboidArea expand(int x) {

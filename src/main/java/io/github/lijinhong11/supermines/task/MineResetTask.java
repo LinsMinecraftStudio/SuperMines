@@ -50,12 +50,18 @@ class MineResetTask extends AbstractTask {
             tm.runSync(loc, () -> loc.getBlock().setType(Material.AIR));
         }
 
-        for (Map.Entry<BlockPos, Material> entry : generated.entrySet()) {
-            Location loc = entry.getKey().toLocation(mine.getWorld());
-            tm.runSync(loc, () -> loc.getBlock().setType(entry.getValue()));
-        }
-
         for (Player p : Bukkit.getOnlinePlayers()) {
+            if (mine.isPlayerInMine(p)) {
+                if (mine.getTeleportLocation() != null) {
+                    p.teleportAsync(mine.getTeleportLocation()).thenAcceptAsync(b -> {
+                        for (Map.Entry<BlockPos, Material> entry : generated.entrySet()) {
+                            Location loc = entry.getKey().toLocation(mine.getWorld());
+                            tm.runSync(loc, () -> loc.getBlock().setType(entry.getValue()));
+                        }
+                    });
+                }
+            }
+
             SuperMines.getInstance().getLanguageManager().sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
         }
     }
