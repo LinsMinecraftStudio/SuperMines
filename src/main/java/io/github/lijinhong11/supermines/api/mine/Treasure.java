@@ -11,24 +11,22 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
-public class Treasure implements Identified {
+public final class Treasure implements Identified {
     private final String id;
     private Component displayName;
-    private List<Component> description;
     private ItemStack itemStack;
     private int chance;
     private List<Material> matchedMaterials;
 
     @ParametersAreNonnullByDefault
-    public Treasure(String id, Component displayName, List<Component> description, ItemStack itemStack, int chance) {
-        this(id, displayName, description, itemStack, chance, List.of(Material.values()));
+    public Treasure(String id, Component displayName, ItemStack itemStack, int chance) {
+        this(id, displayName, itemStack, chance, List.of(Material.values()));
     }
 
     @ParametersAreNonnullByDefault
-    public Treasure(String id, Component displayName, List<Component> description, ItemStack itemStack, int chance, List<Material> matchedMaterials) {
+    public Treasure(String id, Component displayName, ItemStack itemStack, int chance, List<Material> matchedMaterials) {
         this.id = id;
         this.displayName = displayName;
-        this.description = description;
         this.itemStack = itemStack;
         this.chance = chance;
         this.matchedMaterials = matchedMaterials;

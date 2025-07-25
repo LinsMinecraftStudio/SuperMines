@@ -1,12 +1,15 @@
 package io.github.lijinhong11.supermines.api;
 
 import io.github.lijinhong11.supermines.SuperMines;
+import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class SuperMinesAPI {
     public static @Nullable Mine getMine(String id) {
@@ -23,6 +26,14 @@ public class SuperMinesAPI {
 
     public static @Nullable Rank getRank(String id) {
         return SuperMines.getInstance().getRankManager().getRank(id);
+    }
+
+    public static @Nullable PlayerData getPlayerData(String name) {
+        return SuperMines.getInstance().getPlayerDataManager().getPlayerData(name);
+    }
+
+    public static @NotNull PlayerData getOrCreatePlayerData(@NotNull UUID playerUUID) {
+        return SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(playerUUID);
     }
 
     public static void addMine(@NotNull Mine mine) {

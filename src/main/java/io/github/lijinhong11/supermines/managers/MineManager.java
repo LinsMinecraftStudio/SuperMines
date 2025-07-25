@@ -101,7 +101,12 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
                 .map(t -> SuperMines.getInstance().getTreasureManager().getTreasure(t))
                 .toList();
 
-        return new Mine(id, MiniMessage.miniMessage().deserialize(displayName), displayIcon, world, new CuboidArea(blockPos1, blockPos2), blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasureList, requiredRankLevel);
+        Set<String> allowedRankIds = new HashSet<>();
+        if (section.contains("allowedRankIds")) {
+            allowedRankIds = new HashSet<>(section.getStringList("allowedRankIds"));
+        }
+
+        return new Mine(id, MiniMessage.miniMessage().deserialize(displayName), displayIcon, world, new CuboidArea(blockPos1, blockPos2), blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasureList, requiredRankLevel, allowedRankIds);
     }
 
     @Override
@@ -114,6 +119,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("onlyFillAirWhenRegenerate", object.isOnlyFillAirWhenRegenerate());
         section.set("displayIcon", object.getDisplayIcon().toString());
         section.set("requiredRankLevel", object.getRequiredRankLevel());
+        section.set("allowedRankIds", object.getAllowedRankIds().stream().toList());
 
         List<String> treasures = new ArrayList<>();
         for (Treasure treasure : object.getTreasures()) {

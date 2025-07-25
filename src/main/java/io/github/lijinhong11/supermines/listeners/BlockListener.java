@@ -43,6 +43,12 @@ public class BlockListener implements Listener {
             return;
         }
 
+        if (!mine.canMine(e.getPlayer())) {
+            e.setCancelled(true);
+            SuperMines.getInstance().getLanguageManager().sendMessage(e.getPlayer(), "mine.no-enough-rank");
+            return;
+        }
+
         List<Treasure> treasures = mine.getTreasures();
         if (treasures.isEmpty()) {
             return;

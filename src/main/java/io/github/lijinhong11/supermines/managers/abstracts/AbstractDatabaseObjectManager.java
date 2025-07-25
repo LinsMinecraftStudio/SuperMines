@@ -33,6 +33,18 @@ public abstract class AbstractDatabaseObjectManager<T> {
         }
     }
 
+    protected void saveObject(@NotNull T t) {
+        try {
+            connection.insertObject(clazz, t);
+        } catch (SQLException e) {
+            SuperMines.getInstance().getLogger().severe("""
+                    Failed to create/load player data table!
+                    The plugin will disabled...
+                    """);
+            Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
+        }
+    }
+
     protected void saveObject(@NotNull T t, @NotNull Condition condition) {
         try {
             connection.upsertObject(clazz, t, condition);

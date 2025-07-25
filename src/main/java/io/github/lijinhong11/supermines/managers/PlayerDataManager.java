@@ -3,7 +3,10 @@ package io.github.lijinhong11.supermines.managers;
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
 import io.github.lijinhong11.mdatabase.sql.conditions.Conditions;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
+import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractDatabaseObjectManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,17 +27,31 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
         }
     }
 
+    @Nullable
     public PlayerData getPlayerData(String name) {
         for (PlayerData object : playerDataMap.values()) {
             if (object.getPlayerName().equals(name)) {
                 return object;
             }
         }
+
         return null;
     }
 
-    public PlayerData getPlayerData(UUID uuid) {
+    public @Nullable PlayerData getPlayerData(UUID uuid) {
         return playerDataMap.get(uuid);
+    }
+
+    public @NotNull PlayerData getOrCreatePlayerData(@NotNull UUID playerUUID) {
+        PlayerData playerData = getPlayerData(playerUUID);
+
+        if (playerData == null) {
+            playerData = new PlayerData(playerUUID.toString(), playerUUID, Rank.DEFAULT);
+            super.saveObject(playerData);
+            playerDataMap.put(playerUUID, playerData);
+        }
+
+        return playerData;
     }
 
     @Override

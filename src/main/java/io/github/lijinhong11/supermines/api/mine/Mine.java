@@ -3,6 +3,7 @@ package io.github.lijinhong11.supermines.api.mine;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import io.github.lijinhong11.supermines.api.SuperMinesAPI;
+import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
@@ -22,13 +23,14 @@ import java.util.*;
 /**
  * The mine object.
  */
-public class Mine implements Identified {
+public final class Mine implements Identified {
     private final String id;
 
     private final World world;
     private final Map<Material, Double> blockSpawnEntries;
 
     private final List<Treasure> treasures;
+    private final Set<String> allowedRankIds;
 
     private Material displayIcon;
     private Component displayName;
@@ -44,16 +46,16 @@ public class Mine implements Identified {
 
     @ParametersAreNonnullByDefault
     public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate) {
-        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, new ArrayList<>());
+        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, new ArrayList<>(), new HashSet<>());
     }
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures) {
-        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasures, Rank.DEFAULT.getLevel());
+    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, Set<String> allowedRankIds) {
+        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasures, Rank.DEFAULT.getLevel(), allowedRankIds);
     }
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, int requiredRankLevel) {
+    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, int requiredRankLevel, Set<String> allowedRankIds) {
         this.onlyFillAirWhenRegenerate = onlyFillAirWhenRegenerate;
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "Mine ID cannot be null or empty");
         Preconditions.checkArgument(id.matches(Constants.StringsAndComponents.ID_PATTERN), "Mine ID cannot contain special characters");
@@ -67,6 +69,7 @@ public class Mine implements Identified {
         this.regenerateSeconds = regenerateSeconds;
         this.treasures = treasures;
         this.requiredRankLevel = requiredRankLevel;
+        this.allowedRankIds = allowedRankIds;
     }
 
     public boolean isPlayerInMine(@NotNull Player player) {
@@ -130,6 +133,38 @@ public class Mine implements Identified {
 
     public void removeBlockSpawnEntries(List<Material> materials) {
         materials.forEach(blockSpawnEntries::remove);
+    }
+
+    public void addAllowedRankId(String rankId) {
+        allowedRankIds.add(rankId);
+    }
+
+    public void removeAllowedRankId(String rankId) {
+        allowedRankIds.remove(rankId);
+    }
+
+    public void setAllowedRankIds(Collection<String> rankIds) {
+        allowedRankIds.clear();
+        allowedRankIds.addAll(rankIds);
+    }
+
+    public Set<String> getAllowedRankIds() {
+        return new HashSet<>(allowedRankIds);
+    }
+
+    public boolean canMine(Player p) {
+        PlayerData data = SuperMinesAPI.getOrCreatePlayerData(p.getUniqueId());
+        Rank rank = data.getRank();
+
+        if (p.hasPermission(Constants.Permission.BYPASS_RANK)) {
+            return true;
+        }
+
+        if (allowedRankIds.contains(rank.getId())) {
+            return true;
+        }
+
+        return rank.getLevel() >= requiredRankLevel;
     }
 
     public String getId() {

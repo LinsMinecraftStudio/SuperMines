@@ -9,7 +9,7 @@ import io.github.lijinhong11.supermines.managers.database.RankConverter;
 import java.util.UUID;
 
 @Table(name = "player_data")
-public class PlayerData {
+public final class PlayerData {
     @Column(name = "player_uuid")
     @PrimaryKey
     private UUID playerUUID;
@@ -53,7 +53,7 @@ public class PlayerData {
         return minedBlocks;
     }
 
-    public void setMinedBlocks(int minedBlocks) {
-        this.minedBlocks = minedBlocks;
+    public void addMinedBlocks(int amount) {
+        this.minedBlocks += amount;
     }
 }

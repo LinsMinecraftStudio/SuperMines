@@ -45,7 +45,6 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
 
         return new Treasure(id,
                 MiniMessage.miniMessage().deserialize(section.getString("displayName", id)),
-                section.getStringList("description").stream().map(MiniMessage.miniMessage()::deserialize).toList(),
                 ItemUtils.deserializeFromBytes(section.getObject("itemStack", byte[].class)),
                 chance,
                 section.getStringList("matchedMaterials").stream().map(Material::getMaterial).toList()
@@ -100,5 +99,4 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     public @Unmodifiable List<String> getAllTreasureIds() {
         return List.copyOf(treasures.keySet());
     }
-
 }

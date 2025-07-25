@@ -83,7 +83,10 @@ public class Constants {
         public static final String REMOVE = "supermines.delete";
         public static final String RESET = "supermines.reset";
         public static final String SET_DISPLAY_NAME = "supermines.set_display_name";
+        public static final String SET_DISPLAY_ICON = "supermines.set_display_icon";
+        public static final String SET_REQUIRED_LEVEL = "supermines.set_required_level";
 
         public static final String BYPASS_RANK = "supermines.bypass.rank";
+
     }
 }
