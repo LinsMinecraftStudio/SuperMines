@@ -13,6 +13,7 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
+import io.github.lijinhong11.supermines.utils.chat.ChatInput;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -52,9 +53,7 @@ public class GuiManager {
             GuiItem guiItem = ItemBuilder.from(mat)
                     .name(mine.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getMineInfo(p, mine))
-                    .asGuiItem(e -> {
-                        openMineManagementGui(p, mine);
-                    });
+                    .asGuiItem(e -> openMineManagementGui(p, mine));
             gui.addItem(guiItem);
         }
 
@@ -69,7 +68,7 @@ public class GuiManager {
                 .rows(6)
                 .create();
 
-        placeDecoration(gui, mine, mine.getDisplayIcon());
+        placeCommon(p, gui, mine, mine.getDisplayIcon(), () -> openMineManagementGui(p, mine));
     }
 
     public static void openTreasureList(Player p) {
@@ -86,9 +85,7 @@ public class GuiManager {
             GuiItem guiItem = ItemBuilder.from(mat)
                     .name(treasure.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getTreasureInfo(p, treasure))
-                    .asGuiItem(e -> {
-                        openTreasureManagementGui(p, treasure);
-                    });
+                    .asGuiItem(e -> openTreasureManagementGui(p, treasure));
 
             gui.addItem(guiItem);
         }
@@ -102,7 +99,7 @@ public class GuiManager {
                 .rows(6)
                 .create();
 
-        placeDecoration(gui, treasure, Material.CHEST);
+        placeCommon(p, gui, treasure, Material.CHEST, () -> openTreasureManagementGui(p, treasure));
     }
 
     public static void openRankList(Player p) {
@@ -118,9 +115,7 @@ public class GuiManager {
             GuiItem guiItem = ItemBuilder.from(mat)
                     .name(rank.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getRankInfo(p, rank))
-                    .asGuiItem(e -> {
-                        openRankManagementGui(p, rank);
-                    });
+                    .asGuiItem(e -> openRankManagementGui(p, rank));
             gui.addItem(guiItem);
         }
     }
@@ -133,23 +128,49 @@ public class GuiManager {
                 .rows(6)
                 .create();
 
-        placeDecoration(gui, rank, Material.NAME_TAG);
+        placeCommon(p, gui, rank, Material.NAME_TAG, () -> openRankManagementGui(p, rank));
     }
 
     /* common methods */
     private static void fillPageButtons(Player p, PaginatedGui gui) {
-        gui.setItem(6, 3, ItemBuilder.from(Constants.Items.PREVIOUS_PAGE.apply(p)).asGuiItem(event -> gui.previous()));
-        gui.setItem(6, 7, ItemBuilder.from(Constants.Items.NEXT_PAGE.apply(p)).asGuiItem(event -> gui.next()));
+        gui.setItem(6, 1, ItemBuilder.from(Constants.Items.CLOSE.apply(p)).asGuiItem(e -> {
+            e.setCancelled(true);
+            gui.close(p);
+        }));
+        gui.setItem(6, 3, ItemBuilder.from(Constants.Items.PREVIOUS_PAGE.apply(p)).asGuiItem(e -> gui.previous()));
+        gui.setItem(6, 7, ItemBuilder.from(Constants.Items.NEXT_PAGE.apply(p)).asGuiItem(e -> gui.next()));
         gui.setItem(6, 9, ItemBuilder.from(Constants.Items.BACK.apply(p)).asGuiItem(e -> openGeneral(p)));
 
         gui.getFiller().fillBetweenPoints(6, 1, 6, 9, ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem());
     }
 
-    private static <T extends Identified> void placeDecoration(Gui gui, T object, Material icon) {
+    private static <T extends Identified> void placeCommon(Player p, Gui gui, T object, Material icon, Runnable reopen) {
         gui.setItem(2, 5, ItemBuilder.from(icon)
                 .name(object.getDisplayName())
                 .lore(ComponentUtils.deserialize("&7&lID: " + object.getId()))
                 .asGuiItem(e -> e.setCancelled(true)));
+
+        gui.setItem(3, 1, ItemBuilder.from(Constants.Items.SET_DISPLAY_NAME.apply(p, object))
+                .asGuiItem(e -> {
+                    e.setCancelled(true);
+                    if (!p.hasPermission(Constants.Permission.SET_DISPLAY_NAME)) {
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "no-permission");
+                        return;
+                    }
+
+                    gui.close(p);
+
+                    SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.set-display-name.prompt");
+                    ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
+                        if (result.equalsIgnoreCase("##CANCEL")) {
+                            return;
+                        }
+
+                        object.setDisplayName(ComponentUtils.deserialize(result));
+                    });
+
+                    reopen.run();
+                }));
 
         GuiFiller filler = gui.getFiller();
         filler.fillBorder(ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem(e -> e.setCancelled(true)));

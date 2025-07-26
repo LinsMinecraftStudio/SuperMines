@@ -6,6 +6,8 @@ import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
 import io.github.lijinhong11.mdatabase.impl.SQLConnections;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
+import io.github.lijinhong11.supermines.integrates.MiniPlaceholderExtension;
+import io.github.lijinhong11.supermines.integrates.PlaceholderAPIExtension;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
 import io.github.lijinhong11.supermines.listeners.WandListener;
 import io.github.lijinhong11.supermines.listeners.WorldEditListener;
@@ -56,6 +58,7 @@ public class SuperMines extends JavaPlugin {
 
         setupDatabase();
         setupListeners();
+        setupPlaceholders();
 
         taskMaker.startup();
     }
@@ -106,6 +109,16 @@ public class SuperMines extends JavaPlugin {
 
         if (getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
             new WorldEditListener();
+        }
+    }
+
+    private void setupPlaceholders() {
+        if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlaceholderAPIExtension().register();
+        }
+
+        if (getServer().getPluginManager().isPluginEnabled("MiniPlaceholders")) {
+            MiniPlaceholderExtension.register();
         }
     }
 

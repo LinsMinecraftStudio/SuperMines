@@ -22,8 +22,8 @@ public class ComponentUtils {
         return MINI_MESSAGE.serialize(component);
     }
 
-    public static List<? extends Component> parseToComponentList(String... lore) {
-        return parseToComponentList(List.of(lore));
+    public static String serializeLegacy(Component component) {
+        return LEGACY.serialize(component);
     }
 
     public static List<? extends Component> parseToComponentList(List<String> lore) {

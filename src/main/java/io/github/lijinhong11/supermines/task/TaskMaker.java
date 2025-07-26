@@ -6,15 +6,13 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import org.bukkit.Location;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TaskMaker {
     private final PlatformScheduler scheduler;
     private final Map<String, MineResetTask> resetTasks;
-    private final Map<String, List<MineResetWarningTask>> resetWarningTasks;
+    private final Map<String, Map<Integer, MineResetWarningTask>> resetWarningTasks;
 
     public TaskMaker(FoliaLib f) {
         scheduler = f.getScheduler();
@@ -37,18 +35,31 @@ public class TaskMaker {
     }
 
     public void startMineWarningTask(Mine mine, int warningSeconds) {
-        MineResetWarningTask task = new MineResetWarningTask(mine, warningSeconds);
+        MineResetTask resetTask = resetTasks.get(mine.getId());
 
-        int delaySeconds = mine.getRegenerateSeconds() - warningSeconds;
-        if (delaySeconds <= 0) {
+        if (resetTask == null) {
             return;
         }
 
-        resetWarningTasks
-                .computeIfAbsent(mine.getId(), id -> new ArrayList<>())
-                .add(task);
+        long delayMillis = resetTask.getNextResetTime() - System.currentTimeMillis() - warningSeconds * 1000L;
+        if (delayMillis <= 0) {
+            MineResetWarningTask task = new MineResetWarningTask(mine, warningSeconds);
+            scheduler.runNextTick(task);
+            return;
+        }
 
-        scheduler.runLaterAsync(task, delaySeconds * 20L);
+        MineResetWarningTask task = new MineResetWarningTask(mine, warningSeconds);
+
+        Map<Integer, MineResetWarningTask> warningMap = resetWarningTasks
+                .computeIfAbsent(mine.getId(), id -> new HashMap<>());
+
+        if (warningMap.containsKey(warningSeconds)) {
+            return;
+        }
+
+        warningMap.put(warningSeconds, task);
+
+        scheduler.runLaterAsync(task, delayMillis / 50);
     }
 
     public void startMineResetTask(Mine mine) {
@@ -74,17 +85,17 @@ public class TaskMaker {
     }
 
     private void cancelMineResetWarningTasks(Mine mine) {
-        List<MineResetWarningTask> tasks = resetWarningTasks.get(mine.getId());
+        Map<Integer, MineResetWarningTask> tasks = resetWarningTasks.get(mine.getId());
         if (tasks != null) {
-            tasks.forEach(AbstractTask::cancel);
+            tasks.values().forEach(AbstractTask::cancel);
         }
 
         resetWarningTasks.remove(mine.getId());
     }
 
     public void close() {
-        for (List<MineResetWarningTask> task : resetWarningTasks.values()) {
-            task.forEach(AbstractTask::cancel);
+        for (Map<Integer, MineResetWarningTask> task : resetWarningTasks.values()) {
+            task.values().forEach(AbstractTask::cancel);
         }
 
         for (MineResetTask task : resetTasks.values()) {

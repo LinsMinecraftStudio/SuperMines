@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Range;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The mine object.
@@ -33,6 +34,9 @@ public final class Mine implements Identified {
 
     private final List<Treasure> treasures;
     private final Set<String> allowedRankIds;
+    private final Set<Integer> warningRestSeconds = new HashSet<>();
+
+    private final AtomicInteger blocksBroken = new AtomicInteger(0);
 
     private Material displayIcon;
     private Component displayName;
@@ -93,10 +97,6 @@ public final class Mine implements Identified {
         treasures.add(treasure);
     }
 
-    public void addTreasure(@NotNull List<Treasure> treasures) {
-        this.treasures.addAll(treasures);
-    }
-
     public void removeTreasure(@NotNull String id) {
         treasures.removeIf(treasure -> treasure.getId().equals(id));
     }
@@ -105,17 +105,9 @@ public final class Mine implements Identified {
         treasures.remove(treasure);
     }
 
-    public void removeTreasure(@NotNull List<Treasure> treasures) {
-        this.treasures.removeAll(treasures);
-    }
-
     public void setTreasures(@NotNull List<Treasure> treasures) {
         this.treasures.clear();
         this.treasures.addAll(treasures);
-    }
-
-    public void clearTreasures() {
-        treasures.clear();
     }
 
     public void addBlockSpawnEntry(@NotNull Material material, @Range(from = 1, to = 100) double chance) {
@@ -247,6 +239,14 @@ public final class Mine implements Identified {
 
     public int getRequiredRankLevel() {
         return requiredRankLevel;
+    }
+
+    public void setBlocksBroken(int blocksBroken) {
+        this.blocksBroken.set(blocksBroken);
+    }
+
+    public void plusBlocksBroken() {
+        this.blocksBroken.incrementAndGet();
     }
 
     public double calculateRestChance() {

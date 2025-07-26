@@ -6,10 +6,11 @@ time:
   hour: "hour"
   hours: "hours"
 location-format: "&fX: &b%x%, &fY: &b%y%, &fZ: &b%z%"
+no-permission: "&cYou don't have permission to do that!"
 command:
   help:
     general:
-      - "&e/sm create &7- &aCreate a mine"
+      - "&e/sm create <id> [displayName] &7- &aCreate a mine"
       - "&e/sm help &7- &aShow this help message"
       - "&e/sm info <mine> &7- &aShow info of a mine"
       - "&e/sm list &7- &aList all mines"
@@ -25,9 +26,14 @@ command:
       - "&e/sm setDisplayName <mine> <displayName> &7- &aSet the display name of the mine"
       - "&e/sm setDisplayIcon <mine> <item> &7- &aSet the display icon of the mine"
       - "&e/sm removeBlockGenerate <mine> <material> &7- &aStop the block generate in the mine"
+      - "&e/sm addWarning <mine> <restSeconds> &7- &aAdd a mine reset warning task"
+      - "&e/sm removeWarning <mine> <restSeconds> &7- &aRemove a mine reset warning task"
+      - "&e/sm setResetTime <mine> <resetSeconds> &7- &aSet a mine's reset time"
+      - "&e/sm settp <mine> &7- &aSet the teleport location of the mine"
+      - "&e/sm teleport/tp <mine> &7- &aTeleport to the mine"
       - "&e/sm reset <mine> &7- &aReset a mine"
-      - "&e/sm pos1 &7- &aSet the position 1 of an area"
-      - "&e/sm pos2 &7- &aSet the position 2 of an area"
+      - "&e/sm pos1 [position] &7- &aSet the position 1 of an area"
+      - "&e/sm pos2 [position] &7- &aSet the position 2 of an area"
       - "&e/sm wand &7- &aGet a wand"
       - "&e/sm remove <mine> &7- &aRemove a mine"
       - "&e/sm reload &7- &aReload the plugin"
@@ -42,7 +48,7 @@ command:
       - "&e/sm ranks list &7- &aList all ranks"
       - "&e/sm ranks create <id> <displayName> <level> &7- &aAdd a rank"
       - "&e/sm ranks remove <rank> &7- &aRemove a rank"
-      - "&e/sm ranks giveRank <player> <rank> &7- &aSet a player's rank"
+      - "&e/sm ranks giveRank <player> <rank> [notify] &7- &aSet a player's rank (default notify is false)"
       - "&e/sm ranks setDisplayName <rank> <displayName> &7- &aSet a rank's display name"
       - "&e/sm ranks setLevel <rank> <level> &7- &aSet a rank's level"
   pos-set:
@@ -53,6 +59,8 @@ command:
     success: "&aThe mine is created successfully!"
     no-selection: "&cYou have not selected a position!"
     selection-not-finished: "&cYou have not finished selecting a cuboid area!"
+  redefine:
+    success: "&aThe mine's area is redefined successfully!"
   remove:
     success: "&aThe mine is removed successfully!"
   reset:
@@ -68,13 +76,18 @@ command:
     color: "&b"
   treasures:
     no-item-in-hand: "&cYou must hold an item in your hand!"
+    set-item: "&aThe treasure &d%treasure% &ahas been changed"
+    set-chance: "&aThe chance of treasure &d%treasure% &ais set to &b%chance%%"
+    set-display-name: "&aThe display name of treasure &d%treasure% &ais set to &b%displayName%"
     create:
       exists: "&cA treasure with that id already existed!"
       success: "&aThe treasure &d%treasure% &ahas been created successfully!"
     remove:
-      not-exists: "&cThe treasure does not exist!"
       success: "&aThe treasure &d%treasure% &ahas been removed successfully!"
   ranks:
+    set-display-name: "&aThe display name of rank &d%rank% &ais set to &b%displayName%"
+    set-level: "&aThe level of rank &d%rank% &ais set to &b%level%"
+    give-rank: "&aThe rank &d%rank% &ahas been given to &b%player%"
     allowed: "&aNow mine &b%mine% &aallows rank &d%rank% &ato mine"
     disallowed: "&aNow mine &b%mine% &adoes not allow rank &d%rank% &ato mine"
     create:
@@ -99,6 +112,11 @@ gui:
   next: "&eNext Page"
   back: "&cBack"
   close: "&cClose"
+  set-display-name:
+    name: "&6Set Display Name"
+    lore:
+      - "&7Click to set the display name of the mine"
+      - "&7Current: &b%name%"
   general:
     title: "&eSuper&aMines"
   mines:

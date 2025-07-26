@@ -5,6 +5,7 @@ import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import io.github.lijinhong11.supermines.SuperMines;
+import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
@@ -231,7 +232,7 @@ public class SuperMinesCommand {
                                                 .executesPlayer((player, args) -> {
                                                     String id = (String) args.get("rankId");
                                                     if (SuperMines.getInstance().getRankManager().getRank(id) == null) {
-                                                        SuperMines.getInstance().getLanguageManager().sendMessages(player, "command.ranks.not-exists");
+                                                        SuperMines.getInstance().getLanguageManager().sendMessages(player, "command.rank-not-exists");
                                                         return;
                                                     }
 
@@ -257,6 +258,58 @@ public class SuperMinesCommand {
                                                             MessageReplacement.replace("%rank%", rank.getRawDisplayName()),
                                                             MessageReplacement.replace("%level%", String.valueOf(level))
                                                     );
+                                                }),
+                                        new CommandAPICommand("setDisplayName")
+                                                .withPermission(Constants.Permission.RANKS)
+                                                .withArguments(new StringArgument("id")
+                                                                .includeSuggestions(ArgumentSuggestions.strings(getRankList())),
+                                                        new StringArgument("displayName"))
+                                                .executes((sender, args) -> {
+                                                    String id = (String) args.get("id");
+                                                    String displayName = (String) args.get("displayName");
+
+                                                    Rank rank = SuperMines.getInstance().getRankManager().getRank(id);
+                                                    if (rank == null) {
+                                                        SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.rank-not-exists");
+                                                        return;
+                                                    }
+
+                                                    rank.setDisplayName(ComponentUtils.deserialize(displayName));
+                                                    SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.ranks.set-display-name",
+                                                            MessageReplacement.replace("%rank%", rank.getRawDisplayName()),
+                                                            MessageReplacement.replace("%displayName%", displayName)
+                                                    );
+                                                }),
+                                        new CommandAPICommand("giveRank")
+                                                .withPermission(Constants.Permission.RANKS)
+                                                .withArguments(new PlayerArgument("player"),
+                                                        new StringArgument("rankId")
+                                                                .includeSuggestions(ArgumentSuggestions.strings(getRankList()))
+                                                )
+                                                .withOptionalArguments(new BooleanArgument("notify"))
+                                                .executes((sender, args) -> {
+                                                    Player player = (Player) args.get("player");
+                                                    boolean notify = (boolean) args.getOrDefault("notify", false);
+                                                    String id = (String) args.get("rankId");
+
+                                                    Rank rank = SuperMines.getInstance().getRankManager().getRank(id);
+                                                    if (rank == null) {
+                                                        SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.rank-not-exists");
+                                                        return;
+                                                    }
+
+                                                    PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+                                                    data.setRank(rank);
+
+                                                    SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.ranks.give-rank",
+                                                            MessageReplacement.replace("%player%", player.getName()),
+                                                            MessageReplacement.replace("%rank%", rank.getRawDisplayName()));
+
+                                                    if (notify) {
+                                                        SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.ranks.give-rank-notify",
+                                                                MessageReplacement.replace("%rank%", rank.getRawDisplayName())
+                                                        );
+                                                    }
                                                 })
                                 )
                 )
@@ -585,6 +638,24 @@ public class SuperMinesCommand {
                                             MessageReplacement.replace("%mine%", mine.getRawDisplayName()),
                                             MessageReplacement.replace("%rank%", rank.getRawDisplayName())
                                     );
+                                })
+                )
+                .withSubcommand(
+                        new CommandAPICommand("addResetWarning")
+                                .withPermission(Constants.Permission.RESET_WARNINGS)
+                                .withArguments(new StringArgument("mineId")
+                                        .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
+                                        new IntegerArgument("restSeconds", 1, Integer.MAX_VALUE))
+                                .executes((sender, args) -> {
+                                    String mineId = (String) args.get("mineId");
+                                    Mine mine = SuperMines.getInstance().getMineManager().getMine(mineId);
+                                    if (mine == null) {
+                                        SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.mine-not-exists");
+                                        return;
+                                    }
+
+                                    SuperMines.getInstance().getTaskMaker().startMineWarningTask(mine, (Integer) args.get("restSeconds"));
+
                                 })
                 )
                 .withSubcommand(

@@ -2,6 +2,8 @@ package io.github.lijinhong11.supermines.utils;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import io.github.lijinhong11.supermines.SuperMines;
+import io.github.lijinhong11.supermines.api.iface.Identified;
+import io.github.lijinhong11.supermines.message.MessageReplacement;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -10,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class Constants {
@@ -62,6 +65,7 @@ public class Constants {
                         .getMsgComponent(player, "gui.close"))
                 .build();
 
+        /* general gui & common */
         public static final Function<Player, ItemStack> MINES = player -> ItemBuilder.from(Material.STONE)
                 .name(SuperMines
                         .getInstance()
@@ -80,6 +84,16 @@ public class Constants {
                         .getLanguageManager()
                         .getMsgComponent(player, "gui.ranks.title"))
                 .build();
+        public static final BiFunction<Player, Identified, ItemStack> SET_DISPLAY_NAME = (p, i) -> ItemBuilder.from(Material.NAME_TAG)
+                .name(SuperMines
+                        .getInstance()
+                        .getLanguageManager()
+                        .getMsgComponent(p, "gui.set_display_name"))
+                .lore(SuperMines
+                        .getInstance()
+                        .getLanguageManager()
+                        .getMsgComponentList(p, "gui.set_display_name.lore", MessageReplacement.replace("name", i.getRawDisplayName())))
+                .build();
     }
 
     public static class Permission {
@@ -94,6 +108,7 @@ public class Constants {
         public static final String REDEFINE = "supermines.redefine";
         public static final String REMOVE = "supermines.delete";
         public static final String RESET = "supermines.reset";
+        public static final String RESET_WARNINGS = "supermines.reset_warnings";
         public static final String SET_DISPLAY_NAME = "supermines.set_display_name";
         public static final String SET_DISPLAY_ICON = "supermines.set_display_icon";
         public static final String SET_REQUIRED_LEVEL = "supermines.set_required_level";

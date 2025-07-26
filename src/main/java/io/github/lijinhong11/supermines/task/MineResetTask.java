@@ -18,13 +18,20 @@ import java.util.Map;
 
 class MineResetTask extends AbstractTask {
     private final Mine mine;
+    private long nextResetTime;
 
     MineResetTask(Mine mine) {
         this.mine = mine;
     }
 
+    public long getNextResetTime() {
+        return nextResetTime;
+    }
+
     @Override
     public void run(WrappedTask wrappedTask) {
+        refreshNextResetTime();
+
         CuboidArea ca = mine.getArea();
         List<BlockPos> blockPosList = ca.asPosList();
         Map<Material, Double> blockSpawnEntries = mine.getBlockSpawnEntries();
@@ -64,5 +71,9 @@ class MineResetTask extends AbstractTask {
 
             SuperMines.getInstance().getLanguageManager().sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
         }
+    }
+
+    public void refreshNextResetTime() {
+        this.nextResetTime = System.currentTimeMillis() + mine.getRegenerateSeconds() * 1000L;
     }
 }

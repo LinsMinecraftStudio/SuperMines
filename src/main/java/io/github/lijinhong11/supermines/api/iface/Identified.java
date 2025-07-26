@@ -8,4 +8,6 @@ public interface Identified {
     String getRawDisplayName();
 
     Component getDisplayName();
+
+    void setDisplayName(Component displayName);
 }
