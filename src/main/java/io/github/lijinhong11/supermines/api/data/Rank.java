@@ -4,15 +4,16 @@ import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
+import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public final class Rank implements Identified {
-    public static final Rank DEFAULT = new Rank(1, "default", Constants.StringsAndComponents.RESET.append(Component.text("Default")));
+    public static final Rank DEFAULT =
+            new Rank(1, "default", Constants.StringsAndComponents.RESET.append(Component.text("Default")));
 
     private final String id;
+
     private int level;
     private Component displayName;
 

@@ -1,14 +1,13 @@
 package io.github.lijinhong11.supermines.utils.chat;
 
+import io.github.lijinhong11.supermines.utils.ComponentUtils;
+import io.papermc.paper.event.player.AsyncChatEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import io.github.lijinhong11.supermines.utils.ComponentUtils;
-import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -81,9 +80,7 @@ class ChatInputListener implements Listener {
                 }
             }
 
-            if (callbacks.isEmpty())
-                handlers.remove(p.getUniqueId());
+            if (callbacks.isEmpty()) handlers.remove(p.getUniqueId());
         }
     }
-
 }

@@ -10,6 +10,9 @@ import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,10 +21,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The mine object.
@@ -34,7 +33,8 @@ public final class Mine implements Identified {
 
     private final List<Treasure> treasures;
     private final Set<String> allowedRankIds;
-    private final Set<Integer> warningRestSeconds = new HashSet<>();
+
+    private final Set<Integer> warningSeconds;
 
     private final AtomicInteger blocksBroken = new AtomicInteger(0);
 
@@ -47,29 +47,121 @@ public final class Mine implements Identified {
     private Location tpLoc;
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate) {
-        this(id, displayName, Constants.Items.DEFAULT_MINE_ICON, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate);
+    public Mine(
+            String id,
+            Component displayName,
+            World world,
+            CuboidArea area,
+            Map<Material, Double> blockSpawnEntries,
+            int regenerateSeconds,
+            boolean onlyFillAirWhenRegenerate) {
+        this(
+                id,
+                displayName,
+                Constants.Items.DEFAULT_MINE_ICON,
+                world,
+                area,
+                blockSpawnEntries,
+                regenerateSeconds,
+                onlyFillAirWhenRegenerate);
     }
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate) {
-        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, new ArrayList<>(), new HashSet<>());
+    public Mine(
+            String id,
+            Component displayName,
+            Material displayIcon,
+            World world,
+            CuboidArea area,
+            Map<Material, Double> blockSpawnEntries,
+            int regenerateSeconds,
+            boolean onlyFillAirWhenRegenerate) {
+        this(
+                id,
+                displayName,
+                displayIcon,
+                world,
+                area,
+                blockSpawnEntries,
+                regenerateSeconds,
+                onlyFillAirWhenRegenerate,
+                new ArrayList<>(),
+                new HashSet<>());
     }
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, Set<String> allowedRankIds) {
-        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasures, Rank.DEFAULT.getLevel(), allowedRankIds);
+    public Mine(
+            String id,
+            Component displayName,
+            Material displayIcon,
+            World world,
+            CuboidArea area,
+            Map<Material, Double> blockSpawnEntries,
+            int regenerateSeconds,
+            boolean onlyFillAirWhenRegenerate,
+            List<Treasure> treasures,
+            Set<String> allowedRankIds) {
+        this(
+                id,
+                displayName,
+                displayIcon,
+                world,
+                area,
+                blockSpawnEntries,
+                regenerateSeconds,
+                onlyFillAirWhenRegenerate,
+                treasures,
+                Rank.DEFAULT.getLevel(),
+                allowedRankIds);
     }
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, int requiredRankLevel, Set<String> allowedRankIds) {
-        this(id, displayName, displayIcon, world, area, blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasures, requiredRankLevel, allowedRankIds, null);
+    public Mine(
+            String id,
+            Component displayName,
+            Material displayIcon,
+            World world,
+            CuboidArea area,
+            Map<Material, Double> blockSpawnEntries,
+            int regenerateSeconds,
+            boolean onlyFillAirWhenRegenerate,
+            List<Treasure> treasures,
+            int requiredRankLevel,
+            Set<String> allowedRankIds) {
+        this(
+                id,
+                displayName,
+                displayIcon,
+                world,
+                area,
+                blockSpawnEntries,
+                regenerateSeconds,
+                onlyFillAirWhenRegenerate,
+                treasures,
+                requiredRankLevel,
+                allowedRankIds,
+                null,
+                new HashSet<>());
     }
 
     @ParametersAreNonnullByDefault
-    public Mine(String id, Component displayName, Material displayIcon, World world, CuboidArea area, Map<Material, Double> blockSpawnEntries, int regenerateSeconds, boolean onlyFillAirWhenRegenerate, List<Treasure> treasures, int requiredRankLevel, Set<String> allowedRankIds, @Nullable Location tpLoc) {
+    public Mine(
+            String id,
+            Component displayName,
+            Material displayIcon,
+            World world,
+            CuboidArea area,
+            Map<Material, Double> blockSpawnEntries,
+            int regenerateSeconds,
+            boolean onlyFillAirWhenRegenerate,
+            List<Treasure> treasures,
+            int requiredRankLevel,
+            Set<String> allowedRankIds,
+            @Nullable Location tpLoc,
+            Set<Integer> warningSeconds) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "Mine ID cannot be null or empty");
-        Preconditions.checkArgument(id.matches(Constants.StringsAndComponents.ID_PATTERN), "Mine ID cannot contain special characters");
+        Preconditions.checkArgument(
+                id.matches(Constants.StringsAndComponents.ID_PATTERN), "Mine ID cannot contain special characters");
 
         this.id = id;
         this.displayName = displayName;
@@ -82,6 +174,7 @@ public final class Mine implements Identified {
         this.treasures = treasures;
         this.requiredRankLevel = requiredRankLevel;
         this.allowedRankIds = allowedRankIds;
+        this.warningSeconds = warningSeconds;
         this.tpLoc = tpLoc == null ? area.getCenterLocation(world) : tpLoc;
     }
 
@@ -124,12 +217,6 @@ public final class Mine implements Identified {
 
     public void removeBlockSpawnEntry(@NotNull Material material) {
         blockSpawnEntries.remove(material);
-    }
-
-    public void removeBlockSpawnEntries(Material... materials) {
-        for (Material material : materials) {
-            blockSpawnEntries.remove(material);
-        }
     }
 
     public void removeBlockSpawnEntries(List<Material> materials) {
@@ -241,12 +328,25 @@ public final class Mine implements Identified {
         return requiredRankLevel;
     }
 
+    public int getBlocksBroken() {
+        return this.blocksBroken.get();
+    }
+
     public void setBlocksBroken(int blocksBroken) {
         this.blocksBroken.set(blocksBroken);
     }
 
     public void plusBlocksBroken() {
         this.blocksBroken.incrementAndGet();
+    }
+
+    public void setWarningSeconds(Set<Integer> warningSeconds) {
+        this.warningSeconds.clear();
+        this.warningSeconds.addAll(warningSeconds);
+    }
+
+    public Set<Integer> getWarningSeconds() {
+        return this.warningSeconds;
     }
 
     public double calculateRestChance() {

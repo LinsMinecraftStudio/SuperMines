@@ -4,10 +4,9 @@ import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
-import org.bukkit.Location;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.bukkit.Location;
 
 public class TaskMaker {
     private final PlatformScheduler scheduler;
@@ -23,6 +22,10 @@ public class TaskMaker {
     public void startup() {
         for (Mine mine : SuperMines.getInstance().getMineManager().getAllMines()) {
             startMineResetTask(mine);
+
+            for (int second : mine.getWarningSeconds()) {
+                startMineWarningTask(mine, second);
+            }
         }
     }
 
@@ -50,15 +53,14 @@ public class TaskMaker {
 
         MineResetWarningTask task = new MineResetWarningTask(mine, warningSeconds);
 
-        Map<Integer, MineResetWarningTask> warningMap = resetWarningTasks
-                .computeIfAbsent(mine.getId(), id -> new HashMap<>());
+        Map<Integer, MineResetWarningTask> warningMap =
+                resetWarningTasks.computeIfAbsent(mine.getId(), id -> new HashMap<>());
 
         if (warningMap.containsKey(warningSeconds)) {
             return;
         }
 
         warningMap.put(warningSeconds, task);
-
         scheduler.runLaterAsync(task, delayMillis / 50);
     }
 
@@ -82,6 +84,32 @@ public class TaskMaker {
         cancelMineResetWarningTasks(mine);
 
         resetTasks.remove(mine.getId());
+    }
+
+    public long getMineUntilResetTime(Mine mine) {
+        MineResetTask task = resetTasks.get(mine.getId());
+        if (task == null) {
+            return -1;
+        }
+
+        return task.getNextResetTime() - System.currentTimeMillis();
+    }
+
+    public void cancelMineWarningTask(Mine mine, int restSeconds) {
+        MineResetWarningTask task =
+                resetWarningTasks.getOrDefault(mine.getId(), new HashMap<>()).get(restSeconds);
+        if (task != null) {
+            task.cancel();
+        }
+    }
+
+    public void restartMineResetTask(Mine mine) {
+        cancelMineResetTask(mine);
+
+        startMineResetTask(mine);
+        for (int second : mine.getWarningSeconds()) {
+            startMineWarningTask(mine, second);
+        }
     }
 
     private void cancelMineResetWarningTasks(Mine mine) {

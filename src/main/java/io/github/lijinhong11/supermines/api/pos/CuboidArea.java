@@ -1,12 +1,11 @@
 package io.github.lijinhong11.supermines.api.pos;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 public record CuboidArea(BlockPos pos1, BlockPos pos2) {
     public static CuboidArea createFromLocation(Location loc1, Location loc2) {
@@ -14,19 +13,11 @@ public record CuboidArea(BlockPos pos1, BlockPos pos2) {
     }
 
     public BlockPos getMin() {
-        return new BlockPos(
-                Math.min(pos1.x(), pos2.x()),
-                Math.min(pos1.y(), pos2.y()),
-                Math.min(pos1.z(), pos2.z())
-        );
+        return new BlockPos(Math.min(pos1.x(), pos2.x()), Math.min(pos1.y(), pos2.y()), Math.min(pos1.z(), pos2.z()));
     }
 
     public BlockPos getMax() {
-        return new BlockPos(
-                Math.max(pos1.x(), pos2.x()),
-                Math.max(pos1.y(), pos2.y()),
-                Math.max(pos1.z(), pos2.z())
-        );
+        return new BlockPos(Math.max(pos1.x(), pos2.x()), Math.max(pos1.y(), pos2.y()), Math.max(pos1.z(), pos2.z()));
     }
 
     public Location getCenterLocation(World world) {
@@ -47,18 +38,18 @@ public record CuboidArea(BlockPos pos1, BlockPos pos2) {
     }
 
     public CuboidArea expand(int x, int y, int z) {
-        return new CuboidArea(
-                pos1.minus(x, y, z),
-                pos2.plus(x, y, z)
-        );
+        return new CuboidArea(pos1.minus(x, y, z), pos2.plus(x, y, z));
     }
 
     public boolean contains(BlockPos pos) {
         BlockPos min = getMin();
         BlockPos max = getMax();
-        return pos.x() >= min.x() && pos.x() <= max.x() &&
-                pos.y() >= min.y() && pos.y() <= max.y() &&
-                pos.z() >= min.z() && pos.z() <= max.z();
+        return pos.x() >= min.x()
+                && pos.x() <= max.x()
+                && pos.y() >= min.y()
+                && pos.y() <= max.y()
+                && pos.z() >= min.z()
+                && pos.z() <= max.z();
     }
 
     public int sizeX() {

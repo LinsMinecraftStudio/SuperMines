@@ -7,14 +7,13 @@ import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 class MineResetTask extends AbstractTask {
     private final Mine mine;
@@ -69,7 +68,10 @@ class MineResetTask extends AbstractTask {
                 }
             }
 
-            SuperMines.getInstance().getLanguageManager().sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
+            mine.setBlocksBroken(0);
+            SuperMines.getInstance()
+                    .getLanguageManager()
+                    .sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
         }
     }
 

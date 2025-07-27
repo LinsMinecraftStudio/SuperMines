@@ -24,9 +24,16 @@ class MineResetWarningTask extends AbstractTask {
     public void run(WrappedTask wrappedTask) {
         MessageReplacement mineName = MessageReplacement.replace("%mine%", mine.getRawDisplayName());
         for (Player p : Bukkit.getOnlinePlayers()) {
-            lm.sendMessage(p, "mine.reset_warning", mineName, MessageReplacement.replace("%time%", NumberUtils.formatSeconds(p, second)));
+            lm.sendMessage(
+                    p,
+                    "mine.reset_warning",
+                    mineName,
+                    MessageReplacement.replace("%time%", NumberUtils.formatSeconds(p, second)));
         }
 
-        lm.consoleMessage("mine.reset_warning", mineName, MessageReplacement.replace("%time%", NumberUtils.formatSeconds(second)));
+        lm.consoleMessage(
+                "mine.reset_warning",
+                mineName,
+                MessageReplacement.replace("%time%", NumberUtils.formatSeconds(second)));
     }
 }

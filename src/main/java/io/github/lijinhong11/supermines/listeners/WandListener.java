@@ -30,9 +30,9 @@ public class WandListener implements Listener {
 
         Location loc = block.getLocation();
 
-        if (e.getAction() == Action.RIGHT_CLICK_BLOCK) { //pos2
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK) { // pos2
             SuperMinesCommand.handlePos(p, false, loc);
-        } else if (e.getAction() == Action.LEFT_CLICK_BLOCK) { //pos1
+        } else if (e.getAction() == Action.LEFT_CLICK_BLOCK) { // pos1
             SuperMinesCommand.handlePos(p, true, loc);
         }
 

@@ -26,11 +26,12 @@ command:
       - "&e/sm setDisplayName <mine> <displayName> &7- &aSet the display name of the mine"
       - "&e/sm setDisplayIcon <mine> <item> &7- &aSet the display icon of the mine"
       - "&e/sm removeBlockGenerate <mine> <material> &7- &aStop the block generate in the mine"
-      - "&e/sm addWarning <mine> <restSeconds> &7- &aAdd a mine reset warning task"
-      - "&e/sm removeWarning <mine> <restSeconds> &7- &aRemove a mine reset warning task"
+      - "&e/sm addResetWarning <mine> <restSeconds> &7- &aAdd a mine reset warning task"
+      - "&e/sm removeResetWarning <mine> <restSeconds> &7- &aRemove a mine reset warning task"
       - "&e/sm setResetTime <mine> <resetSeconds> &7- &aSet a mine's reset time"
-      - "&e/sm settp <mine> &7- &aSet the teleport location of the mine"
-      - "&e/sm teleport/tp <mine> &7- &aTeleport to the mine"
+      - "&e/sm settp/setteleport <mine> &7- &aSet the teleport location of the mine"
+      - "&e/sm tp/teleport <mine> &7- &aTeleport to the mine"
+      - "&e/sm setOnlyFillAir <mine> <onlyFillAir> &7- &aSet mine only fill air when reset"
       - "&e/sm reset <mine> &7- &aReset a mine"
       - "&e/sm pos1 [position] &7- &aSet the position 1 of an area"
       - "&e/sm pos2 [position] &7- &aSet the position 2 of an area"
@@ -59,12 +60,20 @@ command:
     success: "&aThe mine is created successfully!"
     no-selection: "&cYou have not selected a position!"
     selection-not-finished: "&cYou have not finished selecting a cuboid area!"
+  fillair:
+    enabled: "&aNow mine &b%mine% &awill only fill air with blocks when reset"
+    disabled: "&aNow mine &b%mine% &awill do a full reset with blocks"
   redefine:
     success: "&aThe mine's area is redefined successfully!"
   remove:
     success: "&aThe mine is removed successfully!"
   reset:
+    time-set: "&aThe reset time of mine &b%mine% &ais set to &b%time%"
     success: "&aThe mine is reset successfully!"
+  resetwarning:
+    time-too-long: "&cThe reset time should not exceed the mine's reset time!"
+    started: "&aThe mine's reset warning task will be started!"
+    stopped: "&aThe mine's reset warning task has been stopped!"
   block-generate:
     success: "&aNow the block &d%material% &awill be generated in the &b%mine% &amine with a probability of &b%chance%%"
     chance-too-high: "&cThe total probability of generating all blocks should not exceed 100%!"
@@ -74,6 +83,9 @@ command:
       mine: "&6Mines: "
     separator: "&7, "
     color: "&b"
+  teleport:
+    set: "&aThe teleport location of mine &b%mine% &ahas been set to &d%loc%"
+    no-loc: "&cThe teleport location is undefined, please contact operators for details."
   treasures:
     no-item-in-hand: "&cYou must hold an item in your hand!"
     set-item: "&aThe treasure &d%treasure% &ahas been changed"
@@ -113,6 +125,7 @@ gui:
   back: "&cBack"
   close: "&cClose"
   set-display-name:
+    prompt: "&eEnter the new display name in the chat: &b(Support color codes and MiniMessage format, type &6##CANCEL &bto cancel)"
     name: "&6Set Display Name"
     lore:
       - "&7Click to set the display name of the mine"
@@ -131,3 +144,10 @@ gui:
     title: "&b&lRanks"
   rank-management:
     title: "&b&lRank Management &8&l- &b%rank%"
+    setlevel:
+      prompt: "&eEnter the new rank level in the chat: &b(type &6##CANCEL &bto cancel)"
+      invaild-level: "&cInvalid rank level! Must between 1 and 2147483647"
+      name: "&6Set Rank Level"
+      lore:
+        - "&7Click to set the rank level of the rank"
+        - "&7Current: &b%level%"

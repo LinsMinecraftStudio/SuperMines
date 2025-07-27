@@ -5,14 +5,13 @@ import com.google.common.base.Strings;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import io.github.lijinhong11.supermines.utils.ItemUtils;
+import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.*;
 
 public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     private final Map<String, Treasure> treasures = new HashMap<>();
@@ -43,19 +42,25 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
             section.set("chance", 1);
         }
 
-        return new Treasure(id,
+        return new Treasure(
+                id,
                 MiniMessage.miniMessage().deserialize(section.getString("displayName", id)),
                 ItemUtils.deserializeFromBytes(section.getObject("itemStack", byte[].class)),
                 chance,
-                section.getStringList("matchedMaterials").stream().map(Material::getMaterial).toList()
-        );
+                section.getStringList("matchedMaterials").stream()
+                        .map(Material::getMaterial)
+                        .toList());
     }
 
     @Override
     protected void putObject(@NotNull ConfigurationSection section, Treasure object) {
         section.set("id", object.getId());
         section.set("displayName", MiniMessage.miniMessage().serialize(object.getDisplayName()));
-        section.set("description", object.getDescription().stream().map(MiniMessage.miniMessage()::serialize).toList());
+        section.set(
+                "description",
+                object.getDescription().stream()
+                        .map(MiniMessage.miniMessage()::serialize)
+                        .toList());
         section.set("itemStack", ItemUtils.serializeToBytes(object.getItemStack()));
         section.set("chance", object.getChance());
         section.set("matchedMaterials", object.getMatchedMaterials());

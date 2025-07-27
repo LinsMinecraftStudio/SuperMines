@@ -1,11 +1,10 @@
 package io.github.lijinhong11.supermines.api.pos;
 
+import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.Map;
 
 public record BlockPos(int x, int y, int z) implements Comparable<BlockPos> {
 
@@ -45,19 +44,11 @@ public record BlockPos(int x, int y, int z) implements Comparable<BlockPos> {
     }
 
     public BlockPos min(BlockPos other) {
-        return new BlockPos(
-                Math.min(this.x, other.x),
-                Math.min(this.y, other.y),
-                Math.min(this.z, other.z)
-        );
+        return new BlockPos(Math.min(this.x, other.x), Math.min(this.y, other.y), Math.min(this.z, other.z));
     }
 
     public BlockPos max(BlockPos other) {
-        return new BlockPos(
-                Math.max(this.x, other.x),
-                Math.max(this.y, other.y),
-                Math.max(this.z, other.z)
-        );
+        return new BlockPos(Math.max(this.x, other.x), Math.max(this.y, other.y), Math.max(this.z, other.z));
     }
 
     public @Unmodifiable Map<String, Integer> toMap() {

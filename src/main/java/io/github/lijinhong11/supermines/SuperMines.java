@@ -18,10 +18,9 @@ import io.github.lijinhong11.supermines.managers.TreasureManager;
 import io.github.lijinhong11.supermines.message.LanguageManager;
 import io.github.lijinhong11.supermines.task.TaskMaker;
 import io.github.lijinhong11.supermines.utils.Constants;
+import java.io.File;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 public class SuperMines extends JavaPlugin {
     private static SuperMines instance;
@@ -90,15 +89,20 @@ public class SuperMines extends JavaPlugin {
         String username = remote.getString("username");
         String password = remote.getString("password");
 
-        DatabaseConnection conn = switch (type) {
-            case SQLITE -> {
-                String path = new File(getDataFolder(), Constants.StringsAndComponents.DATABASE_FILE).getAbsolutePath();
-                yield SQLConnections.sqlite(path, new DatabaseParameters());
-            }
-            case MYSQL -> SQLConnections.mysql(ip, port, database, username, password, new DatabaseParameters());
-            case MARIADB -> SQLConnections.mariadb(ip, port, database, username, password, new DatabaseParameters());
-            case POSTGRESQL -> SQLConnections.postgresql(ip, port, database, username, password, new DatabaseParameters());
-        };
+        DatabaseConnection conn =
+                switch (type) {
+                    case SQLITE -> {
+                        String path = new File(getDataFolder(), Constants.StringsAndComponents.DATABASE_FILE)
+                                .getAbsolutePath();
+                        yield SQLConnections.sqlite(path, new DatabaseParameters());
+                    }
+                    case MYSQL ->
+                        SQLConnections.mysql(ip, port, database, username, password, new DatabaseParameters());
+                    case MARIADB ->
+                        SQLConnections.mariadb(ip, port, database, username, password, new DatabaseParameters());
+                    case POSTGRESQL ->
+                        SQLConnections.postgresql(ip, port, database, username, password, new DatabaseParameters());
+                };
 
         playerDataManager = new PlayerDataManager(conn);
     }

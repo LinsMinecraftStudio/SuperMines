@@ -8,6 +8,7 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
+import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,8 +18,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.*;
 
 public class MineManager extends AbstractFileObjectManager<Mine> {
     private final Map<String, Mine> mines = new HashMap<>();
@@ -96,9 +95,9 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         }
 
         List<String> treasures = section.getStringList("treasures");
-        List<Treasure> treasureList = treasures
-                .stream()
-                .filter(treasure -> SuperMines.getInstance().getTreasureManager().getTreasure(treasure) != null)
+        List<Treasure> treasureList = treasures.stream()
+                .filter(treasure ->
+                        SuperMines.getInstance().getTreasureManager().getTreasure(treasure) != null)
                 .map(t -> SuperMines.getInstance().getTreasureManager().getTreasure(t))
                 .toList();
 
@@ -107,7 +106,25 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
             allowedRankIds = new HashSet<>(section.getStringList("allowedRankIds"));
         }
 
-        return new Mine(id, MiniMessage.miniMessage().deserialize(displayName), displayIcon, world, new CuboidArea(blockPos1, blockPos2), blockSpawnEntries, regenerateSeconds, onlyFillAirWhenRegenerate, treasureList, requiredRankLevel, allowedRankIds, loc);
+        Set<Integer> resetWarningSeconds = new HashSet<>();
+        if (section.contains("resetWarningSeconds")) {
+            resetWarningSeconds = new HashSet<>(section.getIntegerList("resetWarningSeconds"));
+        }
+
+        return new Mine(
+                id,
+                MiniMessage.miniMessage().deserialize(displayName),
+                displayIcon,
+                world,
+                new CuboidArea(blockPos1, blockPos2),
+                blockSpawnEntries,
+                regenerateSeconds,
+                onlyFillAirWhenRegenerate,
+                treasureList,
+                requiredRankLevel,
+                allowedRankIds,
+                loc,
+                resetWarningSeconds);
     }
 
     @Override
@@ -121,6 +138,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("displayIcon", object.getDisplayIcon().toString());
         section.set("requiredRankLevel", object.getRequiredRankLevel());
         section.set("allowedRankIds", object.getAllowedRankIds().stream().toList());
+        section.set("resetWarningSeconds", object.getWarningSeconds().stream().toList());
 
         List<String> treasures = new ArrayList<>();
         for (Treasure treasure : object.getTreasures()) {

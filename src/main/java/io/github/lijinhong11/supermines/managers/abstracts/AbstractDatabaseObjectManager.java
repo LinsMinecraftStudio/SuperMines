@@ -3,12 +3,11 @@ package io.github.lijinhong11.supermines.managers.abstracts;
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
 import io.github.lijinhong11.mdatabase.sql.conditions.Condition;
 import io.github.lijinhong11.supermines.SuperMines;
-import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractDatabaseObjectManager<T> {
     private final DatabaseConnection connection;
@@ -25,7 +24,10 @@ public abstract class AbstractDatabaseObjectManager<T> {
         try {
             connection.createTableByClass(clazz);
         } catch (SQLException e) {
-            SuperMines.getInstance().getLogger().severe("""
+            SuperMines.getInstance()
+                    .getLogger()
+                    .severe(
+                            """
                     Failed to create/load player data table!
                     The plugin will disabled...
                     """);
@@ -37,7 +39,10 @@ public abstract class AbstractDatabaseObjectManager<T> {
         try {
             connection.insertObject(clazz, t);
         } catch (SQLException e) {
-            SuperMines.getInstance().getLogger().severe("""
+            SuperMines.getInstance()
+                    .getLogger()
+                    .severe(
+                            """
                     Failed to create/load player data table!
                     The plugin will disabled...
                     """);
@@ -49,7 +54,10 @@ public abstract class AbstractDatabaseObjectManager<T> {
         try {
             connection.upsertObject(clazz, t, condition);
         } catch (SQLException e) {
-            SuperMines.getInstance().getLogger().severe("""
+            SuperMines.getInstance()
+                    .getLogger()
+                    .severe(
+                            """
                     Failed to create/load player data table!
                     The plugin will disabled...
                     """);
@@ -61,7 +69,10 @@ public abstract class AbstractDatabaseObjectManager<T> {
         try {
             return connection.selectMulti(clazz);
         } catch (SQLException e) {
-            SuperMines.getInstance().getLogger().severe("""
+            SuperMines.getInstance()
+                    .getLogger()
+                    .severe(
+                            """
                     Failed to create/load player data table!
                     The plugin will disabled...
                     """);

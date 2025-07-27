@@ -5,6 +5,7 @@ import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
+import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -13,8 +14,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-
-import java.util.List;
 
 public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -50,7 +49,9 @@ public class BlockListener implements Listener {
             return;
         }
 
-        PlayerData playerData = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(e.getPlayer().getUniqueId());
+        PlayerData playerData = SuperMines.getInstance()
+                .getPlayerDataManager()
+                .getOrCreatePlayerData(e.getPlayer().getUniqueId());
 
         List<Treasure> treasures = mine.getTreasures();
         if (treasures.isEmpty()) {
@@ -58,6 +59,7 @@ public class BlockListener implements Listener {
         }
 
         playerData.addMinedBlocks(1);
+        mine.plusBlocksBroken();
 
         for (Treasure treasure : treasures) {
             if (treasure.getMatchedMaterials().contains(e.getBlock().getType())) {

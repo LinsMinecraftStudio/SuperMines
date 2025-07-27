@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.plugin.Plugin;
@@ -46,7 +45,6 @@ public class ConfigFileUtil {
             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
             YamlConfiguration configuration = YamlConfiguration.loadConfiguration(reader);
             YamlConfiguration configuration2 = YamlConfiguration.loadConfiguration(file);
-
 
             for (String key : configuration.getKeys(true)) {
                 Object value = configuration.get(key);

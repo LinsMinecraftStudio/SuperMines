@@ -2,7 +2,10 @@ package io.github.lijinhong11.supermines.integrates;
 
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
+import io.github.lijinhong11.supermines.api.mine.Mine;
+import io.github.lijinhong11.supermines.utils.NumberUtils;
 import io.github.miniplaceholders.api.Expansion;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -15,13 +18,53 @@ public class MiniPlaceholderExtension {
                     if (args.hasNext()) {
                         String playerName = args.pop().value();
                         OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
-                        PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
+                        PlayerData data =
+                                SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
                         return Tag.selfClosingInserting(data.getRank().getDisplayName());
                     } else {
                         OfflinePlayer p = (Player) a;
-                        PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
+                        PlayerData data =
+                                SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
                         return Tag.selfClosingInserting(data.getRank().getDisplayName());
                     }
+                })
+                .globalPlaceholder("mine_blockbroken", (args, ctx) -> {
+                    String s = args.popOr("missing_mine_id").value();
+                    Mine mine = SuperMines.getInstance().getMineManager().getMine(s);
+                    if (mine != null) {
+                        return Tag.selfClosingInserting(Component.text(mine.getBlocksBroken()));
+                    } else {
+                        return Tag.selfClosingInserting(Component.text("MINE_NOT_FOUND"));
+                    }
+                })
+                .globalPlaceholder("mine_blocksbroken", (args, ctx) -> {
+                    String mineId = args.popOr("missing_mine_id").value();
+                    Mine mine = SuperMines.getInstance().getMineManager().getMine(mineId);
+                    if (mine == null) return Tag.selfClosingInserting(Component.text("MINE_NOT_FOUND"));
+                    return Tag.selfClosingInserting(Component.text(mine.getBlocksBroken()));
+                })
+                .globalPlaceholder("mine_resettime", (args, ctx) -> {
+                    String mineId = args.popOr("missing_mine_id").value();
+                    Mine mine = SuperMines.getInstance().getMineManager().getMine(mineId);
+                    if (mine == null) return Tag.selfClosingInserting(Component.text("MINE_NOT_FOUND"));
+                    int millis = (int) (SuperMines.getInstance().getTaskMaker().getMineUntilResetTime(mine) * 1000);
+                    return Tag.selfClosingInserting(Component.text(NumberUtils.formatSeconds(null, millis)));
+                })
+                .globalPlaceholder("mine_blockpercent", (args, ctx) -> {
+                    String mineId = args.popOr("missing_mine_id").value();
+                    Mine mine = SuperMines.getInstance().getMineManager().getMine(mineId);
+                    if (mine == null) return Tag.selfClosingInserting(Component.text("MINE_NOT_FOUND"));
+                    int broken = mine.getBlocksBroken();
+                    int total = mine.getArea().volume();
+                    double percent = total == 0 ? 0.0 : (double) broken / total * 100;
+                    return Tag.selfClosingInserting(Component.text(String.format("%.2f", percent)));
+                })
+                .globalPlaceholder("totalblocks", (args, ctx) -> {
+                    String mineId = args.popOr("missing_mine_id").value();
+                    Mine mine = SuperMines.getInstance().getMineManager().getMine(mineId);
+                    if (mine == null) return Tag.selfClosingInserting(Component.text("MINE_NOT_FOUND"));
+                    return Tag.selfClosingInserting(
+                            Component.text(mine.getArea().volume()));
                 })
                 .build();
 

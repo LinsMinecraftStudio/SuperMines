@@ -1,9 +1,8 @@
 package io.github.lijinhong11.supermines.utils;
 
 import io.github.lijinhong11.supermines.SuperMines;
-import org.bukkit.command.CommandSender;
-
 import java.util.concurrent.ThreadLocalRandom;
+import org.bukkit.command.CommandSender;
 
 public class NumberUtils {
     private NumberUtils() {}
@@ -37,10 +36,16 @@ public class NumberUtils {
             sb.append(days).append(" ").append(days == 1 ? dayText : daysText).append(" ");
         }
         if (hours > 0) {
-            sb.append(hours).append(" ").append(hours == 1 ? hourText : hoursText).append(" ");
+            sb.append(hours)
+                    .append(" ")
+                    .append(hours == 1 ? hourText : hoursText)
+                    .append(" ");
         }
         if (minutes > 0) {
-            sb.append(minutes).append(" ").append(minutes == 1 ? minuteText : minutesText).append(" ");
+            sb.append(minutes)
+                    .append(" ")
+                    .append(minutes == 1 ? minuteText : minutesText)
+                    .append(" ");
         }
         if (seconds > 0 || sb.isEmpty()) {
             sb.append(seconds).append(" ").append(seconds == 1 ? secondText : secondsText);

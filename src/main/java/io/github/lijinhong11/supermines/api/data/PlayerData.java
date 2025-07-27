@@ -5,7 +5,6 @@ import io.github.lijinhong11.mdatabase.serialization.annotations.Converter;
 import io.github.lijinhong11.mdatabase.serialization.annotations.PrimaryKey;
 import io.github.lijinhong11.mdatabase.serialization.annotations.Table;
 import io.github.lijinhong11.supermines.managers.database.RankConverter;
-
 import java.util.UUID;
 
 @Table(name = "player_data")
@@ -24,8 +23,7 @@ public final class PlayerData {
     @Column(name = "rank")
     private Rank rank;
 
-    public PlayerData() {
-    }
+    public PlayerData() {}
 
     public PlayerData(String playerName, UUID playerUUID, Rank rank) {
         this.playerName = playerName;

@@ -3,13 +3,12 @@ package io.github.lijinhong11.supermines.api.mine;
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
+import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
 
 public final class Treasure implements Identified {
     private final String id;
@@ -24,7 +23,8 @@ public final class Treasure implements Identified {
     }
 
     @ParametersAreNonnullByDefault
-    public Treasure(String id, Component displayName, ItemStack itemStack, int chance, List<Material> matchedMaterials) {
+    public Treasure(
+            String id, Component displayName, ItemStack itemStack, int chance, List<Material> matchedMaterials) {
         this.id = id;
         this.displayName = displayName;
         this.itemStack = itemStack;
