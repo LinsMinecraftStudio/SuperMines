@@ -3,6 +3,7 @@ package io.github.lijinhong11.supermines.api.mine;
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
+import io.github.lijinhong11.supermines.utils.Constants;
 import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
@@ -37,11 +38,11 @@ public final class Treasure implements Identified {
     }
 
     public String getRawDisplayName() {
-        return ComponentUtils.serialize(displayName);
+        return ComponentUtils.serialize(getDisplayName());
     }
 
     public Component getDisplayName() {
-        return displayName;
+        return Constants.StringsAndComponents.RESET.append(displayName);
     }
 
     public void setDisplayName(@NotNull Component displayName) {

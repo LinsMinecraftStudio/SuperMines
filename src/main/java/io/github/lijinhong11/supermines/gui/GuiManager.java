@@ -15,6 +15,7 @@ import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.chat.ChatInput;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -26,14 +27,15 @@ public class GuiManager {
                 .create();
 
         gui.setItem(2, 3, ItemBuilder.from(Constants.Items.MINES.apply(p)).asGuiItem(e -> {
+            e.setCancelled(true);
             openMineList(p);
         }));
-
         gui.setItem(2, 5, ItemBuilder.from(Constants.Items.TREASURES.apply(p)).asGuiItem(e -> {
+            e.setCancelled(true);
             openTreasureList(p);
         }));
-
         gui.setItem(2, 7, ItemBuilder.from(Constants.Items.RANKS.apply(p)).asGuiItem(e -> {
+            e.setCancelled(true);
             openRankList(p);
         }));
 
@@ -54,7 +56,10 @@ public class GuiManager {
             GuiItem guiItem = ItemBuilder.from(mat)
                     .name(mine.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getMineInfo(p, mine))
-                    .asGuiItem(e -> openMineManagementGui(p, mine));
+                    .asGuiItem(e -> {
+                        e.setCancelled(true);
+                        openMineManagementGui(p, mine);
+                    });
             gui.addItem(guiItem);
         }
 
@@ -78,7 +83,7 @@ public class GuiManager {
                 4,
                 ItemBuilder.from(Constants.Items.SET_DISPLAY_ICON.apply(p, mine.getDisplayIcon()))
                         .asGuiItem(e -> {
-                            Material m = openMaterialChooser(p, () -> openMineManagementGui(p, mine));
+                            Material m = openMaterialChooser(p, mt -> true, () -> openMineManagementGui(p, mine));
                             mine.setDisplayIcon(m);
 
                             openMineManagementGui(p, mine);
@@ -185,6 +190,10 @@ public class GuiManager {
 
     /* common methods */
     private static void fillPageButtons(Player p, PaginatedGui gui, Runnable reopen) {
+        gui.getFiller()
+                .fillBetweenPoints(
+                        6, 1, 6, 9, ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem(e -> e.setCancelled(true)));
+
         gui.setItem(6, 1, ItemBuilder.from(Constants.Items.CLOSE.apply(p)).asGuiItem(e -> {
             e.setCancelled(true);
             gui.close(p);
@@ -194,10 +203,6 @@ public class GuiManager {
                 6, 3, ItemBuilder.from(Constants.Items.PREVIOUS_PAGE.apply(p)).asGuiItem(e -> gui.previous()));
         gui.setItem(6, 7, ItemBuilder.from(Constants.Items.NEXT_PAGE.apply(p)).asGuiItem(e -> gui.next()));
         gui.setItem(6, 9, ItemBuilder.from(Constants.Items.BACK.apply(p)).asGuiItem(e -> reopen.run()));
-
-        gui.getFiller()
-                .fillBetweenPoints(
-                        6, 1, 6, 9, ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem());
     }
 
     private static <T extends Identified> void placeCommon(
@@ -239,7 +244,7 @@ public class GuiManager {
         filler.fillBorder(ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem(e -> e.setCancelled(true)));
     }
 
-    private static Material openMaterialChooser(Player p, Runnable reopen) {
+    private static Material openMaterialChooser(Player p, Predicate<Material> predicate, Runnable reopen) {
         PaginatedGui gui = Gui.paginated()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.material-chooser.title"))
                 .rows(6)
@@ -251,6 +256,10 @@ public class GuiManager {
 
         for (Material material : Material.values()) {
             if (material.isAir()) {
+                continue;
+            }
+
+            if (!predicate.test(material)) {
                 continue;
             }
 

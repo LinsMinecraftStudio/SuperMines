@@ -255,7 +255,7 @@ public final class Mine implements Identified {
     }
 
     public String getRawDisplayName() {
-        return ComponentUtils.serialize(displayName);
+        return ComponentUtils.serialize(getDisplayName());
     }
 
     public void setDisplayName(@NotNull Component displayName) {
@@ -265,7 +265,7 @@ public final class Mine implements Identified {
     }
 
     public Component getDisplayName() {
-        return displayName == null ? Component.text(id) : displayName;
+        return displayName == null ? Constants.StringsAndComponents.RESET.append(Component.text(id)) : displayName;
     }
 
     public void setDisplayIcon(Material displayIcon) {

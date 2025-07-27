@@ -84,7 +84,7 @@ public class SuperMinesCommand {
                                         .withPermission(Constants.Permission.TREASURES)
                                         .withArguments(
                                                 new StringArgument("id"),
-                                                new StringArgument("displayName"),
+                                                new TextArgument("displayName"),
                                                 new IntegerArgument("chance", 1, 100))
                                         .executesPlayer((player, args) -> {
                                             String id = (String) args.get("id");
@@ -160,7 +160,7 @@ public class SuperMinesCommand {
                                                 new StringArgument("id")
                                                         .includeSuggestions(
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
-                                                new StringArgument("displayName"))
+                                                new TextArgument("displayName"))
                                         .executes((sender, args) -> {
                                             String id = (String) args.get("id");
                                             String displayName = (String) args.get("displayName");
@@ -267,7 +267,7 @@ public class SuperMinesCommand {
                                         .withPermission(Constants.Permission.RANKS)
                                         .withArguments(
                                                 new StringArgument("rankId"),
-                                                new StringArgument("displayName"),
+                                                new TextArgument("displayName"),
                                                 new IntegerArgument("level", 1, Integer.MAX_VALUE))
                                         .executesPlayer((player, args) -> {
                                             String id = (String) args.get("rankId");
@@ -363,7 +363,7 @@ public class SuperMinesCommand {
                                         .withArguments(
                                                 new StringArgument("id")
                                                         .includeSuggestions(ArgumentSuggestions.strings(getRankList())),
-                                                new StringArgument("displayName"))
+                                                new TextArgument("displayName"))
                                         .executes((sender, args) -> {
                                             String id = (String) args.get("id");
                                             String displayName = (String) args.get("displayName");
@@ -453,7 +453,7 @@ public class SuperMinesCommand {
                 .withSubcommand(new CommandAPICommand("create")
                         .withPermission(Constants.Permission.CREATE)
                         .withArguments(new StringArgument("id"))
-                        .withOptionalArguments(new StringArgument("displayName"))
+                        .withOptionalArguments(new TextArgument("displayName"))
                         .executesPlayer((player, args) -> {
                             String id = (String) args.get("id");
                             String displayName =
@@ -666,7 +666,7 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
-                                new StringArgument("displayName"))
+                                new TextArgument("displayName"))
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
                             Mine mine =

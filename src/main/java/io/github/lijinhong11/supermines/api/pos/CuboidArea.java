@@ -24,9 +24,8 @@ public record CuboidArea(BlockPos pos1, BlockPos pos2) {
         BlockPos min = getMin();
         BlockPos max = getMax();
         double centerX = (min.x() + max.x()) / 2.0 + 0.5;
-        double centerY = (min.y() + max.y()) / 2.0 + 1; // 中心 +1 层
         double centerZ = (min.z() + max.z()) / 2.0 + 0.5;
-        return new Location(world, centerX, centerY, centerZ);
+        return new Location(world, centerX, Math.max(pos1.y(), pos2.y()) + 1, centerZ);
     }
 
     public CuboidArea expand(int x) {

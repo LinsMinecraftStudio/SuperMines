@@ -44,11 +44,11 @@ public final class Rank implements Identified {
     }
 
     public String getRawDisplayName() {
-        return ComponentUtils.serialize(displayName);
+        return ComponentUtils.serialize(getDisplayName());
     }
 
     public Component getDisplayName() {
-        return displayName;
+        return Constants.StringsAndComponents.RESET.append(displayName);
     }
 
     public void setDisplayName(@NotNull Component displayName) {

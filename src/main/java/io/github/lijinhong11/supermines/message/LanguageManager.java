@@ -8,7 +8,6 @@ import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
 import io.github.lijinhong11.supermines.utils.Constants;
 import java.io.File;
-import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -71,13 +70,12 @@ public final class LanguageManager {
                 String name = entry.getName();
                 if (name.startsWith("language/") && !entry.isDirectory()) {
                     String realName = name.replaceAll("language/", "");
-                    try (InputStream stream = plugin.getClass().getClassLoader().getResourceAsStream(name)) {
-                        File destinationFile = new File(pluginFolder, "language/" + realName);
+                    File destinationFile = new File(pluginFolder, "language/" + realName);
+                    if (!destinationFile.exists()) {
+                        plugin.saveResource("language/" + realName, false);
+                    }
 
-                        if (!destinationFile.exists() && stream != null) {
-                            plugin.saveResource("language/" + realName, false);
-                        }
-
+                    if (destinationFile.exists()) {
                         ConfigFileUtil.completeLangFile(plugin, "language/" + realName);
                     }
                 }

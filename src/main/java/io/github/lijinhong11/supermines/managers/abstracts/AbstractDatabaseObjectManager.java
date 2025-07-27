@@ -6,6 +6,8 @@ import io.github.lijinhong11.supermines.SuperMines;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,11 +28,11 @@ public abstract class AbstractDatabaseObjectManager<T> {
         } catch (SQLException e) {
             SuperMines.getInstance()
                     .getLogger()
-                    .severe(
+                    .log(Level.SEVERE,
                             """
                     Failed to create/load player data table!
                     The plugin will disabled...
-                    """);
+                    """, e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
         }
     }
@@ -65,17 +67,26 @@ public abstract class AbstractDatabaseObjectManager<T> {
         }
     }
 
+    protected T getOne(@NotNull Condition condition) {
+        try {
+            return connection.selectOne(clazz, condition);
+        } catch (SQLException ignored) {
+        }
+
+        return null;
+    }
+
     protected final List<T> getAll() {
         try {
             return connection.selectMulti(clazz);
         } catch (SQLException e) {
             SuperMines.getInstance()
                     .getLogger()
-                    .severe(
+                    .log(Level.SEVERE,
                             """
                     Failed to create/load player data table!
                     The plugin will disabled...
-                    """);
+                    """, e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
         }
 

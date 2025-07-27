@@ -17,7 +17,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 public class MineManager extends AbstractFileObjectManager<Mine> {
     private final Map<String, Mine> mines = new HashMap<>();
@@ -206,11 +205,11 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         super.remove(id);
     }
 
-    public @Unmodifiable Collection<Mine> getAllMines() {
-        return Collections.unmodifiableCollection(mines.values());
+    public Collection<Mine> getAllMines() {
+        return new HashSet<>(mines.values());
     }
 
-    public @Unmodifiable List<String> getAllMineIds() {
-        return List.copyOf(mines.keySet());
+    public List<String> getAllMineIds() {
+        return new ArrayList<>(mines.keySet());
     }
 }

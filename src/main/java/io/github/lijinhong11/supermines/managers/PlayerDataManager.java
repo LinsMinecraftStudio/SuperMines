@@ -8,6 +8,8 @@ import io.github.lijinhong11.supermines.managers.abstracts.AbstractDatabaseObjec
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +46,7 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
         PlayerData playerData = getPlayerData(playerUUID);
 
         if (playerData == null) {
-            playerData = new PlayerData(playerUUID.toString(), playerUUID, Rank.DEFAULT);
+            playerData = new PlayerData(Bukkit.getOfflinePlayer(playerUUID).getName(), playerUUID, Rank.DEFAULT);
             super.saveObject(playerData);
             playerDataMap.put(playerUUID, playerData);
         }
@@ -55,9 +57,11 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
     @Override
     public void saveAndClose() {
         for (PlayerData playerData : playerDataMap.values()) {
-            super.saveObject(
-                    playerData,
-                    Conditions.eq("player_uuid", playerData.getPlayerUUID().toString()));
+            if (getOne(Conditions.eq("player_uuid", playerData.getPlayerUUID().toString())) != null) {
+                super.saveObject(playerData, Conditions.eq("player_uuid", playerData.getPlayerUUID().toString()));
+            } else {
+                super.saveObject(playerData);
+            }
         }
 
         super.close();

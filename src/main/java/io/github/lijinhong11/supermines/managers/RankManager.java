@@ -7,7 +7,6 @@ import java.util.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 public class RankManager extends AbstractFileObjectManager<Rank> {
     private final Map<String, Rank> ranks = new HashMap<>();
@@ -66,11 +65,11 @@ public class RankManager extends AbstractFileObjectManager<Rank> {
         super.remove(id);
     }
 
-    public @Unmodifiable Collection<Rank> getAllRanks() {
-        return Collections.unmodifiableCollection(ranks.values());
+    public Collection<Rank> getAllRanks() {
+        return new HashSet<>(ranks.values());
     }
 
-    public @Unmodifiable List<String> getAllRankIds() {
-        return List.copyOf(ranks.keySet());
+    public List<String> getAllRankIds() {
+        return new ArrayList<>(ranks.keySet());
     }
 }

@@ -35,7 +35,7 @@ public class Constants {
 
         public static final Function<Player, ItemStack> WAND = player -> ItemBuilder.from(Material.BLAZE_ROD)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "wand.name"))
-                .lore(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "wand.lore"))
+                .lore(SuperMines.getInstance().getLanguageManager().getMsgComponentList(player, "wand.lore"))
                 .pdc(c -> c.set(Keys.WAND_KEY, PersistentDataType.BOOLEAN, true))
                 .build();
 

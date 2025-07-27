@@ -50,29 +50,30 @@ class MineResetTask extends AbstractTask {
             }
         }
 
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (mine.getTeleportLocation() != null) {
+                if (mine.isPlayerInMine(p)) {
+                    p.teleportAsync(mine.getTeleportLocation());
+                }
+            }
+
+            SuperMines.getInstance()
+                    .getLanguageManager()
+                    .sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
+        }
+
         TaskMaker tm = SuperMines.getInstance().getTaskMaker();
         for (BlockPos pos : mine.getArea().asPosList()) {
             Location loc = pos.toLocation(mine.getWorld());
             tm.runSync(loc, () -> loc.getBlock().setType(Material.AIR));
         }
 
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (mine.isPlayerInMine(p)) {
-                if (mine.getTeleportLocation() != null) {
-                    p.teleportAsync(mine.getTeleportLocation()).thenAcceptAsync(b -> {
-                        for (Map.Entry<BlockPos, Material> entry : generated.entrySet()) {
-                            Location loc = entry.getKey().toLocation(mine.getWorld());
-                            tm.runSync(loc, () -> loc.getBlock().setType(entry.getValue()));
-                        }
-                    });
-                }
-            }
-
-            mine.setBlocksBroken(0);
-            SuperMines.getInstance()
-                    .getLanguageManager()
-                    .sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
+        for (Map.Entry<BlockPos, Material> entry : generated.entrySet()) {
+            Location loc = entry.getKey().toLocation(mine.getWorld());
+            tm.runSync(loc, () -> loc.getBlock().setType(entry.getValue()));
         }
+
+        mine.setBlocksBroken(0);
     }
 
     public void refreshNextResetTime() {

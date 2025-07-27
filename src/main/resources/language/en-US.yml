@@ -7,6 +7,11 @@ time:
   hours: "hours"
 location-format: "&fX: &b%x%, &fY: &b%y%, &fZ: &b%z%"
 no-permission: "&cYou don't have permission to do that!"
+wand:
+  name: "&eSuper&aMine &dPosition Set Wand"
+  lore:
+    - "&aLeft-Click to set position 1"
+    - "&aRight-Click to set position 2"
 command:
   help:
     general:
@@ -53,8 +58,8 @@ command:
       - "&e/sm ranks setDisplayName <rank> <displayName> &7- &aSet a rank's display name"
       - "&e/sm ranks setLevel <rank> <level> &7- &aSet a rank's level"
   pos-set:
-    pos1: "&aPosition 1 has set to &d%loc%"
-    pos2: "&aPosition 2 has set to &d%loc%"
+    pos1: "&aPosition 1 has set to &d%pos%"
+    pos2: "&aPosition 2 has set to &d%pos%"
   create:
     exists: "&cA mine with that id already existed!"
     success: "&aThe mine is created successfully!"

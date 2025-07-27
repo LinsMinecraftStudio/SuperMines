@@ -11,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     private final Map<String, Treasure> treasures = new HashMap<>();
@@ -56,11 +55,6 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     protected void putObject(@NotNull ConfigurationSection section, Treasure object) {
         section.set("id", object.getId());
         section.set("displayName", MiniMessage.miniMessage().serialize(object.getDisplayName()));
-        section.set(
-                "description",
-                object.getDescription().stream()
-                        .map(MiniMessage.miniMessage()::serialize)
-                        .toList());
         section.set("itemStack", ItemUtils.serializeToBytes(object.getItemStack()));
         section.set("chance", object.getChance());
         section.set("matchedMaterials", object.getMatchedMaterials());
@@ -97,11 +91,11 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         super.remove(key);
     }
 
-    public @Unmodifiable Collection<Treasure> getAllTreasures() {
-        return Collections.unmodifiableCollection(treasures.values());
+    public Collection<Treasure> getAllTreasures() {
+        return new HashSet<>(treasures.values());
     }
 
-    public @Unmodifiable List<String> getAllTreasureIds() {
-        return List.copyOf(treasures.keySet());
+    public List<String> getAllTreasureIds() {
+        return new ArrayList<>(treasures.keySet());
     }
 }
