@@ -66,7 +66,7 @@ public class TaskMaker {
 
     public void startMineResetTask(Mine mine) {
         MineResetTask task = new MineResetTask(mine);
-        scheduler.runTimerAsync(task, mine.getRegenerateSeconds() * 20L, mine.getRegenerateSeconds() * 20L);
+        scheduler.runTimerAsync(task, 1L, mine.getRegenerateSeconds() * 20L);
         resetTasks.put(mine.getId(), task);
     }
 
@@ -92,7 +92,7 @@ public class TaskMaker {
             return -1;
         }
 
-        return task.getNextResetTime() - System.currentTimeMillis();
+        return Math.max(0, task.getNextResetTime() - System.currentTimeMillis());
     }
 
     public void cancelMineWarningTask(Mine mine, int restSeconds) {

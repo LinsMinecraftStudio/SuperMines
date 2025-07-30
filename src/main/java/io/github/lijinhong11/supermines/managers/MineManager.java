@@ -186,11 +186,9 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
 
     public @Nullable Mine getMine(@NotNull Location loc) {
         for (Mine mine : mines.values()) {
-            if (!mine.getWorld().getName().equals(loc.getWorld().getName())) {
-                continue;
-            }
-
-            if (mine.getArea().contains(BlockPos.fromLocation(loc))) {
+            boolean sameWorld = mine.getWorld() == loc.getWorld();
+            boolean contains = mine.getArea().contains(BlockPos.fromLocation(loc));
+            if (sameWorld && contains) {
                 return mine;
             }
         }
@@ -206,10 +204,10 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
     }
 
     public Collection<Mine> getAllMines() {
-        return new HashSet<>(mines.values());
+        return mines.values();
     }
 
-    public List<String> getAllMineIds() {
-        return new ArrayList<>(mines.keySet());
+    public Set<String> getAllMineIds() {
+        return mines.keySet();
     }
 }

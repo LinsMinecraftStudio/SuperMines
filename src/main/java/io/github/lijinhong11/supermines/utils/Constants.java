@@ -89,6 +89,18 @@ public class Constants {
                                         "gui.mine-management.set_display_icon.lore",
                                         MessageReplacement.replace("%material%", m.toString())))
                         .build();
+        public static final BiFunction<Player, Integer, ItemStack> SET_REGEN_SECONDS =
+                (p, i) -> ItemBuilder.from(Material.STONE)
+                        .name(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponent(p, "gui.mine-management.set_regen_seconds"))
+                        .lore(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponentList(
+                                        p,
+                                        "gui.mine-management.set_regen_seconds.lore",
+                                        MessageReplacement.replace("%seconds%", String.valueOf(i))))
+                        .build();
 
         // rank management
         public static final BiFunction<Player, Integer, ItemStack> SET_RANK_LEVEL =

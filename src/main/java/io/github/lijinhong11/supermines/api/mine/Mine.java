@@ -362,7 +362,11 @@ public final class Mine implements Identified {
         PlayerData data = SuperMinesAPI.getOrCreatePlayerData(p.getUniqueId());
         Rank rank = data.getRank();
 
-        if (p.hasPermission(Constants.Permission.BYPASS_RANK)) {
+        if (p.isOp() || p.hasPermission(Constants.Permission.BYPASS_RANK)) {
+            return true;
+        }
+
+        if (allowedRankIds.isEmpty()) {
             return true;
         }
 

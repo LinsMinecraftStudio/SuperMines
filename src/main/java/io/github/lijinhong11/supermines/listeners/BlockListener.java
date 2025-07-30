@@ -4,6 +4,7 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
+import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import java.util.List;
 import org.bukkit.Location;
@@ -53,19 +54,17 @@ public class BlockListener implements Listener {
                 .getPlayerDataManager()
                 .getOrCreatePlayerData(e.getPlayer().getUniqueId());
 
-        List<Treasure> treasures = mine.getTreasures();
-        if (treasures.isEmpty()) {
-            return;
-        }
-
         playerData.addMinedBlocks(1);
         mine.plusBlocksBroken();
 
-        for (Treasure treasure : treasures) {
-            if (treasure.getMatchedMaterials().contains(e.getBlock().getType())) {
-                int chance = treasure.getChance();
-                if (NumberUtils.matchChance(chance)) {
-                    world.dropItemNaturally(loc, treasure.getItemStack().clone());
+        List<Treasure> treasures = mine.getTreasures();
+        if (!treasures.isEmpty()) {
+            for (Treasure treasure : treasures) {
+                if (treasure.getMatchedMaterials().contains(e.getBlock().getType())) {
+                    int chance = treasure.getChance();
+                    if (NumberUtils.matchChance(chance)) {
+                        world.dropItemNaturally(loc, treasure.getItemStack().clone());
+                    }
                 }
             }
         }

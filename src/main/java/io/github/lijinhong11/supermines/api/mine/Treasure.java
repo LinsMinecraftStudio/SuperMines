@@ -20,7 +20,7 @@ public final class Treasure implements Identified {
 
     @ParametersAreNonnullByDefault
     public Treasure(String id, Component displayName, ItemStack itemStack, int chance) {
-        this(id, displayName, itemStack, chance, List.of(Material.values()));
+        this(id, displayName, itemStack, chance, List.of());
     }
 
     @ParametersAreNonnullByDefault

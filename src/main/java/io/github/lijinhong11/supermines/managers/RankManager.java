@@ -66,10 +66,10 @@ public class RankManager extends AbstractFileObjectManager<Rank> {
     }
 
     public Collection<Rank> getAllRanks() {
-        return new HashSet<>(ranks.values());
+        return ranks.values();
     }
 
-    public List<String> getAllRankIds() {
-        return new ArrayList<>(ranks.keySet());
+    public Set<String> getAllRankIds() {
+        return ranks.keySet();
     }
 }

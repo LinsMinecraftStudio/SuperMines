@@ -1,7 +1,6 @@
 package io.github.lijinhong11.supermines.managers.abstracts;
 
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
-import io.github.lijinhong11.mdatabase.sql.conditions.Condition;
 import io.github.lijinhong11.supermines.SuperMines;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public abstract class AbstractDatabaseObjectManager<T> {
                     .getLogger()
                     .log(Level.SEVERE,
                             """
-                    Failed to create/load player data table!
+                    Failed to create/load player data!
                     The plugin will disabled...
                     """, e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
@@ -39,41 +38,17 @@ public abstract class AbstractDatabaseObjectManager<T> {
 
     protected void saveObject(@NotNull T t) {
         try {
-            connection.insertObject(clazz, t);
+            connection.insertObject(clazz, t, true);
         } catch (SQLException e) {
             SuperMines.getInstance()
                     .getLogger()
-                    .severe(
+                    .log(Level.SEVERE,
                             """
-                    Failed to create/load player data table!
+                    Failed to save player data!
                     The plugin will disabled...
-                    """);
+                    """, e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
         }
-    }
-
-    protected void saveObject(@NotNull T t, @NotNull Condition condition) {
-        try {
-            connection.upsertObject(clazz, t, condition);
-        } catch (SQLException e) {
-            SuperMines.getInstance()
-                    .getLogger()
-                    .severe(
-                            """
-                    Failed to create/load player data table!
-                    The plugin will disabled...
-                    """);
-            Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
-        }
-    }
-
-    protected T getOne(@NotNull Condition condition) {
-        try {
-            return connection.selectOne(clazz, condition);
-        } catch (SQLException ignored) {
-        }
-
-        return null;
     }
 
     protected final List<T> getAll() {
@@ -84,7 +59,7 @@ public abstract class AbstractDatabaseObjectManager<T> {
                     .getLogger()
                     .log(Level.SEVERE,
                             """
-                    Failed to create/load player data table!
+                    Failed to load player data table!
                     The plugin will disabled...
                     """, e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());

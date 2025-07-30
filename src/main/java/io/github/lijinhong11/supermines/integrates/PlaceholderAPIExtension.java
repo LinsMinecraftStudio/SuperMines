@@ -12,6 +12,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("deprecation")
 public class PlaceholderAPIExtension extends PlaceholderExpansion {
     @Override
     public @NotNull String getIdentifier() {
@@ -38,6 +39,10 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
                 return ChatColor.translateAlternateColorCodes(
                         '&', ComponentUtils.serializeLegacy(data.getRank().getDisplayName()));
+            } else if (args[0].equalsIgnoreCase("minedBlocks")) {
+                PlayerData data =
+                        SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+                return String.valueOf(data.getMinedBlocks());
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("rank")) {
@@ -47,6 +52,12 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
                 return ChatColor.translateAlternateColorCodes(
                         '&', ComponentUtils.serializeLegacy(data.getRank().getDisplayName()));
+            } else if (args[0].equalsIgnoreCase("minedBlocks")) {
+                String playerName = args[1];
+                OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
+                PlayerData data =
+                        SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
+                return String.valueOf(data.getMinedBlocks());
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("mine")) {
@@ -59,15 +70,19 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                         }
                         case "resettime" -> {
                             return NumberUtils.formatSeconds(null, (int)
-                                    (SuperMines.getInstance().getTaskMaker().getMineUntilResetTime(mine) * 1000));
+                                    (SuperMines.getInstance().getTaskMaker().getMineUntilResetTime(mine) / 1000));
                         }
                         case "blockpercent" -> {
                             int broken = mine.getBlocksBroken();
                             int total = mine.getArea().volume();
-                            return String.format("%.2f", (double) (broken / total * 100));
+                            double percent = total == 0 ? 0d : ((double) broken / total) * 100;
+                            return String.format("%.2f", percent);
                         }
                         case "totalblocks" -> {
                             return String.valueOf(mine.getArea().volume());
+                        }
+                        default -> {
+                            return "INVALID_ARGUMENT";
                         }
                     }
                 } else {

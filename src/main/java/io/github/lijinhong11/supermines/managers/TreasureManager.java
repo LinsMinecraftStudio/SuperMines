@@ -57,7 +57,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         section.set("displayName", MiniMessage.miniMessage().serialize(object.getDisplayName()));
         section.set("itemStack", ItemUtils.serializeToBytes(object.getItemStack()));
         section.set("chance", object.getChance());
-        section.set("matchedMaterials", object.getMatchedMaterials());
+        section.set("matchedMaterials", object.getMatchedMaterials().stream().map(Material::toString).toList());
     }
 
     @Override
@@ -92,10 +92,10 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     }
 
     public Collection<Treasure> getAllTreasures() {
-        return new HashSet<>(treasures.values());
+        return treasures.values();
     }
 
-    public List<String> getAllTreasureIds() {
-        return new ArrayList<>(treasures.keySet());
+    public Set<String> getAllTreasureIds() {
+        return treasures.keySet();
     }
 }

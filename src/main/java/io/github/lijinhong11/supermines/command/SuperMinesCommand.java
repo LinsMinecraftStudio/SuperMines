@@ -84,11 +84,11 @@ public class SuperMinesCommand {
                                         .withPermission(Constants.Permission.TREASURES)
                                         .withArguments(
                                                 new StringArgument("id"),
-                                                new TextArgument("displayName"),
+                                                new DisplayNameArgument(),
                                                 new IntegerArgument("chance", 1, 100))
                                         .executesPlayer((player, args) -> {
                                             String id = (String) args.get("id");
-                                            String displayName = (String) args.get("displayName");
+                                            Component displayName = (Component) args.get("displayName");
                                             int chance = (int) args.get("chance");
                                             if (!id.matches(Constants.StringsAndComponents.ID_PATTERN)) {
                                                 SuperMines.getInstance()
@@ -105,8 +105,7 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
-                                            Treasure treasure = new Treasure(
-                                                    id, ComponentUtils.deserialize(displayName), is, chance);
+                                            Treasure treasure = new Treasure(id, displayName, is, chance);
                                             SuperMines.getInstance()
                                                     .getTreasureManager()
                                                     .addTreasure(treasure);
@@ -160,10 +159,10 @@ public class SuperMinesCommand {
                                                 new StringArgument("id")
                                                         .includeSuggestions(
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
-                                                new TextArgument("displayName"))
+                                                new DisplayNameArgument())
                                         .executes((sender, args) -> {
                                             String id = (String) args.get("id");
-                                            String displayName = (String) args.get("displayName");
+                                            Component displayName = (Component) args.get("displayName");
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
                                                     .getTreasure(id);
@@ -174,7 +173,7 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
-                                            treasure.setDisplayName(ComponentUtils.deserialize(displayName));
+                                            treasure.setDisplayName(displayName);
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
@@ -267,11 +266,11 @@ public class SuperMinesCommand {
                                         .withPermission(Constants.Permission.RANKS)
                                         .withArguments(
                                                 new StringArgument("rankId"),
-                                                new TextArgument("displayName"),
+                                                new DisplayNameArgument(),
                                                 new IntegerArgument("level", 1, Integer.MAX_VALUE))
                                         .executesPlayer((player, args) -> {
                                             String id = (String) args.get("rankId");
-                                            String displayName = (String) args.get("displayName");
+                                            Component displayName = (Component) args.get("displayName");
                                             int level = (int) args.get("level");
 
                                             if (!id.matches(Constants.StringsAndComponents.ID_PATTERN)) {
@@ -291,7 +290,7 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
-                                            Rank rank = new Rank(level, id, ComponentUtils.deserialize(displayName));
+                                            Rank rank = new Rank(level, id, displayName);
                                             SuperMines.getInstance()
                                                     .getRankManager()
                                                     .addRank(rank);
@@ -363,10 +362,10 @@ public class SuperMinesCommand {
                                         .withArguments(
                                                 new StringArgument("id")
                                                         .includeSuggestions(ArgumentSuggestions.strings(getRankList())),
-                                                new TextArgument("displayName"))
+                                                new DisplayNameArgument())
                                         .executes((sender, args) -> {
                                             String id = (String) args.get("id");
-                                            String displayName = (String) args.get("displayName");
+                                            Component displayName = (Component) args.get("displayName");
 
                                             Rank rank = SuperMines.getInstance()
                                                     .getRankManager()
@@ -378,15 +377,15 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
-                                            rank.setDisplayName(ComponentUtils.deserialize(displayName));
+                                            rank.setDisplayName(displayName);
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
                                                             sender,
                                                             "command.ranks.set-display-name",
                                                             MessageReplacement.replace(
-                                                                    "%rank%", rank.getRawDisplayName()),
-                                                            MessageReplacement.replace("%displayName%", displayName));
+                                                                    "%rank%", rank.getId()),
+                                                            MessageReplacement.replace("%displayName%", rank.getRawDisplayName()));
                                         }),
                                 new CommandAPICommand("giveRank")
                                         .withPermission(Constants.Permission.RANKS)
@@ -453,11 +452,10 @@ public class SuperMinesCommand {
                 .withSubcommand(new CommandAPICommand("create")
                         .withPermission(Constants.Permission.CREATE)
                         .withArguments(new StringArgument("id"))
-                        .withOptionalArguments(new TextArgument("displayName"))
+                        .withOptionalArguments(new DisplayNameArgument())
                         .executesPlayer((player, args) -> {
                             String id = (String) args.get("id");
-                            String displayName =
-                                    args.get("displayName") == null ? id : (String) args.get("displayName");
+                            Component displayName = args.getOptionalByClass("displayName", Component.class).orElse(Component.text(id));
                             createMine(player, id, displayName);
                         }))
                 .withSubcommand(new CommandAPICommand("redefine")
@@ -666,7 +664,7 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
-                                new TextArgument("displayName"))
+                                new DisplayNameArgument())
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
                             Mine mine =
@@ -678,7 +676,7 @@ public class SuperMinesCommand {
                                 return;
                             }
 
-                            mine.setDisplayName(ComponentUtils.deserialize((String) args.get("displayName")));
+                            mine.setDisplayName(args.getByClass("displayName", Component.class));
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -888,7 +886,7 @@ public class SuperMinesCommand {
                                             sender,
                                             "command.reset.time-set",
                                             MessageReplacement.replace("%mine%", mine.getRawDisplayName()),
-                                            MessageReplacement.replace("%time%", String.valueOf(resetTime)));
+                                            MessageReplacement.replace("%time%", NumberUtils.formatSeconds(resetTime)));
                         }))
                 .withSubcommand(new CommandAPICommand("settp")
                         .withAliases("setteleport")
@@ -1000,10 +998,10 @@ public class SuperMinesCommand {
         return sel.toCuboidArea();
     }
 
-    private void createMine(Player player, String id, String displayName) {
+    private void createMine(Player player, String id, Component displayName) {
         CuboidArea ca = getSelectedArea(player, id, true);
         if (ca == null) return;
-        Component name = displayName == null ? Component.text(id) : ComponentUtils.deserialize(displayName);
+        Component name = displayName == null ? Component.text(id) : displayName;
         Mine mine = new Mine(id, name, player.getWorld(), ca, new HashMap<>(), 3600, false);
         SuperMines.getInstance().getMineManager().addMine(mine);
         SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.success");
@@ -1057,15 +1055,15 @@ public class SuperMinesCommand {
         sender.sendMessage(msg);
     }
 
-    private List<String> getMineList() {
+    private Set<String> getMineList() {
         return SuperMines.getInstance().getMineManager().getAllMineIds();
     }
 
-    private List<String> getTreasuresList() {
+    private Set<String> getTreasuresList() {
         return SuperMines.getInstance().getTreasureManager().getAllTreasureIds();
     }
 
-    private List<String> getRankList() {
+    private Set<String> getRankList() {
         return SuperMines.getInstance().getRankManager().getAllRankIds();
     }
 

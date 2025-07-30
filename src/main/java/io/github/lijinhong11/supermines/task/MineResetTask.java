@@ -7,54 +7,64 @@ import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
 class MineResetTask extends AbstractTask {
     private final Mine mine;
-    private long nextResetTime;
+    private final AtomicLong nextResetTime = new AtomicLong();
 
     MineResetTask(Mine mine) {
         this.mine = mine;
+        refreshNextResetTime();
     }
 
     public long getNextResetTime() {
-        return nextResetTime;
+        return nextResetTime.get();
     }
 
     @Override
     public void run(WrappedTask wrappedTask) {
         refreshNextResetTime();
+        doReset();
+    }
 
+    private void doReset() {
         CuboidArea ca = mine.getArea();
         List<BlockPos> blockPosList = ca.asPosList();
         Map<Material, Double> blockSpawnEntries = mine.getBlockSpawnEntries();
         Map<BlockPos, Material> generated = new HashMap<>();
+
         for (BlockPos pos : blockPosList) {
             Location loc = pos.toLocation(mine.getWorld());
             Material material = loc.getBlock().getType();
-            if (mine.isOnlyFillAirWhenRegenerate() && !material.isAir()) {
-                continue;
-            }
+            if (mine.isOnlyFillAirWhenRegenerate() && !material.isAir()) continue;
 
+            Material selected = null;
             for (Map.Entry<Material, Double> entry : blockSpawnEntries.entrySet()) {
                 if (NumberUtils.matchChance(entry.getValue())) {
-                    generated.put(pos, entry.getKey());
+                    selected = entry.getKey();
                     break;
                 }
             }
+
+            if (selected == null && !blockSpawnEntries.isEmpty()) {
+                selected = NumberUtils.weightedRandom(blockSpawnEntries);
+            }
+
+            generated.put(pos, selected);
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (mine.getTeleportLocation() != null) {
-                if (mine.isPlayerInMine(p)) {
-                    p.teleportAsync(mine.getTeleportLocation());
-                }
+            if (mine.getTeleportLocation() != null && mine.isPlayerInMine(p)) {
+                p.teleportAsync(mine.getTeleportLocation());
             }
 
             SuperMines.getInstance()
@@ -63,7 +73,7 @@ class MineResetTask extends AbstractTask {
         }
 
         TaskMaker tm = SuperMines.getInstance().getTaskMaker();
-        for (BlockPos pos : mine.getArea().asPosList()) {
+        for (BlockPos pos : blockPosList) {
             Location loc = pos.toLocation(mine.getWorld());
             tm.runSync(loc, () -> loc.getBlock().setType(Material.AIR));
         }
@@ -77,6 +87,6 @@ class MineResetTask extends AbstractTask {
     }
 
     public void refreshNextResetTime() {
-        this.nextResetTime = System.currentTimeMillis() + mine.getRegenerateSeconds() * 1000L;
+        this.nextResetTime.set(System.currentTimeMillis() + mine.getRegenerateSeconds() * 1000L);
     }
 }

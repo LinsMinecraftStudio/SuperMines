@@ -28,6 +28,20 @@ public class MiniPlaceholderExtension {
                         return Tag.selfClosingInserting(data.getRank().getDisplayName());
                     }
                 })
+                .audiencePlaceholder("minedBlocks", (a, args, ctx) -> {
+                    if (args.hasNext()) {
+                        String playerName = args.pop().value();
+                        OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
+                        PlayerData data =
+                                SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
+                        return Tag.selfClosingInserting(Component.text(data.getMinedBlocks()));
+                    } else {
+                        OfflinePlayer p = (Player) a;
+                        PlayerData data =
+                                SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
+                        return Tag.selfClosingInserting(Component.text(data.getMinedBlocks()));
+                    }
+                })
                 .globalPlaceholder("mine_blockbroken", (args, ctx) -> {
                     String s = args.popOr("missing_mine_id").value();
                     Mine mine = SuperMines.getInstance().getMineManager().getMine(s);
@@ -56,7 +70,7 @@ public class MiniPlaceholderExtension {
                     if (mine == null) return Tag.selfClosingInserting(Component.text("MINE_NOT_FOUND"));
                     int broken = mine.getBlocksBroken();
                     int total = mine.getArea().volume();
-                    double percent = total == 0 ? 0.0 : (double) broken / total * 100;
+                    double percent = total == 0 ? 0d :((double) broken / total) * 100;
                     return Tag.selfClosingInserting(Component.text(String.format("%.2f", percent)));
                 })
                 .globalPlaceholder("totalblocks", (args, ctx) -> {

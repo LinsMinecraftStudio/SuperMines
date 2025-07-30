@@ -1,7 +1,6 @@
 package io.github.lijinhong11.supermines.managers;
 
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
-import io.github.lijinhong11.mdatabase.sql.conditions.Conditions;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractDatabaseObjectManager;
@@ -57,11 +56,7 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
     @Override
     public void saveAndClose() {
         for (PlayerData playerData : playerDataMap.values()) {
-            if (getOne(Conditions.eq("player_uuid", playerData.getPlayerUUID().toString())) != null) {
-                super.saveObject(playerData, Conditions.eq("player_uuid", playerData.getPlayerUUID().toString()));
-            } else {
-                super.saveObject(playerData);
-            }
+            super.saveObject(playerData);
         }
 
         super.close();

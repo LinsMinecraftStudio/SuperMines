@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.gui;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.util.GuiFiller;
+import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
@@ -15,9 +16,11 @@ import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.chat.ChatInput;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class GuiManager {
     public static void openGeneral(Player p) {
@@ -27,16 +30,16 @@ public class GuiManager {
                 .create();
 
         gui.setItem(2, 3, ItemBuilder.from(Constants.Items.MINES.apply(p)).asGuiItem(e -> {
-            e.setCancelled(true);
             openMineList(p);
+            e.setCancelled(true);
         }));
         gui.setItem(2, 5, ItemBuilder.from(Constants.Items.TREASURES.apply(p)).asGuiItem(e -> {
-            e.setCancelled(true);
             openTreasureList(p);
+            e.setCancelled(true);
         }));
         gui.setItem(2, 7, ItemBuilder.from(Constants.Items.RANKS.apply(p)).asGuiItem(e -> {
-            e.setCancelled(true);
             openRankList(p);
+            e.setCancelled(true);
         }));
 
         gui.open(p);
@@ -57,8 +60,8 @@ public class GuiManager {
                     .name(mine.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getMineInfo(p, mine))
                     .asGuiItem(e -> {
-                        e.setCancelled(true);
                         openMineManagementGui(p, mine);
+                        e.setCancelled(true);
                     });
             gui.addItem(guiItem);
         }
@@ -78,16 +81,49 @@ public class GuiManager {
 
         placeCommon(p, gui, mine, mine.getDisplayIcon(), () -> openMineManagementGui(p, mine));
 
-        gui.setItem(
+        putItem(
                 3,
                 4,
-                ItemBuilder.from(Constants.Items.SET_DISPLAY_ICON.apply(p, mine.getDisplayIcon()))
-                        .asGuiItem(e -> {
-                            Material m = openMaterialChooser(p, mt -> true, () -> openMineManagementGui(p, mine));
-                            mine.setDisplayIcon(m);
+                gui,
+                ItemBuilder.from(Constants.Items.SET_DISPLAY_ICON.apply(p, mine.getDisplayIcon())),
+                e -> {
+                    Material m = openMaterialChooser(p, mt -> true, () -> openMineManagementGui(p, mine));
+                    mine.setDisplayIcon(m);
 
-                            openMineManagementGui(p, mine);
-                        }));
+                    openMineManagementGui(p, mine);
+                });
+
+        putItem(
+                3,
+                6,
+                gui,
+                ItemBuilder.from(Constants.Items.SET_REGEN_SECONDS.apply(p, mine.getRegenerateSeconds())),
+                e -> {
+                    if (!p.hasPermission(Constants.Permission.SET_RESET_TIME)) {
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "no-permission");
+                        return;
+                    }
+
+                    gui.close(p);
+
+                    SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.mine-management.set_reset_time.prompt");
+                    ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
+                        if (result.equalsIgnoreCase("##CANCEL")) {
+                            return;
+                        }
+
+                        try {
+                            int time = Integer.parseUnsignedInt(result);
+                            mine.setRegenerateSeconds(time);
+                        } catch (NumberFormatException ex) {
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(p, "gui.input.invalid-number");
+                        }
+                    });
+
+                    openMineManagementGui(p, mine);
+                });
     }
 
     public static void openTreasureList(Player p) {
@@ -104,7 +140,10 @@ public class GuiManager {
             GuiItem guiItem = ItemBuilder.from(mat)
                     .name(treasure.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getTreasureInfo(p, treasure))
-                    .asGuiItem(e -> openTreasureManagementGui(p, treasure));
+                    .asGuiItem(e -> {
+                        openTreasureManagementGui(p, treasure);
+                        e.setCancelled(true);
+                    });
 
             gui.addItem(guiItem);
         }
@@ -136,7 +175,10 @@ public class GuiManager {
             GuiItem guiItem = ItemBuilder.from(mat)
                     .name(rank.getDisplayName())
                     .lore(SuperMines.getInstance().getLanguageManager().getRankInfo(p, rank))
-                    .asGuiItem(e -> openRankManagementGui(p, rank));
+                    .asGuiItem(e -> {
+                        openRankManagementGui(p, rank);
+                        e.setCancelled(true);
+                    });
             gui.addItem(guiItem);
         }
     }
@@ -153,39 +195,40 @@ public class GuiManager {
 
         placeCommon(p, gui, rank, Material.NAME_TAG, () -> openRankManagementGui(p, rank));
 
-        gui.setItem(
+        putItem(
                 3,
                 4,
-                ItemBuilder.from(Constants.Items.SET_RANK_LEVEL.apply(p, rank.getLevel()))
-                        .asGuiItem(e -> {
-                            e.setCancelled(true);
-                            if (!p.hasPermission(Constants.Permission.RANKS)) {
-                                SuperMines.getInstance().getLanguageManager().sendMessage(p, "no-permission");
-                                return;
-                            }
+                gui,
+                ItemBuilder.from(Constants.Items.SET_RANK_LEVEL.apply(p, rank.getLevel())),
+                e -> {
+                    if (!p.hasPermission(Constants.Permission.RANKS)) {
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "no-permission");
+                        return;
+                    }
 
-                            gui.close(p);
+                    gui.close(p);
 
+                    SuperMines.getInstance()
+                            .getLanguageManager()
+                            .sendMessage(p, "gui.rank-management.setlevel.prompt");
+                    ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
+                        if (result.equalsIgnoreCase("##CANCEL")) {
+                            return;
+                        }
+
+                        try {
+                            int lvl = Integer.parseUnsignedInt(result);
+                            rank.setLevel(lvl);
+                        } catch (NumberFormatException ex) {
                             SuperMines.getInstance()
                                     .getLanguageManager()
-                                    .sendMessage(p, "gui.rank-management.setlevel.prompt");
-                            ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-                                if (result.equalsIgnoreCase("##CANCEL")) {
-                                    return;
-                                }
+                                    .sendMessage(p, "gui.input.invalid-number");
+                        }
 
-                                try {
-                                    int lvl = Integer.parseUnsignedInt(result);
-                                    rank.setLevel(lvl);
-                                } catch (NumberFormatException ex) {
-                                    SuperMines.getInstance()
-                                            .getLanguageManager()
-                                            .sendMessage(p, "gui.rank-management.setlevel.invalid-level");
-                                }
-
-                                openRankManagementGui(p, rank);
-                            });
-                        }));
+                        openRankManagementGui(p, rank);
+                    });
+                    e.setCancelled(true);
+                });
     }
 
     /* common methods */
@@ -194,51 +237,46 @@ public class GuiManager {
                 .fillBetweenPoints(
                         6, 1, 6, 9, ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem(e -> e.setCancelled(true)));
 
-        gui.setItem(6, 1, ItemBuilder.from(Constants.Items.CLOSE.apply(p)).asGuiItem(e -> {
-            e.setCancelled(true);
-            gui.close(p);
-        }));
+        putItem(6, 1, gui, ItemBuilder.from(Constants.Items.CLOSE.apply(p)), e -> gui.close(p));
+        putItem(6, 3, gui, ItemBuilder.from(Constants.Items.PREVIOUS_PAGE.apply(p)), e -> gui.previous());
+        putItem(6, 7, gui, ItemBuilder.from(Constants.Items.NEXT_PAGE.apply(p)), e -> gui.next());
+        putItem(6, 9, gui, ItemBuilder.from(Constants.Items.BACK.apply(p)), e -> reopen.run());
+    }
 
-        gui.setItem(
-                6, 3, ItemBuilder.from(Constants.Items.PREVIOUS_PAGE.apply(p)).asGuiItem(e -> gui.previous()));
-        gui.setItem(6, 7, ItemBuilder.from(Constants.Items.NEXT_PAGE.apply(p)).asGuiItem(e -> gui.next()));
-        gui.setItem(6, 9, ItemBuilder.from(Constants.Items.BACK.apply(p)).asGuiItem(e -> reopen.run()));
+    private static void putItem(int row, int col, BaseGui gui, ItemBuilder item, Consumer<InventoryClickEvent> clickEventConsumer) {
+        gui.setItem(row, col, item.asGuiItem(e -> {
+            clickEventConsumer.accept(e);
+            e.setCancelled(true);
+        }));
     }
 
     private static <T extends Identified> void placeCommon(
             Player p, Gui gui, T object, Material icon, Runnable reopen) {
-        gui.setItem(
-                2,
-                5,
+        putItem(2, 5, gui,
                 ItemBuilder.from(icon)
                         .name(object.getDisplayName())
-                        .lore(ComponentUtils.deserialize("&7&lID: " + object.getId()))
-                        .asGuiItem(e -> e.setCancelled(true)));
+                        .lore(ComponentUtils.deserialize("&7&lID: " + object.getId())), e -> {});
 
-        gui.setItem(
-                3,
-                2,
-                ItemBuilder.from(Constants.Items.SET_DISPLAY_NAME.apply(p, object))
-                        .asGuiItem(e -> {
-                            e.setCancelled(true);
-                            if (!p.hasPermission(Constants.Permission.SET_DISPLAY_NAME)) {
-                                SuperMines.getInstance().getLanguageManager().sendMessage(p, "no-permission");
-                                return;
-                            }
+        putItem(3, 2, gui,
+                ItemBuilder.from(Constants.Items.SET_DISPLAY_NAME.apply(p, object)), e -> {
+                    if (!p.hasPermission(Constants.Permission.SET_DISPLAY_NAME)) {
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "no-permission");
+                        return;
+                    }
 
-                            gui.close(p);
+                    gui.close(p);
 
-                            SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.set-display-name.prompt");
-                            ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-                                if (result.equalsIgnoreCase("##CANCEL")) {
-                                    return;
-                                }
+                    SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.set_display_name.prompt");
+                    ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
+                        if (result.equalsIgnoreCase("##CANCEL")) {
+                            return;
+                        }
 
-                                object.setDisplayName(ComponentUtils.deserialize(result));
-                            });
+                        object.setDisplayName(ComponentUtils.deserialize(result));
+                    });
 
-                            reopen.run();
-                        }));
+                    reopen.run();
+                });
 
         GuiFiller filler = gui.getFiller();
         filler.fillBorder(ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem(e -> e.setCancelled(true)));
@@ -264,9 +302,9 @@ public class GuiManager {
             }
 
             GuiItem guiItem = ItemBuilder.from(material).asGuiItem(e -> {
-                e.setCancelled(true);
                 selected.set(material);
                 reopen.run();
+                e.setCancelled(true);
             });
 
             gui.addItem(guiItem);

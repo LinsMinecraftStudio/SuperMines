@@ -129,7 +129,9 @@ gui:
   next: "&eNext Page"
   back: "&cBack"
   close: "&cClose"
-  set-display-name:
+  input:
+    invalid-number: "&cInvalid number! It must between 1 and 2147483647"
+  set_display_name:
     prompt: "&eEnter the new display name in the chat: &b(Support color codes and MiniMessage format, type &6##CANCEL &bto cancel)"
     name: "&6Set Display Name"
     lore:
@@ -141,6 +143,12 @@ gui:
     title: "&7&lMines"
   mine-management:
     title: "&7&lMine Management &8&l- &7%mine%"
+    set-regen-seconds:
+      prompt: "&eEnter the new reset time in the chat: &b(type &6##CANCEL &bto cancel)"
+      name: "&nSet Reset Time"
+      lore:
+        - "&7Unit: Second(s)"
+        - "&7Current: &b%seconds%"
   treasures:
     title: "&e&lTreasures"
   treasure-management:
@@ -151,7 +159,6 @@ gui:
     title: "&b&lRank Management &8&l- &b%rank%"
     setlevel:
       prompt: "&eEnter the new rank level in the chat: &b(type &6##CANCEL &bto cancel)"
-      invaild-level: "&cInvalid rank level! Must between 1 and 2147483647"
       name: "&6Set Rank Level"
       lore:
         - "&7Click to set the rank level of the rank"

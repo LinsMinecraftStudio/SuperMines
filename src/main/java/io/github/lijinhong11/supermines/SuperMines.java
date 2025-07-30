@@ -9,6 +9,7 @@ import io.github.lijinhong11.supermines.command.SuperMinesCommand;
 import io.github.lijinhong11.supermines.integrates.MiniPlaceholderExtension;
 import io.github.lijinhong11.supermines.integrates.PlaceholderAPIExtension;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
+import io.github.lijinhong11.supermines.listeners.PlayerListener;
 import io.github.lijinhong11.supermines.listeners.WandListener;
 import io.github.lijinhong11.supermines.listeners.WorldEditListener;
 import io.github.lijinhong11.supermines.managers.MineManager;
@@ -110,6 +111,7 @@ public class SuperMines extends JavaPlugin {
     private void setupListeners() {
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new WandListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 
         if (getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
             new WorldEditListener();

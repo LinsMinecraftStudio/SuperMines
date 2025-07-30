@@ -49,6 +49,10 @@
                             <pattern>dev.triumphteam.gui</pattern>
                             <shadedPattern>io.github.lijinhong11.supermines.libraries.gui</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>io.github.lijinhong11.mdatabase</pattern>
+                            <shadedPattern>io.github.lijinhong11.supermines.libraries.database</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
@@ -64,6 +68,10 @@
     </build>
 
     <repositories>
+        <repository>
+            <id>minecraft-libraries</id>
+            <url>https://libraries.minecraft.net</url>
+        </repository>
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/releases/</url>
@@ -102,6 +110,12 @@
             <artifactId>triumph-gui</artifactId>
             <version>3.1.11</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
@@ -115,6 +129,12 @@
             <groupId>dev.jorel</groupId>
             <artifactId>commandapi-bukkit-core</artifactId>
             <version>10.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mojang</groupId>
+            <artifactId>brigadier</artifactId>
+            <version>1.0.18</version>
             <scope>provided</scope>
         </dependency>
 
