@@ -92,7 +92,6 @@ public class GuiManager {
 
                     openMineManagementGui(p, mine);
                 });
-
         putItem(
                 3,
                 6,
@@ -100,7 +99,7 @@ public class GuiManager {
                 ItemBuilder.from(Constants.Items.SET_REGEN_SECONDS.apply(p, mine.getRegenerateSeconds())),
                 e -> {
                     if (!p.hasPermission(Constants.Permission.SET_RESET_TIME)) {
-                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "no-permission");
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "common.no-permission");
                         return;
                     }
 
@@ -115,15 +114,34 @@ public class GuiManager {
                         try {
                             int time = Integer.parseUnsignedInt(result);
                             mine.setRegenerateSeconds(time);
+
+                            SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
                         } catch (NumberFormatException ex) {
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(p, "gui.input.invalid-number");
                         }
+
+                        openMineManagementGui(p, mine);
                     });
+                });
+        putItem(
+                3,
+                8,
+                gui,
+                ItemBuilder.from(Constants.Items.ONLY_FILL_AIR.apply(p, mine.isOnlyFillAirWhenRegenerate())),
+                e -> {
+                    if (!p.hasPermission(Constants.Permission.SET_ONLY_FILL_AIR)) {
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "common.no-permission");
+                        return;
+                    }
+
+                    mine.setOnlyFillAirWhenRegenerate(!mine.isOnlyFillAirWhenRegenerate());
 
                     openMineManagementGui(p, mine);
                 });
+
+        gui.open(p);
     }
 
     public static void openTreasureList(Player p) {
@@ -202,7 +220,7 @@ public class GuiManager {
                 ItemBuilder.from(Constants.Items.SET_RANK_LEVEL.apply(p, rank.getLevel())),
                 e -> {
                     if (!p.hasPermission(Constants.Permission.RANKS)) {
-                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "no-permission");
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "common.no-permission");
                         return;
                     }
 
@@ -260,7 +278,7 @@ public class GuiManager {
         putItem(3, 2, gui,
                 ItemBuilder.from(Constants.Items.SET_DISPLAY_NAME.apply(p, object)), e -> {
                     if (!p.hasPermission(Constants.Permission.SET_DISPLAY_NAME)) {
-                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "no-permission");
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "common.no-permission");
                         return;
                     }
 
@@ -273,9 +291,9 @@ public class GuiManager {
                         }
 
                         object.setDisplayName(ComponentUtils.deserialize(result));
-                    });
 
-                    reopen.run();
+                        reopen.run();
+                    });
                 });
 
         GuiFiller filler = gui.getFiller();

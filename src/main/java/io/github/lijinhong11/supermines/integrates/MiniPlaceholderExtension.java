@@ -42,15 +42,6 @@ public class MiniPlaceholderExtension {
                         return Tag.selfClosingInserting(Component.text(data.getMinedBlocks()));
                     }
                 })
-                .globalPlaceholder("mine_blockbroken", (args, ctx) -> {
-                    String s = args.popOr("missing_mine_id").value();
-                    Mine mine = SuperMines.getInstance().getMineManager().getMine(s);
-                    if (mine != null) {
-                        return Tag.selfClosingInserting(Component.text(mine.getBlocksBroken()));
-                    } else {
-                        return Tag.selfClosingInserting(Component.text("MINE_NOT_FOUND"));
-                    }
-                })
                 .globalPlaceholder("mine_blocksbroken", (args, ctx) -> {
                     String mineId = args.popOr("missing_mine_id").value();
                     Mine mine = SuperMines.getInstance().getMineManager().getMine(mineId);
@@ -70,7 +61,16 @@ public class MiniPlaceholderExtension {
                     if (mine == null) return Tag.selfClosingInserting(Component.text("MINE_NOT_FOUND"));
                     int broken = mine.getBlocksBroken();
                     int total = mine.getArea().volume();
-                    double percent = total == 0 ? 0d :((double) broken / total) * 100;
+                    double percent = total == 0 ? 100d : ((double) (total - broken) / total) * 100;
+                    return Tag.selfClosingInserting(Component.text(String.format("%.2f", percent)));
+                })
+                .globalPlaceholder("mine_minedpercent", (args, ctx) -> {
+                    String mineId = args.popOr("missing_mine_id").value();
+                    Mine mine = SuperMines.getInstance().getMineManager().getMine(mineId);
+                    if (mine == null) return Tag.selfClosingInserting(Component.text("MINE_NOT_FOUND"));
+                    int broken = mine.getBlocksBroken();
+                    int total = mine.getArea().volume();
+                    double percent = total == 0 ? 0d : ((double) broken / total) * 100;
                     return Tag.selfClosingInserting(Component.text(String.format("%.2f", percent)));
                 })
                 .globalPlaceholder("totalblocks", (args, ctx) -> {

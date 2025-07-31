@@ -75,6 +75,12 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                         case "blockpercent" -> {
                             int broken = mine.getBlocksBroken();
                             int total = mine.getArea().volume();
+                            double percent = total == 0 ? 100d : ((double) (total - broken) / total) * 100;
+                            return String.format("%.2f", percent);
+                        }
+                        case "minedpercent" -> {
+                            int broken = mine.getBlocksBroken();
+                            int total = mine.getArea().volume();
                             double percent = total == 0 ? 0d : ((double) broken / total) * 100;
                             return String.format("%.2f", percent);
                         }

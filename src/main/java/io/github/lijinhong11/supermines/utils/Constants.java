@@ -61,19 +61,19 @@ public class Constants {
         public static final Function<Player, ItemStack> TREASURES = player -> ItemBuilder.from(Material.CHEST)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.treasures.title"))
                 .build();
-        public static final Function<Player, ItemStack> RANKS = player -> ItemBuilder.from(Material.CHEST)
+        public static final Function<Player, ItemStack> RANKS = player -> ItemBuilder.from(Material.NAME_TAG)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.ranks.title"))
                 .build();
 
         public static final BiFunction<Player, Identified, ItemStack> SET_DISPLAY_NAME =
                 (p, i) -> ItemBuilder.from(Material.NAME_TAG)
-                        .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.set_display_name"))
+                        .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.set_display_name.name"))
                         .lore(SuperMines.getInstance()
                                 .getLanguageManager()
                                 .getMsgComponentList(
                                         p,
                                         "gui.set_display_name.lore",
-                                        MessageReplacement.replace("name", i.getRawDisplayName())))
+                                        MessageReplacement.replace("%name%", i.getRawDisplayName())))
                         .build();
 
         // mine management
@@ -81,7 +81,7 @@ public class Constants {
                 (p, m) -> ItemBuilder.from(Material.STONE)
                         .name(SuperMines.getInstance()
                                 .getLanguageManager()
-                                .getMsgComponent(p, "gui.mine-management.set_display_icon"))
+                                .getMsgComponent(p, "gui.mine-management.set_display_icon.name"))
                         .lore(SuperMines.getInstance()
                                 .getLanguageManager()
                                 .getMsgComponentList(
@@ -90,16 +90,28 @@ public class Constants {
                                         MessageReplacement.replace("%material%", m.toString())))
                         .build();
         public static final BiFunction<Player, Integer, ItemStack> SET_REGEN_SECONDS =
-                (p, i) -> ItemBuilder.from(Material.STONE)
+                (p, i) -> ItemBuilder.from(Material.CLOCK)
                         .name(SuperMines.getInstance()
                                 .getLanguageManager()
-                                .getMsgComponent(p, "gui.mine-management.set_regen_seconds"))
+                                .getMsgComponent(p, "gui.mine-management.set_regen_seconds.name"))
                         .lore(SuperMines.getInstance()
                                 .getLanguageManager()
                                 .getMsgComponentList(
                                         p,
                                         "gui.mine-management.set_regen_seconds.lore",
                                         MessageReplacement.replace("%seconds%", String.valueOf(i))))
+                        .build();
+        public static final BiFunction<Player, Boolean, ItemStack> ONLY_FILL_AIR =
+                (p, b) -> ItemBuilder.from(Material.STONE)
+                        .name(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponent(p, "gui.mine-management.only_fill_air.name"))
+                        .lore(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponentList(
+                                        p,
+                                        "gui.mine-management.only_fill_air.lore",
+                                MessageReplacement.replace("%status%", StringUtils.getBooleanStatus(p, b))))
                         .build();
 
         // rank management

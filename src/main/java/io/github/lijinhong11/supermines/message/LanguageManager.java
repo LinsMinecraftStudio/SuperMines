@@ -6,7 +6,7 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
-import io.github.lijinhong11.supermines.utils.Constants;
+
 import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URI;
@@ -51,9 +51,6 @@ public final class LanguageManager {
     private void loadLanguages() {
         detectPlayerLocale = plugin.getConfig().getBoolean("detect-player-locale", true);
 
-        defaultConfiguration =
-                YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "language/en-US.yml"));
-
         File pluginFolder = plugin.getDataFolder();
 
         URL fileURL = Objects.requireNonNull(plugin.getClass().getClassLoader().getResource("language/"));
@@ -69,22 +66,28 @@ public final class LanguageManager {
                 JarEntry entry = jarEntries.nextElement();
                 String name = entry.getName();
                 if (name.startsWith("language/") && !entry.isDirectory()) {
-                    String realName = name.replaceAll("language/", "");
+                    String realName = name.replaceFirst("language/", "");
                     File destinationFile = new File(pluginFolder, "language/" + realName);
                     if (!destinationFile.exists()) {
                         plugin.saveResource("language/" + realName, false);
-                    }
-
-                    if (destinationFile.exists()) {
+                    } else {
                         ConfigFileUtil.completeLangFile(plugin, "language/" + realName);
                     }
                 }
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (Exception ignored) {
         }
 
-        File[] languageFiles = new File(pluginFolder, "language").listFiles();
+        defaultConfiguration =
+                YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "language/en-US.yml"));
+
+        File languageFolder = new File(pluginFolder, "language");
+        if (!languageFolder.exists()) {
+            loadLanguages();
+            return;
+        }
+
+        File[] languageFiles = languageFolder.listFiles(f -> f.getName().endsWith(".yml"));
         if (languageFiles != null) {
             for (File languageFile : languageFiles) {
                 String language = convertToRightLangCode(languageFile.getName().replaceAll(".yml", ""));
@@ -211,7 +214,7 @@ public final class LanguageManager {
     }
 
     public static Component parseToComponent(String msg) {
-        return Constants.StringsAndComponents.RESET.append(ComponentUtils.deserialize(msg));
+        return ComponentUtils.deserialize(msg);
     }
 
     public static List<Component> parseToComponentList(List<String> msgList) {

@@ -5,8 +5,11 @@ time:
   minutes: "minutes"
   hour: "hour"
   hours: "hours"
-location-format: "&fX: &b%x%, &fY: &b%y%, &fZ: &b%z%"
-no-permission: "&cYou don't have permission to do that!"
+common:
+  location-format: "&fX: &b%x%, &fY: &b%y%, &fZ: &b%z%"
+  no-permission: "&cYou don't have permission to do that!"
+  enabled: "&aEnabled"
+  disabled: "&cDisabled"
 wand:
   name: "&eSuper&aMine &dPosition Set Wand"
   lore:
@@ -141,20 +144,37 @@ gui:
     title: "&eSuper&aMines"
   mines:
     title: "&7&lMines"
+    info:
+      - ""
   mine-management:
     title: "&7&lMine Management &8&l- &7%mine%"
-    set-regen-seconds:
-      prompt: "&eEnter the new reset time in the chat: &b(type &6##CANCEL &bto cancel)"
-      name: "&nSet Reset Time"
+    set_display_icon:
+      name: "&6Set Display Icon"
       lore:
+        - "&7Click to set the display icon of the mine"
+        - "&7Current: &b%material%"
+    set_regen_seconds:
+      prompt: "&eEnter the new reset time in the chat: &b(type &6##CANCEL &bto cancel)"
+      name: "&bSet Reset Time"
+      lore:
+        - "&7Click to set the reset time of the mine"
         - "&7Unit: Second(s)"
         - "&7Current: &b%seconds%"
+    only_fill_air:
+      name: "&aOnly Fill Air When Reset"
+      lore:
+        - "&7Click to decide whether only fill air when the mine reset"
+        - "&7Current: &b%status%"
   treasures:
     title: "&e&lTreasures"
+    info:
+      - ""
   treasure-management:
     title: "&e&lTreasure Management &8&l- &e%treasure%"
   ranks:
     title: "&b&lRanks"
+    info:
+      - ""
   rank-management:
     title: "&b&lRank Management &8&l- &b%rank%"
     setlevel:
