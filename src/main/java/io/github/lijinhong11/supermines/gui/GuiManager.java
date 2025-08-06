@@ -27,6 +27,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class GuiManager {
     public static void openGeneral(Player p) {
@@ -205,7 +207,7 @@ public class GuiManager {
 
         fillPageButtons(p, gui, () -> openMineManagementGui(p, mine));
 
-        putItem(6, 1, gui, ItemBuilder.from(Constants.Items.ADD_BLOCK_GENERATE.apply(p)), e -> {
+        putItem(6, 1, gui, ItemBuilder.from(Constants.Items.ADD.apply(p)), e -> {
             Material m = openMaterialChooser(p, Material::isBlock, () -> {});
 
             SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.mine-management.block_spawn.add_prompt", MessageReplacement.replace("%material%", m.toString()));
@@ -303,7 +305,113 @@ public class GuiManager {
 
         placeCommon(p, gui, treasure, Material.CHEST, () -> openTreasureManagementGui(p, treasure));
 
-        putItem(3,2, gui);
+        putItem(3, 4, gui, ItemBuilder.from(Constants.Items.SET_CHANCE.apply(p, treasure.getChance())), e -> {
+            if (!p.hasPermission(Constants.Permission.TREASURES)) {
+                SuperMines.getInstance().getLanguageManager().sendMessage(p, "common.no-permission");
+                return;
+            }
+
+            gui.close(p);
+
+            ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
+                if (result.equalsIgnoreCase("##CANCEL")) {
+                    return;
+                }
+
+                try {
+                    double d = Double.parseDouble(result);
+
+                    if (d >= 100 || d < 0) {
+                        throw new NumberFormatException();
+                    }
+
+                    treasure.setChance(d);
+                } catch (NumberFormatException ex) {
+                    SuperMines.getInstance()
+                            .getLanguageManager()
+                            .sendMessage(p, "gui.input.invalid-precent");
+                }
+
+                openTreasureManagementGui(p, treasure);
+            });
+        });
+
+        putItem(3, 8, gui, ItemBuilder.from(Constants.Items.MATCHED_MATERIALS.apply(p)), e -> openMatchedMaterials(p, treasure));
+
+        putTreasureItemStack(gui, p, treasure);
+    }
+
+    private static void putTreasureItemStack(BaseGui gui, Player p, Treasure t) {
+        ItemStack clone = t.getItemStack().clone();
+
+        ItemMeta meta = clone.getItemMeta();
+        Component newName = SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.treasure-management.itemstack.name",
+                MessageReplacement.replace("%name%", ComponentUtils.serialize(meta.displayName())));
+
+        meta.displayName(newName);
+        meta.lore(SuperMines.getInstance().getLanguageManager().getMsgComponentList(p, "gui.treasure-management.itemstack.lore"));
+
+        clone.setItemMeta(meta);
+
+        putItem(3, 6, gui, ItemBuilder.from(clone), e -> {
+            if (!p.hasPermission(Constants.Permission.TREASURES)) {
+                SuperMines.getInstance().getLanguageManager().sendMessage(p, "common.no-permission");
+                return;
+            }
+
+            ClickType type = e.getClick();
+            if (type.isRightClick()) {
+                if (p.getInventory().firstEmpty() != -1) {
+                    p.getInventory().addItem(t.getItemStack());
+                }
+            } else if (type.isLeftClick()) {
+                ItemStack item = p.getItemOnCursor();
+                if (!item.getType().isAir()) {
+                    t.setItemStack(item);
+                    putTreasureItemStack(gui, p, t);
+                }
+            }
+        });
+    }
+
+    private static void openMatchedMaterials(Player p, Treasure treasure) {
+        PaginatedGui gui = Gui.paginated()
+                .rows(6)
+                .pageSize(45)
+                .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.treasure-management.matched_materials.title"))
+                .create();
+
+        fillPageButtons(p, gui, () -> openTreasureManagementGui(p, treasure));
+
+        putItem(6, 1, gui, ItemBuilder.from(Constants.Items.ADD.apply(p)), e -> {
+            Material m = openMaterialChooser(p, Material::isBlock, () -> {});
+
+            if (!treasure.getMatchedMaterials().contains(m)) {
+                treasure.addMatchedMaterial(m);
+            }
+
+            openMatchedMaterials(p, treasure);
+        });
+
+        for (Material material : treasure.getMatchedMaterials()) {
+            List<Component> lore = SuperMines.getInstance().getLanguageManager().getMsgComponentList(p, "gui.treasure-management.matched_materials.each_lore");
+            GuiItem item = ItemBuilder.from(material)
+                    .lore(lore)
+                    .asGuiItem(e -> {
+                        if (!p.hasPermission(Constants.Permission.BLOCK_GENERATE)) {
+                            SuperMines.getInstance().getLanguageManager().sendMessage(p, "common.no-permission");
+                            return;
+                        }
+
+                        treasure.removeMatchedMaterial(material);
+                        openMatchedMaterials(p, treasure);
+
+                        e.setCancelled(true);
+                    });
+            gui.addItem(item);
+        }
+
+        gui.open(p);
     }
 
     public static void openRankList(Player p) {
@@ -371,7 +479,6 @@ public class GuiManager {
 
                         openRankManagementGui(p, rank);
                     });
-                    e.setCancelled(true);
                 });
     }
 

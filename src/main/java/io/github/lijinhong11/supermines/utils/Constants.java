@@ -13,7 +13,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
 
 public class Constants {
     private Constants() {}
@@ -76,6 +75,11 @@ public class Constants {
                                         "gui.set_display_name.lore",
                                         MessageReplacement.replace("%name%", i.getRawDisplayName())))
                         .build();
+        public static final Function<Player, ItemStack> ADD = p -> ItemBuilder.from(Material.PAPER)
+                .name(SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMsgComponent(p, "gui.add"))
+                .build();
 
         // mine management
         public static final BiFunction<Player, Material, ItemStack> SET_DISPLAY_ICON =
@@ -138,16 +142,26 @@ public class Constants {
                                         "gui.mine-management.block_spawn_entries.lore",
                                         MessageReplacement.replace("level", String.valueOf(i))))
                         .build();
-        public static final Function<Player, ItemStack> ADD_BLOCK_GENERATE = p -> ItemBuilder.from(Material.PAPER)
-                .name(SuperMines.getInstance()
-                        .getLanguageManager()
-                        .getMsgComponent(p, "gui.mine-management.block_spawn_entries.add.name"))
-                .lore(SuperMines.getInstance()
-                        .getLanguageManager()
-                        .getMsgComponentList(
-                                p,
-                                "gui.mine-management.block_spawn_entries.add.lore"))
-                .build();
+
+        // treasure management
+        public static final BiFunction<Player, Double, ItemStack> SET_CHANCE =
+                (p, i) -> ItemBuilder.from(Material.BRUSH)
+                        .name(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponent(p, "gui.treasure-management.set_chance.name"))
+                        .lore(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponentList(
+                                        p,
+                                        "gui.treasure-management.set_chance.lore",
+                                        MessageReplacement.replace("%chance%", String.valueOf(i))))
+                        .build();
+        public static final Function<Player, ItemStack> MATCHED_MATERIALS =
+                p -> ItemBuilder.from(Material.STONE)
+                        .name(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponent(p, "gui.treasure-management.matched_materials.name"))
+                        .build();
 
         // rank management
         public static final BiFunction<Player, Integer, ItemStack> SET_RANK_LEVEL =

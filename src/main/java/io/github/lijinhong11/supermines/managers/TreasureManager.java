@@ -35,7 +35,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
             return null;
         }
 
-        int chance = section.getInt("chance");
+        double chance = section.getDouble("chance");
         if (chance <= 0 || chance > 100) {
             chance = 1;
             section.set("chance", 1);

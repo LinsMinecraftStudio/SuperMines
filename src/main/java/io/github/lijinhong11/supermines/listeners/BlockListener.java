@@ -61,7 +61,7 @@ public class BlockListener implements Listener {
         if (!treasures.isEmpty()) {
             for (Treasure treasure : treasures) {
                 if (treasure.getMatchedMaterials().contains(e.getBlock().getType())) {
-                    int chance = treasure.getChance();
+                    double chance = treasure.getChance();
                     if (NumberUtils.matchChance(chance)) {
                         world.dropItemNaturally(loc, treasure.getItemStack().clone());
                     }

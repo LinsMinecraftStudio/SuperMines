@@ -15,17 +15,17 @@ public final class Treasure implements Identified {
     private final String id;
     private Component displayName;
     private ItemStack itemStack;
-    private int chance;
+    private double chance;
     private List<Material> matchedMaterials;
 
     @ParametersAreNonnullByDefault
-    public Treasure(String id, Component displayName, ItemStack itemStack, int chance) {
+    public Treasure(String id, Component displayName, ItemStack itemStack, double chance) {
         this(id, displayName, itemStack, chance, List.of());
     }
 
     @ParametersAreNonnullByDefault
     public Treasure(
-            String id, Component displayName, ItemStack itemStack, int chance, List<Material> matchedMaterials) {
+            String id, Component displayName, ItemStack itemStack, double chance, List<Material> matchedMaterials) {
         this.id = id;
         this.displayName = displayName;
         this.itemStack = itemStack;
@@ -59,19 +59,23 @@ public final class Treasure implements Identified {
         this.itemStack = itemStack;
     }
 
-    public int getChance() {
+    public double getChance() {
         return chance;
     }
 
-    public void setChance(int chance) {
+    public void setChance(double chance) {
         this.chance = chance;
+    }
+
+    public void addMatchedMaterial(Material material) {
+        matchedMaterials.add(material);
+    }
+
+    public void removeMatchedMaterial(Material material) {
+        matchedMaterials.remove(material);
     }
 
     public List<Material> getMatchedMaterials() {
         return matchedMaterials;
-    }
-
-    public void setMatchedMaterials(List<Material> matchedMaterials) {
-        this.matchedMaterials = matchedMaterials;
     }
 }
