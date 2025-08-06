@@ -13,6 +13,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 public class Constants {
     private Constants() {}
@@ -102,7 +103,7 @@ public class Constants {
                                         MessageReplacement.replace("%seconds%", String.valueOf(i))))
                         .build();
         public static final BiFunction<Player, Boolean, ItemStack> ONLY_FILL_AIR =
-                (p, b) -> ItemBuilder.from(Material.STONE)
+                (p, b) -> ItemBuilder.from(Material.BARRIER)
                         .name(SuperMines.getInstance()
                                 .getLanguageManager()
                                 .getMsgComponent(p, "gui.mine-management.only_fill_air.name"))
@@ -113,6 +114,40 @@ public class Constants {
                                         "gui.mine-management.only_fill_air.lore",
                                 MessageReplacement.replace("%status%", StringUtils.getBooleanStatus(p, b))))
                         .build();
+        public static final BiFunction<Player, Integer, ItemStack> SET_REQUIRED_RANK_LEVEL =
+                (p, i) -> ItemBuilder.from(Material.NAME_TAG)
+                        .name(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponent(p, "gui.mine-management.set_required_lvl.name"))
+                        .lore(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponentList(
+                                        p,
+                                        "gui.mine-management.set_required_lvl.lore",
+                                        MessageReplacement.replace("level", String.valueOf(i))))
+                        .build();
+        public static final BiFunction<Player, Integer, ItemStack> BLOCK_SPAWN_ENTRIES =
+                (p, i) -> ItemBuilder.from(Material.COAL_ORE)
+                        .name(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponent(p, "gui.mine-management.block_spawn_entries.name"))
+                        .lore(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponentList(
+                                        p,
+                                        "gui.mine-management.block_spawn_entries.lore",
+                                        MessageReplacement.replace("level", String.valueOf(i))))
+                        .build();
+        public static final Function<Player, ItemStack> ADD_BLOCK_GENERATE = p -> ItemBuilder.from(Material.PAPER)
+                .name(SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMsgComponent(p, "gui.mine-management.block_spawn_entries.add.name"))
+                .lore(SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMsgComponentList(
+                                p,
+                                "gui.mine-management.block_spawn_entries.add.lore"))
+                .build();
 
         // rank management
         public static final BiFunction<Player, Integer, ItemStack> SET_RANK_LEVEL =

@@ -160,6 +160,12 @@ gui:
         - "&7Click to set the reset time of the mine"
         - "&7Unit: Second(s)"
         - "&7Current: &b%seconds%"
+    set_required_lvl:
+      prompt: "&eEnter the new required rank level in the chat: &b(type &6##CANCEL &bto cancel)"
+      name: "&bSet Required Rank Level"
+      lore:
+        - "&7Click to set the required rank level of the mine"
+        - "&7Current: &b%level%"
     only_fill_air:
       name: "&aOnly Fill Air When Reset"
       lore:
