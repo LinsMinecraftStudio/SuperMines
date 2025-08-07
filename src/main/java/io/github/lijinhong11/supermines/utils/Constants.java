@@ -24,10 +24,14 @@ public class Constants {
     }
 
     public static class Keys {
+        private Keys() {}
+
         public static final NamespacedKey WAND_KEY = new NamespacedKey(SuperMines.getInstance(), "supermines_wand");
     }
 
     public static class Items {
+        private Items() {}
+
         public static final Material DEFAULT_MINE_ICON = Material.STONE;
         public static final ItemStack BACKGROUND = ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE)
                 .name(Component.space())
@@ -130,17 +134,11 @@ public class Constants {
                                         "gui.mine-management.set_required_lvl.lore",
                                         MessageReplacement.replace("level", String.valueOf(i))))
                         .build();
-        public static final BiFunction<Player, Integer, ItemStack> BLOCK_SPAWN_ENTRIES =
-                (p, i) -> ItemBuilder.from(Material.COAL_ORE)
+        public static final Function<Player, ItemStack> BLOCK_SPAWN_ENTRIES =
+            p -> ItemBuilder.from(Material.COAL_ORE)
                         .name(SuperMines.getInstance()
                                 .getLanguageManager()
                                 .getMsgComponent(p, "gui.mine-management.block_spawn_entries.name"))
-                        .lore(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponentList(
-                                        p,
-                                        "gui.mine-management.block_spawn_entries.lore",
-                                        MessageReplacement.replace("level", String.valueOf(i))))
                         .build();
 
         // treasure management

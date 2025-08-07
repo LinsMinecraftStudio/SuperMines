@@ -132,10 +132,14 @@ gui:
   next: "&eNext Page"
   back: "&cBack"
   close: "&cClose"
+  add: "&dAdd"
+  material-chooser:
+    title: "&dChoose a material"
   input:
-    invalid-number: "&cInvalid number! It must between 1 and 2147483647"
+    invalid-number: "&cInvalid number! The number cannot be less than 0!"
+    invalid-percent: "&cInvalid Percentage! The value must be a positive number and less than or equal to 100"
   set_display_name:
-    prompt: "&eEnter the new display name in the chat: &b(Support color codes and MiniMessage format, type &6##CANCEL &bto cancel)"
+    prompt: "&eEnter the new display name in the chat: &b(Support color codes, type &6##CANCEL &bto cancel)"
     name: "&6Set Display Name"
     lore:
       - "&7Click to set the display name of the mine"
@@ -171,16 +175,32 @@ gui:
       lore:
         - "&7Click to decide whether only fill air when the mine reset"
         - "&7Current: &b%status%"
+    block_spawn_entries:
+      name: "&bGenerated Block List"
+      set_precent_prompt: "&eEnter the new percent of material %material% in the chat: &b(type &6##CANCEL &bto cancel)"
   treasures:
     title: "&e&lTreasures"
     info:
-      - ""
+      - "&7Chance: &e%chance%"
+      - "&7Matched Materials Amount: &a%matched_materials%"
   treasure-management:
     title: "&e&lTreasure Management &8&l- &e%treasure%"
+    set_chance:
+      name: "&aSet Chance"
+      lore:
+        - "&7Click to set the chance"
+        - "&7Current: &b%chance%"
+      prompt: "&eEnter the new chance of the treasure in the chat: &b(type &6##CANCEL &bto cancel)"
+    itemstack:
+      name: ""
+      lore:
+        - ""
+    matched_materials:
+      name: ""
   ranks:
     title: "&b&lRanks"
     info:
-      - ""
+      - "&7Level: &b%level%"
   rank-management:
     title: "&b&lRank Management &8&l- &b%rank%"
     setlevel:

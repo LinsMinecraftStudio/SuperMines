@@ -18,6 +18,7 @@ import io.github.lijinhong11.supermines.managers.RankManager;
 import io.github.lijinhong11.supermines.managers.TreasureManager;
 import io.github.lijinhong11.supermines.message.LanguageManager;
 import io.github.lijinhong11.supermines.task.TaskMaker;
+import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
 import io.github.lijinhong11.supermines.utils.Constants;
 import java.io.File;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,6 +42,7 @@ public class SuperMines extends JavaPlugin {
 
         saveDefaultConfig();
         saveConfig();
+        ConfigFileUtil.completeFile(this, "config.yml");
 
         foliaLibImpl = new FoliaLib(this);
     }

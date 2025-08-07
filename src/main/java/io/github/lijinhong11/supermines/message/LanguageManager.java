@@ -11,6 +11,7 @@ import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -55,8 +56,10 @@ public final class LanguageManager {
 
         URL fileURL = Objects.requireNonNull(plugin.getClass().getClassLoader().getResource("language/"));
         String jarPath = fileURL.toString().substring(0, fileURL.toString().indexOf("!/") + 2);
+        File languageFolder = new File(pluginFolder, "language");
 
         try {
+            languageFolder.mkdirs();
             URL jar = URI.create(jarPath).toURL();
             JarURLConnection jarCon = (JarURLConnection) jar.openConnection();
             JarFile jarFile = jarCon.getJarFile();
@@ -65,10 +68,14 @@ public final class LanguageManager {
             while (jarEntries.hasMoreElements()) {
                 JarEntry entry = jarEntries.nextElement();
                 String name = entry.getName();
-                if (name.startsWith("language/") && !entry.isDirectory()) {
+                if (!name.startsWith("language/")) {
+                    continue;
+                }
+
+                if (!entry.isDirectory()) {
                     String realName = name.replaceFirst("language/", "");
-                    File destinationFile = new File(pluginFolder, "language/" + realName);
-                    if (!destinationFile.exists()) {
+                    Path path = languageFolder.toPath().resolve(realName);
+                    if (!path.toFile().exists()) {
                         plugin.saveResource("language/" + realName, false);
                     } else {
                         ConfigFileUtil.completeLangFile(plugin, "language/" + realName);
@@ -80,12 +87,6 @@ public final class LanguageManager {
 
         defaultConfiguration =
                 YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "language/en-US.yml"));
-
-        File languageFolder = new File(pluginFolder, "language");
-        if (!languageFolder.exists()) {
-            loadLanguages();
-            return;
-        }
 
         File[] languageFiles = languageFolder.listFiles(f -> f.getName().endsWith(".yml"));
         if (languageFiles != null) {

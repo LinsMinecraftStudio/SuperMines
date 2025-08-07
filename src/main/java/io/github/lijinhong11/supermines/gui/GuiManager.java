@@ -185,7 +185,7 @@ public class GuiManager {
                 4,
                 5,
                 gui,
-                ItemBuilder.from(Constants.Items.BLOCK_SPAWN_ENTRIES.apply(p, mine.getRegenerateSeconds())),
+                ItemBuilder.from(Constants.Items.BLOCK_SPAWN_ENTRIES.apply(p)),
                 e -> {
                     if (!p.hasPermission(Constants.Permission.BLOCK_GENERATE)) {
                         SuperMines.getInstance().getLanguageManager().sendMessage(p, "common.no-permission");
@@ -313,6 +313,7 @@ public class GuiManager {
 
             gui.close(p);
 
+            SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.treasure-management.set_chance.prompt");
             ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
                 if (result.equalsIgnoreCase("##CANCEL")) {
                     return;

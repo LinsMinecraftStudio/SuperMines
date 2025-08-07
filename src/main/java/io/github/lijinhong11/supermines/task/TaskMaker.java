@@ -21,6 +21,10 @@ public class TaskMaker {
 
     public void startup() {
         for (Mine mine : SuperMines.getInstance().getMineManager().getAllMines()) {
+            if (mine.getRegenerateSeconds() < 1) {
+                continue;
+            }
+
             startMineResetTask(mine);
 
             for (int second : mine.getWarningSeconds()) {
