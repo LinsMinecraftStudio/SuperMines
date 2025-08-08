@@ -5,6 +5,7 @@ import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -16,16 +17,16 @@ public final class Treasure implements Identified {
     private Component displayName;
     private ItemStack itemStack;
     private double chance;
-    private List<Material> matchedMaterials;
+    private Set<Material> matchedMaterials;
 
     @ParametersAreNonnullByDefault
     public Treasure(String id, Component displayName, ItemStack itemStack, double chance) {
-        this(id, displayName, itemStack, chance, List.of());
+        this(id, displayName, itemStack, chance, Set.of());
     }
 
     @ParametersAreNonnullByDefault
     public Treasure(
-            String id, Component displayName, ItemStack itemStack, double chance, List<Material> matchedMaterials) {
+            String id, Component displayName, ItemStack itemStack, double chance, Set<Material> matchedMaterials) {
         this.id = id;
         this.displayName = displayName;
         this.itemStack = itemStack;

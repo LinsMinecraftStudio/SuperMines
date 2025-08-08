@@ -53,6 +53,8 @@ command:
       - "&e/sm treasures setItem <treasure> &7- &aSet the reward item (the item must be held in hand)"
       - "&e/sm treasures setChance <treasure> <chance> &7- &aSet the chance of a treasure"
       - "&e/sm treasures setDisplayName <treasure> <displayName> &7- &aSet the display name"
+      - "&e/sm treasures addMatch <treasure> <material> &7- &aAdd match material"
+      - "&e/sm treasures removeMatch <treasure> <material> &7- &aRemove match material"
     ranks:
       - "&e/sm ranks list &7- &aList all ranks"
       - "&e/sm ranks create <id> <displayName> <level> &7- &aAdd a rank"
@@ -104,6 +106,11 @@ command:
       success: "&aThe treasure &d%treasure% &ahas been created successfully!"
     remove:
       success: "&aThe treasure &d%treasure% &ahas been removed successfully!"
+    matched_materials:
+      exists: "&cThe material is already exists in the list!"
+      not_exists: "&cThe material isn't in the list!"
+      add_success: "&aThe material &b%material% has been added to the treasure &d%treasure%"
+      remove_success: "&aThe material &b%material% has been removed from the treasure &d%treasure%"
   ranks:
     set-display-name: "&aThe display name of rank &d%rank% &ais set to &b%displayName%"
     set-level: "&aThe level of rank &d%rank% &ais set to &b%level%"
@@ -149,7 +156,9 @@ gui:
   mines:
     title: "&7&lMines"
     info:
-      - ""
+      - "&7World: &a%world%"
+      - "&7Reset Time: &b%regenerate_seconds%"
+      - "&7Position: &efrom %pos1% to %pos2%"
   mine-management:
     title: "&7&lMine Management &8&l- &7%mine%"
     set_display_icon:
@@ -192,11 +201,12 @@ gui:
         - "&7Current: &b%chance%"
       prompt: "&eEnter the new chance of the treasure in the chat: &b(type &6##CANCEL &bto cancel)"
     itemstack:
-      name: ""
+      name: "&dSet Item Stack"
       lore:
-        - ""
+        - "&7Left click to set the item as the item on the cursor"
+        - "&7Right click to get the item"
     matched_materials:
-      name: ""
+      name: "&bMatched Materials"
   ranks:
     title: "&b&lRanks"
     info:

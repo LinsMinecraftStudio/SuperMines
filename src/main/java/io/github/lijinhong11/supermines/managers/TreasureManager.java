@@ -6,6 +6,8 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import io.github.lijinhong11.supermines.utils.ItemUtils;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -48,7 +50,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
                 chance,
                 section.getStringList("matchedMaterials").stream()
                         .map(Material::getMaterial)
-                        .toList());
+                        .collect(Collectors.toSet()));
     }
 
     @Override

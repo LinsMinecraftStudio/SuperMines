@@ -245,7 +245,72 @@ public class SuperMinesCommand {
                                                             "command.treasures.set-item",
                                                             MessageReplacement.replace(
                                                                     "%treasure%", treasure.getRawDisplayName()));
-                                        })))
+                                        }),
+                                new CommandAPICommand("addMatch")
+                                        .withPermission(Constants.Permission.TREASURES)
+                                        .withArguments(new StringArgument("id")
+                                                .includeSuggestions(ArgumentSuggestions.strings(getTreasuresList())),
+                                                new MaterialArgument("block"))
+                                        .executes((sender, args) -> {
+                                            String id = (String) args.get("id");
+                                            Material mat = (Material) args.get("block");
+
+                                            Treasure treasure = SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .getTreasure(id);
+                                            if (treasure == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessages(sender, "command.treasure-not-exists");
+                                                return;
+                                            }
+
+                                            if (mat == null || mat.isAir() || !mat.isBlock()) {
+                                                SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.invalid-material");
+                                                return;
+                                            }
+
+                                            if (treasure.getMatchedMaterials().contains(mat)) {
+                                                SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.treasures.matched_materials.exists");
+                                                return;
+                                            }
+
+                                            treasure.addMatchedMaterial(mat);
+                                            SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.treasures.matched_materials.add_success");
+                                        }),
+                                new CommandAPICommand("removeMatch")
+                                        .withPermission(Constants.Permission.TREASURES)
+                                        .withArguments(new StringArgument("id")
+                                                        .includeSuggestions(ArgumentSuggestions.strings(getTreasuresList())),
+                                                new MaterialArgument("block"))
+                                        .executes((sender, args) -> {
+                                            String id = (String) args.get("id");
+                                            Material mat = (Material) args.get("block");
+
+                                            Treasure treasure = SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .getTreasure(id);
+                                            if (treasure == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessages(sender, "command.treasure-not-exists");
+                                                return;
+                                            }
+
+                                            if (mat == null || mat.isAir() || !mat.isBlock()) {
+                                                SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.invalid-material");
+                                                return;
+                                            }
+
+                                            if (!treasure.getMatchedMaterials().contains(mat)) {
+                                                SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.treasures.matched_materials.not_exists");
+                                                return;
+                                            }
+
+                                            treasure.removeMatchedMaterial(mat);
+                                            SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.treasures.matched_materials.remove_success");
+                                        })
+                        ))
                 .withSubcommand(new CommandAPICommand("ranks")
                         .withPermission(Constants.Permission.RANKS)
                         .executes((sender, args) -> {
@@ -583,15 +648,14 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
-                                new ItemStackArgument("block"),
+                                new MaterialArgument("block"),
                                 new DoubleArgument("chance", 1, 100))
                         .executes((sender, args) -> {
-                            ItemStack block = (ItemStack) args.get("block");
                             String mineId = (String) args.get("mineId");
                             double chance = (double) args.get("chance");
-                            Material mat = block.getType();
+                            Material mat = (Material) args.get("block");
 
-                            if (!mat.isBlock() || mat.isAir()) {
+                            if (mat == null || !mat.isBlock() || mat.isAir()) {
                                 SuperMines.getInstance()
                                         .getLanguageManager()
                                         .sendMessage(sender, "command.invalid-material");
@@ -637,11 +701,16 @@ public class SuperMinesCommand {
                         }))
                 .withSubcommand(new CommandAPICommand("removeBlockGenerate")
                         .withPermission(Constants.Permission.BLOCK_GENERATE)
-                        .withArguments(new StringArgument("mineId"), new ItemStackArgument("block"))
+                        .withArguments(new StringArgument("mineId"), new MaterialArgument("block"))
                         .executes((sender, args) -> {
-                            ItemStack block = (ItemStack) args.get("block");
                             String mineId = (String) args.get("mineId");
-                            Material mat = block.getType();
+                            Material mat = (Material) args.get("block");
+
+                            if (mat == null || mat.isAir()) {
+                                SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.invalid-material");
+                                return;
+                            }
+
                             Mine mine =
                                     SuperMines.getInstance().getMineManager().getMine(mineId);
                             if (mine == null) {
@@ -676,7 +745,7 @@ public class SuperMinesCommand {
                                 return;
                             }
 
-                            mine.setDisplayName(args.getByClass("displayName", Component.class));
+                            mine.setDisplayName(Objects.requireNonNull(args.getByClass("displayName", Component.class)));
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -689,11 +758,11 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
-                                new ItemStackArgument("icon"))
+                                new MaterialArgument("icon"))
                         .withPermission(Constants.Permission.SET_DISPLAY_ICON)
                         .executes((executor, args) -> {
                             String mineId = (String) args.get("mineId");
-                            Material icon = ((ItemStack) args.get("icon")).getType();
+                            Material icon = (Material) args.get("icon");
                             Mine mine =
                                     SuperMines.getInstance().getMineManager().getMine(mineId);
                             if (mine == null) {
