@@ -48,15 +48,6 @@ public class TaskMaker {
             return;
         }
 
-        long delayMillis = resetTask.getNextResetTime() - System.currentTimeMillis() - warningSeconds * 1000L;
-        if (delayMillis <= 0) {
-            MineResetWarningTask task = new MineResetWarningTask(mine, warningSeconds);
-            scheduler.runNextTick(task);
-            return;
-        }
-
-        MineResetWarningTask task = new MineResetWarningTask(mine, warningSeconds);
-
         Map<Integer, MineResetWarningTask> warningMap =
                 resetWarningTasks.computeIfAbsent(mine.getId(), id -> new HashMap<>());
 
@@ -64,8 +55,21 @@ public class TaskMaker {
             return;
         }
 
+        MineResetWarningTask task = new MineResetWarningTask(mine, warningSeconds);
+
+        long delayMillis = resetTask.getNextResetTime() - System.currentTimeMillis() - warningSeconds * 1000L;
+        if (delayMillis <= 0) {
+
+            scheduler.runNextTick(task);
+            scheduler.runLaterAsync(t -> {
+                scheduler.runTimerAsync(task, delayMillis / 50L, mine.getRegenerateSeconds() * 20L);
+                warningMap.put(warningSeconds, task);
+            }, delayMillis / 50);
+            return;
+        }
+
         warningMap.put(warningSeconds, task);
-        scheduler.runLaterAsync(task, delayMillis / 50);
+        scheduler.runTimerAsync(task, delayMillis / 50L, mine.getRegenerateSeconds() * 20L);
     }
 
     public void startMineResetTask(Mine mine) {

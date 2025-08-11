@@ -133,7 +133,7 @@ command:
 mine:
   no-place: "&cYou can't place blocks in the mine!"
   reset: "&aMine &b%mine% &ahas been reset!"
-  reset_warning: "&cMine &b%%mine% will reset in &b%time%"
+  reset_warning: "&cMine &b%mine% &cwill reset in &b%time%"
 gui:
   previous: "&ePrevious Page"
   next: "&eNext Page"
@@ -206,7 +206,9 @@ gui:
         - "&7Left click to set the item as the item on the cursor"
         - "&7Right click to get the item"
     matched_materials:
-      name: "&bMatched Materials"
+      title: "&bMatched Materials"
+      each_lore:
+        - "&7Click to remove"
   ranks:
     title: "&b&lRanks"
     info:

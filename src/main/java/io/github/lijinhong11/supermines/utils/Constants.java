@@ -158,7 +158,7 @@ public class Constants {
                 p -> ItemBuilder.from(Material.STONE)
                         .name(SuperMines.getInstance()
                                 .getLanguageManager()
-                                .getMsgComponent(p, "gui.treasure-management.matched_materials.name"))
+                                .getMsgComponent(p, "gui.treasure-management.matched_materials.title"))
                         .build();
 
         // rank management

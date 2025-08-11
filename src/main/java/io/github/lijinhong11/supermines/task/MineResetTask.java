@@ -73,9 +73,11 @@ class MineResetTask extends AbstractTask {
         }
 
         TaskMaker tm = SuperMines.getInstance().getTaskMaker();
-        for (BlockPos pos : blockPosList) {
-            Location loc = pos.toLocation(mine.getWorld());
-            tm.runSync(loc, () -> loc.getBlock().setType(Material.AIR));
+        if (!mine.isOnlyFillAirWhenRegenerate()) {
+            for (BlockPos pos : blockPosList) {
+                Location loc = pos.toLocation(mine.getWorld());
+                tm.runSync(loc, () -> loc.getBlock().setType(Material.AIR));
+            }
         }
 
         for (Map.Entry<BlockPos, Material> entry : generated.entrySet()) {

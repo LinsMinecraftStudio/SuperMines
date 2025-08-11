@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
-import java.util.List;
+
 import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
@@ -13,11 +13,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public final class Treasure implements Identified {
+    private final Set<Material> matchedMaterials;
+
     private final String id;
     private Component displayName;
     private ItemStack itemStack;
     private double chance;
-    private Set<Material> matchedMaterials;
 
     @ParametersAreNonnullByDefault
     public Treasure(String id, Component displayName, ItemStack itemStack, double chance) {
@@ -76,7 +77,7 @@ public final class Treasure implements Identified {
         matchedMaterials.remove(material);
     }
 
-    public List<Material> getMatchedMaterials() {
+    public Set<Material> getMatchedMaterials() {
         return matchedMaterials;
     }
 }
