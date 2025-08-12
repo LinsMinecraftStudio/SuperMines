@@ -1,0 +1,223 @@
+time:
+  second: "秒"
+  seconds: "秒"
+  minute: "分钟"
+  minutes: "分钟"
+  hour: "小时"
+  hours: "小时"
+common:
+  location-format: "&fX: &b%x%, &fY: &b%y%, &fZ: &b%z%"
+  no-permission: "&c你没有权限这么做！"
+  enabled: "&a已启用"
+  disabled: "&c已禁用"
+wand:
+  name: "&eSuper&aMines &d位置设置棒"
+  lore:
+    - "&a左键设置位置 1"
+    - "&a右键设置位置 2"
+command:
+  help:
+    general:
+      - "&e/sm create <id> [显示名称] &7- &a创建一个矿区"
+      - "&e/sm help &7- &a显示此帮助信息"
+      - "&e/sm info <矿区> &7- &a显示矿区信息"
+      - "&e/sm list &7- &a列出所有矿区"
+      - "&e/sm gui &7- &a显示 GUI"
+      - "&e/sm treasures &7- &a显示宝藏相关帮助"
+      - "&e/sm ranks &7- &a显示等级相关帮助"
+      - "&e/sm addTreasure <矿区> <宝藏> &7- &a为矿区添加宝藏"
+      - "&e/sm removeTreasure <矿区> <宝藏> &7- &a从矿区移除宝藏"
+      - "&e/sm setRequiredLevel <矿区> <等级> &7- &a设置矿区所需的最低等级"
+      - "&e/sm addAllowedRank <矿区> <等级> &7- &a允许某等级进入矿区"
+      - "&e/sm removeAllowedRank <矿区> <等级> &7- &a取消某等级进入矿区"
+      - "&e/sm setBlockGenerate <矿区> <方块> <概率> &7- &a设置矿区生成方块的概率"
+      - "&e/sm setDisplayName <矿区> <显示名称> &7- &a设置矿区显示名称"
+      - "&e/sm setDisplayIcon <矿区> <物品> &7- &a设置矿区显示图标"
+      - "&e/sm removeBlockGenerate <矿区> <方块> &7- &a移除矿区的方块生成"
+      - "&e/sm addResetWarning <矿区> <剩余秒数> &7- &a添加矿区重置警告任务"
+      - "&e/sm removeResetWarning <矿区> <剩余秒数> &7- &a移除矿区重置警告任务"
+      - "&e/sm setResetTime <矿区> <秒数> &7- &a设置矿区重置时间"
+      - "&e/sm settp/setteleport <矿区> &7- &a设置矿区传送点"
+      - "&e/sm tp/teleport <矿区> &7- &a传送到矿区"
+      - "&e/sm setOnlyFillAir <矿区> <是否只填充空气> &7- &a设置重置时是否只填充空气"
+      - "&e/sm reset <矿区> &7- &a重置矿区"
+      - "&e/sm pos1 [位置] &7- &a设置区域位置 1"
+      - "&e/sm pos2 [位置] &7- &a设置区域位置 2"
+      - "&e/sm wand &7- &a获取魔棒"
+      - "&e/sm remove <矿区> &7- &a移除矿区"
+      - "&e/sm reload &7- &a重载插件"
+    treasures:
+      - "&e/sm treasures list &7- &a列出所有宝藏"
+      - "&e/sm treasures create <id> <显示名称> <概率> &7- &a添加宝藏（必须手持物品）"
+      - "&e/sm treasures remove <宝藏> &7- &a移除宝藏"
+      - "&e/sm treasures setItem <宝藏> &7- &a设置奖励物品（必须手持物品）"
+      - "&e/sm treasures setChance <宝藏> <概率> &7- &a设置宝藏概率"
+      - "&e/sm treasures setDisplayName <宝藏> <显示名称> &7- &a设置宝藏显示名称"
+      - "&e/sm treasures addMatch <宝藏> <方块> &7- &a添加匹配方块"
+      - "&e/sm treasures removeMatch <宝藏> <方块> &7- &a移除匹配方块"
+    ranks:
+      - "&e/sm ranks list &7- &a列出所有等级"
+      - "&e/sm ranks create <id> <显示名称> <等级> &7- &a添加等级"
+      - "&e/sm ranks remove <等级> &7- &a移除等级"
+      - "&e/sm ranks giveRank <玩家> <等级> [提示] &7- &a设置玩家等级（默认不提示）"
+      - "&e/sm ranks setDisplayName <等级> <显示名称> &7- &a设置等级显示名称"
+      - "&e/sm ranks setLevel <等级> <等级值> &7- &a设置等级值"
+  pos-set:
+    pos1: "&a位置 1 已设置为 &d%pos%"
+    pos2: "&a位置 2 已设置为 &d%pos%"
+  create:
+    exists: "&c已存在相同 ID 的矿区！"
+    success: "&a矿区创建成功！"
+    no-selection: "&c你还未选择位置！"
+    selection-not-finished: "&c你还未完成立方区域选择！"
+  fillair:
+    enabled: "&a矿区 &b%mine% &a重置时将只填充空气"
+    disabled: "&a矿区 &b%mine% &a重置时将进行完整重置"
+  redefine:
+    success: "&a矿区区域重新定义成功！"
+  remove:
+    success: "&a矿区移除成功！"
+  reset:
+    time-set: "&a矿区 &b%mine% &a重置时间已设置为 &b%time%"
+    success: "&a矿区已成功重置！"
+  resetwarning:
+    time-too-long: "&c警告时间不能超过矿区的重置时间！"
+    started: "&a矿区重置警告任务已启动！"
+    stopped: "&a矿区重置警告任务已停止！"
+  block-generate:
+    success: "&a方块 &d%material% &a已添加到矿区 &b%mine%，生成概率为 &b%chance%%"
+    chance-too-high: "&c所有方块生成概率总和不能超过 100%！"
+    removed: "&a矿区 &b%mine% &a的方块生成已移除！"
+  list:
+    head:
+      mine: "&6矿区: "
+    separator: "&7, "
+    color: "&b"
+  teleport:
+    set: "&a矿区 &b%mine% &a的传送点已设置为 &d%loc%"
+    no-loc: "&c矿区未定义传送点，请联系管理员。"
+  treasures:
+    no-item-in-hand: "&c你必须手持物品！"
+    set-item: "&a宝藏 &d%treasure% &a的物品已更改"
+    set-chance: "&a宝藏 &d%treasure% &a的概率已设置为 &b%chance%%"
+    set-display-name: "&a宝藏 &d%treasure% &a的显示名称已设置为 &b%displayName%"
+    create:
+      exists: "&c已存在相同 ID 的宝藏！"
+      success: "&a宝藏 &d%treasure% &a已创建成功！"
+    remove:
+      success: "&a宝藏 &d%treasure% &a已移除！"
+    matched_materials:
+      exists: "&c该方块已在列表中！"
+      not_exists: "&c该方块不在列表中！"
+      add_success: "&a方块 &b%material% &a已添加到宝藏 &d%treasure%"
+      remove_success: "&a方块 &b%material% &a已从宝藏 &d%treasure% &a中移除"
+  ranks:
+    set-display-name: "&a等级 &d%rank% &a的显示名称已设置为 &b%displayName%"
+    set-level: "&a等级 &d%rank% &a的等级值已设置为 &b%level%"
+    give-rank: "&a已将等级 &d%rank% &a授予玩家 &b%player%"
+    allowed: "&a矿区 &b%mine% &a现已允许等级 &d%rank% &a进入"
+    disallowed: "&a矿区 &b%mine% &a现已禁止等级 &d%rank% &a进入"
+    create:
+      exists: "&c已存在相同 ID 的等级！"
+      success: "&a等级 &b%rank% &a创建成功！"
+    remove:
+      success: "&a等级 &b%rank% &a移除成功！"
+  set-display-name: "&a矿区 &d%mine% &a的显示名称已设置为 &b%displayName%"
+  set-display-icon: "&a矿区 &d%mine% &a的显示图标已设置为 &b%item%"
+  mine-not-exists: "&c该矿区不存在！"
+  rank-not-exists: "&c该等级不存在！"
+  treasure-not-exists: "&c该宝藏不存在！"
+  invalid-material: "&c无效的方块！"
+  invalid-id: "&cID 中包含无效字符！"
+  pos-in-mine: "&c你选择的位置已在某个矿区内！"
+mine:
+  no-place: "&c你不能在矿区内放置方块！"
+  reset: "&a矿区 &b%mine% &a已重置！"
+  reset_warning: "&c矿区 &b%mine% &c将在 &b%time% &c后重置"
+gui:
+  previous: "&e上一页"
+  next: "&e下一页"
+  back: "&c返回"
+  close: "&c关闭"
+  add: "&d添加"
+  material-chooser:
+    title: "&d选择方块"
+  input:
+    invalid-number: "&c无效数字！数字不能小于 0！"
+    invalid-percent: "&c无效百分比！必须为大于 0 且小于等于 100 的数字"
+  set_display_name:
+    prompt: "&e请在聊天栏输入新的显示名称：&b（支持颜色代码，输入 &6##CANCEL &b取消）"
+    name: "&6设置显示名称"
+    lore:
+      - "&7点击设置矿区显示名称"
+      - "&7当前: &b%name%"
+  general:
+    title: "&eSuper&aMines"
+  mines:
+    title: "&7&l矿区"
+    info:
+      - "&7世界: &a%world%"
+      - "&7重置时间: &b%regenerate_seconds%"
+      - "&7位置: &e从 %pos1% 到 %pos2%"
+  mine-management:
+    title: "&7&l矿区管理 &8&l- &7%mine%"
+    set_display_icon:
+      name: "&6设置显示图标"
+      lore:
+        - "&7点击设置矿区显示图标"
+        - "&7当前: &b%material%"
+    set_regen_seconds:
+      prompt: "&e请输入新的矿区重置时间：&b（输入 &6##CANCEL &b取消）"
+      name: "&b设置重置时间"
+      lore:
+        - "&7点击设置矿区重置时间"
+        - "&7单位: 秒"
+        - "&7当前: &b%seconds%"
+    set_required_lvl:
+      prompt: "&e请输入新的所需等级：&b（输入 &6##CANCEL &b取消）"
+      name: "&b设置所需等级"
+      lore:
+        - "&7点击设置矿区所需等级"
+        - "&7当前: &b%level%"
+    only_fill_air:
+      name: "&a重置时只填充空气"
+      lore:
+        - "&7点击切换重置时是否只填充空气"
+        - "&7当前: &b%status%"
+    block_spawn_entries:
+      name: "&b生成方块列表"
+      set_precent_prompt: "&e请输入方块 &d%material% &e的新百分比：&b（输入 &6##CANCEL &b取消）"
+  treasures:
+    title: "&e&l宝藏"
+    info:
+      - "&7概率: &e%chance%"
+      - "&7匹配方块数量: &a%matched_materials%"
+  treasure-management:
+    title: "&e&l宝藏管理 &8&l- &e%treasure%"
+    set_chance:
+      name: "&a设置概率"
+      lore:
+        - "&7点击设置概率"
+        - "&7当前: &b%chance%"
+      prompt: "&e请输入新的宝藏概率：&b（输入 &6##CANCEL &b取消）"
+    itemstack:
+      name: "&d设置物品堆"
+      lore:
+        - "&7左键将手上物品设置为宝藏"
+        - "&7右键获取宝藏物品"
+    matched_materials:
+      title: "&b匹配方块"
+      each_lore:
+        - "&7点击移除"
+  ranks:
+    title: "&b&l等级"
+    info:
+      - "&7等级值: &b%level%"
+  rank-management:
+    title: "&b&l等级管理 &8&l- &b%rank%"
+    setlevel:
+      prompt: "&e请输入新的等级值：&b（输入 &6##CANCEL &b取消）"
+      name: "&6设置等级值"
+      lore:
+        - "&7点击设置等级值"
+        - "&7当前: &b%level%"

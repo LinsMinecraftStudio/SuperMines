@@ -109,8 +109,8 @@ command:
     matched_materials:
       exists: "&cThe material is already exists in the list!"
       not_exists: "&cThe material isn't in the list!"
-      add_success: "&aThe material &b%material% has been added to the treasure &d%treasure%"
-      remove_success: "&aThe material &b%material% has been removed from the treasure &d%treasure%"
+      add_success: "&aThe material &b%material% &ahas been added to the treasure &d%treasure%"
+      remove_success: "&aThe material &b%material% &ahas been removed from the treasure &d%treasure%"
   ranks:
     set-display-name: "&aThe display name of rank &d%rank% &ais set to &b%displayName%"
     set-level: "&aThe level of rank &d%rank% &ais set to &b%level%"
@@ -186,7 +186,7 @@ gui:
         - "&7Current: &b%status%"
     block_spawn_entries:
       name: "&bGenerated Block List"
-      set_precent_prompt: "&eEnter the new percent of material %material% in the chat: &b(type &6##CANCEL &bto cancel)"
+      set_precent_prompt: "&eEnter the new percent of material &d%material% &ein the chat: &b(type &6##CANCEL &bto cancel)"
   treasures:
     title: "&e&lTreasures"
     info:
