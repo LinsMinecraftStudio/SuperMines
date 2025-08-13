@@ -61,10 +61,12 @@ public class TaskMaker {
         if (delayMillis <= 0) {
 
             scheduler.runNextTick(task);
-            scheduler.runLaterAsync(t -> {
-                scheduler.runTimerAsync(task, delayMillis / 50L, mine.getRegenerateSeconds() * 20L);
-                warningMap.put(warningSeconds, task);
-            }, delayMillis / 50);
+            scheduler.runLaterAsync(
+                    t -> {
+                        scheduler.runTimerAsync(task, delayMillis / 50L, mine.getRegenerateSeconds() * 20L);
+                        warningMap.put(warningSeconds, task);
+                    },
+                    delayMillis / 50);
             return;
         }
 

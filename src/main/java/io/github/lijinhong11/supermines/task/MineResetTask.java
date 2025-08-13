@@ -7,15 +7,14 @@ import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 class MineResetTask extends AbstractTask {
     private final Mine mine;
@@ -41,6 +40,10 @@ class MineResetTask extends AbstractTask {
         List<BlockPos> blockPosList = ca.asPosList();
         Map<Material, Double> blockSpawnEntries = mine.getBlockSpawnEntries();
         Map<BlockPos, Material> generated = new HashMap<>();
+
+        if (blockSpawnEntries.isEmpty()) {
+            return;
+        }
 
         for (BlockPos pos : blockPosList) {
             Location loc = pos.toLocation(mine.getWorld());

@@ -1,7 +1,6 @@
 package io.github.lijinhong11.supermines.utils;
 
 import io.github.lijinhong11.supermines.SuperMines;
-
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.command.CommandSender;
@@ -14,7 +13,8 @@ public class NumberUtils {
     }
 
     public static <T> T weightedRandom(Map<T, Double> map) {
-        double totalWeight = map.values().stream().mapToDouble(Double::doubleValue).sum();
+        double totalWeight =
+                map.values().stream().mapToDouble(Double::doubleValue).sum();
         double random = Math.random() * totalWeight;
         double current = 0.0;
         for (Map.Entry<T, Double> entry : map.entrySet()) {
@@ -25,10 +25,6 @@ public class NumberUtils {
         }
 
         return map.keySet().iterator().next();
-    }
-
-    public static String formatSeconds(int seconds) {
-        return formatSeconds(null, seconds);
     }
 
     public static String formatSeconds(CommandSender cs, int totalSeconds) {

@@ -4,7 +4,6 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
-import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import java.util.List;
 import org.bukkit.Location;

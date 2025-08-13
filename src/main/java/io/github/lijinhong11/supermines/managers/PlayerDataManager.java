@@ -7,7 +7,6 @@ import io.github.lijinhong11.supermines.managers.abstracts.AbstractDatabaseObjec
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

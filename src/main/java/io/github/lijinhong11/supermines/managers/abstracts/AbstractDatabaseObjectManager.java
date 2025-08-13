@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,11 +26,13 @@ public abstract class AbstractDatabaseObjectManager<T> {
         } catch (SQLException e) {
             SuperMines.getInstance()
                     .getLogger()
-                    .log(Level.SEVERE,
+                    .log(
+                            Level.SEVERE,
                             """
                     Failed to create/load player data!
                     The plugin will disabled...
-                    """, e);
+                    """,
+                            e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
         }
     }
@@ -42,11 +43,13 @@ public abstract class AbstractDatabaseObjectManager<T> {
         } catch (SQLException e) {
             SuperMines.getInstance()
                     .getLogger()
-                    .log(Level.SEVERE,
+                    .log(
+                            Level.SEVERE,
                             """
                     Failed to save player data!
                     The plugin will disabled...
-                    """, e);
+                    """,
+                            e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
         }
     }
@@ -57,11 +60,13 @@ public abstract class AbstractDatabaseObjectManager<T> {
         } catch (SQLException e) {
             SuperMines.getInstance()
                     .getLogger()
-                    .log(Level.SEVERE,
+                    .log(
+                            Level.SEVERE,
                             """
                     Failed to load player data table!
                     The plugin will disabled...
-                    """, e);
+                    """,
+                            e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
         }
 

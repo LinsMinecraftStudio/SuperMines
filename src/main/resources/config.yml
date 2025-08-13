@@ -4,16 +4,16 @@ language: en-US
 # Whether to use the corresponding language that player uses
 detect-player-locale: true
 
+# Update check
+check-update: true
+
 # Mine settings
 mine:
   # Allow place blocks in mines
   allow-place: false
 
-# Special settings for Slimefun
-slimefun:
-  disable-explosion-pickaxe: false
-
 # Storage settings
+# Require restart
 storage:
   # Database type
   # Support: SQLite, MySQL, MariaDB, PostgreSQL

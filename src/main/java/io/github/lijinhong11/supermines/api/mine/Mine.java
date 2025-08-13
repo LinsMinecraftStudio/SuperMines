@@ -203,7 +203,7 @@ public final class Mine implements Identified {
         this.treasures.addAll(treasures);
     }
 
-    public void addBlockSpawnEntry(@NotNull Material material, @Range(from = 1, to = 100) double chance) {
+    public void addBlockSpawnEntry(@NotNull Material material, double chance) {
         if (chance < 1 || chance > 100) {
             throw new IllegalArgumentException("Chance must be between 1 and 100");
         }
@@ -237,7 +237,7 @@ public final class Mine implements Identified {
     }
 
     public Set<String> getAllowedRankIds() {
-        return new HashSet<>(allowedRankIds);
+        return allowedRankIds;
     }
 
     public void setTeleportLocation(@NotNull Location tpLoc) {
@@ -293,14 +293,16 @@ public final class Mine implements Identified {
     }
 
     public List<Treasure> getTreasures() {
-        return new ArrayList<>(treasures);
+        return treasures;
     }
 
     public Map<Material, Double> getBlockSpawnEntries() {
-        return new HashMap<>(blockSpawnEntries);
+        return blockSpawnEntries;
     }
 
-    public void setRegenerateSeconds(@Range(from = 1, to = Integer.MAX_VALUE) int regenerateSeconds) {
+    public void setRegenerateSeconds(@Range(from = 0, to = Integer.MAX_VALUE) int regenerateSeconds) {
+        Preconditions.checkArgument(regenerateSeconds >= 0, "regenerate seconds must equal to or greater than 0");
+
         this.regenerateSeconds = regenerateSeconds;
     }
 

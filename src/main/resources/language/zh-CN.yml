@@ -80,12 +80,13 @@ command:
   reset:
     time-set: "&a矿区 &b%mine% &a重置时间已设置为 &b%time%"
     success: "&a矿区已成功重置！"
+    stop-reset: "&a矿区 &b%mine% &a将停止重置"
   resetwarning:
     time-too-long: "&c警告时间不能超过矿区的重置时间！"
     started: "&a矿区重置警告任务已启动！"
     stopped: "&a矿区重置警告任务已停止！"
   block-generate:
-    success: "&a方块 &d%material% &a已添加到矿区 &b%mine%，生成概率为 &b%chance%%"
+    success: "&a方块 &d%material% &a已添加到矿区 &b%mine%&a，生成概率为 &b%chance%%"
     chance-too-high: "&c所有方块生成概率总和不能超过 100%！"
     removed: "&a矿区 &b%mine% &a的方块生成已移除！"
   list:
@@ -122,6 +123,9 @@ command:
       success: "&a等级 &b%rank% &a创建成功！"
     remove:
       success: "&a等级 &b%rank% &a移除成功！"
+  reload:
+    safe-tip: "&c提示：为了确保插件安全运行，只会重载配置文件和语言文件"
+    success: "&a重载成功！"
   set-display-name: "&a矿区 &d%mine% &a的显示名称已设置为 &b%displayName%"
   set-display-icon: "&a矿区 &d%mine% &a的显示图标已设置为 &b%item%"
   mine-not-exists: "&c该矿区不存在！"
@@ -174,8 +178,8 @@ gui:
         - "&7单位: 秒"
         - "&7当前: &b%seconds%"
     set_required_lvl:
-      prompt: "&e请输入新的所需等级：&b（输入 &6##CANCEL &b取消）"
-      name: "&b设置所需等级"
+      prompt: "&e请输入新的所需等级值：&b（输入 &6##CANCEL &b取消）"
+      name: "&b设置所需等级值"
       lore:
         - "&7点击设置矿区所需等级"
         - "&7当前: &b%level%"

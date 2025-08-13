@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
-
 import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;

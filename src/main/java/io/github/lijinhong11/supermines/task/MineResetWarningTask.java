@@ -30,10 +30,5 @@ class MineResetWarningTask extends AbstractTask {
                     mineName,
                     MessageReplacement.replace("%time%", NumberUtils.formatSeconds(p, second)));
         }
-
-        lm.consoleMessage(
-                "mine.reset_warning",
-                mineName,
-                MessageReplacement.replace("%time%", NumberUtils.formatSeconds(second)));
     }
 }

@@ -6,7 +6,6 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
-
 import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URI;
@@ -16,7 +15,6 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -142,10 +140,6 @@ public final class LanguageManager {
         for (String msg : getMsgList(commandSender, key, args)) {
             commandSender.sendMessage(parseToComponent(msg));
         }
-    }
-
-    public void consoleMessage(String key, MessageReplacement... args) {
-        Bukkit.getConsoleSender().sendMessage(parseToComponent(getMsg(null, key, args)));
     }
 
     public Component getMsgComponent(@Nullable CommandSender commandSender, String key, MessageReplacement... args) {

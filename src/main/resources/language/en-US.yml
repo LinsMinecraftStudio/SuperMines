@@ -80,6 +80,7 @@ command:
   reset:
     time-set: "&aThe reset time of mine &b%mine% &ais set to &b%time%"
     success: "&aThe mine is reset successfully!"
+    stop-reset: "&aThe mine &b%mine% &awill stop reset"
   resetwarning:
     time-too-long: "&cThe reset time should not exceed the mine's reset time!"
     started: "&aThe mine's reset warning task will be started!"
@@ -122,6 +123,9 @@ command:
       success: "&aThe rank &b%rank% &ahas been created successfully!"
     remove:
       success: "&aThe rank &b%rank% &ahas been removed successfully!"
+  reload:
+    safe-tip: "&cNote: To ensure the plugin works safely, it will only reload config and message files"
+    success: "&aReload successfully!"
   set-display-name: "&aThe display name of mine &d%mine% &ais set to &b%displayName%"
   set-display-icon: "&aThe display icon of mine &d%mine% &ais set to &b%item%"
   mine-not-exists: "&cThe mine does not exist!"
@@ -130,6 +134,7 @@ command:
   invalid-material: "&cInvalid material!"
   invalid-id: "&cInvalid characters in the id!"
   pos-in-mine: "&cThe location you have chosen is already in a mine!"
+
 mine:
   no-place: "&cYou can't place blocks in the mine!"
   reset: "&aMine &b%mine% &ahas been reset!"
