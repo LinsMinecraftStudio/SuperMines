@@ -134,7 +134,6 @@ command:
   invalid-material: "&cInvalid material!"
   invalid-id: "&cInvalid characters in the id!"
   pos-in-mine: "&cThe location you have chosen is already in a mine!"
-
 mine:
   no-place: "&cYou can't place blocks in the mine!"
   reset: "&aMine &b%mine% &ahas been reset!"

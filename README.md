@@ -3,7 +3,7 @@ SuperMines
 SuperMines is a powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 
 ## Downloads
-
+[Hangar](https://hangar.papermc.io/lijinhong11/SuperMines)
 
 ## RoadMap
 v1.0: release  
