@@ -28,6 +28,20 @@ public class MiniPlaceholderExtension {
                         return Tag.selfClosingInserting(data.getRank().getDisplayName());
                     }
                 })
+                .audiencePlaceholder("rankLevel", (a, args, ctx) -> {
+                    if (args.hasNext()) {
+                        String playerName = args.pop().value();
+                        OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
+                        PlayerData data =
+                                SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
+                        return Tag.selfClosingInserting(Component.text(data.getRank().getLevel()));
+                    } else {
+                        OfflinePlayer p = (Player) a;
+                        PlayerData data =
+                                SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
+                        return Tag.selfClosingInserting(Component.text(data.getRank().getLevel()));
+                    }
+                })
                 .audiencePlaceholder("minedBlocks", (a, args, ctx) -> {
                     if (args.hasNext()) {
                         String playerName = args.pop().value();

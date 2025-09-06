@@ -15,6 +15,7 @@ import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.chat.ChatInput;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -385,45 +386,26 @@ public class GuiManager {
     }
 
     private static void openMatchedMaterials(Player p, Treasure treasure) {
-        PaginatedGui gui = Gui.paginated()
-                .rows(6)
-                .pageSize(45)
-                .title(SuperMines.getInstance()
-                        .getLanguageManager()
-                        .getMsgComponent(p, "gui.treasure-management.matched_materials.title"))
-                .create();
+        ListGUI.openList(p, SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponent(p, "gui.treasure-management.matched_materials.title"),
+                treasure.getMatchedMaterials(),
+                m -> {
+                    List<Component> lore = SuperMines.getInstance()
+                            .getLanguageManager()
+                            .getMsgComponentList(p, "gui.treasure-management.matched_materials.each_lore");
+                    return ItemBuilder.from(m)
+                            .lore(lore)
+                            .build();
+                }, treasure::removeMatchedMaterial, () -> {
+                    Material m = openMaterialChooser(p, Material::isBlock, () -> {});
 
-        fillPageButtons(p, gui, () -> openTreasureManagementGui(p, treasure));
+                    if (!treasure.getMatchedMaterials().contains(m)) {
+                        treasure.addMatchedMaterial(m);
+                    }
 
-        putItem(6, 1, gui, ItemBuilder.from(Constants.Items.ADD.apply(p)), e -> {
-            Material m = openMaterialChooser(p, Material::isBlock, () -> {});
-
-            if (!treasure.getMatchedMaterials().contains(m)) {
-                treasure.addMatchedMaterial(m);
-            }
-
-            openMatchedMaterials(p, treasure);
-        });
-
-        for (Material material : treasure.getMatchedMaterials()) {
-            List<Component> lore = SuperMines.getInstance()
-                    .getLanguageManager()
-                    .getMsgComponentList(p, "gui.treasure-management.matched_materials.each_lore");
-            GuiItem item = ItemBuilder.from(material).lore(lore).asGuiItem(e -> {
-                if (!p.hasPermission(Constants.Permission.BLOCK_GENERATE)) {
-                    SuperMines.getInstance().getLanguageManager().sendMessage(p, "common.no-permission");
-                    return;
-                }
-
-                treasure.removeMatchedMaterial(material);
-                openMatchedMaterials(p, treasure);
-
-                e.setCancelled(true);
-            });
-            gui.addItem(item);
-        }
-
-        gui.open(p);
+                    openMatchedMaterials(p, treasure);
+                }, () -> openTreasureManagementGui(p, treasure));
     }
 
     public static void openRankList(Player p) {
@@ -499,7 +481,7 @@ public class GuiManager {
         putItem(6, 9, gui, ItemBuilder.from(Constants.Items.BACK.apply(p)), e -> reopen.run());
     }
 
-    private static void putItem(
+    static void putItem(
             int row, int col, BaseGui gui, ItemBuilder item, Consumer<InventoryClickEvent> clickEventConsumer) {
         gui.setItem(row, col, item.asGuiItem(e -> {
             clickEventConsumer.accept(e);

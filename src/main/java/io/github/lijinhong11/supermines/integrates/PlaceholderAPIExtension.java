@@ -26,7 +26,7 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.0";
+        return "1.1";
     }
 
     @Override
@@ -39,7 +39,11 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
                 return ChatColor.translateAlternateColorCodes(
                         '&', ComponentUtils.serializeLegacy(data.getRank().getDisplayName()));
-            } else if (args[0].equalsIgnoreCase("minedBlocks")) {
+            } else if (args[0].equalsIgnoreCase("ranklevel")) {
+                PlayerData data =
+                        SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+                return String.valueOf(data.getRank().getLevel());
+            } else if (args[0].equalsIgnoreCase("minedblocks")) {
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
                 return String.valueOf(data.getMinedBlocks());
@@ -52,7 +56,13 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
                 return ChatColor.translateAlternateColorCodes(
                         '&', ComponentUtils.serializeLegacy(data.getRank().getDisplayName()));
-            } else if (args[0].equalsIgnoreCase("minedBlocks")) {
+            } else if (args[0].equalsIgnoreCase("ranklevel")) {
+                String playerName = args[1];
+                OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
+                PlayerData data =
+                        SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
+                return String.valueOf(data.getRank().getLevel());
+            } else if (args[0].equalsIgnoreCase("minedblocks")) {
                 String playerName = args[1];
                 OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
                 PlayerData data =
