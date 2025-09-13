@@ -5,6 +5,8 @@ import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
+
+import java.util.Collection;
 import java.util.UUID;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
@@ -19,12 +21,28 @@ public class SuperMinesAPI {
         return SuperMines.getInstance().getMineManager().getMine(loc);
     }
 
+    public static @NotNull Collection<Mine> getMines() {
+        return SuperMines.getInstance().getMineManager().getAllMines();
+    }
+
     public static @Nullable Treasure getTreasure(String id) {
         return SuperMines.getInstance().getTreasureManager().getTreasure(id);
     }
 
+    public static @NotNull Collection<Treasure> getTreasures() {
+        return SuperMines.getInstance().getTreasureManager().getAllTreasures();
+    }
+
     public static @Nullable Rank getRank(String id) {
         return SuperMines.getInstance().getRankManager().getRank(id);
+    }
+
+    /**
+     * Get all ranks (the default rank is not included)
+     * @return a collection, which contains all ranks (the default rank is not included)
+     */
+    public static @NotNull Collection<Rank> getRanks() {
+        return SuperMines.getInstance().getRankManager().getAllRanks();
     }
 
     public static @Nullable PlayerData getPlayerData(String name) {
