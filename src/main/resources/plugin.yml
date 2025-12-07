@@ -1,6 +1,6 @@
 name: SuperMines
 main: io.github.lijinhong11.supermines.SuperMines
-version: 1.0.1
+version: ${project.version}
 authors: ["mmmjjkx"]
 description: A mine plugin
 api-version: 1.20
@@ -13,3 +13,5 @@ softdepend:
   - FastAsyncWorldEdit
   - PlaceholderAPI
   - MiniPlaceholders
+  - mcMMO
+  - AuraSkills

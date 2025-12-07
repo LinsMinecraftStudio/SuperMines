@@ -6,7 +6,7 @@
 
     <groupId>io.github.lijinhong11</groupId>
     <artifactId>SuperMines</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -54,6 +54,15 @@
                             <shadedPattern>io.github.lijinhong11.supermines.libraries.database</shadedPattern>
                         </relocation>
                     </relocations>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>com/tcoded/folialib/impl/SpigotImplementation.class</exclude>
+                                <exclude>com/tcoded/folialib/impl/LegacySpigotImplementation.class</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>
@@ -65,9 +74,23 @@
                 </executions>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 
     <repositories>
+        <repository>
+            <id>neetgames</id>
+            <url>https://nexus.neetgames.com/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>matteodev</id>
+            <url>https://maven.devs.beer/</url>
+        </repository>
         <repository>
             <id>minecraft-libraries</id>
             <url>https://libraries.minecraft.net</url>
@@ -120,7 +143,7 @@
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MDatabase</artifactId>
-            <version>1.0.2-SNAPSHOT</version>
+            <version>1.0.3-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
@@ -152,19 +175,40 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- PlaceholderAPI hook -->
+        <!-- Placeholders Plugin hook -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.11.6</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- MiniPlaceholders hook -->
         <dependency>
             <groupId>io.github.miniplaceholders</groupId>
             <artifactId>miniplaceholders-api</artifactId>
             <version>2.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Skills Plugin Hook -->
+        <dependency>
+            <groupId>com.gmail.nossr50.mcMMO</groupId>
+            <artifactId>mcMMO</artifactId>
+            <version>2.2.045</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.aurelium</groupId>
+            <artifactId>auraskills-api-bukkit</artifactId>
+            <version>2.3.9</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/AuraSkills-2.3.9.jar</systemPath>
+        </dependency>
+
+        <!-- Blocks -->
+        <dependency>
+            <groupId>dev.lone</groupId>
+            <artifactId>api-itemsadder</artifactId>
+            <version>4.0.10</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

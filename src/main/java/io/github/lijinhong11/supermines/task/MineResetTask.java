@@ -5,6 +5,7 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
+import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import java.util.HashMap;
@@ -38,8 +39,8 @@ class MineResetTask extends AbstractTask {
     private void doReset() {
         CuboidArea ca = mine.getArea();
         List<BlockPos> blockPosList = ca.asPosList();
-        Map<Material, Double> blockSpawnEntries = mine.getBlockSpawnEntries();
-        Map<BlockPos, Material> generated = new HashMap<>();
+        Map<AddonBlock, Double> blockSpawnEntries = mine.getBlockSpawnEntries();
+        Map<BlockPos, AddonBlock> generated = new HashMap<>();
 
         if (blockSpawnEntries.isEmpty()) {
             return;
@@ -50,8 +51,8 @@ class MineResetTask extends AbstractTask {
             Material material = loc.getBlock().getType();
             if (mine.isOnlyFillAirWhenRegenerate() && !material.isAir()) continue;
 
-            Material selected = null;
-            for (Map.Entry<Material, Double> entry : blockSpawnEntries.entrySet()) {
+            AddonBlock selected = null;
+            for (Map.Entry<AddonBlock, Double> entry : blockSpawnEntries.entrySet()) {
                 if (NumberUtils.matchChance(entry.getValue())) {
                     selected = entry.getKey();
                     break;
@@ -83,9 +84,9 @@ class MineResetTask extends AbstractTask {
             }
         }
 
-        for (Map.Entry<BlockPos, Material> entry : generated.entrySet()) {
+        for (Map.Entry<BlockPos, AddonBlock> entry : generated.entrySet()) {
             Location loc = entry.getKey().toLocation(mine.getWorld());
-            tm.runSync(loc, () -> loc.getBlock().setType(entry.getValue()));
+            tm.runSync(loc, () -> entry.getValue().place(loc));
         }
 
         mine.setBlocksBroken(0);

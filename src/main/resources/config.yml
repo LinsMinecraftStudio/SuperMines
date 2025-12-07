@@ -11,6 +11,9 @@ check-update: true
 mine:
   # Allow place blocks in mines
   allow-place: false
+  # Allow to players earn XP from skill plugins in mines
+  # Note: support mcMMO and AuraSkills
+  allow-earn-xp: true
 
 # Storage settings
 # Require restart

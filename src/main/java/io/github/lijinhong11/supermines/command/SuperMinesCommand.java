@@ -252,7 +252,7 @@ public class SuperMinesCommand {
                                                 new StringArgument("id")
                                                         .includeSuggestions(
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
-                                                new MaterialArgument("block"))
+                                                new BlockArgument("block"))
                                         .executes((sender, args) -> {
                                             String id = (String) args.get("id");
                                             Material mat = (Material) args.get("block");
@@ -294,7 +294,7 @@ public class SuperMinesCommand {
                                                 new StringArgument("id")
                                                         .includeSuggestions(
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
-                                                new MaterialArgument("block"))
+                                                new BlockArgument("block"))
                                         .executes((sender, args) -> {
                                             String id = (String) args.get("id");
                                             Material mat = (Material) args.get("block");
@@ -670,7 +670,7 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
-                                new MaterialArgument("block"),
+                                new BlockArgument("block"),
                                 new DoubleArgument("chance", 1, 100))
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
@@ -723,7 +723,7 @@ public class SuperMinesCommand {
                         }))
                 .withSubcommand(new CommandAPICommand("removeBlockGenerate")
                         .withPermission(Constants.Permission.BLOCK_GENERATE)
-                        .withArguments(new StringArgument("mineId"), new MaterialArgument("block"))
+                        .withArguments(new StringArgument("mineId"), new BlockArgument("block"))
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
                             Material mat = (Material) args.get("block");
@@ -783,7 +783,7 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
-                                new MaterialArgument("icon"))
+                                new BlockArgument("icon"))
                         .withPermission(Constants.Permission.SET_DISPLAY_ICON)
                         .executes((executor, args) -> {
                             String mineId = (String) args.get("mineId");

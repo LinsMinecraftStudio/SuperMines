@@ -8,6 +8,9 @@ import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
+import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
+import io.github.lijinhong11.supermines.integrates.block.MinecraftBlockAddon;
+import io.github.lijinhong11.supermines.managers.database.StringRankSet;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import java.util.*;
@@ -29,7 +32,7 @@ public final class Mine implements Identified {
     private final String id;
 
     private final World world;
-    private final Map<Material, Double> blockSpawnEntries;
+    private final Map<AddonBlock, Double> blockSpawnEntries;
 
     private final List<Treasure> treasures;
     private final Set<String> allowedRankIds;
@@ -52,7 +55,7 @@ public final class Mine implements Identified {
             Component displayName,
             World world,
             CuboidArea area,
-            Map<Material, Double> blockSpawnEntries,
+            Map<AddonBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
         this(
@@ -73,7 +76,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<Material, Double> blockSpawnEntries,
+            Map<AddonBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
         this(
@@ -96,7 +99,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<Material, Double> blockSpawnEntries,
+            Map<AddonBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -122,7 +125,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<Material, Double> blockSpawnEntries,
+            Map<AddonBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -151,7 +154,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<Material, Double> blockSpawnEntries,
+            Map<AddonBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -208,10 +211,10 @@ public final class Mine implements Identified {
             throw new IllegalArgumentException("Chance must be between 1 and 100");
         }
 
-        blockSpawnEntries.put(material, chance);
+        blockSpawnEntries.put(MinecraftBlockAddon.createForMaterial(material), chance);
     }
 
-    public void addBlockSpawnEntries(Map<Material, Double> blockSpawnEntries) {
+    public void addBlockSpawnEntries(Map<AddonBlock, Double> blockSpawnEntries) {
         this.blockSpawnEntries.putAll(blockSpawnEntries);
     }
 
@@ -296,7 +299,7 @@ public final class Mine implements Identified {
         return treasures;
     }
 
-    public Map<Material, Double> getBlockSpawnEntries() {
+    public Map<AddonBlock, Double> getBlockSpawnEntries() {
         return blockSpawnEntries;
     }
 
@@ -362,7 +365,7 @@ public final class Mine implements Identified {
 
     public boolean canMine(Player p) {
         PlayerData data = SuperMinesAPI.getOrCreatePlayerData(p.getUniqueId());
-        Rank rank = data.getRank();
+        StringRankSet rank = data.getRank();
 
         if (p.isOp() || p.hasPermission(Constants.Permission.BYPASS_RANK)) {
             return true;
@@ -372,10 +375,10 @@ public final class Mine implements Identified {
             return true;
         }
 
-        if (allowedRankIds.contains(rank.getId())) {
+        if (rank.matchRank(allowedRankIds)) {
             return true;
         }
 
-        return rank.getLevel() >= requiredRankLevel;
+        return rank.matchRankLevel(requiredRankLevel);
     }
 }

@@ -6,8 +6,8 @@ import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
 import io.github.lijinhong11.mdatabase.impl.SQLConnections;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
-import io.github.lijinhong11.supermines.integrates.MiniPlaceholderExtension;
-import io.github.lijinhong11.supermines.integrates.PlaceholderAPIExtension;
+import io.github.lijinhong11.supermines.integrates.placeholders.MiniPlaceholderExtension;
+import io.github.lijinhong11.supermines.integrates.placeholders.PlaceholderAPIExtension;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
 import io.github.lijinhong11.supermines.listeners.PlayerListener;
 import io.github.lijinhong11.supermines.listeners.WandListener;
@@ -56,11 +56,19 @@ public class SuperMines extends JavaPlugin {
         rankManager = new RankManager();
         taskMaker = new TaskMaker(foliaLibImpl);
 
-        new SuperMinesCommand().register();
+        getLogger().info("""
+                ==============================
+                       SuperMines v%s
+                        Author: mmmjjkx
+                           Enjoy :)
+                ==============================
+                """.formatted(getPluginMeta().getVersion()));
 
         setupDatabase();
         setupListeners();
         setupPlaceholders();
+
+        new SuperMinesCommand().register();
 
         taskMaker.startup();
     }
