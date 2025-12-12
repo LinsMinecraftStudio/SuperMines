@@ -6,6 +6,7 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
+import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import java.util.HashMap;
@@ -87,6 +88,7 @@ class MineResetTask extends AbstractTask {
         for (Map.Entry<BlockPos, AddonBlock> entry : generated.entrySet()) {
             Location loc = entry.getKey().toLocation(mine.getWorld());
             tm.runSync(loc, () -> entry.getValue().place(loc));
+            SkillsBlockPlace.markAsEarnable(loc);
         }
 
         mine.setBlocksBroken(0);

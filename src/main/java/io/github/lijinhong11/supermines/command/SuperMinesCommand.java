@@ -498,7 +498,7 @@ public class SuperMinesCommand {
                                             PlayerData data = SuperMines.getInstance()
                                                     .getPlayerDataManager()
                                                     .getOrCreatePlayerData(player.getUniqueId());
-                                            data.setRank(rank);
+                                            data.addRank(rank);
 
                                             SuperMines.getInstance()
                                                     .getLanguageManager()

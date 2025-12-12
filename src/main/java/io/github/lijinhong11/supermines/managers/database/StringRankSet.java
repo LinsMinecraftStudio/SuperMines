@@ -10,6 +10,16 @@ import java.util.Set;
 public class StringRankSet extends HashSet<Rank> {
     public StringRankSet() {}
 
+    public StringRankSet(String string) {
+        String[] split = string.split(",");
+        for (String id : split) {
+            Rank rank = SuperMines.getInstance().getRankManager().getRank(id);
+            if (rank != null) {
+                add(rank);
+            }
+        }
+    }
+
     public StringRankSet(Rank single) {
         add(single);
     }
@@ -35,5 +45,11 @@ public class StringRankSet extends HashSet<Rank> {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        String[] rankIds = stream().map(Rank::getId).toList().toArray(new String[0]);
+        return String.join(",", rankIds);
     }
 }

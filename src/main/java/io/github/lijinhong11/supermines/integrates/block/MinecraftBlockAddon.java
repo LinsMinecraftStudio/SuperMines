@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.integrates.block;
 
 import org.bukkit.Material;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
@@ -13,18 +14,26 @@ public class MinecraftBlockAddon extends BlockAddon {
 
     private MinecraftBlockAddon() {}
 
+    @Contract("!null -> !null")
     public static AddonBlock createForMaterial(Material material) {
-        return new AddonBlock(l -> l.getBlock().setType(material));
+        if (material == null) {
+            return null;
+        }
+
+        return new AddonBlock("", material.toString(), l -> l.getBlock().setType(material));
     }
 
     @Override
     public AddonBlock getBlock(String id) {
-        return null;
+        Material material = Material.matchMaterial(id);
+        return createForMaterial(material);
     }
 
     @Override
-    public void addBlockSuggestions(String input, List<String> suggestions) {
-
+    public void addBlockSuggestions(List<String> suggestions) {
+        for (Material material : Material.values()) {
+            suggestions.add(material.toString().toLowerCase());
+        }
     }
 
     @Override

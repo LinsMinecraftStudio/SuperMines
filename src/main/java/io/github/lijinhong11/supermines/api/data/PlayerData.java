@@ -49,6 +49,10 @@ public final class PlayerData {
         this.rank = rank;
     }
 
+    public void addRank(Rank rank) {
+        this.rank.add(rank);
+    }
+
     public int getMinedBlocks() {
         return minedBlocks;
     }

@@ -6,6 +6,7 @@ import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
 import io.github.lijinhong11.mdatabase.impl.SQLConnections;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
+import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.integrates.placeholders.MiniPlaceholderExtension;
 import io.github.lijinhong11.supermines.integrates.placeholders.PlaceholderAPIExtension;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
@@ -51,9 +52,11 @@ public class SuperMines extends JavaPlugin {
     public void onEnable() {
         languageManager = new LanguageManager(this);
 
+        BlockAddon.init();
+
         treasureManager = new TreasureManager();
-        mineManager = new MineManager();
         rankManager = new RankManager();
+        mineManager = new MineManager();
         taskMaker = new TaskMaker(foliaLibImpl);
 
         getLogger().info("""

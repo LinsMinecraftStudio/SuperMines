@@ -1,10 +1,14 @@
 package io.github.lijinhong11.supermines.integrates.block;
 
 import dev.lone.itemsadder.api.CustomBlock;
+import dev.lone.itemsadder.api.ItemsAdder;
 
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class ItemsAdderBlockAddon extends BlockAddon {
+    ItemsAdderBlockAddon() {}
+
     @Override
     public AddonBlock getBlock(String id) {
         CustomBlock block = CustomBlock.getInstance(id);
@@ -12,16 +16,14 @@ public class ItemsAdderBlockAddon extends BlockAddon {
             return null;
         }
 
-        return new AddonBlock(block::place);
+        return new AddonBlock("ia", id, block::place);
     }
 
     @Override
-    public void addBlockSuggestions(String input, List<String> suggestions) {
-        if (input.startsWith("ia")) {
-
-        } else if (input.startsWith("itemsadder")) {
-
-        }
+    public void addBlockSuggestions(List<String> suggestions) {
+        List<String> blocks = ItemsAdder.getNamespacedBlocksNamesInConfig();
+        blocks.forEach(s -> suggestions.add("ia:" + s));
+        blocks.forEach(s -> suggestions.add("itemsadder:" + s));
     }
 
     @Override

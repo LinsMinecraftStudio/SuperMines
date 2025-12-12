@@ -8,7 +8,7 @@ public class RankConverter implements ObjectConverter<StringRankSet> {
     @Override
     public StringRankSet convert(Object o) {
         if (o instanceof String s) {
-            return new StringRankSet(SuperMines.getInstance().getRankManager().getRank(s));
+            return new StringRankSet(s);
         }
 
         return new StringRankSet(Rank.DEFAULT);
@@ -16,8 +16,8 @@ public class RankConverter implements ObjectConverter<StringRankSet> {
 
     @Override
     public Object convertBack(Object t) {
-        if (t instanceof Rank r) {
-            return r.getId();
+        if (t instanceof StringRankSet r) {
+            return r.toString();
         }
 
         return Rank.DEFAULT.getId();

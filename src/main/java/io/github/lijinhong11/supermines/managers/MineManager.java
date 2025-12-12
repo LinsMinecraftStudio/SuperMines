@@ -7,6 +7,8 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
+import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
+import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -79,17 +81,17 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         BlockPos blockPos1 = new BlockPos(pos1.getInt("x"), pos1.getInt("y"), pos1.getInt("z"));
         BlockPos blockPos2 = new BlockPos(pos2.getInt("x"), pos2.getInt("y"), pos2.getInt("z"));
 
-        Map<Material, Double> blockSpawnEntries = new HashMap<>();
+        Map<AddonBlock, Double> blockSpawnEntries = new HashMap<>();
 
         ConfigurationSection blockSpawn = section.getConfigurationSection("blockSpawnEntries");
         if (blockSpawn != null) {
             for (String m : blockSpawn.getKeys(false)) {
-                Material material = Material.getMaterial(m);
-                if (material == null) {
+                AddonBlock block = BlockAddon.getAddonBlock(m);
+                if (block == null) {
                     continue;
                 }
 
-                blockSpawnEntries.put(material, blockSpawn.getDouble(m, 1));
+                blockSpawnEntries.put(block, blockSpawn.getDouble(m, 1));
             }
         }
 
@@ -146,7 +148,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("treasures", treasures);
 
         Map<String, Double> blockSpawnEntries = new HashMap<>();
-        for (Map.Entry<Material, Double> entry : object.getBlockSpawnEntries().entrySet()) {
+        for (Map.Entry<AddonBlock, Double> entry : object.getBlockSpawnEntries().entrySet()) {
             blockSpawnEntries.put(entry.getKey().toString(), entry.getValue());
         }
 
