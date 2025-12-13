@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.integrates.block;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +11,6 @@ public abstract class BlockAddon {
     private static final List<BlockAddon> blockAddons = new ArrayList<>();
 
     public static void init() {
-        blockAddons.add(MinecraftBlockAddon.INSTANCE);
-
         if (Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")) {
             blockAddons.add(new ItemsAdderBlockAddon());
         }
@@ -19,6 +18,12 @@ public abstract class BlockAddon {
         if (Bukkit.getPluginManager().isPluginEnabled("Nexo")) {
             blockAddons.add(new NexoBlockAddon());
         }
+
+        blockAddons.add(MinecraftBlockAddon.INSTANCE);
+    }
+
+    public static BlockAddon getBlockAddon(String key) {
+        return blockAddons.stream().filter(b -> b.getKey().contains(key)).findFirst().orElse(null);
     }
 
     public static AddonBlock getAddonBlock(String keyID) {
@@ -46,7 +51,13 @@ public abstract class BlockAddon {
         return addon.map(blockAddon -> blockAddon.getBlock(id)).orElse(null);
     }
 
+    public static void removeAddonBlock(Location loc) {
+        blockAddons.forEach(b -> b.removeBlock(loc));
+    }
+
     public abstract AddonBlock getBlock(String id);
+
+    public abstract void removeBlock(Location loc);
 
     public abstract void addBlockSuggestions(List<String> suggestions);
 

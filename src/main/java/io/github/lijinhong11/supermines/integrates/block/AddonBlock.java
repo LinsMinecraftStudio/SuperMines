@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.integrates.block;
 
 import org.bukkit.Location;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class AddonBlock {
@@ -27,7 +28,18 @@ public class AddonBlock {
         placer.accept(loc);
     }
 
-    public void remove(Location loc) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
 
+        if (!(obj instanceof AddonBlock block)) {
+            return false;
+        }
+
+        return Objects.equals(getKey(), block.getKey())
+                && Objects.equals(getId(), block.getId())
+                && Objects.equals(placer, block.placer);
     }
 }

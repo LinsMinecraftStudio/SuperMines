@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.integrates.block;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.ItemsAdder;
+import org.bukkit.Location;
 
 import java.util.List;
 
@@ -17,6 +18,11 @@ public class ItemsAdderBlockAddon extends BlockAddon {
         }
 
         return new AddonBlock("ia", id, block::place);
+    }
+
+    @Override
+    public void removeBlock(Location loc) {
+        CustomBlock.remove(loc);
     }
 
     @Override

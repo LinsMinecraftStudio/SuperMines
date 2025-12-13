@@ -47,6 +47,22 @@ public class StringRankSet extends HashSet<Rank> {
         return false;
     }
 
+    public Rank getBestValuedRank() {
+        int biggest = getBiggestRankLevel();
+
+        for (Rank r : this) {
+            if (r.getLevel() == biggest) {
+                return r;
+            }
+        }
+
+        return Rank.DEFAULT;
+    }
+
+    public int getBiggestRankLevel() {
+        return stream().mapToInt(Rank::getLevel).max().orElse(Rank.DEFAULT.getLevel());
+    }
+
     @Override
     public String toString() {
         String[] rankIds = stream().map(Rank::getId).toList().toArray(new String[0]);

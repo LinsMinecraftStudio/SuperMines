@@ -1,5 +1,6 @@
 package io.github.lijinhong11.supermines.integrates.block;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Contract;
 
@@ -30,6 +31,11 @@ public class MinecraftBlockAddon extends BlockAddon {
     }
 
     @Override
+    public void removeBlock(Location loc) {
+        loc.getBlock().setType(Material.AIR);
+    }
+
+    @Override
     public void addBlockSuggestions(List<String> suggestions) {
         for (Material material : Material.values()) {
             suggestions.add(material.toString().toLowerCase());
@@ -38,6 +44,6 @@ public class MinecraftBlockAddon extends BlockAddon {
 
     @Override
     public List<String> getKey() {
-        return List.of("minecraft", "mc"); //or no key
+        return List.of("minecraft", "mc", "");
     }
 }

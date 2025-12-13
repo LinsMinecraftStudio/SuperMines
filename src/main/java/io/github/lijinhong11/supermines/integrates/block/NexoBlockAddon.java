@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.integrates.block;
 
 import com.nexomc.nexo.api.NexoBlocks;
 import com.nexomc.nexo.mechanics.custom_block.CustomBlockMechanic;
+import org.bukkit.Location;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,11 @@ public class NexoBlockAddon extends BlockAddon {
         }
 
         return new AddonBlock("nexo", id, l -> NexoBlocks.place(id, l));
+    }
+
+    @Override
+    public void removeBlock(Location loc) {
+        NexoBlocks.remove(loc);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package io.github.lijinhong11.supermines.managers.database;
 
 import io.github.lijinhong11.mdatabase.serialization.ObjectConverter;
-import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.Rank;
 
 public class RankConverter implements ObjectConverter<StringRankSet> {

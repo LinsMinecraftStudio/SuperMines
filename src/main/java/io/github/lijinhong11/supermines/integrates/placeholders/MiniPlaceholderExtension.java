@@ -14,32 +14,32 @@ import org.bukkit.entity.Player;
 public class MiniPlaceholderExtension {
     public static void register() {
         Expansion expansion = Expansion.builder("supermines")
-                .audiencePlaceholder("rank", (a, args, ctx) -> {
+                .audiencePlaceholder("bestRank", (a, args, ctx) -> {
                     if (args.hasNext()) {
                         String playerName = args.pop().value();
                         OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
-                        return Tag.selfClosingInserting(data.getRank().getDisplayName());
+                        return Tag.selfClosingInserting(data.getRank().getBestValuedRank().getDisplayName());
                     } else {
                         OfflinePlayer p = (Player) a;
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
-                        return Tag.selfClosingInserting(data.getRank().getDisplayName());
+                        return Tag.selfClosingInserting(data.getRank().getBestValuedRank().getDisplayName());
                     }
                 })
-                .audiencePlaceholder("rankLevel", (a, args, ctx) -> {
+                .audiencePlaceholder("biggestRankLevel", (a, args, ctx) -> {
                     if (args.hasNext()) {
                         String playerName = args.pop().value();
                         OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
-                        return Tag.selfClosingInserting(Component.text(data.getRank().getLevel()));
+                        return Tag.selfClosingInserting(Component.text(data.getRank().getBiggestRankLevel()));
                     } else {
                         OfflinePlayer p = (Player) a;
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
-                        return Tag.selfClosingInserting(Component.text(data.getRank().getLevel()));
+                        return Tag.selfClosingInserting(Component.text(data.getRank().getBiggestRankLevel()));
                     }
                 })
                 .audiencePlaceholder("minedBlocks", (a, args, ctx) -> {

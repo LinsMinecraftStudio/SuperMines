@@ -9,6 +9,13 @@ import io.github.lijinhong11.supermines.managers.database.StringRankSet;
 
 import java.util.UUID;
 
+/**
+ * Represents player data stored in the database, including mining statistics
+ * and rank information.
+ * <p>
+ * Note: This is an important database object. So do not use reflection to edit
+ * it anyway.
+ */
 @Table(name = "player_data")
 public final class PlayerData {
     @Column(name = "player_uuid")
@@ -25,7 +32,8 @@ public final class PlayerData {
     @Column(name = "rank")
     private StringRankSet rank;
 
-    public PlayerData() {}
+    public PlayerData() {
+    }
 
     public PlayerData(String playerName, UUID playerUUID, StringRankSet rank) {
         this.playerName = playerName;

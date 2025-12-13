@@ -34,34 +34,34 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
         String[] args = params.split("_");
 
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("rank")) {
+            if (args[0].equalsIgnoreCase("bestrank")) {
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
                 return ChatColor.translateAlternateColorCodes(
-                        '&', ComponentUtils.serializeLegacy(data.getRank().getDisplayName()));
-            } else if (args[0].equalsIgnoreCase("ranklevel")) {
+                        '&', ComponentUtils.serializeLegacy(data.getRank().getBestValuedRank().getDisplayName()));
+            } else if (args[0].equalsIgnoreCase("biggestranklevel")) {
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
-                return String.valueOf(data.getRank().getLevel());
+                return String.valueOf(data.getRank().getBiggestRankLevel());
             } else if (args[0].equalsIgnoreCase("minedblocks")) {
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
                 return String.valueOf(data.getMinedBlocks());
             }
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("rank")) {
+            if (args[0].equalsIgnoreCase("bestrank")) {
                 String playerName = args[1];
                 OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
                 return ChatColor.translateAlternateColorCodes(
-                        '&', ComponentUtils.serializeLegacy(data.getRank().getDisplayName()));
-            } else if (args[0].equalsIgnoreCase("ranklevel")) {
+                        '&', ComponentUtils.serializeLegacy(data.getRank().getBestValuedRank().getDisplayName()));
+            } else if (args[0].equalsIgnoreCase("biggestranklevel")) {
                 String playerName = args[1];
                 OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
-                return String.valueOf(data.getRank().getLevel());
+                return String.valueOf(data.getRank().getBiggestRankLevel());
             } else if (args[0].equalsIgnoreCase("minedblocks")) {
                 String playerName = args[1];
                 OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);

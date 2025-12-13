@@ -2,10 +2,12 @@ package io.github.lijinhong11.supermines.task;
 
 import com.tcoded.folialib.wrapper.task.WrappedTask;
 import io.github.lijinhong11.supermines.SuperMines;
+import io.github.lijinhong11.supermines.api.events.MineResetEvent;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.pos.BlockPos;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
+import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
@@ -81,7 +83,7 @@ class MineResetTask extends AbstractTask {
         if (!mine.isOnlyFillAirWhenRegenerate()) {
             for (BlockPos pos : blockPosList) {
                 Location loc = pos.toLocation(mine.getWorld());
-                tm.runSync(loc, () -> loc.getBlock().setType(Material.AIR));
+                tm.runSync(loc, () -> BlockAddon.removeAddonBlock(loc));
             }
         }
 
@@ -92,6 +94,8 @@ class MineResetTask extends AbstractTask {
         }
 
         mine.setBlocksBroken(0);
+
+        new MineResetEvent(mine).callEvent();
     }
 
     public void refreshNextResetTime() {
