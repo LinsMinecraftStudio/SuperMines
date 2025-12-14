@@ -2,7 +2,7 @@ package io.github.lijinhong11.supermines.integrates.block;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.jetbrains.annotations.Contract;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -15,18 +15,21 @@ public class MinecraftBlockAddon extends BlockAddon {
 
     private MinecraftBlockAddon() {}
 
-    @Contract("!null -> !null")
     public static AddonBlock createForMaterial(Material material) {
         if (material == null) {
             return null;
         }
 
-        return new AddonBlock("", material.toString(), l -> l.getBlock().setType(material));
+        if (material.isAir()) {
+            return null;
+        }
+
+        return new AddonBlock("", material.toString(), l -> l.getBlock().setType(material), new ItemStack(material));
     }
 
     @Override
     public AddonBlock getBlock(String id) {
-        Material material = Material.matchMaterial(id);
+        Material material = Material.matchMaterial(id.toUpperCase());
         return createForMaterial(material);
     }
 

@@ -11,6 +11,9 @@ import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
+import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
+import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
+import io.github.lijinhong11.supermines.integrates.block.MinecraftBlockAddon;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
@@ -21,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,6 +35,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class GuiManager {
     // GUI position constants (keeping original layout)
+    // SHOULD I DO THAT?
     private static final int GENERAL_MINES_ROW = 2;
     private static final int GENERAL_MINES_COL = 3;
     private static final int GENERAL_TREASURES_ROW = 2;
@@ -81,8 +86,6 @@ public class GuiManager {
     private static final int PAGINATION_END_COL = 9;
 
     private static final String CANCEL_COMMAND = "##CANCEL";
-    private static final int PERCENTAGE_MAX = 100;
-    private static final int PERCENTAGE_MIN = 0;
 
     public static void openGeneral(Player p) {
         Gui gui = Gui.gui()
@@ -130,9 +133,9 @@ public class GuiManager {
         // Display Icon
         putItem(MINE_DISPLAY_ICON_ROW, MINE_DISPLAY_ICON_COL, gui,
                 ItemBuilder.from(Constants.Items.SET_DISPLAY_ICON.apply(p, mine.getDisplayIcon())), e -> {
-                    Material m = openMaterialChooser(p, mt -> true, reopen);
+                    AddonBlock m = openBlockChooser(p, b -> MinecraftBlockAddon.INSTANCE.getKey().contains(b.getKey()), reopen);
                     if (m != null) {
-                        mine.setDisplayIcon(m);
+                        mine.setDisplayIcon(m.toItem().getType());
                         reopen.run();
                     }
                 });
@@ -197,7 +200,7 @@ public class GuiManager {
         fillPageButtons(p, gui, back);
 
         putItem(BLOCK_SPAWN_ADD_ROW, BLOCK_SPAWN_ADD_COL, gui, ItemBuilder.from(Constants.Items.ADD.apply(p)), e -> {
-            Material m = openMaterialChooser(p, Material::isBlock, reopen);
+            AddonBlock m = openBlockChooser(p, b -> true, reopen);
             if (m != null) {
                 SuperMines.getInstance()
                         .getLanguageManager()
@@ -209,13 +212,13 @@ public class GuiManager {
             }
         });
 
-        for (Map.Entry<Material, Double> entry : mine.getBlockSpawnEntries().entrySet()) {
+        for (Map.Entry<AddonBlock, Double> entry : mine.getBlockSpawnEntries().entrySet()) {
             MessageReplacement r = MessageReplacement.replace("%precent%", String.valueOf(entry.getValue()));
             List<Component> lore = SuperMines.getInstance()
                     .getLanguageManager()
                     .getMsgComponentList(p, "gui.mine-management.block_spawn.each_lore", r);
-            Material material = entry.getKey();
-            GuiItem item = ItemBuilder.from(material).lore(lore).asGuiItem(e -> {
+            AddonBlock block = entry.getKey();
+            GuiItem item = ItemBuilder.from(block.toItem()).lore(lore).asGuiItem(e -> {
                 if (!checkPermission(p, Constants.Permission.BLOCK_GENERATE))
                     return;
 
@@ -227,10 +230,10 @@ public class GuiManager {
                             .sendMessage(
                                     p,
                                     "gui.mine-management.block_spawn.set_precent_prompt",
-                                    MessageReplacement.replace("%material%", material.toString()));
-                    addBlockSpawnEntry(p, mine, material);
+                                    MessageReplacement.replace("%material%", block.toString()));
+                    addBlockSpawnEntry(p, mine, block);
                 } else if (type.isRightClick()) {
-                    mine.removeBlockSpawnEntry(material);
+                    mine.removeBlockSpawnEntry(block);
                     reopen.run();
                 }
                 e.setCancelled(true);
@@ -242,7 +245,11 @@ public class GuiManager {
     }
 
     private static void addBlockSpawnEntry(Player p, Mine mine, Material material) {
-        handleDoubleInput(p, PERCENTAGE_MIN, PERCENTAGE_MAX, result -> {
+        addBlockSpawnEntry(p, mine, MinecraftBlockAddon.createForMaterial(material));
+    }
+
+    private static void addBlockSpawnEntry(Player p, Mine mine, AddonBlock material) {
+        handleDoubleInput(p, Constants.PERCENTAGE_MIN, Constants.PERCENTAGE_MAX, result -> {
             mine.addBlockSpawnEntry(material, result);
             openBlockSpawnEntries(p, mine);
         }, "gui.input.invalid-precent");
@@ -285,7 +292,7 @@ public class GuiManager {
                     gui.close(p);
                     SuperMines.getInstance().getLanguageManager().sendMessage(p,
                             "gui.treasure-management.set_chance.prompt");
-                    handleDoubleInput(p, PERCENTAGE_MIN, PERCENTAGE_MAX, result -> {
+                    handleDoubleInput(p, Constants.PERCENTAGE_MIN, Constants.PERCENTAGE_MAX, result -> {
                         treasure.setChance(result);
                         reopen.run();
                     }, "gui.input.invalid-precent");
@@ -337,20 +344,19 @@ public class GuiManager {
         ListGUI.openList(p, SuperMines.getInstance()
                 .getLanguageManager()
                 .getMsgComponent(p, "gui.treasure-management.matched_materials.title"),
-                treasure.getMatchedMaterials(),
-                m -> {
+                treasure.getMatchedBlocks(),
+                t -> {
                     List<Component> lore = SuperMines.getInstance()
                             .getLanguageManager()
                             .getMsgComponentList(p, "gui.treasure-management.matched_materials.each_lore");
-                    return ItemBuilder.from(m)
+                    return ItemBuilder.from(t.toItem())
                             .lore(lore)
                             .build();
-                }, treasure::removeMatchedMaterial, () -> {
-                    Material m = openMaterialChooser(p, Material::isBlock, () -> {
-                    });
+                }, treasure::removeMatchedBlock, () -> {
+                    AddonBlock m = openBlockChooser(p, b -> true, null);
 
-                    if (!treasure.getMatchedMaterials().contains(m)) {
-                        treasure.addMatchedMaterial(m);
+                    if (!treasure.getMatchedBlocks().contains(m)) {
+                        treasure.addMatchedBlock(m);
                     }
 
                     openMatchedMaterials(p, treasure);
@@ -520,19 +526,19 @@ public class GuiManager {
                 e -> back.run());
     }
 
-    private static Material openMaterialChooser(Player p, Predicate<Material> predicate, Runnable reopen) {
+    private static AddonBlock openBlockChooser(Player p, Predicate<AddonBlock> predicate, Runnable reopen) {
         PaginatedGui gui = createPaginatedGui(p, "gui.material-chooser.title", 6, 45);
         fillPageButtons(p, gui, reopen);
 
-        AtomicReference<Material> selected = new AtomicReference<>();
+        AtomicReference<AddonBlock> selected = new AtomicReference<>();
 
-        for (Material material : Material.values()) {
-            if (material.isAir() || !predicate.test(material)) {
+        for (AddonBlock block : BlockAddon.getAllBlocks()) {
+            if (block.toItem().getType().isAir() || !predicate.test(block)) {
                 continue;
             }
 
-            GuiItem guiItem = ItemBuilder.from(material).asGuiItem(e -> {
-                selected.set(material);
+            GuiItem guiItem = ItemBuilder.from(block.toItem()).asGuiItem(e -> {
+                selected.set(block);
                 reopen.run();
                 e.setCancelled(true);
             });

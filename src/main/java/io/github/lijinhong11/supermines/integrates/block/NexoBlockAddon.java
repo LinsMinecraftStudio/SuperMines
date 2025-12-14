@@ -1,11 +1,15 @@
 package io.github.lijinhong11.supermines.integrates.block;
 
 import com.nexomc.nexo.api.NexoBlocks;
+import com.nexomc.nexo.api.NexoItems;
+import com.nexomc.nexo.items.ItemBuilder;
 import com.nexomc.nexo.mechanics.custom_block.CustomBlockMechanic;
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class NexoBlockAddon extends BlockAddon {
     NexoBlockAddon() {}
@@ -17,7 +21,14 @@ public class NexoBlockAddon extends BlockAddon {
             return null;
         }
 
-        return new AddonBlock("nexo", id, l -> NexoBlocks.place(id, l));
+        Optional<ItemBuilder> itemBuilderOptional = NexoItems.optionalItemFromId(block.getItemID());
+        if (itemBuilderOptional.isEmpty()) {
+            return null;
+        }
+
+        ItemStack item = itemBuilderOptional.get().build();
+
+        return new AddonBlock("nexo", id, l -> NexoBlocks.place(id, l), item);
     }
 
     @Override

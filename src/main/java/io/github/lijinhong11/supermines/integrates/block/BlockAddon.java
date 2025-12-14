@@ -55,6 +55,18 @@ public abstract class BlockAddon {
         blockAddons.forEach(b -> b.removeBlock(loc));
     }
 
+    public static List<AddonBlock> getAllBlocks() {
+        List<AddonBlock> blocks = new ArrayList<>();
+
+        for (BlockAddon addon : blockAddons) {
+            List<String> suggestions = new ArrayList<>();
+            addon.addBlockSuggestions(suggestions);
+            blocks.addAll(suggestions.parallelStream().map(BlockAddon::getAddonBlock).toList());
+        }
+
+        return blocks;
+    }
+
     public abstract AddonBlock getBlock(String id);
 
     public abstract void removeBlock(Location loc);

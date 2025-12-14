@@ -240,7 +240,7 @@ public final class Mine implements Identified {
     /**
      * Adds a block spawn entry with the specified material and chance.
      *
-     * @param material the material to spawn
+     * @param material the material of the block to spawn
      * @param chance the spawn chance (must be between 1 and 100)
      * @throws IllegalArgumentException if chance is not between 1 and 100
      */
@@ -250,6 +250,21 @@ public final class Mine implements Identified {
         }
 
         blockSpawnEntries.put(MinecraftBlockAddon.createForMaterial(material), chance);
+    }
+
+    /**
+     * Adds a block spawn entry with the specified material and chance.
+     *
+     * @param block the block to spawn
+     * @param chance the spawn chance (must be between 1 and 100)
+     * @throws IllegalArgumentException if chance is not between 1 and 100
+     */
+    public void addBlockSpawnEntry(@NotNull AddonBlock block, double chance) {
+        if (chance < 1 || chance > 100) {
+            throw new IllegalArgumentException("Chance must be between 1 and 100");
+        }
+
+        blockSpawnEntries.put(block, chance);
     }
 
     /**
@@ -361,16 +376,19 @@ public final class Mine implements Identified {
      * @return the serialized display name
      */
     public String getRawDisplayName() {
-        return ComponentUtils.serialize(getDisplayName());
+        if (displayName == null) {
+            return id;
+        }
+
+        return ComponentUtils.serialize(displayName);
     }
 
     /**
      * Sets the display name of this mine.
      *
      * @param displayName the display name component (cannot be null)
-     * @throws NullPointerException if displayName is null
      */
-    public void setDisplayName(@NotNull Component displayName) {
+    public void setDisplayName(@Nullable Component displayName) {
         Preconditions.checkNotNull(displayName, "display name cannot be null");
 
         this.displayName = displayName;
@@ -382,7 +400,7 @@ public final class Mine implements Identified {
      * @return the display name component, or a default name if not set
      */
     public Component getDisplayName() {
-        return displayName == null ? Constants.StringsAndComponents.RESET.append(Component.text(id)) : displayName;
+        return displayName == null ? ComponentUtils.text(id) : displayName;
     }
 
     /**

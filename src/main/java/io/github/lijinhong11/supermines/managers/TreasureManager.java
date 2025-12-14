@@ -3,12 +3,13 @@ package io.github.lijinhong11.supermines.managers;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
+import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
+import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import io.github.lijinhong11.supermines.utils.ItemUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,9 +48,11 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
                 MiniMessage.miniMessage().deserialize(section.getString("displayName", id)),
                 ItemUtils.deserializeFromBytes(section.getObject("itemStack", byte[].class)),
                 chance,
-                section.getStringList("matchedMaterials").stream()
-                        .map(Material::getMaterial)
+                section.getStringList("matchedBlocks").stream()
+                        .map(BlockAddon::getAddonBlock)
                         .collect(Collectors.toSet()));
+
+        //BREAKING CHANGE: matchedMaterials -> matchedBlocks
     }
 
     @Override
@@ -59,8 +62,8 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         section.set("itemStack", ItemUtils.serializeToBytes(object.getItemStack()));
         section.set("chance", object.getChance());
         section.set(
-                "matchedMaterials",
-                object.getMatchedMaterials().stream().map(Material::toString).toList());
+                "matchedBlocks",
+                object.getMatchedBlocks().stream().map(AddonBlock::toString).toList());
     }
 
     @Override

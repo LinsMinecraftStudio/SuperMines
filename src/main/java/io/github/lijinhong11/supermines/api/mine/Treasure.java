@@ -2,6 +2,8 @@ package io.github.lijinhong11.supermines.api.mine;
 
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.iface.Identified;
+import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
+import io.github.lijinhong11.supermines.integrates.block.MinecraftBlockAddon;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import java.util.Set;
@@ -9,13 +11,13 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a treasure that can be dropped when mining blocks in a mine.
  */
 public final class Treasure implements Identified {
-    private final Set<Material> matchedMaterials;
+    private final Set<AddonBlock> matchedMaterials;
 
     private final String id;
     private Component displayName;
@@ -46,7 +48,7 @@ public final class Treasure implements Identified {
      */
     @ParametersAreNonnullByDefault
     public Treasure(
-            String id, Component displayName, ItemStack itemStack, double chance, Set<Material> matchedMaterials) {
+            String id, Component displayName, ItemStack itemStack, double chance, Set<AddonBlock> matchedMaterials) {
         this.id = id;
         this.displayName = displayName;
         this.itemStack = itemStack;
@@ -69,7 +71,11 @@ public final class Treasure implements Identified {
      * @return the serialized display name
      */
     public String getRawDisplayName() {
-        return ComponentUtils.serialize(getDisplayName());
+        if (displayName == null) {
+            return id;
+        }
+
+        return ComponentUtils.serialize(displayName);
     }
 
     /**
@@ -78,16 +84,15 @@ public final class Treasure implements Identified {
      * @return the display name component
      */
     public Component getDisplayName() {
-        return Constants.StringsAndComponents.RESET.append(displayName);
+        return displayName == null ? ComponentUtils.text(id) : displayName;
     }
 
     /**
      * Sets the display name of this treasure.
      *
      * @param displayName the display name component (cannot be null)
-     * @throws NullPointerException if displayName is null
      */
-    public void setDisplayName(@NotNull Component displayName) {
+    public void setDisplayName(@Nullable Component displayName) {
         Preconditions.checkNotNull(displayName, "display name cannot be null");
 
         this.displayName = displayName;
@@ -135,7 +140,16 @@ public final class Treasure implements Identified {
      * @param material the material to add
      */
     public void addMatchedMaterial(Material material) {
-        matchedMaterials.add(material);
+        addMatchedBlock(MinecraftBlockAddon.createForMaterial(material));
+    }
+
+    /**
+     * Adds a material that can trigger this treasure when mined.
+     *
+     * @param block the block to add
+     */
+    public void addMatchedBlock(AddonBlock block) {
+        matchedMaterials.add(block);
     }
 
     /**
@@ -144,15 +158,24 @@ public final class Treasure implements Identified {
      * @param material the material to remove
      */
     public void removeMatchedMaterial(Material material) {
-        matchedMaterials.remove(material);
+        matchedMaterials.remove(MinecraftBlockAddon.createForMaterial(material));
+    }
+
+    /**
+     * Removes a material from the matched materials set.
+     *
+     * @param block the block to remove
+     */
+    public void removeMatchedBlock(AddonBlock block) {
+        matchedMaterials.remove(block);
     }
 
     /**
      * Gets all materials that can trigger this treasure.
      *
-     * @return a set of matched materials
+     * @return a set of matched blocks
      */
-    public Set<Material> getMatchedMaterials() {
+    public Set<AddonBlock> getMatchedBlocks() {
         return matchedMaterials;
     }
 }

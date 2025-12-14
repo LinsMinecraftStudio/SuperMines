@@ -33,7 +33,7 @@ public class ConfigFileUtil {
             return;
         }
 
-        if (fileCheck(plugin, resourceFile, stream, file)) return;
+        if (badFileCheck(plugin, resourceFile, stream, file)) return;
 
         try {
             InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
@@ -94,7 +94,7 @@ public class ConfigFileUtil {
 
         File file = new File(plugin.getDataFolder(), resourceFile);
 
-        if (fileCheck(plugin, resourceFile, stream, file)) return;
+        if (badFileCheck(plugin, resourceFile, stream, file)) return;
 
         try {
             Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
@@ -116,7 +116,7 @@ public class ConfigFileUtil {
         }
     }
 
-    private static boolean fileCheck(Plugin plugin, String resourceFile, InputStream stream, File file) {
+    private static boolean badFileCheck(Plugin plugin, String resourceFile, InputStream stream, File file) {
         if (!file.getAbsolutePath().startsWith(plugin.getDataFolder().getAbsolutePath())) {
             return true;
         }

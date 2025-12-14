@@ -123,7 +123,7 @@ public final class LanguageManager {
         MessageReplacement chance = MessageReplacement.replace("%chance%", String.valueOf(treasure.getChance()));
         MessageReplacement matchedMaterials = MessageReplacement.replace(
                 "%matched_materials%",
-                String.valueOf(treasure.getMatchedMaterials().size()));
+                String.valueOf(treasure.getMatchedBlocks().size()));
         return getMsgComponentList(p, "gui.treasures.info", chance, matchedMaterials);
     }
 

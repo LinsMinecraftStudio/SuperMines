@@ -3,11 +3,13 @@ package io.github.lijinhong11.supermines.api.data;
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
-import io.github.lijinhong11.supermines.utils.Constants;
+
 import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Represents a rank that can be assigned to players for mine access control.
@@ -16,8 +18,7 @@ public final class Rank implements Identified {
     /**
      * The default rank with level 1.
      */
-    public static final Rank DEFAULT =
-            new Rank(1, "default", Constants.StringsAndComponents.RESET.append(Component.text("Default")));
+    public static final Rank DEFAULT = new Rank(1, "default", ComponentUtils.deserialize("Default"));
 
     private final String id;
 
@@ -33,7 +34,8 @@ public final class Rank implements Identified {
      * @throws IllegalArgumentException if level is not greater than 0
      * @throws NullPointerException if id is null
      */
-    public Rank(int level, @NotNull String id, Component displayName) {
+    @ParametersAreNonnullByDefault
+    public Rank(int level, String id, Component displayName) {
         Preconditions.checkArgument(level > 0, "Rank level must be greater than 0");
         Preconditions.checkNotNull(id, "Rank ID must not be null");
 
@@ -77,7 +79,7 @@ public final class Rank implements Identified {
      *
      * @return the serialized display name
      */
-    public String getRawDisplayName() {
+    public @NotNull String getRawDisplayName() {
         return ComponentUtils.serialize(getDisplayName());
     }
 
@@ -86,8 +88,8 @@ public final class Rank implements Identified {
      *
      * @return the display name component
      */
-    public Component getDisplayName() {
-        return Constants.StringsAndComponents.RESET.append(displayName);
+    public @NotNull Component getDisplayName() {
+        return displayName == null ? ComponentUtils.text(id) : displayName;
     }
 
     /**

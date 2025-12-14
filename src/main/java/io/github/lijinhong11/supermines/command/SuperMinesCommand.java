@@ -12,13 +12,16 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.gui.GuiManager;
+import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import io.github.lijinhong11.supermines.utils.StringUtils;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,8 +30,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+//TODO: replace Material to AddonBlock
 public class SuperMinesCommand {
-
     private static final Map<UUID, AreaSelection> selectionMap = new ConcurrentHashMap<>();
 
     public static void handlePos(Player player, boolean isPos1, Location forcedLoc) {
@@ -255,7 +258,7 @@ public class SuperMinesCommand {
                                                 new BlockArgument("block"))
                                         .executes((sender, args) -> {
                                             String id = (String) args.get("id");
-                                            Material mat = (Material) args.get("block");
+                                            AddonBlock mat = (AddonBlock) args.get("block");
 
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
@@ -267,26 +270,26 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
-                                            if (mat == null || mat.isAir() || !mat.isBlock()) {
+                                            if (mat == null || mat.toItem().getType().isAir()) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
-                                                        .sendMessage(sender, "command.invalid-material");
+                                                        .sendMessage(sender, "command.invalid-block");
                                                 return;
                                             }
 
-                                            if (treasure.getMatchedMaterials().contains(mat)) {
+                                            if (treasure.getMatchedBlocks().contains(mat)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
                                                         .sendMessage(
-                                                                sender, "command.treasures.matched_materials.exists");
+                                                                sender, "command.treasures.matched_blocks.exists");
                                                 return;
                                             }
 
-                                            treasure.addMatchedMaterial(mat);
+                                            treasure.addMatchedBlock(mat);
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
-                                                            sender, "command.treasures.matched_materials.add_success");
+                                                            sender, "command.treasures.matched_blocks.add_success");
                                         }),
                                 new CommandAPICommand("removeMatch")
                                         .withPermission(Constants.Permission.TREASURES)
@@ -297,7 +300,7 @@ public class SuperMinesCommand {
                                                 new BlockArgument("block"))
                                         .executes((sender, args) -> {
                                             String id = (String) args.get("id");
-                                            Material mat = (Material) args.get("block");
+                                            AddonBlock mat = (AddonBlock) args.get("block");
 
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
@@ -312,11 +315,11 @@ public class SuperMinesCommand {
                                             if (mat == null || mat.isAir() || !mat.isBlock()) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
-                                                        .sendMessage(sender, "command.invalid-material");
+                                                        .sendMessage(sender, "command.invalid-block");
                                                 return;
                                             }
 
-                                            if (!treasure.getMatchedMaterials().contains(mat)) {
+                                            if (!treasure.getMatchedBlocks().contains(mat)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
                                                         .sendMessage(

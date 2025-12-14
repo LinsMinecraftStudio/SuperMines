@@ -17,7 +17,7 @@ public class ItemsAdderBlockAddon extends BlockAddon {
             return null;
         }
 
-        return new AddonBlock("ia", id, block::place);
+        return new AddonBlock("ia", id, block::place, block.getItemStack());
     }
 
     @Override

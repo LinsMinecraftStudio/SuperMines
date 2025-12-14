@@ -26,6 +26,10 @@ public class ComponentUtils {
         return MiniMessage.miniMessage().deserialize(mini, MiniPlaceholders.getGlobalPlaceholders());
     }
 
+    public static Component text(String input) {
+        return Constants.StringsAndComponents.RESET.append(Component.text(input));
+    }
+
     public static String serialize(Component component) {
         return LEGACY.serialize(component);
     }

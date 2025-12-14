@@ -15,6 +15,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 public class Constants {
+    public static final int PERCENTAGE_MAX = 100;
+    public static final int PERCENTAGE_MIN = 0;
+
     private Constants() {}
 
     public static class StringsAndComponents {
