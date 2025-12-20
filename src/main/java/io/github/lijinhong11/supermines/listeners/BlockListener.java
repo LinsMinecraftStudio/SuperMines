@@ -4,6 +4,7 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
+import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import java.util.List;
 import org.bukkit.Location;
@@ -59,7 +60,7 @@ public class BlockListener implements Listener {
         List<Treasure> treasures = mine.getTreasures();
         if (!treasures.isEmpty()) {
             for (Treasure treasure : treasures) {
-                if (treasure.getMatchedBlocks().contains(e.getBlock().getType())) {
+                if (treasure.getMatchedBlocks().contains(BlockAddon.getAddonBlockByLocation(loc))) {
                     double chance = treasure.getChance();
                     if (NumberUtils.matchChance(chance)) {
                         world.dropItemNaturally(loc, treasure.getItemStack().clone());

@@ -32,6 +32,25 @@ public class NexoBlockAddon extends BlockAddon {
     }
 
     @Override
+    public AddonBlock getBlock(Location loc) {
+        CustomBlockMechanic block = NexoBlocks.customBlockMechanic(loc);
+        if (block == null) {
+            return null;
+        }
+
+        String id = block.getItemID();
+
+        Optional<ItemBuilder> itemBuilderOptional = NexoItems.optionalItemFromId(id);
+        if (itemBuilderOptional.isEmpty()) {
+            return null;
+        }
+
+        ItemStack item = itemBuilderOptional.get().build();
+
+        return new AddonBlock("nexo", id, l -> NexoBlocks.place(id, l), item);
+    }
+
+    @Override
     public void removeBlock(Location loc) {
         NexoBlocks.remove(loc);
     }

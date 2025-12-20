@@ -11,6 +11,16 @@ public class ItemsAdderBlockAddon extends BlockAddon {
     ItemsAdderBlockAddon() {}
 
     @Override
+    public AddonBlock getBlock(Location loc) {
+        CustomBlock block = CustomBlock.byAlreadyPlaced(loc.getBlock());
+        if (block == null) {
+            return null;
+        }
+
+        return new AddonBlock("ia", block.getId(), block::place, block.getItemStack());
+    }
+
+    @Override
     public AddonBlock getBlock(String id) {
         CustomBlock block = CustomBlock.getInstance(id);
         if (block == null) {

@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.integrates.block;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,17 @@ public abstract class BlockAddon {
         return addon.map(blockAddon -> blockAddon.getBlock(id)).orElse(null);
     }
 
+    public static AddonBlock getAddonBlockByLocation(Location loc) {
+        for (BlockAddon addon : blockAddons) {
+            AddonBlock block = addon.getBlock(loc);
+            if (block != null) {
+                return block;
+            }
+        }
+
+        return MinecraftBlockAddon.INSTANCE.getBlock(loc);
+    }
+
     public static void removeAddonBlock(Location loc) {
         blockAddons.forEach(b -> b.removeBlock(loc));
     }
@@ -68,6 +80,8 @@ public abstract class BlockAddon {
     }
 
     public abstract AddonBlock getBlock(String id);
+
+    public abstract AddonBlock getBlock(Location loc);
 
     public abstract void removeBlock(Location loc);
 

@@ -34,6 +34,11 @@ public class MinecraftBlockAddon extends BlockAddon {
     }
 
     @Override
+    public AddonBlock getBlock(Location loc) {
+        return createForMaterial(loc.getBlock().getType());
+    }
+
+    @Override
     public void removeBlock(Location loc) {
         loc.getBlock().setType(Material.AIR);
     }
