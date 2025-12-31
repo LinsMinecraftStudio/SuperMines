@@ -104,7 +104,7 @@ public class GuiManager {
     }
 
     public static void openMineList(Player p) {
-        PaginatedGui gui = createPaginatedGui(p, "gui.mines.title", 6, 45);
+        PaginatedGui gui = createPaginatedGui(p, "gui.mines.title", 45);
         fillPageButtons(p, gui, () -> openGeneral(p));
 
         for (Mine mine : SuperMines.getInstance().getMineManager().getAllMines()) {
@@ -124,7 +124,7 @@ public class GuiManager {
 
     public static void openMineManagementGui(Player p, Mine mine) {
         MessageReplacement mineName = MessageReplacement.replace("%mine%", mine.getRawDisplayName());
-        Gui gui = createManagementGui(p, "gui.mine-management.title", mineName, 6);
+        Gui gui = createManagementGui(p, "gui.mine-management.title", mineName);
         Runnable reopen = () -> openMineManagementGui(p, mine);
         Runnable back = () -> openMineList(p);
 
@@ -193,7 +193,7 @@ public class GuiManager {
     }
 
     private static void openBlockSpawnEntries(Player p, Mine mine) {
-        PaginatedGui gui = createPaginatedGui(p, "gui.mine-management.block_spawn.title", 6, 45);
+        PaginatedGui gui = createPaginatedGui(p, "gui.mine-management.block_spawn.title", 45);
         Runnable reopen = () -> openBlockSpawnEntries(p, mine);
         Runnable back = () -> openMineManagementGui(p, mine);
 
@@ -256,7 +256,7 @@ public class GuiManager {
     }
 
     public static void openTreasureList(Player p) {
-        PaginatedGui gui = createPaginatedGui(p, "gui.treasures.title", 6, 45);
+        PaginatedGui gui = createPaginatedGui(p, "gui.treasures.title", 45);
         fillPageButtons(p, gui, () -> openGeneral(p));
 
         for (Treasure treasure : SuperMines.getInstance().getTreasureManager().getAllTreasures()) {
@@ -277,7 +277,7 @@ public class GuiManager {
 
     public static void openTreasureManagementGui(Player p, Treasure treasure) {
         MessageReplacement treasureName = MessageReplacement.replace("%treasure%", treasure.getRawDisplayName());
-        Gui gui = createManagementGui(p, "gui.treasure-management.title", treasureName, 6);
+        Gui gui = createManagementGui(p, "gui.treasure-management.title", treasureName);
         Runnable reopen = () -> openTreasureManagementGui(p, treasure);
         Runnable back = () -> openTreasureList(p);
 
@@ -364,7 +364,7 @@ public class GuiManager {
     }
 
     public static void openRankList(Player p) {
-        PaginatedGui gui = createPaginatedGui(p, "gui.ranks.title", 6, 45);
+        PaginatedGui gui = createPaginatedGui(p, "gui.ranks.title", 45);
         fillPageButtons(p, gui, () -> openGeneral(p));
 
         for (Rank rank : SuperMines.getInstance().getRankManager().getAllRanks()) {
@@ -384,7 +384,7 @@ public class GuiManager {
 
     public static void openRankManagementGui(Player p, Rank rank) {
         MessageReplacement rankName = MessageReplacement.replace("%rank%", rank.getRawDisplayName());
-        Gui gui = createManagementGui(p, "gui.rank-management.title", rankName, 6);
+        Gui gui = createManagementGui(p, "gui.rank-management.title", rankName);
         Runnable reopen = () -> openRankManagementGui(p, rank);
         Runnable back = () -> openRankList(p);
 
@@ -407,18 +407,18 @@ public class GuiManager {
     }
 
     /* Helper methods */
-    private static PaginatedGui createPaginatedGui(Player p, String titleKey, int rows, int pageSize) {
+    private static PaginatedGui createPaginatedGui(Player p, String titleKey, int pageSize) {
         return Gui.paginated()
-                .rows(rows)
+                .rows(6)
                 .pageSize(pageSize)
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, titleKey))
                 .create();
     }
 
-    private static Gui createManagementGui(Player p, String titleKey, MessageReplacement replacement, int rows) {
+    private static Gui createManagementGui(Player p, String titleKey, MessageReplacement replacement) {
         return Gui.gui()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, titleKey, replacement))
-                .rows(rows)
+                .rows(6)
                 .create();
     }
 
@@ -527,7 +527,7 @@ public class GuiManager {
     }
 
     private static AddonBlock openBlockChooser(Player p, Predicate<AddonBlock> predicate, Runnable reopen) {
-        PaginatedGui gui = createPaginatedGui(p, "gui.material-chooser.title", 6, 45);
+        PaginatedGui gui = createPaginatedGui(p, "gui.material-chooser.title", 45);
         fillPageButtons(p, gui, reopen);
 
         AtomicReference<AddonBlock> selected = new AtomicReference<>();

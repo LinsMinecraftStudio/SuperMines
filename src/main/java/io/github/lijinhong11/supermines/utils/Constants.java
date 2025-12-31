@@ -20,7 +20,7 @@ public class Constants {
 
     private Constants() {}
 
-    public static class StringsAndComponents {
+    public static class Texts {
         public static final String DATABASE_FILE = "data/data.db";
         public static final String ID_PATTERN = "^[a-zA-Z0-9_-]+$";
         public static final Component RESET = Component.empty().decoration(TextDecoration.ITALIC, false);

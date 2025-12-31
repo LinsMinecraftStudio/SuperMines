@@ -106,7 +106,7 @@ public class SuperMines extends JavaPlugin {
         DatabaseConnection conn =
                 switch (type) {
                     case SQLITE -> {
-                        String path = new File(getDataFolder(), Constants.StringsAndComponents.DATABASE_FILE)
+                        String path = new File(getDataFolder(), Constants.Texts.DATABASE_FILE)
                                 .getAbsolutePath();
                         yield SQLConnections.sqlite(path, new DatabaseParameters());
                     }

@@ -30,7 +30,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-//TODO: replace Material to AddonBlock
 public class SuperMinesCommand {
     private static final Map<UUID, AreaSelection> selectionMap = new ConcurrentHashMap<>();
 
@@ -93,7 +92,7 @@ public class SuperMinesCommand {
                                             String id = args.getByClassOrDefault("id", String.class, "");
                                             Optional<Component> displayName = args.getOptionalByClass("displayName", Component.class);
                                             double chance = (double) args.get("chance");
-                                            if (!id.matches(Constants.StringsAndComponents.ID_PATTERN)) {
+                                            if (!id.matches(Constants.Texts.ID_PATTERN)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
                                                         .sendMessages(player, "command.invalid-id");
@@ -364,7 +363,7 @@ public class SuperMinesCommand {
                                             Component displayName = (Component) args.get("displayName");
                                             int level = (int) args.get("level");
 
-                                            if (!id.matches(Constants.StringsAndComponents.ID_PATTERN)) {
+                                            if (!id.matches(Constants.Texts.ID_PATTERN)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
                                                         .sendMessages(player, "command.invalid-id");
@@ -481,7 +480,7 @@ public class SuperMinesCommand {
                                 new CommandAPICommand("giveRank")
                                         .withPermission(Constants.Permission.RANKS)
                                         .withArguments(
-                                                new PlayerArgument("player"),
+                                                new EntitySelectorArgument.OnePlayer("player"),
                                                 new StringArgument("rankId")
                                                         .includeSuggestions(ArgumentSuggestions.strings(getRankList())))
                                         .withOptionalArguments(new BooleanArgument("notify"))
@@ -1028,7 +1027,7 @@ public class SuperMinesCommand {
                         .withAliases("teleport")
                         .withPermission(Constants.Permission.TELEPORT)
                         .withArguments(new StringArgument("mineId"))
-                        .withOptionalArguments(new PlayerArgument("player"))
+                        .withOptionalArguments(new EntitySelectorArgument.OnePlayer("player"))
                         .executes((sender, args) -> {
                             Optional<Player> player = args.getOptionalByClass("player", Player.class);
                             if (player.isEmpty()) {
@@ -1134,7 +1133,7 @@ public class SuperMinesCommand {
             return null;
         }
 
-        if (!id.matches(Constants.StringsAndComponents.ID_PATTERN)) {
+        if (!id.matches(Constants.Texts.ID_PATTERN)) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.invalid-id");
             return null;
         }

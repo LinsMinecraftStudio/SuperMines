@@ -27,7 +27,7 @@ public class ComponentUtils {
     }
 
     public static Component text(String input) {
-        return Constants.StringsAndComponents.RESET.append(Component.text(input));
+        return Constants.Texts.RESET.append(Component.text(input));
     }
 
     public static String serialize(Component component) {

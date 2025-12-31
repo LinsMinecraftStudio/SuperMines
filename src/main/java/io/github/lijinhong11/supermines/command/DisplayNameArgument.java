@@ -1,12 +1,30 @@
 package io.github.lijinhong11.supermines.command;
 
-import dev.jorel.commandapi.arguments.CustomArgument;
-import dev.jorel.commandapi.arguments.GreedyStringArgument;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.CommandAPIArgumentType;
+import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import net.kyori.adventure.text.Component;
 
-public class DisplayNameArgument extends CustomArgument<Component, String> {
+public class DisplayNameArgument extends Argument<Component> {
     public DisplayNameArgument() {
-        super(new GreedyStringArgument("displayName"), i -> ComponentUtils.deserialize(i.input()));
+        super("displayName", StringArgumentType.greedyString());
+    }
+
+    @Override
+    public Class<Component> getPrimitiveType() {
+        return Component.class;
+    }
+
+    @Override
+    public CommandAPIArgumentType getArgumentType() {
+        return CommandAPIArgumentType.PRIMITIVE_STRING;
+    }
+
+    @Override
+    public <Source> Component parseArgument(CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
+        return ComponentUtils.deserialize(s);
     }
 }

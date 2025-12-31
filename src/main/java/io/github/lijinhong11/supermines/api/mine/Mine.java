@@ -164,7 +164,7 @@ public final class Mine implements Identified {
             Set<Integer> warningSeconds) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "Mine ID cannot be null or empty");
         Preconditions.checkArgument(
-                id.matches(Constants.StringsAndComponents.ID_PATTERN), "Mine ID cannot contain special characters");
+                id.matches(Constants.Texts.ID_PATTERN), "Mine ID cannot contain special characters");
 
         this.id = id;
         this.displayName = displayName;

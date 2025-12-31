@@ -20,6 +20,10 @@ public abstract class BlockAddon {
             blockAddons.add(new NexoBlockAddon());
         }
 
+        if (Bukkit.getPluginManager().isPluginEnabled("Oraxen")) {
+            blockAddons.add(new OraxenBlockAddon());
+        }
+
         blockAddons.add(MinecraftBlockAddon.INSTANCE);
     }
 

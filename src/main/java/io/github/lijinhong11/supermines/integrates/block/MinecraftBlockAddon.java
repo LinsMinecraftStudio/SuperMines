@@ -52,6 +52,6 @@ public class MinecraftBlockAddon extends BlockAddon {
 
     @Override
     public List<String> getKey() {
-        return List.of("minecraft", "mc", "");
+        return List.of("minecraft", "");
     }
 }

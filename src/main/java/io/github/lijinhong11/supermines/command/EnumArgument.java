@@ -1,20 +1,39 @@
 package io.github.lijinhong11.supermines.command;
 
-import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.CustomArgument;
-import dev.jorel.commandapi.arguments.StringArgument;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import dev.jorel.commandapi.arguments.*;
+import dev.jorel.commandapi.executors.CommandArguments;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class EnumArgument<E extends Enum<E>> extends CustomArgument<E, String> {
+public class EnumArgument<E extends Enum<E>> extends Argument<E> {
+    private final Class<E> enumClass;
+
     public EnumArgument(String argName, Class<E> enumClass) {
-        super(new StringArgument(argName), i -> Enum.valueOf(enumClass, i.input().toUpperCase()));
+        super(argName, StringArgumentType.string());
+
+        this.enumClass = enumClass;
 
         List<String> suggestions = new ArrayList<>(Arrays.stream(enumClass.getEnumConstants()).map(Enum::toString).toList());
 
         includeSuggestions(ArgumentSuggestions.strings(suggestions));
+    }
+
+    @Override
+    public Class<E> getPrimitiveType() {
+        return enumClass;
+    }
+
+    @Override
+    public CommandAPIArgumentType getArgumentType() {
+        return CommandAPIArgumentType.PRIMITIVE_STRING;
+    }
+
+    @Override
+    public <Source> E parseArgument(CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
+        return Enum.valueOf(enumClass, s.toUpperCase());
     }
 }
