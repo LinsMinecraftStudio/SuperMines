@@ -18,13 +18,6 @@ import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.chat.ChatInput;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -32,6 +25,12 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class GuiManager {
     // GUI position constants (keeping original layout)
@@ -133,7 +132,7 @@ public class GuiManager {
         // Display Icon
         putItem(MINE_DISPLAY_ICON_ROW, MINE_DISPLAY_ICON_COL, gui,
                 ItemBuilder.from(Constants.Items.SET_DISPLAY_ICON.apply(p, mine.getDisplayIcon())), e -> {
-                    AddonBlock m = openBlockChooser(p, b -> MinecraftBlockAddon.INSTANCE.getKey().contains(b.getKey()), reopen);
+                    AddonBlock m = openMaterialChooser(p, reopen);
                     if (m != null) {
                         mine.setDisplayIcon(m.toItem().getType());
                         reopen.run();
@@ -342,8 +341,8 @@ public class GuiManager {
 
     private static void openMatchedMaterials(Player p, Treasure treasure) {
         ListGUI.openList(p, SuperMines.getInstance()
-                .getLanguageManager()
-                .getMsgComponent(p, "gui.treasure-management.matched_materials.title"),
+                        .getLanguageManager()
+                        .getMsgComponent(p, "gui.treasure-management.matched_materials.title"),
                 treasure.getMatchedBlocks(),
                 t -> {
                     List<Component> lore = SuperMines.getInstance()
@@ -446,7 +445,7 @@ public class GuiManager {
     }
 
     private static void handleDoubleInput(Player p, double min, double max, Consumer<Double> onSuccess,
-            String errorKey) {
+                                          String errorKey) {
         ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
             if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
                 return;
@@ -526,8 +525,16 @@ public class GuiManager {
                 e -> back.run());
     }
 
+    private static AddonBlock openMaterialChooser(Player p, Runnable reopen) {
+        return openBlockChooser(p, b -> b.getKey().isBlank(), "material", reopen);
+    }
+
     private static AddonBlock openBlockChooser(Player p, Predicate<AddonBlock> predicate, Runnable reopen) {
-        PaginatedGui gui = createPaginatedGui(p, "gui.material-chooser.title", 45);
+        return openBlockChooser(p, predicate, "block", reopen);
+    }
+
+    private static AddonBlock openBlockChooser(Player p, Predicate<AddonBlock> predicate, String title, Runnable reopen) {
+        PaginatedGui gui = createPaginatedGui(p, "gui." + title + "-chooser.title", 45);
         fillPageButtons(p, gui, reopen);
 
         AtomicReference<AddonBlock> selected = new AtomicReference<>();

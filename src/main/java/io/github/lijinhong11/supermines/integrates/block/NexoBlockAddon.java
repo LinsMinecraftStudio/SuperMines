@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class NexoBlockAddon extends BlockAddon {
-    NexoBlockAddon() {}
+    NexoBlockAddon() {
+    }
 
     @Override
     public AddonBlock getBlock(String id) {

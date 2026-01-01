@@ -5,12 +5,12 @@ import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
-
-import java.util.Collection;
-import java.util.UUID;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.UUID;
 
 /**
  * The main API class for SuperMines plugin.
@@ -35,7 +35,7 @@ public class SuperMinesAPI {
      *
      * @param loc the location to check
      * @return the mine at the specified location, or null if no mine exists at that
-     *         location
+     * location
      */
     public static @Nullable Mine getMine(Location loc) {
         return SuperMines.getInstance().getMineManager().getMine(loc);
@@ -73,7 +73,7 @@ public class SuperMinesAPI {
      * Gets a rank.
      * <p>
      * Note: You can't get default rank from it. See {@link Rank#DEFAULT}
-     * 
+     *
      * @return a rank (the default rank is not gettable)
      */
     public static @Nullable Rank getRank(String id) {
@@ -82,9 +82,9 @@ public class SuperMinesAPI {
 
     /**
      * Gets all ranks. (the default rank is not included)
-     * 
+     *
      * @return a collection, which contains all ranks (the default rank is not
-     *         included)
+     * included)
      */
     public static @NotNull Collection<Rank> getRanks() {
         return SuperMines.getInstance().getRankManager().getAllRanks();

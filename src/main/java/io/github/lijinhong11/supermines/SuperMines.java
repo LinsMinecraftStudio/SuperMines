@@ -21,9 +21,11 @@ import io.github.lijinhong11.supermines.message.LanguageManager;
 import io.github.lijinhong11.supermines.task.TaskMaker;
 import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
 import io.github.lijinhong11.supermines.utils.Constants;
-import java.io.File;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
 
 public class SuperMines extends JavaPlugin {
     private static SuperMines instance;
@@ -37,15 +39,16 @@ public class SuperMines extends JavaPlugin {
     private FoliaLib foliaLibImpl;
     private TaskMaker taskMaker;
 
+    public static SuperMines getInstance() {
+        return instance;
+    }
+
     @Override
     public void onLoad() {
         instance = this;
-
-        saveDefaultConfig();
-        saveConfig();
-        ConfigFileUtil.completeFile(this, "config.yml");
-
         foliaLibImpl = new FoliaLib(this);
+
+        ConfigFileUtil.completeFile(this, "config.yml");
     }
 
     @Override
@@ -72,6 +75,8 @@ public class SuperMines extends JavaPlugin {
         setupPlaceholders();
 
         new SuperMinesCommand().register();
+
+        new Metrics(this, 28631);
 
         taskMaker.startup();
     }
@@ -111,11 +116,11 @@ public class SuperMines extends JavaPlugin {
                         yield SQLConnections.sqlite(path, new DatabaseParameters());
                     }
                     case MYSQL ->
-                        SQLConnections.mysql(ip, port, database, username, password, new DatabaseParameters());
+                            SQLConnections.mysql(ip, port, database, username, password, new DatabaseParameters());
                     case MARIADB ->
-                        SQLConnections.mariadb(ip, port, database, username, password, new DatabaseParameters());
+                            SQLConnections.mariadb(ip, port, database, username, password, new DatabaseParameters());
                     case POSTGRESQL ->
-                        SQLConnections.postgresql(ip, port, database, username, password, new DatabaseParameters());
+                            SQLConnections.postgresql(ip, port, database, username, password, new DatabaseParameters());
                 };
 
         playerDataManager = new PlayerDataManager(conn);
@@ -139,10 +144,6 @@ public class SuperMines extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("MiniPlaceholders")) {
             MiniPlaceholderExtension.register();
         }
-    }
-
-    public static SuperMines getInstance() {
-        return instance;
     }
 
     public MineManager getMineManager() {

@@ -6,7 +6,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CommandAPIArgumentType;
-
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
 import io.github.lijinhong11.supermines.integrates.block.BlockAddon;

@@ -11,12 +11,12 @@ public final class MessageReplacement implements Pair<String, String> {
         this.replacement = replacement;
     }
 
-    public String parse(String message) {
-        return message.replaceAll(left(), right());
-    }
-
     public static MessageReplacement replace(String placeholder, String replacement) {
         return new MessageReplacement(placeholder, replacement);
+    }
+
+    public String parse(String message) {
+        return message.replaceAll(left(), right());
     }
 
     @Override

@@ -7,12 +7,16 @@ import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
 import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import io.github.lijinhong11.supermines.utils.ItemUtils;
-import java.util.*;
-import java.util.stream.Collectors;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     private final Map<String, Treasure> treasures = new HashMap<>();

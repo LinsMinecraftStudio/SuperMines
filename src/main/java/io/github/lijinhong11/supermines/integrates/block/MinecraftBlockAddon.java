@@ -13,7 +13,8 @@ public class MinecraftBlockAddon extends BlockAddon {
         INSTANCE = new MinecraftBlockAddon();
     }
 
-    private MinecraftBlockAddon() {}
+    private MinecraftBlockAddon() {
+    }
 
     public static AddonBlock createForMaterial(Material material) {
         if (material == null) {

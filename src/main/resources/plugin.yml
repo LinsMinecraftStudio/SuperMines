@@ -6,6 +6,9 @@ description: A mine plugin
 api-version: 1.20
 folia-supported: true
 website: https://github.com/LinsMinecraftStudio/SuperMines
+libraries:
+  - dev.triumphteam:triumph-gui:3.1.13
+  - org.bstats:bstats-bukkit:3.1.0
 depend:
   - CommandAPI
 softdepend:

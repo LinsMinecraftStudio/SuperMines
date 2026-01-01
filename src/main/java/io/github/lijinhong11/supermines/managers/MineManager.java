@@ -10,7 +10,6 @@ import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
 import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
-import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,6 +18,8 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public class MineManager extends AbstractFileObjectManager<Mine> {
     private final Map<String, Mine> mines = new HashMap<>();
@@ -180,8 +181,10 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         super.putObject(mine.getId(), mine);
     }
 
-    public @Nullable Mine getMine(@NotNull String id) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "mine id cannot be null or empty");
+    public @Nullable Mine getMine(@Nullable String id) {
+        if (id == null) {
+            return null;
+        }
 
         return mines.get(id);
     }

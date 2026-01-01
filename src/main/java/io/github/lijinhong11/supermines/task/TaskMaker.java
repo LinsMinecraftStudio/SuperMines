@@ -4,9 +4,10 @@ import com.tcoded.folialib.FoliaLib;
 import com.tcoded.folialib.impl.PlatformScheduler;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import org.bukkit.Location;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Location;
 
 public class TaskMaker {
     private final PlatformScheduler scheduler;

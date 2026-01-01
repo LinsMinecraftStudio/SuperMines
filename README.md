@@ -1,5 +1,5 @@
-<center> SuperMines
-=
+<div style="text-align: center;"><h1>SuperMines</h1></div>
+
 <div style="text-align: center;">
 <img alt="hangar" height="40" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg">
 
@@ -10,15 +10,19 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 ### Breaking changes
 1. Files
    * treasures.yml
-     * Changed `matchedMaterials` to `matchedBlocks`
-     * 
+     * Change `matchedMaterials` to `matchedBlocks`
      
 2. API
+   * PlayerData can store multi ranks in a set
+
+3. Placeholders
+   * Players can have multi ranks so that the %supermines_rank% (or something like that) will not work!
+   * Use %supermines_hasrank_RANKID% to do check whether the player has the rank.
 
 ## Features
 * MiniPlaceholders/PlaceholdersAPI support
 * Folia support
-* ItemsAdder/Nexo support
+* ItemsAdder/Oraxen/Nexo support
 * Rank system
 * Coming soon...
 
@@ -30,3 +34,4 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 [Modrinth]()
 
 ## API
+See [API class](./src/main/java/io/github/lijinhong11/supermines/api/SuperMinesAPI.java)

@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 public class StringRankSet extends HashSet<Rank> {
-    public StringRankSet() {}
+    public StringRankSet() {
+    }
 
     public StringRankSet(String string) {
         String[] split = string.split(",");
@@ -22,6 +23,10 @@ public class StringRankSet extends HashSet<Rank> {
 
     public StringRankSet(Rank single) {
         add(single);
+    }
+
+    public boolean matchRank(String rank) {
+        return this.stream().anyMatch(r -> r.getId().equals(rank));
     }
 
     public boolean matchRank(Set<String> rankIds) {

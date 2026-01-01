@@ -2,12 +2,6 @@ package io.github.lijinhong11.supermines.utils.chat;
 
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -18,6 +12,8 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
+
+import java.util.*;
 
 class ChatInputListener implements Listener {
     private final Plugin plugin;

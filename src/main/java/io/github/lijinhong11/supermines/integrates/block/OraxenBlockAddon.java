@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class OraxenBlockAddon extends BlockAddon {
-    OraxenBlockAddon() {}
+    OraxenBlockAddon() {
+    }
 
     @Override
     public AddonBlock getBlock(String id) {

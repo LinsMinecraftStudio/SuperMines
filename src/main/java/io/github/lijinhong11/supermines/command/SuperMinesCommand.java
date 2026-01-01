@@ -14,14 +14,7 @@ import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.gui.GuiManager;
 import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
-import io.github.lijinhong11.supermines.utils.ComponentUtils;
-import io.github.lijinhong11.supermines.utils.Constants;
-import io.github.lijinhong11.supermines.utils.NumberUtils;
-import io.github.lijinhong11.supermines.utils.StringUtils;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
+import io.github.lijinhong11.supermines.utils.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,6 +22,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SuperMinesCommand {
     private static final Map<UUID, AreaSelection> selectionMap = new ConcurrentHashMap<>();
@@ -91,7 +87,7 @@ public class SuperMinesCommand {
                                         .executesPlayer((player, args) -> {
                                             String id = args.getByClassOrDefault("id", String.class, "");
                                             Optional<Component> displayName = args.getOptionalByClass("displayName", Component.class);
-                                            double chance = (double) args.get("chance");
+                                            double chance = args.getByClassOrDefault("chance", double.class, 0d);
                                             if (!id.matches(Constants.Texts.ID_PATTERN)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
@@ -133,7 +129,7 @@ public class SuperMinesCommand {
                                         .withPermission(Constants.Permission.TREASURES)
                                         .withArguments(new StringArgument("id"))
                                         .executesPlayer((player, args) -> {
-                                            String id = (String) args.get("id");
+                                            String id = NullUtils.tryString((String) args.get("id"));
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
                                                     .getTreasure(id);
@@ -163,7 +159,7 @@ public class SuperMinesCommand {
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
                                                 new DisplayNameArgument())
                                         .executes((sender, args) -> {
-                                            String id = (String) args.get("id");
+                                            String id = NullUtils.tryString((String) args.get("id"));
                                             Component displayName = (Component) args.get("displayName");
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
@@ -192,8 +188,8 @@ public class SuperMinesCommand {
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
                                                 new DoubleArgument("chance", 1, 100))
                                         .executes((sender, args) -> {
-                                            String id = (String) args.get("id");
-                                            double chance = (double) args.get("chance");
+                                            String id = NullUtils.tryString((String) args.get("id"));
+                                            double chance = args.getByClassOrDefault("chance", double.class, 0d);
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
                                                     .getTreasure(id);
@@ -218,7 +214,7 @@ public class SuperMinesCommand {
                                         .withArguments(new StringArgument("id")
                                                 .includeSuggestions(ArgumentSuggestions.strings(getTreasuresList())))
                                         .executesPlayer((player, args) -> {
-                                            String id = (String) args.get("id");
+                                            String id = NullUtils.tryString((String) args.get("id"));
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
                                                     .getTreasure(id);
@@ -256,7 +252,7 @@ public class SuperMinesCommand {
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
                                                 new BlockArgument("block"))
                                         .executes((sender, args) -> {
-                                            String id = (String) args.get("id");
+                                            String id = NullUtils.tryString((String) args.get("id"));
                                             AddonBlock block = (AddonBlock) args.get("block");
 
                                             Treasure treasure = SuperMines.getInstance()
@@ -298,7 +294,7 @@ public class SuperMinesCommand {
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
                                                 new BlockArgument("block"))
                                         .executes((sender, args) -> {
-                                            String id = (String) args.get("id");
+                                            String id = NullUtils.tryString((String) args.get("id"));
                                             AddonBlock block = (AddonBlock) args.get("block");
 
                                             Treasure treasure = SuperMines.getInstance()
@@ -359,9 +355,9 @@ public class SuperMinesCommand {
                                                 new DisplayNameArgument(),
                                                 new IntegerArgument("level", 1, Integer.MAX_VALUE))
                                         .executesPlayer((player, args) -> {
-                                            String id = (String) args.get("rankId");
-                                            Component displayName = (Component) args.get("displayName");
-                                            int level = (int) args.get("level");
+                                            String id = NullUtils.tryString((String) args.get("rankId"));
+                                            Component displayName = args.getByClassOrDefault("displayName", Component.class, Component.text(id));
+                                            int level = args.getByClassOrDefault("level", int.class, 0);
 
                                             if (!id.matches(Constants.Texts.ID_PATTERN)) {
                                                 SuperMines.getInstance()
@@ -371,8 +367,8 @@ public class SuperMinesCommand {
                                             }
 
                                             if (SuperMines.getInstance()
-                                                            .getRankManager()
-                                                            .getRank(id)
+                                                    .getRankManager()
+                                                    .getRank(id)
                                                     != null) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
@@ -396,10 +392,10 @@ public class SuperMinesCommand {
                                         .withArguments(new StringArgument("rankId")
                                                 .includeSuggestions(ArgumentSuggestions.strings(getRankList())))
                                         .executesPlayer((player, args) -> {
-                                            String id = (String) args.get("rankId");
+                                            String id = NullUtils.tryString((String) args.get("rankId"));
                                             if (SuperMines.getInstance()
-                                                            .getRankManager()
-                                                            .getRank(id)
+                                                    .getRankManager()
+                                                    .getRank(id)
                                                     == null) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
@@ -424,7 +420,7 @@ public class SuperMinesCommand {
                                                         .includeSuggestions(ArgumentSuggestions.strings(getRankList())),
                                                 new IntegerArgument("level", 1, Integer.MAX_VALUE))
                                         .executes((sender, args) -> {
-                                            String id = (String) args.get("id");
+                                            String id = NullUtils.tryString((String) args.get("id"));
                                             int level = (int) args.get("level");
                                             Rank rank = SuperMines.getInstance()
                                                     .getRankManager()
@@ -454,7 +450,7 @@ public class SuperMinesCommand {
                                                         .includeSuggestions(ArgumentSuggestions.strings(getRankList())),
                                                 new DisplayNameArgument())
                                         .executes((sender, args) -> {
-                                            String id = (String) args.get("id");
+                                            String id = NullUtils.tryString((String) args.get("id"));
                                             Component displayName = (Component) args.get("displayName");
 
                                             Rank rank = SuperMines.getInstance()
@@ -550,7 +546,7 @@ public class SuperMinesCommand {
                         .withArguments(new StringArgument("id"))
                         .withOptionalArguments(new DisplayNameArgument())
                         .executesPlayer((player, args) -> {
-                            String id = (String) args.get("id");
+                            String id = NullUtils.tryString((String) args.get("id"));
                             Component displayName = args.getOptionalByClass("displayName", Component.class)
                                     .orElse(Component.text(id));
                             createMine(player, id, displayName);

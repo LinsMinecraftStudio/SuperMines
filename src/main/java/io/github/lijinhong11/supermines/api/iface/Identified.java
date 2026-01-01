@@ -1,8 +1,7 @@
 package io.github.lijinhong11.supermines.api.iface;
 
-import org.jetbrains.annotations.Nullable;
-
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for objects that have a unique identifier and display name.

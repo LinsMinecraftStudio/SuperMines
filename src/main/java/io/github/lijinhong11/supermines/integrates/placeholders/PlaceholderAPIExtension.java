@@ -26,7 +26,7 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.1";
+        return SuperMines.getInstance().getPluginMeta().getVersion();
     }
 
     @Override
@@ -68,6 +68,10 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
                 return String.valueOf(data.getMinedBlocks());
+            } else if (args[0].equalsIgnoreCase("hasrank")) {
+                String rank = args[1];
+                PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+                return String.valueOf(data.getRank().matchRank(rank));
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("mine")) {
@@ -104,6 +108,11 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                 } else {
                     return "MINE_NOT_FOUND";
                 }
+            } else if (args[0].equalsIgnoreCase("hasrank")) {
+                String rank = args[1];
+                OfflinePlayer p2 = Bukkit.getOfflinePlayer(args[2]);
+                PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
+                return String.valueOf(data.getRank().matchRank(rank));
             }
         }
 

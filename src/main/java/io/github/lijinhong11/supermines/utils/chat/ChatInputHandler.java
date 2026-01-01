@@ -1,8 +1,9 @@
 package io.github.lijinhong11.supermines.utils.chat;
 
-import java.util.function.Predicate;
-import javax.annotation.ParametersAreNonnullByDefault;
 import org.bukkit.entity.Player;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.function.Predicate;
 
 public interface ChatInputHandler extends Predicate<String> {
     @ParametersAreNonnullByDefault

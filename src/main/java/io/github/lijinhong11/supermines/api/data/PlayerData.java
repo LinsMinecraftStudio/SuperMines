@@ -6,6 +6,7 @@ import io.github.lijinhong11.mdatabase.serialization.annotations.PrimaryKey;
 import io.github.lijinhong11.mdatabase.serialization.annotations.Table;
 import io.github.lijinhong11.supermines.managers.database.RankConverter;
 import io.github.lijinhong11.supermines.managers.database.StringRankSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -30,7 +31,7 @@ public final class PlayerData {
 
     @Converter(RankConverter.class)
     @Column(name = "rank")
-    private StringRankSet rank;
+    private StringRankSet rank = new StringRankSet();
 
     public PlayerData() {
     }
@@ -49,7 +50,7 @@ public final class PlayerData {
         return playerUUID;
     }
 
-    public StringRankSet getRank() {
+    public @NotNull StringRankSet getRank() {
         return rank;
     }
 

@@ -18,16 +18,16 @@ public class MineResetEvent extends Event {
         this.mine = mine;
     }
 
+    public static HandlerList getHandlerList() {
+        return new HandlerList();
+    }
+
     public Mine getMine() {
         return mine;
     }
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return new HandlerList();
-    }
-
-    public static HandlerList getHandlerList() {
         return new HandlerList();
     }
 }

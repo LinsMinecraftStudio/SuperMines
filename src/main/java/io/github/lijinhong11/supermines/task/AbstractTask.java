@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.task;
 
 import com.tcoded.folialib.wrapper.task.WrappedTask;
+
 import java.util.function.Consumer;
 
 public abstract class AbstractTask implements Consumer<WrappedTask> {

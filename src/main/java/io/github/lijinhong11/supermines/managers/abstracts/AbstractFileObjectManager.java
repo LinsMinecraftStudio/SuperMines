@@ -2,13 +2,14 @@ package io.github.lijinhong11.supermines.managers.abstracts;
 
 import com.google.common.base.Strings;
 import io.github.lijinhong11.supermines.SuperMines;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractFileObjectManager<T> {
     private final File configFile;
@@ -28,7 +29,8 @@ public abstract class AbstractFileObjectManager<T> {
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
-    @NotNull protected final List<T> getAll() {
+    @NotNull
+    protected final List<T> getAll() {
         Set<String> keys = config.getKeys(false);
         if (keys.isEmpty()) {
             return new ArrayList<>();

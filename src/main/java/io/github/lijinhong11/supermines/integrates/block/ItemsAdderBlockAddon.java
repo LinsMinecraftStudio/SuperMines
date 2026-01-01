@@ -8,7 +8,8 @@ import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class ItemsAdderBlockAddon extends BlockAddon {
-    ItemsAdderBlockAddon() {}
+    ItemsAdderBlockAddon() {
+    }
 
     @Override
     public AddonBlock getBlock(Location loc) {

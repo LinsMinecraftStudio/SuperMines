@@ -1,16 +1,21 @@
 package io.github.lijinhong11.supermines.utils;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.plugin.Plugin;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+
 public class ConfigFileUtil {
-    private ConfigFileUtil() {}
+    private ConfigFileUtil() {
+    }
 
     /**
      * Complete configuration(key and value, comments, etc)
@@ -78,7 +83,7 @@ public class ConfigFileUtil {
     /**
      * Complete language file (keys and values, comments, etc.)
      *
-     * @param plugin plugin instance
+     * @param plugin       plugin instance
      * @param resourceFile the language file you want to complete
      */
     public static void completeLangFile(Plugin plugin, String resourceFile) {

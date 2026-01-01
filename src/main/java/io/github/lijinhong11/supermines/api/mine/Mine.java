@@ -13,9 +13,6 @@ import io.github.lijinhong11.supermines.integrates.block.MinecraftBlockAddon;
 import io.github.lijinhong11.supermines.managers.database.StringRankSet;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,6 +21,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The mine object.
@@ -228,20 +229,10 @@ public final class Mine implements Identified {
     }
 
     /**
-     * Sets all treasures for this mine, replacing any existing ones.
-     *
-     * @param treasures the list of treasures to set
-     */
-    public void setTreasures(@NotNull List<Treasure> treasures) {
-        this.treasures.clear();
-        this.treasures.addAll(treasures);
-    }
-
-    /**
      * Adds a block spawn entry with the specified material and chance.
      *
      * @param material the material of the block to spawn
-     * @param chance the spawn chance (must be between 1 and 100)
+     * @param chance   the spawn chance (must be between 1 and 100)
      * @throws IllegalArgumentException if chance is not between 1 and 100
      */
     public void addBlockSpawnEntry(@NotNull Material material, double chance) {
@@ -255,7 +246,7 @@ public final class Mine implements Identified {
     /**
      * Adds a block spawn entry with the specified material and chance.
      *
-     * @param block the block to spawn
+     * @param block  the block to spawn
      * @param chance the spawn chance (must be between 1 and 100)
      * @throws IllegalArgumentException if chance is not between 1 and 100
      */
@@ -322,6 +313,15 @@ public final class Mine implements Identified {
     }
 
     /**
+     * Gets all allowed rank IDs for this mine.
+     *
+     * @return a set of allowed rank IDs
+     */
+    public Set<String> getAllowedRankIds() {
+        return allowedRankIds;
+    }
+
+    /**
      * Sets all allowed rank IDs for this mine, replacing any existing ones.
      *
      * @param rankIds the collection of rank IDs to set
@@ -332,12 +332,12 @@ public final class Mine implements Identified {
     }
 
     /**
-     * Gets all allowed rank IDs for this mine.
+     * Gets the teleport location for this mine.
      *
-     * @return a set of allowed rank IDs
+     * @return the teleport location, or null if not set
      */
-    public Set<String> getAllowedRankIds() {
-        return allowedRankIds;
+    public @Nullable Location getTeleportLocation() {
+        return tpLoc;
     }
 
     /**
@@ -350,15 +350,6 @@ public final class Mine implements Identified {
         Preconditions.checkNotNull(tpLoc, "teleport location cannot be null");
 
         this.tpLoc = tpLoc;
-    }
-
-    /**
-     * Gets the teleport location for this mine.
-     *
-     * @return the teleport location, or null if not set
-     */
-    public @Nullable Location getTeleportLocation() {
-        return tpLoc;
     }
 
     /**
@@ -384,6 +375,15 @@ public final class Mine implements Identified {
     }
 
     /**
+     * Gets the display name of this mine.
+     *
+     * @return the display name component, or a default name if not set
+     */
+    public Component getDisplayName() {
+        return displayName == null ? ComponentUtils.text(id) : displayName;
+    }
+
+    /**
      * Sets the display name of this mine.
      *
      * @param displayName the display name component (cannot be null)
@@ -395,12 +395,12 @@ public final class Mine implements Identified {
     }
 
     /**
-     * Gets the display name of this mine.
+     * Gets the display icon material for this mine.
      *
-     * @return the display name component, or a default name if not set
+     * @return the display icon material
      */
-    public Component getDisplayName() {
-        return displayName == null ? ComponentUtils.text(id) : displayName;
+    public Material getDisplayIcon() {
+        return displayIcon;
     }
 
     /**
@@ -416,21 +416,21 @@ public final class Mine implements Identified {
     }
 
     /**
-     * Gets the display icon material for this mine.
-     *
-     * @return the display icon material
-     */
-    public Material getDisplayIcon() {
-        return displayIcon;
-    }
-
-    /**
      * Gets the world this mine is located in.
      *
      * @return the world
      */
     public World getWorld() {
         return world;
+    }
+
+    /**
+     * Gets the area of this mine.
+     *
+     * @return the cuboid area
+     */
+    public CuboidArea getArea() {
+        return area;
     }
 
     /**
@@ -446,15 +446,6 @@ public final class Mine implements Identified {
     }
 
     /**
-     * Gets the area of this mine.
-     *
-     * @return the cuboid area
-     */
-    public CuboidArea getArea() {
-        return area;
-    }
-
-    /**
      * Gets all treasures associated with this mine.
      *
      * @return a list of treasures
@@ -464,12 +455,31 @@ public final class Mine implements Identified {
     }
 
     /**
+     * Sets all treasures for this mine, replacing any existing ones.
+     *
+     * @param treasures the list of treasures to set
+     */
+    public void setTreasures(@NotNull List<Treasure> treasures) {
+        this.treasures.clear();
+        this.treasures.addAll(treasures);
+    }
+
+    /**
      * Gets all block spawn entries for this mine.
      *
      * @return a map of blocks to their spawn chances
      */
     public Map<AddonBlock, Double> getBlockSpawnEntries() {
         return blockSpawnEntries;
+    }
+
+    /**
+     * Gets the regeneration time in seconds for this mine.
+     *
+     * @return the regeneration time in seconds
+     */
+    public int getRegenerateSeconds() {
+        return regenerateSeconds;
     }
 
     /**
@@ -485,12 +495,12 @@ public final class Mine implements Identified {
     }
 
     /**
-     * Gets the regeneration time in seconds for this mine.
+     * Checks if this mine only fills air blocks when regenerating.
      *
-     * @return the regeneration time in seconds
+     * @return true if only air blocks are filled, false otherwise
      */
-    public int getRegenerateSeconds() {
-        return regenerateSeconds;
+    public boolean isOnlyFillAirWhenRegenerate() {
+        return onlyFillAirWhenRegenerate;
     }
 
     /**
@@ -503,12 +513,12 @@ public final class Mine implements Identified {
     }
 
     /**
-     * Checks if this mine only fills air blocks when regenerating.
+     * Gets the required rank level for this mine.
      *
-     * @return true if only air blocks are filled, false otherwise
+     * @return the minimum rank level required
      */
-    public boolean isOnlyFillAirWhenRegenerate() {
-        return onlyFillAirWhenRegenerate;
+    public int getRequiredRankLevel() {
+        return requiredRankLevel;
     }
 
     /**
@@ -527,15 +537,6 @@ public final class Mine implements Identified {
      */
     public void setRequiredRankLevel(Rank requiredRank) {
         this.requiredRankLevel = requiredRank.getLevel();
-    }
-
-    /**
-     * Gets the required rank level for this mine.
-     *
-     * @return the minimum rank level required
-     */
-    public int getRequiredRankLevel() {
-        return requiredRankLevel;
     }
 
     /**
@@ -564,6 +565,15 @@ public final class Mine implements Identified {
     }
 
     /**
+     * Gets the warning seconds for reset notifications.
+     *
+     * @return the set of seconds before reset to show warnings
+     */
+    public Set<Integer> getWarningSeconds() {
+        return this.warningSeconds;
+    }
+
+    /**
      * Sets the warning seconds for reset notifications.
      *
      * @param warningSeconds the set of seconds before reset to show warnings
@@ -571,15 +581,6 @@ public final class Mine implements Identified {
     public void setWarningSeconds(Set<Integer> warningSeconds) {
         this.warningSeconds.clear();
         this.warningSeconds.addAll(warningSeconds);
-    }
-
-    /**
-     * Gets the warning seconds for reset notifications.
-     *
-     * @return the set of seconds before reset to show warnings
-     */
-    public Set<Integer> getWarningSeconds() {
-        return this.warningSeconds;
     }
 
     /**

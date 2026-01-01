@@ -3,13 +3,12 @@ package io.github.lijinhong11.supermines.api.data;
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
-
-import java.util.Objects;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
 
 /**
  * Represents a rank that can be assigned to players for mine access control.
@@ -28,11 +27,11 @@ public final class Rank implements Identified {
     /**
      * Creates a new rank with the specified parameters.
      *
-     * @param level the rank level (must be greater than 0)
-     * @param id the unique identifier (cannot be null)
+     * @param level       the rank level (must be greater than 0)
+     * @param id          the unique identifier (cannot be null)
      * @param displayName the display name component
      * @throws IllegalArgumentException if level is not greater than 0
-     * @throws NullPointerException if id is null
+     * @throws NullPointerException     if id is null
      */
     @ParametersAreNonnullByDefault
     public Rank(int level, String id, Component displayName) {

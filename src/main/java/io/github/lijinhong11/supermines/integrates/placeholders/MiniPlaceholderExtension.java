@@ -9,7 +9,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 public class MiniPlaceholderExtension {
     public static void register() {
@@ -22,7 +21,7 @@ public class MiniPlaceholderExtension {
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
                         return Tag.selfClosingInserting(data.getRank().getBestValuedRank().getDisplayName());
                     } else {
-                        OfflinePlayer p = (Player) a;
+                        OfflinePlayer p = (OfflinePlayer) a;
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
                         return Tag.selfClosingInserting(data.getRank().getBestValuedRank().getDisplayName());
@@ -36,7 +35,7 @@ public class MiniPlaceholderExtension {
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
                         return Tag.selfClosingInserting(Component.text(data.getRank().getBiggestRankLevel()));
                     } else {
-                        OfflinePlayer p = (Player) a;
+                        OfflinePlayer p = (OfflinePlayer) a;
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
                         return Tag.selfClosingInserting(Component.text(data.getRank().getBiggestRankLevel()));
@@ -50,11 +49,25 @@ public class MiniPlaceholderExtension {
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
                         return Tag.selfClosingInserting(Component.text(data.getMinedBlocks()));
                     } else {
-                        OfflinePlayer p = (Player) a;
+                        OfflinePlayer p = (OfflinePlayer) a;
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
                         return Tag.selfClosingInserting(Component.text(data.getMinedBlocks()));
                     }
+                })
+                .audiencePlaceholder("hasrank", (a, args, ctx) -> {
+                    if (!args.hasNext()) {
+                        return Tag.selfClosingInserting(Component.text("NO_RANK_ID_INPUT"));
+                    }
+
+                    String rankId = args.pop().value();
+                    OfflinePlayer player = (OfflinePlayer) a;
+                    if (args.hasNext()) {
+                        player = Bukkit.getOfflinePlayer(args.pop().value());
+                    }
+
+                    PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+                    return Tag.selfClosingInserting(Component.text(data.getRank().matchRank(rankId)));
                 })
                 .globalPlaceholder("mine_blocksbroken", (args, ctx) -> {
                     String mineId = args.popOr("missing_mine_id").value();

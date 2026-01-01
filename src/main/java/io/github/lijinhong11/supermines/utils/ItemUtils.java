@@ -3,7 +3,8 @@ package io.github.lijinhong11.supermines.utils;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemUtils {
-    private ItemUtils() {}
+    private ItemUtils() {
+    }
 
     public static byte[] serializeToBytes(ItemStack itemStack) {
         return itemStack.serializeAsBytes();

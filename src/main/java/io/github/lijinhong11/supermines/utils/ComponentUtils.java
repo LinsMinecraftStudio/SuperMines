@@ -14,9 +14,14 @@ public class ComponentUtils {
             .hexColors()
             .build();
 
-    private ComponentUtils() {}
+    private ComponentUtils() {
+    }
 
     public static Component deserialize(String input) {
+        if (input == null) {
+            return Component.empty();
+        }
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             input = PlaceholderAPI.setPlaceholders(null, input);
         }

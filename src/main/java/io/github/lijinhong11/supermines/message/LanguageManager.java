@@ -6,14 +6,6 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
-import java.io.File;
-import java.net.JarURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
@@ -22,6 +14,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.net.JarURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * A class to manage language files and messages.
@@ -45,6 +46,14 @@ public final class LanguageManager {
         this.defaultLanguage = defaultLanguage;
 
         loadLanguages();
+    }
+
+    public static Component parseToComponent(String msg) {
+        return ComponentUtils.deserialize(msg);
+    }
+
+    public static List<Component> parseToComponentList(List<String> msgList) {
+        return msgList.stream().map(LanguageManager::parseToComponent).toList();
     }
 
     private void loadLanguages() {
@@ -206,14 +215,6 @@ public final class LanguageManager {
 
     public void reload() {
         loadLanguages();
-    }
-
-    public static Component parseToComponent(String msg) {
-        return ComponentUtils.deserialize(msg);
-    }
-
-    public static List<Component> parseToComponentList(List<String> msgList) {
-        return msgList.stream().map(LanguageManager::parseToComponent).toList();
     }
 
     private Configuration getConfiguration(CommandSender p) {

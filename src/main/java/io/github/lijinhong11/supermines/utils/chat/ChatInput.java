@@ -1,28 +1,27 @@
 package io.github.lijinhong11.supermines.utils.chat;
 
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import javax.annotation.Nonnull;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import javax.annotation.Nonnull;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public final class ChatInput {
 
     static ChatInputListener listener;
 
-    private ChatInput() {}
+    private ChatInput() {
+    }
 
     /**
      * This method waits for the Player to write something in chat.
      * Afterwards the given callback will be invoked.
      *
-     * @param plugin
-     *            The Plugin performing this action
-     * @param p
-     *            The Player that we are waiting for
-     * @param handler
-     *            A callback to invoke when the Player has entered some text
+     * @param plugin  The Plugin performing this action
+     * @param p       The Player that we are waiting for
+     * @param handler A callback to invoke when the Player has entered some text
      */
     public static void waitForPlayer(@Nonnull Plugin plugin, @Nonnull Player p, @Nonnull Consumer<String> handler) {
         waitForPlayer(plugin, p, s -> true, handler);
@@ -34,14 +33,10 @@ public final class ChatInput {
      * With the predicate you can filter out unwanted inputs.
      * Like commands for example.
      *
-     * @param plugin
-     *            The Plugin performing this action
-     * @param p
-     *            The Player that we are waiting for
-     * @param predicate
-     *            A Filter for the messages the Player types in
-     * @param handler
-     *            A callback to invoke when the Player has entered some text
+     * @param plugin    The Plugin performing this action
+     * @param p         The Player that we are waiting for
+     * @param predicate A Filter for the messages the Player types in
+     * @param handler   A callback to invoke when the Player has entered some text
      */
     public static void waitForPlayer(
             @Nonnull Plugin plugin,
@@ -66,12 +61,9 @@ public final class ChatInput {
      * This method waits for the Player to write something in chat.
      * Afterwards the given callback will be invoked.
      *
-     * @param plugin
-     *            The Plugin performing this action
-     * @param p
-     *            The Player that we are waiting for
-     * @param handler
-     *            A callback to invoke when the Player has entered some text
+     * @param plugin  The Plugin performing this action
+     * @param p       The Player that we are waiting for
+     * @param handler A callback to invoke when the Player has entered some text
      */
     public static void waitForPlayer(
             @Nonnull Plugin plugin, @Nonnull Player p, @Nonnull BiConsumer<Player, String> handler) {
@@ -84,14 +76,10 @@ public final class ChatInput {
      * With the predicate you can filter out unwanted inputs.
      * Like commands for example.
      *
-     * @param plugin
-     *            The Plugin performing this action
-     * @param p
-     *            The Player that we are waiting for
-     * @param predicate
-     *            A Filter for the messages the Player types in
-     * @param handler
-     *            A callback to invoke when the Player has entered some text
+     * @param plugin    The Plugin performing this action
+     * @param p         The Player that we are waiting for
+     * @param predicate A Filter for the messages the Player types in
+     * @param handler   A callback to invoke when the Player has entered some text
      */
     public static void waitForPlayer(
             @Nonnull Plugin plugin,

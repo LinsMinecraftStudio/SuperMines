@@ -5,13 +5,13 @@ import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
 import io.github.lijinhong11.supermines.integrates.block.MinecraftBlockAddon;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
-import io.github.lijinhong11.supermines.utils.Constants;
-import java.util.Set;
-import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Set;
 
 /**
  * Represents a treasure that can be dropped when mining blocks in a mine.

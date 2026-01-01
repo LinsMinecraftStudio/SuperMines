@@ -4,8 +4,6 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -14,11 +12,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 public class Constants {
     public static final int PERCENTAGE_MAX = 100;
     public static final int PERCENTAGE_MIN = 0;
 
-    private Constants() {}
+    private Constants() {
+    }
 
     public static class Texts {
         public static final String DATABASE_FILE = "data/data.db";
@@ -27,30 +29,26 @@ public class Constants {
     }
 
     public static class Keys {
-        private Keys() {}
-
         public static final NamespacedKey WAND_KEY = new NamespacedKey(SuperMines.getInstance(), "supermines_wand");
+
+        private Keys() {
+        }
     }
 
     public static class Items {
-        private Items() {}
-
         public static final Material DEFAULT_MINE_ICON = Material.STONE;
         public static final ItemStack BACKGROUND = ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE)
                 .name(Component.space())
                 .build();
-
         public static final Function<Player, ItemStack> WAND = player -> ItemBuilder.from(Material.BLAZE_ROD)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "wand.name"))
                 .lore(SuperMines.getInstance().getLanguageManager().getMsgComponentList(player, "wand.lore"))
                 .pdc(c -> c.set(Keys.WAND_KEY, PersistentDataType.BOOLEAN, true))
                 .build();
-
         // functional buttons
         public static final Function<Player, ItemStack> PREVIOUS_PAGE = player -> ItemBuilder.from(Material.PAPER)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.previous"))
                 .build();
-
         public static final Function<Player, ItemStack> NEXT_PAGE = player -> ItemBuilder.from(Material.PAPER)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.next"))
                 .build();
@@ -60,7 +58,6 @@ public class Constants {
         public static final Function<Player, ItemStack> CLOSE = player -> ItemBuilder.from(Material.BARRIER)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.close"))
                 .build();
-
         /* general gui & common */
         public static final Function<Player, ItemStack> MINES = player -> ItemBuilder.from(Material.STONE)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.mines.title"))
@@ -71,7 +68,6 @@ public class Constants {
         public static final Function<Player, ItemStack> RANKS = player -> ItemBuilder.from(Material.NAME_TAG)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.ranks.title"))
                 .build();
-
         public static final BiFunction<Player, Identified, ItemStack> SET_DISPLAY_NAME = (p, i) -> ItemBuilder.from(
                         Material.NAME_TAG)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.set_display_name.name"))
@@ -85,7 +81,6 @@ public class Constants {
         public static final Function<Player, ItemStack> ADD = p -> ItemBuilder.from(Material.PAPER)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.add"))
                 .build();
-
         // mine management
         public static final BiFunction<Player, Material, ItemStack> SET_DISPLAY_ICON =
                 (p, m) -> ItemBuilder.from(Material.STONE)
@@ -140,7 +135,6 @@ public class Constants {
                         .getLanguageManager()
                         .getMsgComponent(p, "gui.mine-management.block_spawn_entries.name"))
                 .build();
-
         // treasure management
         public static final BiFunction<Player, Double, ItemStack> SET_CHANCE =
                 (p, i) -> ItemBuilder.from(Material.BRUSH)
@@ -159,7 +153,6 @@ public class Constants {
                         .getLanguageManager()
                         .getMsgComponent(p, "gui.treasure-management.matched_materials.title"))
                 .build();
-
         // rank management
         public static final BiFunction<Player, Integer, ItemStack> SET_RANK_LEVEL =
                 (p, i) -> ItemBuilder.from(Material.NAME_TAG)
@@ -173,6 +166,9 @@ public class Constants {
                                         "gui.rank-management.setlevel.lore",
                                         MessageReplacement.replace("level", String.valueOf(i))))
                         .build();
+
+        private Items() {
+        }
     }
 
     public static class Permission {
