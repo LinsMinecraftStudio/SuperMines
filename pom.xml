@@ -6,7 +6,7 @@
 
     <groupId>io.github.lijinhong11</groupId>
     <artifactId>SuperMines</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.1.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -46,10 +46,6 @@
                             <shadedPattern>io.github.lijinhong11.supermines.libraries.folialib</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>dev.triumphteam.gui</pattern>
-                            <shadedPattern>io.github.lijinhong11.supermines.libraries.gui</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>io.github.lijinhong11.mdatabase</pattern>
                             <shadedPattern>io.github.lijinhong11.supermines.libraries.database</shadedPattern>
                         </relocation>
@@ -58,7 +54,6 @@
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
-                                <exclude>com/tcoded/folialib/impl/SpigotImplementation.class</exclude>
                                 <exclude>com/tcoded/folialib/impl/LegacySpigotImplementation.class</exclude>
                             </excludes>
                         </filter>
@@ -147,12 +142,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>dev.triumphteam</groupId>
             <artifactId>triumph-gui</artifactId>
             <version>3.1.13</version>
@@ -238,6 +227,10 @@
                 <exclusion>
                     <groupId>dev.triumphteam</groupId>
                     <artifactId>triumph-gui</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.nexomc</groupId>
+                    <artifactId>protectionlib</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

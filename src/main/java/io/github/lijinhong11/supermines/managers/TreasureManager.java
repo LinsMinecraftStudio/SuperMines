@@ -88,8 +88,10 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         super.putObject(treasure.getId(), treasure);
     }
 
-    public @Nullable Treasure getTreasure(@NotNull String id) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "treasure id cannot be null or empty");
+    public @Nullable Treasure getTreasure(@Nullable String id) {
+        if (id == null) {
+            return null;
+        }
 
         return treasures.get(id);
     }

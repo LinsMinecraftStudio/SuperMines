@@ -7,14 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents an event when a mine resets.
- * <p>
- * Note: it will be triggered <b>asynchronously</b>
  */
 public class MineResetEvent extends Event {
     private final Mine mine;
 
     public MineResetEvent(Mine mine) {
         super(true);
+
         this.mine = mine;
     }
 

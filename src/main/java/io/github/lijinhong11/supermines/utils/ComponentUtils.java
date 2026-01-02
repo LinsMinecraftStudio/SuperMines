@@ -27,8 +27,13 @@ public class ComponentUtils {
         }
 
         Component result = LEGACY.deserialize(input);
-        String mini = MiniMessage.miniMessage().serialize(result);
-        return MiniMessage.miniMessage().deserialize(mini, MiniPlaceholders.getGlobalPlaceholders());
+
+        if (Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
+            String mini = MiniMessage.miniMessage().serialize(result);
+            return MiniMessage.miniMessage().deserialize(mini, MiniPlaceholders.getGlobalPlaceholders());
+        }
+
+        return result;
     }
 
     public static Component text(String input) {

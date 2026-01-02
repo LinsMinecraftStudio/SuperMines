@@ -83,7 +83,7 @@ public class TaskMaker {
 
     public void runMineResetTaskNow(Mine mine) {
         MineResetTask mrt = new MineResetTask(mine);
-        scheduler.runNextTick(mrt);
+        scheduler.runLaterAsync(mrt, 1);
     }
 
     public void cancelMineResetTask(Mine mine) {

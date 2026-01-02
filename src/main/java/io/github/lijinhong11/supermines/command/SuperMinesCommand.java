@@ -284,7 +284,8 @@ public class SuperMinesCommand {
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
-                                                            sender, "command.treasures.matched_blocks.add_success");
+                                                            sender, "command.treasures.matched_blocks.add_success",
+                                                            MessageReplacement.replace("%block%", block.toString()));
                                         }),
                                 new CommandAPICommand("removeMatch")
                                         .withPermission(Constants.Permission.TREASURES)
@@ -328,7 +329,8 @@ public class SuperMinesCommand {
                                                     .getLanguageManager()
                                                     .sendMessage(
                                                             sender,
-                                                            "command.treasures.matched_blocks.remove_success");
+                                                            "command.treasures.matched_blocks.remove_success",
+                                                            MessageReplacement.replace("%block%", block.toString()));
                                         })))
 
                 // Rank
@@ -421,7 +423,7 @@ public class SuperMinesCommand {
                                                 new IntegerArgument("level", 1, Integer.MAX_VALUE))
                                         .executes((sender, args) -> {
                                             String id = NullUtils.tryString((String) args.get("id"));
-                                            int level = (int) args.get("level");
+                                            int level = args.getByClassOrDefault("level", int.class, 0);
                                             Rank rank = SuperMines.getInstance()
                                                     .getRankManager()
                                                     .getRank(id);
@@ -429,6 +431,13 @@ public class SuperMinesCommand {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
                                                         .sendMessage(sender, "command.rank-not-exists");
+                                                return;
+                                            }
+
+                                            if (level < 1) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.ranks.level-less-than-1");
                                                 return;
                                             }
 
@@ -520,6 +529,50 @@ public class SuperMinesCommand {
                                             }
                                         }),
                                 new CommandAPICommand("takeRank")
+                                        .withArguments(
+                                                new EntitySelectorArgument.OnePlayer("player"),
+                                                new StringArgument("rankId")
+                                                        .includeSuggestions(ArgumentSuggestions.strings(getRankList())))
+                                        .withOptionalArguments(new BooleanArgument("notify"))
+                                        .executes((sender, args) -> {
+                                            Player player = (Player) args.get("player");
+                                            boolean notify = (boolean) args.getOrDefault("notify", false);
+                                            String id = (String) args.get("rankId");
+
+                                            Rank rank = SuperMines.getInstance()
+                                                    .getRankManager()
+                                                    .getRank(id);
+                                            if (rank == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.rank-not-exists");
+                                                return;
+                                            }
+
+                                            PlayerData data = SuperMines.getInstance()
+                                                    .getPlayerDataManager()
+                                                    .getOrCreatePlayerData(player.getUniqueId());
+                                            data.removeRank(rank);
+
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            sender,
+                                                            "command.ranks.take-rank",
+                                                            MessageReplacement.replace("%player%", player.getName()),
+                                                            MessageReplacement.replace(
+                                                                    "%rank%", rank.getRawDisplayName()));
+
+                                            if (notify) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(
+                                                                player,
+                                                                "command.ranks.take-rank-notify",
+                                                                MessageReplacement.replace(
+                                                                        "%rank%", rank.getRawDisplayName()));
+                                            }
+                                        })
                         )
                 )
                 // Other
@@ -590,7 +643,7 @@ public class SuperMinesCommand {
                                 new StringArgument("treasureId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getTreasuresList())))
                         .executes((sender, args) -> {
-                            String mineId = (String) args.get("mineId");
+                            String mineId = args.getByClassOrDefault("mineId", String.class, "");
                             String treasureId = (String) args.get("treasureId");
                             Mine mine =
                                     SuperMines.getInstance().getMineManager().getMine(mineId);
@@ -621,8 +674,8 @@ public class SuperMinesCommand {
                                 new StringArgument("treasureId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getTreasuresList())))
                         .executes((sender, args) -> {
-                            String mineId = (String) args.get("mineId");
-                            String treasureId = (String) args.get("treasureId");
+                            String mineId = args.getByClassOrDefault("mineId", String.class, "");
+                            String treasureId = args.getByClassOrDefault("treasureId", String.class, "");
                             Mine mine =
                                     SuperMines.getInstance().getMineManager().getMine(mineId);
                             if (mine == null) {
@@ -724,7 +777,7 @@ public class SuperMinesCommand {
                                             sender,
                                             "command.block-generate.success",
                                             MessageReplacement.replace("%mine%", mine.getRawDisplayName()),
-                                            MessageReplacement.replace("%material%", block.toString()),
+                                            MessageReplacement.replace("%block%", block.toString()),
                                             MessageReplacement.replace("%chance%", String.valueOf(chance)));
                         }))
                 .withSubcommand(new CommandAPICommand("removeBlockGenerate")
@@ -1187,6 +1240,7 @@ public class SuperMinesCommand {
             SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.mine-not-exists");
             return;
         }
+
         SuperMines.getInstance().getTaskMaker().runMineResetTaskNow(mine);
         SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.reset.success");
     }

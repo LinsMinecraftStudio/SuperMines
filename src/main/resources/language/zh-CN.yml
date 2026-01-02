@@ -60,6 +60,7 @@ command:
       - "&e/sm ranks create <id> <显示名称> <等级> &7- &a添加等级"
       - "&e/sm ranks remove <等级> &7- &a移除等级"
       - "&e/sm ranks giveRank <玩家> <等级> [提示] &7- &a设置玩家等级（默认不提示）"
+      - "&e/sm ranks takeRank <玩家> <等级> [提示] &7- &a取消玩家等级（默认不提示）"
       - "&e/sm ranks setDisplayName <等级> <显示名称> &7- &a设置等级显示名称"
       - "&e/sm ranks setLevel <等级> <等级值> &7- &a设置等级值"
   pos-set:
@@ -86,7 +87,7 @@ command:
     started: "&a矿区重置警告任务已启动！"
     stopped: "&a矿区重置警告任务已停止！"
   block-generate:
-    success: "&a方块 &d%material% &a已添加到矿区 &b%mine%&a，生成概率为 &b%chance%%"
+    success: "&a方块 &d%block% &a已添加到矿区 &b%mine%&a，生成概率为 &b%chance%%"
     chance-too-high: "&c所有方块生成概率总和不能超过 100%！"
     removed: "&a矿区 &b%mine% &a的方块生成已移除！"
   list:
@@ -107,17 +108,21 @@ command:
       success: "&a宝藏 &d%treasure% &a已创建成功！"
     remove:
       success: "&a宝藏 &d%treasure% &a已移除！"
-    matched_materials:
+    matched_blocks:
       exists: "&c该方块已在列表中！"
       not_exists: "&c该方块不在列表中！"
-      add_success: "&a方块 &b%material% &a已添加到宝藏 &d%treasure%"
-      remove_success: "&a方块 &b%material% &a已从宝藏 &d%treasure% &a中移除"
+      add_success: "&a方块 &b%block% &a已添加到宝藏 &d%treasure%"
+      remove_success: "&a方块 &b%block% &a已从宝藏 &d%treasure% &a中移除"
   ranks:
     set-display-name: "&a等级 &d%rank% &a的显示名称已设置为 &b%displayName%"
     set-level: "&a等级 &d%rank% &a的等级值已设置为 &b%level%"
     give-rank: "&a已将等级 &d%rank% &a授予玩家 &b%player%"
+    give-rank-notify: "&a你获得了等级 &d%rank%"
+    take-rank: "&c玩家 &b%player% &a的等级 &d%rank% 已被取消"
+    take-rank-notify: "&c你的等级 &d%rank% &c已被取消"
     allowed: "&a矿区 &b%mine% &a现已允许等级 &d%rank% &a进入"
     disallowed: "&a矿区 &b%mine% &a现已禁止等级 &d%rank% &a进入"
+    level-less-than-1: "&c等级不能低于1！"
     create:
       exists: "&c已存在相同 ID 的等级！"
       success: "&a等级 &b%rank% &a创建成功！"
@@ -131,7 +136,8 @@ command:
   mine-not-exists: "&c该矿区不存在！"
   rank-not-exists: "&c该等级不存在！"
   treasure-not-exists: "&c该宝藏不存在！"
-  invalid-material: "&c无效的方块！"
+  invalid-material: "&c无效的方块材料！"
+  invalid-block: "&c无效的方块！"
   invalid-id: "&cID 中包含无效字符！"
   pos-in-mine: "&c你选择的位置已在某个矿区内！"
 mine:

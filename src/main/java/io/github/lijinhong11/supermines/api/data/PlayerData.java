@@ -1,5 +1,6 @@
 package io.github.lijinhong11.supermines.api.data;
 
+import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mdatabase.serialization.annotations.Column;
 import io.github.lijinhong11.mdatabase.serialization.annotations.Converter;
 import io.github.lijinhong11.mdatabase.serialization.annotations.PrimaryKey;
@@ -54,12 +55,18 @@ public final class PlayerData {
         return rank;
     }
 
-    public void setRank(StringRankSet rank) {
+    public void setRank(@NotNull StringRankSet rank) {
+        Preconditions.checkNotNull(rank, "rank");
+
         this.rank = rank;
     }
 
     public void addRank(Rank rank) {
         this.rank.add(rank);
+    }
+
+    public void removeRank(Rank rank) {
+        this.rank.remove(rank);
     }
 
     public int getMinedBlocks() {

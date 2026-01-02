@@ -94,9 +94,9 @@ class MineResetTask extends AbstractTask {
             SkillsBlockPlace.markAsEarnable(loc);
         }
 
-        mine.setBlocksBroken(0);
-
         new MineResetEvent(mine).callEvent();
+
+        mine.setBlocksBroken(0);
     }
 
     public void refreshNextResetTime() {

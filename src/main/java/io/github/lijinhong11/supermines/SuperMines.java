@@ -21,7 +21,7 @@ import io.github.lijinhong11.supermines.message.LanguageManager;
 import io.github.lijinhong11.supermines.task.TaskMaker;
 import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
 import io.github.lijinhong11.supermines.utils.Constants;
-import org.bstats.bukkit.Metrics;
+import io.github.lijinhong11.supermines.utils.Metrics;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,6 +49,8 @@ public class SuperMines extends JavaPlugin {
         foliaLibImpl = new FoliaLib(this);
 
         ConfigFileUtil.completeFile(this, "config.yml");
+        ConfigFileUtil.completeLangFile(this, "language/en-US.yml");
+        ConfigFileUtil.completeLangFile(this, "language/zh-CN.yml");
     }
 
     @Override
@@ -63,6 +65,7 @@ public class SuperMines extends JavaPlugin {
         taskMaker = new TaskMaker(foliaLibImpl);
 
         getLogger().info("""
+                
                 ==============================
                        SuperMines v%s
                         Author: mmmjjkx
