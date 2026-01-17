@@ -1,7 +1,8 @@
 <div align="center">
 <h1>SuperMines</h1>
 
-<img alt="hangar" height="40" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg">
+<a href="https://hangar.papermc.io/lijinhong11/SuperMines"><img alt="hangar" height="40" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg"></a>
+<a href="https://modrinth.com/plugin/supermines"><img alt="modrinth" height="40" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg"></a>
 
 A powerful, easy-to-use, and free-to-use mine plugin for Paper servers. 
 </div>
@@ -34,7 +35,7 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 
 ## Downloads
 [Hangar](https://hangar.papermc.io/lijinhong11/SuperMines)  
-[Modrinth]()
+[Modrinth](https://modrinth.com/plugin/supermines)
 
 ## API
 See [the API class](./src/main/java/io/github/lijinhong11/supermines/api/SuperMinesAPI.java)
