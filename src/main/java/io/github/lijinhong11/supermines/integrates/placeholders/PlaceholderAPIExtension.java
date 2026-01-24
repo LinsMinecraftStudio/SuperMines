@@ -11,6 +11,7 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("deprecation")
 public class PlaceholderAPIExtension extends PlaceholderExpansion {
     @Override
     public @NotNull String getIdentifier() {
@@ -19,12 +20,12 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor() {
-        return "mmmjjkx";
+        return "mmmjjkx (lijinhong11)";
     }
 
     @Override
     public @NotNull String getVersion() {
-        return SuperMines.getInstance().getPluginMeta().getVersion();
+        return SuperMines.getInstance().getDescription().getVersion();
     }
 
     @Override

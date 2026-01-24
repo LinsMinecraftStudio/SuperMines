@@ -4,7 +4,7 @@ import com.tcoded.folialib.FoliaLib;
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
 import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
-import io.github.lijinhong11.mdatabase.impl.SQLConnections;
+import io.github.lijinhong11.mdatabase.impl.DatabaseConnections;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
 import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.integrates.placeholders.MiniPlaceholderExtension;
@@ -27,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
+@SuppressWarnings("deprecation")
 public class SuperMines extends JavaPlugin {
     private static SuperMines instance;
 
@@ -36,6 +37,7 @@ public class SuperMines extends JavaPlugin {
     private PlayerDataManager playerDataManager;
 
     private LanguageManager languageManager;
+
     private FoliaLib foliaLibImpl;
     private TaskMaker taskMaker;
 
@@ -49,12 +51,41 @@ public class SuperMines extends JavaPlugin {
         foliaLibImpl = new FoliaLib(this);
 
         ConfigFileUtil.completeFile(this, "config.yml");
-        ConfigFileUtil.completeLangFile(this, "language/en-US.yml");
-        ConfigFileUtil.completeLangFile(this, "language/zh-CN.yml");
     }
 
     @Override
     public void onEnable() {
+        getLogger().info("""
+                
+                ==============================
+                       SuperMines v%s
+                        Author: mmmjjkx
+                           Enjoy :)
+                ==============================
+                """.formatted(getDescription().getVersion()));
+
+        try {
+            Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
+        } catch (Exception e) {
+            getLogger().info("""
+                    
+                    ==============================
+                    SuperMines detected that you are using Spigot server software.
+                    Some important features will not work!!!!
+                    You may experience some errors, but I'm sorry.
+                    SuperMines suggest you to change to Paper.
+                    
+                    Why?
+                    Paper has a lot of performance improvements and a lot benefits.
+                    Some developers are changed to use Paper to develop their plugins.
+                    
+                    Download Paper and improve your server!
+                    
+                    You can download Paper @ https://papermc.io/downloads/paper
+                    ==============================
+                    """);
+        }
+
         languageManager = new LanguageManager(this);
 
         BlockAddon.init();
@@ -63,15 +94,6 @@ public class SuperMines extends JavaPlugin {
         rankManager = new RankManager();
         mineManager = new MineManager();
         taskMaker = new TaskMaker(foliaLibImpl);
-
-        getLogger().info("""
-                
-                ==============================
-                       SuperMines v%s
-                        Author: mmmjjkx
-                           Enjoy :)
-                ==============================
-                """.formatted(getPluginMeta().getVersion()));
 
         setupDatabase();
         setupListeners();
@@ -111,20 +133,7 @@ public class SuperMines extends JavaPlugin {
         String username = remote.getString("username");
         String password = remote.getString("password");
 
-        DatabaseConnection conn =
-                switch (type) {
-                    case SQLITE -> {
-                        String path = new File(getDataFolder(), Constants.Texts.DATABASE_FILE)
-                                .getAbsolutePath();
-                        yield SQLConnections.sqlite(path, new DatabaseParameters());
-                    }
-                    case MYSQL ->
-                            SQLConnections.mysql(ip, port, database, username, password, new DatabaseParameters());
-                    case MARIADB ->
-                            SQLConnections.mariadb(ip, port, database, username, password, new DatabaseParameters());
-                    case POSTGRESQL ->
-                            SQLConnections.postgresql(ip, port, database, username, password, new DatabaseParameters());
-                };
+        DatabaseConnection conn = DatabaseConnections.createByType(type, new File(getDataFolder(), Constants.Texts.DATABASE_FILE), ip, port, database, username, password, new DatabaseParameters());
 
         playerDataManager = new PlayerDataManager(conn);
     }

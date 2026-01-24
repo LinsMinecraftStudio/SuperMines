@@ -99,6 +99,7 @@ public final class LanguageManager {
         if (languageFiles != null) {
             for (File languageFile : languageFiles) {
                 String language = convertToRightLangCode(languageFile.getName().replaceAll(".yml", ""));
+                ConfigFileUtil.completeLangFile(plugin, "language/" + languageFile.getName());
                 configurations.put(language, YamlConfiguration.loadConfiguration(languageFile));
             }
         }

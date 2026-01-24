@@ -14,12 +14,12 @@ public class RankConverter implements ObjectConverter<StringRankSet> {
     }
 
     @Override
-    public Object convertBack(Object t) {
-        if (t instanceof StringRankSet r) {
-            return r.toString();
+    public Object convertBack(StringRankSet t) {
+        if (t == null) {
+            return Rank.DEFAULT.getId();
         }
 
-        return Rank.DEFAULT.getId();
+        return t.toString();
     }
 
     @Override

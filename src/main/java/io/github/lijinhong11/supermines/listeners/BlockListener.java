@@ -7,7 +7,6 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,21 +38,21 @@ public class BlockListener implements Listener {
     public void breakBlock(BlockBreakEvent e) {
         Location loc = e.getBlock().getLocation();
         Mine mine = SuperMines.getInstance().getMineManager().getMine(loc);
-        World world = loc.getWorld();
+        Player player = e.getPlayer();
 
         if (mine == null) {
             return;
         }
 
-        if (!mine.canMine(e.getPlayer())) {
+        if (!mine.canMine(player)) {
             e.setCancelled(true);
-            SuperMines.getInstance().getLanguageManager().sendMessage(e.getPlayer(), "mine.no-enough-rank");
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "mine.no-enough-rank");
             return;
         }
 
         PlayerData playerData = SuperMines.getInstance()
                 .getPlayerDataManager()
-                .getOrCreatePlayerData(e.getPlayer().getUniqueId());
+                .getOrCreatePlayerData(player.getUniqueId());
 
         playerData.addMinedBlocks(1);
         mine.plusBlocksBroken();
@@ -64,7 +63,7 @@ public class BlockListener implements Listener {
                 if (treasure.getMatchedBlocks().contains(BlockAddon.getAddonBlockByLocation(loc))) {
                     double chance = treasure.getChance();
                     if (NumberUtils.matchChance(chance)) {
-                        world.dropItemNaturally(loc, treasure.getItemStack().clone());
+                        treasure.giveToPlayer(player, true);
                     }
                 }
             }

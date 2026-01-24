@@ -10,9 +10,12 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+@SuppressWarnings("deprecation")
 public class MiniPlaceholderExtension {
     public static void register() {
         Expansion expansion = Expansion.builder("supermines")
+                .version(SuperMines.getInstance().getDescription().getVersion())
+                .author("mmmjjkx (lijinhong11)")
                 .audiencePlaceholder("bestRank", (a, args, ctx) -> {
                     if (args.hasNext()) {
                         String playerName = args.pop().value();

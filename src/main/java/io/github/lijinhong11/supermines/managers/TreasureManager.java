@@ -6,9 +6,9 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
 import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
-import io.github.lijinhong11.supermines.utils.ItemUtils;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,27 +47,33 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
             section.set("chance", 1);
         }
 
+        ItemStack item = section.getObject("itemStack", byte[].class) == null ? null : ItemStack.deserializeBytes(section.getObject("itemStack", byte[].class));
+
         return new Treasure(
                 id,
                 MiniMessage.miniMessage().deserialize(section.getString("displayName", id)),
-                ItemUtils.deserializeFromBytes(section.getObject("itemStack", byte[].class)),
+                item,
                 chance,
                 section.getStringList("matchedBlocks").stream()
                         .map(BlockAddon::getAddonBlock)
-                        .collect(Collectors.toSet()));
-
-        //BREAKING CHANGE: matchedMaterials -> matchedBlocks
+                        .collect(Collectors.toSet()),
+                section.getStringList("commands"));
     }
 
     @Override
     protected void putObject(@NotNull ConfigurationSection section, Treasure object) {
         section.set("id", object.getId());
         section.set("displayName", MiniMessage.miniMessage().serialize(object.getDisplayName()));
-        section.set("itemStack", ItemUtils.serializeToBytes(object.getItemStack()));
         section.set("chance", object.getChance());
         section.set(
                 "matchedBlocks",
                 object.getMatchedBlocks().stream().map(AddonBlock::toString).toList());
+        if (object.getItemStack() != null) {
+            section.set("itemStack", object.getItemStack().serializeAsBytes());
+        }
+        if (object.getConsoleCommands() != null) {
+            section.set("commands", object.getConsoleCommands());
+        }
     }
 
     @Override
