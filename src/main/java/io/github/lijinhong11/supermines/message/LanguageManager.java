@@ -7,6 +7,7 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -144,6 +145,10 @@ public final class LanguageManager {
 
     public void sendMessage(CommandSender commandSender, String key, MessageReplacement... args) {
         commandSender.sendMessage(parseToComponent(getMsg(commandSender, key, args)));
+    }
+
+    public void sendMessage(CommandSender commandSender, String key, ClickEvent clickEvent, MessageReplacement... args) {
+        commandSender.sendMessage(parseToComponent(getMsg(commandSender, key, args)).clickEvent(clickEvent));
     }
 
     public void sendMessages(CommandSender commandSender, String key, MessageReplacement... args) {

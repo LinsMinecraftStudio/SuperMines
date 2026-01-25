@@ -63,9 +63,14 @@ command:
       - "&e/sm ranks takeRank <玩家> <等级> [提示] &7- &a取消玩家等级（默认不提示）"
       - "&e/sm ranks setDisplayName <等级> <显示名称> &7- &a设置等级显示名称"
       - "&e/sm ranks setLevel <等级> <等级值> &7- &a设置等级值"
-  pos-set:
-    pos1: "&a位置 1 已设置为 &d%pos%"
-    pos2: "&a位置 2 已设置为 &d%pos%"
+  pos:
+    invalid-height: "&c所选位置超出了世界的高度限制。"
+    outside-border: "&c所选位置位于世界边界之外。"
+    different-world: "&c位置 1 和 位置 2 必须位于同一个世界。"
+    in-mine: "&c你不能在已有矿区内选择位置。"
+    set:
+      pos1: "&a已将位置 1 设置为 &e%pos%&a。"
+      pos2: "&a已将位置 2 设置为 &e%pos%&a。"
   create:
     exists: "&c已存在相同 ID 的矿区！"
     success: "&a矿区创建成功！"
@@ -95,6 +100,7 @@ command:
       mine: "&6矿区: "
     separator: "&7, "
     color: "&b"
+    ordered: "&e%order%. &a%content%"
   teleport:
     set: "&a矿区 &b%mine% &a的传送点已设置为 &d%loc%"
     no-loc: "&c矿区未定义传送点，请联系管理员。"

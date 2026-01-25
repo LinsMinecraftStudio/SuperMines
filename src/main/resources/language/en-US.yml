@@ -63,9 +63,14 @@ command:
       - "&e/sm ranks takeRank <player> <rank> [notify] &7- &aTake away a player's rank (default notify is false)"
       - "&e/sm ranks setDisplayName <rank> <displayName> &7- &aSet a rank's display name"
       - "&e/sm ranks setLevel <rank> <level> &7- &aSet a rank's level"
-  pos-set:
-    pos1: "&aPosition 1 has set to &d%pos%"
-    pos2: "&aPosition 2 has set to &d%pos%"
+  pos:
+    invalid-height: "&cThe selected position is outside the world height limit."
+    outside-border: "&cThe selected position is outside the world border."
+    different-world: "&cPosition 1 and Position 2 must be in the same world."
+    in-mine: "&cYou cannot select a position inside an existing mine."
+    set:
+      pos1: "&aPosition 1 set to &e%pos%&a."
+      pos2: "&aPosition 2 set to &e%pos%&a."
   create:
     exists: "&cA mine with that id already existed!"
     success: "&aThe mine is created successfully!"
@@ -95,6 +100,7 @@ command:
       mine: "&6Mines: "
     separator: "&7, "
     color: "&b"
+    ordered: "&e%order%. &a%content%"
   teleport:
     set: "&aThe teleport location of mine &b%mine% &ahas been set to &d%loc%"
     no-loc: "&cThe teleport location is undefined, please contact operators for details."

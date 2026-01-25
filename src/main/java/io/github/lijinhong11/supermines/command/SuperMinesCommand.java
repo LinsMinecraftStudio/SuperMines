@@ -15,6 +15,8 @@ import io.github.lijinhong11.supermines.gui.GuiManager;
 import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
 import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.*;
+import io.github.lijinhong11.supermines.utils.selection.AreaSelection;
+import io.github.lijinhong11.supermines.utils.selection.SelectionValidator;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,38 +34,41 @@ public class SuperMinesCommand {
     public static void handlePos(Player player, boolean isPos1, Location forcedLoc) {
         Location loc = forcedLoc != null ? forcedLoc : player.getLocation();
 
-        if (SuperMines.getInstance().getMineManager().getMine(loc) != null) {
-            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
+        var mineManager = SuperMines.getInstance().getMineManager();
+        if (mineManager.getMine(loc) != null) {
+            SuperMines.getInstance()
+                    .getLanguageManager()
+                    .sendMessage(player, "command.pos.in-mine");
             return;
         }
 
         UUID uuid = player.getUniqueId();
         AreaSelection sel = selectionMap.get(uuid);
-        if (sel != null) {
-            sel = isPos1 ? new AreaSelection(loc, sel.pos2) : new AreaSelection(sel.pos1, loc);
-        } else {
-            sel = isPos1 ? new AreaSelection(loc, null) : new AreaSelection(null, loc);
-        }
 
-        String parsed = StringUtils.parseLocation(player, loc);
-        MessageReplacement pos = MessageReplacement.replace("%pos%", parsed);
-        if (isPos1) {
-            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-set.pos1", pos);
-        } else {
-            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-set.pos2", pos);
-        }
-
-        selectionMap.put(uuid, sel);
-    }
-
-    public static void handlePos(Player player, Location pos1, Location pos2) {
-        if (SuperMines.getInstance().getMineManager().getMine(pos1) != null
-                || SuperMines.getInstance().getMineManager().getMine(pos2) != null) {
+        if (!SelectionValidator.validateAll(player, sel, loc)) {
             return;
         }
 
-        UUID uuid = player.getUniqueId();
-        selectionMap.put(uuid, new AreaSelection(pos1, pos2));
+        if (sel == null) {
+            sel = new AreaSelection(null, null);
+        }
+
+        sel = isPos1
+                ? new AreaSelection(loc, sel.pos2())
+                : new AreaSelection(sel.pos1(), loc);
+
+        selectionMap.put(uuid, sel);
+
+        String parsed = StringUtils.parseLocation(player, loc);
+        MessageReplacement pos = MessageReplacement.replace("%pos%", parsed);
+
+        SuperMines.getInstance()
+                .getLanguageManager()
+                .sendMessage(
+                        player,
+                        isPos1 ? "command.pos.set.pos1" : "command.pos.set.pos2",
+                        pos
+                );
     }
 
     public void register() {
@@ -856,7 +861,7 @@ public class SuperMinesCommand {
                                 return;
                             }
 
-                            if (icon.isAir()) {
+                            if (icon == null || icon.isAir()) {
                                 SuperMines.getInstance()
                                         .getLanguageManager()
                                         .sendMessage(executor, "command.invalid-material");
@@ -970,8 +975,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.getWarningSeconds().add(restSeconds);
-                            SuperMines.getInstance().getTaskMaker().startMineWarningTask(mine, (Integer)
-                                    args.get("restSeconds"));
+                            SuperMines.getInstance().getTaskMaker().startMineWarningTask(mine, restSeconds);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -1007,8 +1011,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.getWarningSeconds().remove(restSeconds);
-                            SuperMines.getInstance().getTaskMaker().cancelMineWarningTask(mine, (Integer)
-                                    args.get("restSeconds"));
+                            SuperMines.getInstance().getTaskMaker().cancelMineWarningTask(mine, restSeconds);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(sender, "command.resetwarning.removed");
@@ -1021,7 +1024,7 @@ public class SuperMinesCommand {
                                 new IntegerArgument("resetTime", 1, Integer.MAX_VALUE))
                         .executes((sender, args) -> {
                             String id = (String) args.get("mineId");
-                            int resetTime = (int) args.get("resetTime");
+                            int resetTime = args.getByClassOrDefault("resetTime", int.class, 0);
                             Mine mine =
                                     SuperMines.getInstance().getMineManager().getMine(id);
                             if (mine == null) {
@@ -1032,7 +1035,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.setRegenerateSeconds(resetTime);
-                            if (resetTime == 0) {
+                            if (resetTime <= 0) {
                                 SuperMines.getInstance().getTaskMaker().cancelMineResetTask(mine);
                                 SuperMines.getInstance()
                                         .getLanguageManager()
@@ -1128,7 +1131,7 @@ public class SuperMinesCommand {
                                 new BooleanArgument("onlyFillAir"))
                         .executes((sender, args) -> {
                             String id = (String) args.get("mineId");
-                            boolean b = (boolean) args.get("onlyFillAir");
+                            boolean b = args.getByClassOrDefault("onlyFillAir", boolean.class, false);
 
                             Mine mine =
                                     SuperMines.getInstance().getMineManager().getMine(id);
@@ -1188,12 +1191,12 @@ public class SuperMinesCommand {
         }
 
         AreaSelection sel = selectionMap.get(player.getUniqueId());
-        if (sel == null || sel.pos1 == null || sel.pos2 == null) {
+        if (sel == null || sel.pos1() == null || sel.pos2() == null) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.selection-not-finished");
             return null;
         }
 
-        if (sel.isAnyInMine()) {
+        if (sel.isAnyMineIn()) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos-in-mine");
             return null;
         }
@@ -1269,16 +1272,5 @@ public class SuperMinesCommand {
 
     private Set<String> getRankList() {
         return SuperMines.getInstance().getRankManager().getAllRankIds();
-    }
-
-    private record AreaSelection(Location pos1, Location pos2) {
-        public CuboidArea toCuboidArea() {
-            return CuboidArea.createFromLocation(pos1, pos2);
-        }
-
-        public boolean isAnyInMine() {
-            return SuperMines.getInstance().getMineManager().getMine(pos1) != null
-                    || SuperMines.getInstance().getMineManager().getMine(pos2) != null;
-        }
     }
 }

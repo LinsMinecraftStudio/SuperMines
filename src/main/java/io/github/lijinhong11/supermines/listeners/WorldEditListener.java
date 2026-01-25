@@ -10,6 +10,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -50,7 +51,11 @@ public class WorldEditListener {
             BlockVector3 pos1 = cub.getMinimumPoint();
             BlockVector3 pos2 = cub.getMaximumPoint();
 
-            SuperMinesCommand.handlePos(p, BukkitAdapter.adapt(world, pos1), BukkitAdapter.adapt(world, pos2));
+            Location loc1 = BukkitAdapter.adapt(world, pos1);
+            Location loc2 = BukkitAdapter.adapt(world, pos2);
+
+            SuperMinesCommand.handlePos(p, true, loc1);
+            SuperMinesCommand.handlePos(p, false, loc2);
         } catch (IncompleteRegionException ignored) {
         }
     }

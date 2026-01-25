@@ -17,7 +17,7 @@ mine:
   # Auto pickup settings
   auto-pickup:
     # Whether to enable auto pickup
-    # You can use "/mine auto-pickup toggle" to toggle the state
+    # You can use "/mine auto-pickup-toggle" to toggle the state
     enabled: false
     # Enabled mines
     # Leave empty to use in all mines
