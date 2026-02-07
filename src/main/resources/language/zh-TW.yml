@@ -1,0 +1,252 @@
+time:
+  second: "秒"
+  seconds: "秒"
+  minute: "分鐘"
+  minutes: "分鐘"
+  hour: "小時"
+  hours: "小時"
+common:
+  location-format: "&fX: &b%x%, &fY: &b%y%, &fZ: &b%z%"
+  no-permission: "&c你沒有權限這麼做！"
+  enabled: "&a已啟用"
+  disabled: "&c已停用"
+wand:
+  name: "&eSuper&aMines &d位置設定棒"
+  lore:
+    - "&a左鍵設定位置 1"
+    - "&a右鍵設定位置 2"
+command:
+  help:
+    general:
+      - "&e/sm create <id> [顯示名稱] &7- &a建立礦區"
+      - "&e/sm help &7- &a顯示此說明"
+      - "&e/sm info <礦區> &7- &a顯示礦區資訊"
+      - "&e/sm list &7- &a列出所有礦區"
+      - "&e/sm gui &7- &a顯示 GUI"
+      - "&e/sm treasures &7- &a顯示寶藏相關說明"
+      - "&e/sm ranks &7- &a顯示等級相關說明"
+      - "&e/sm addTreasure <礦區> <寶藏> &7- &a為礦區新增寶藏"
+      - "&e/sm removeTreasure <礦區> <寶藏> &7- &a從礦區移除寶藏"
+      - "&e/sm setRequiredLevel <礦區> <等級> &7- &a設定礦區所需最低等級"
+      - "&e/sm addAllowedRank <礦區> <等級> &7- &a允許該等級進入礦區"
+      - "&e/sm removeAllowedRank <礦區> <等級> &7- &a禁止該等級進入礦區"
+      - "&e/sm setBlockGenerate <礦區> <方塊> <機率> &7- &a設定礦區方塊生成機率"
+      - "&e/sm setDisplayName <礦區> <顯示名稱> &7- &a設定礦區顯示名稱"
+      - "&e/sm setDisplayIcon <礦區> <物品> &7- &a設定礦區顯示圖示"
+      - "&e/sm removeBlockGenerate <礦區> <方塊> &7- &a移除礦區方塊生成"
+      - "&e/sm addResetWarning <礦區> <剩餘秒數> &7- &a新增礦區重置警告"
+      - "&e/sm removeResetWarning <礦區> <剩餘秒數> &7- &a移除礦區重置警告"
+      - "&e/sm setResetTime <礦區> <秒數> &7- &a設定礦區重置時間"
+      - "&e/sm settp/setteleport <礦區> &7- &a設定礦區傳送點"
+      - "&e/sm tp/teleport <礦區> &7- &a傳送至礦區"
+      - "&e/sm setOnlyFillAir <礦區> <是否只填充空氣> &7- &a設定重置時是否只填充空氣"
+      - "&e/sm reset <礦區> &7- &a重置礦區"
+      - "&e/sm pos1 [位置] &7- &a設定區域位置 1"
+      - "&e/sm pos2 [位置] &7- &a設定區域位置 2"
+      - "&e/sm wand &7- &a取得魔棒"
+      - "&e/sm remove <礦區> &7- &a移除礦區"
+      - "&e/sm reload &7- &a重新載入插件"
+    treasures:
+      - "&e/sm treasures list &7- &a列出所有寶藏"
+      - "&e/sm treasures create <id> <顯示名稱> <機率> &7- &a新增寶藏（須手持物品）"
+      - "&e/sm treasures remove <寶藏> &7- &a移除寶藏"
+      - "&e/sm treasures setItem <寶藏> &7- &a設定獎勵物品（須手持物品）"
+      - "&e/sm treasures setChance <寶藏> <機率> &7- &a設定寶藏機率"
+      - "&e/sm treasures setDisplayName <寶藏> <顯示名稱> &7- &a設定寶藏顯示名稱"
+      - "&e/sm treasures addMatch <寶藏> <方塊> &7- &a新增匹配方塊"
+      - "&e/sm treasures removeMatch <寶藏> <方塊> &7- &a移除匹配方塊"
+      - "&e/sm treasures addCommand <寶藏> <指令> &7- &a新增控制台/玩家指令（可用PlaceholderAPI/MiniPlaceholders佔位符）"
+      - "&e/sm treasures removeCommand <寶藏> <指令> &7- &a移除一條指令"
+      - "&e/sm treasures listCommands <寶藏> &7- &a列出寶藏的所有指令"
+    ranks:
+      - "&e/sm ranks list &7- &a列出所有等級"
+      - "&e/sm ranks create <id> <顯示名稱> <等級> &7- &a新增等級"
+      - "&e/sm ranks remove <等級> &7- &a移除等級"
+      - "&e/sm ranks giveRank <玩家> <等級> [提示] &7- &a設定玩家等級（預設不提示）"
+      - "&e/sm ranks takeRank <玩家> <等級> [提示] &7- &a取消玩家等級（預設不提示）"
+      - "&e/sm ranks setDisplayName <等級> <顯示名稱> &7- &a設定等級顯示名稱"
+      - "&e/sm ranks setLevel <等級> <等級值> &7- &a設定等級值"
+  pos:
+    invalid-height: "&c所選位置超出世界高度限制。"
+    outside-border: "&c所選位置位於世界邊界外。"
+    different-world: "&c位置 1 與位置 2 必須在同一世界。"
+    in-mine: "&c不能在已有礦區內選擇位置。"
+    set:
+      pos1: "&a已將位置 1 設為 &e%pos%&a。"
+      pos2: "&a已將位置 2 設為 &e%pos%&a。"
+  create:
+    exists: "&c已存在相同 ID 的礦區！"
+    success: "&a礦區建立成功！"
+    no-selection: "&c尚未選擇位置！"
+    selection-not-finished: "&c尚未完成立方區域選擇！"
+  fillair:
+    enabled: "&a礦區 &b%mine% &a重置時將只填充空氣"
+    disabled: "&a礦區 &b%mine% &a重置時將完整重置"
+  redefine:
+    success: "&a礦區區域已重新定義！"
+  remove:
+    success: "&a礦區已移除！"
+  reset:
+    time-set: "&a礦區 &b%mine% &a的重置時間已設為 &b%time%"
+    success: "&a礦區已重置！"
+    stop-reset: "&a礦區 &b%mine% &a將停止重置"
+  resetwarning:
+    time-too-long: "&c警告時間不可超過礦區重置時間！"
+    started: "&a礦區重置警告已啟動！"
+    stopped: "&a礦區重置警告已停止！"
+  block-generate:
+    success: "&a方塊 &d%block% &a已加入礦區 &b%mine%&a，生成機率 &b%chance%%"
+    chance-too-high: "&c所有方塊生成機率總和不可超過 100%！"
+    removed: "&a礦區 &b%mine% &a的方塊生成已移除！"
+  list:
+    head:
+      mine: "&6礦區："
+    separator: "&7, "
+    color: "&b"
+    ordered: "&e%order%. &a%content%"
+  teleport:
+    set: "&a礦區 &b%mine% &a的傳送點已設為 &d%loc%"
+    no-loc: "&c礦區尚未設定傳送點，請聯絡管理員。"
+  treasures:
+    no-item-in-hand: "&c必須手持物品！"
+    set-item: "&a寶藏 &d%treasure% &a的物品已更新"
+    set-chance: "&a寶藏 &d%treasure% &a的機率已設為 &b%chance%%"
+    set-display-name: "&a寶藏 &d%treasure% &a的顯示名稱已設為 &b%displayName%"
+    create:
+      exists: "&c已存在相同 ID 的寶藏！"
+      success: "&a寶藏 &d%treasure% &a已建立！"
+    remove:
+      success: "&a寶藏 &d%treasure% &a已移除！"
+    matched_blocks:
+      exists: "&c該方塊已在清單中！"
+      not_exists: "&c該方塊不在清單中！"
+      add_success: "&a方塊 &b%block% &a已加入寶藏 &d%treasure%"
+      remove_success: "&a方塊 &b%block% &a已從寶藏 &d%treasure% &a中移除"
+    command-empty: "&c指令不能為空！"
+    add-command:
+      success: "&a已為寶藏 &d%treasure% &a新增指令。"
+    remove-command:
+      success: "&a已從寶藏 &d%treasure% &a中移除指令。"
+      not-found: "&c該指令不在寶藏的指令清單中。"
+    list-commands:
+      empty: "&e寶藏 &d%treasure% &e目前沒有控制台/玩家指令。"
+      head: "&6寶藏 &d%treasure% &6的指令清單："
+      line: "&7%index%. &f%command%"
+  ranks:
+    set-display-name: "&a等級 &d%rank% &a的顯示名稱已設為 &b%displayName%"
+    set-level: "&a等級 &d%rank% &a的等級值已設為 &b%level%"
+    give-rank: "&a已將等級 &d%rank% &a授予玩家 &b%player%"
+    give-rank-notify: "&a你已獲得等級 &d%rank%"
+    take-rank: "&c玩家 &b%player% &a的等級 &d%rank% 已取消"
+    take-rank-notify: "&c你的等級 &d%rank% &c已取消"
+    allowed: "&a礦區 &b%mine% &a已允許等級 &d%rank% &a進入"
+    disallowed: "&a礦區 &b%mine% &a已禁止等級 &d%rank% &a進入"
+    level-less-than-1: "&c等級不可小於 1！"
+    create:
+      exists: "&c已存在相同 ID 的等級！"
+      success: "&a等級 &b%rank% &a已建立！"
+    remove:
+      success: "&a等級 &b%rank% &a已移除！"
+  reload:
+    safe-tip: "&c注意：為確保插件正常運作，僅會重新載入設定與語言檔"
+    success: "&a重新載入成功！"
+  set-display-name: "&a礦區 &d%mine% &a的顯示名稱已設為 &b%displayName%"
+  set-display-icon: "&a礦區 &d%mine% &a的顯示圖示已設為 &b%item%"
+  mine-not-exists: "&c該礦區不存在！"
+  rank-not-exists: "&c該等級不存在！"
+  treasure-not-exists: "&c該寶藏不存在！"
+  invalid-material: "&c無效的方塊材質！"
+  invalid-block: "&c無效的方塊！"
+  invalid-id: "&cID 含無效字元！"
+  pos-in-mine: "&c所選位置已在某礦區內！"
+mine:
+  no-place: "&c不能在礦區內放置方塊！"
+  reset: "&a礦區 &b%mine% &a已重置！"
+  reset_warning: "&c礦區 &b%mine% &c將於 &b%time% &c後重置"
+gui:
+  previous: "&e上一頁"
+  next: "&e下一頁"
+  back: "&c返回"
+  close: "&c關閉"
+  add: "&d新增"
+  material-chooser:
+    title: "&d選擇方塊"
+  input:
+    invalid-number: "&c無效數字！數字不可小於 0！"
+    invalid-percent: "&c無效百分比！須為大於 0 且不超過 100 的數字"
+  set_display_name:
+    prompt: "&e請在聊天欄輸入新顯示名稱：&b（支援顏色代碼，輸入 &6##CANCEL &b取消）"
+    name: "&6設定顯示名稱"
+    lore:
+      - "&7點擊設定礦區顯示名稱"
+      - "&7目前：&b%name%"
+  general:
+    title: "&eSuper&aMines"
+  mines:
+    title: "&7&l礦區"
+    info:
+      - "&7世界：&a%world%"
+      - "&7重置時間：&b%regenerate_seconds%"
+      - "&7位置：&e由 %pos1% 至 %pos2%"
+  mine-management:
+    title: "&7&l礦區管理 &8&l- &7%mine%"
+    set_display_icon:
+      name: "&6設定顯示圖示"
+      lore:
+        - "&7點擊設定礦區顯示圖示"
+        - "&7目前：&b%material%"
+    set_regen_seconds:
+      prompt: "&e請輸入新的礦區重置時間：&b（輸入 &6##CANCEL &b取消）"
+      name: "&b設定重置時間"
+      lore:
+        - "&7點擊設定礦區重置時間"
+        - "&7單位：秒"
+        - "&7目前：&b%seconds%"
+    set_required_lvl:
+      prompt: "&e請輸入新的所需等級值：&b（輸入 &6##CANCEL &b取消）"
+      name: "&b設定所需等級"
+      lore:
+        - "&7點擊設定礦區所需等級"
+        - "&7目前：&b%level%"
+    only_fill_air:
+      name: "&a重置時只填充空氣"
+      lore:
+        - "&7點擊切換是否僅填充空氣"
+        - "&7目前：&b%status%"
+    block_spawn_entries:
+      name: "&b生成方塊清單"
+      set_precent_prompt: "&e請輸入方塊 &d%material% &e的新百分比：&b（輸入 &6##CANCEL &b取消）"
+  treasures:
+    title: "&e&l寶藏"
+    info:
+      - "&7機率：&e%chance%"
+      - "&7匹配方塊數量：&a%matched_materials%"
+  treasure-management:
+    title: "&e&l寶藏管理 &8&l- &e%treasure%"
+    set_chance:
+      name: "&a設定機率"
+      lore:
+        - "&7點擊設定機率"
+        - "&7目前：&b%chance%"
+      prompt: "&e請輸入新的寶藏機率：&b（輸入 &6##CANCEL &b取消）"
+    itemstack:
+      name: "&d設定物品"
+      lore:
+        - "&7左鍵以游標物品設定為寶藏"
+        - "&7右鍵取得寶藏物品"
+    matched_materials:
+      title: "&b匹配方塊"
+      each_lore:
+        - "&7點擊移除"
+  ranks:
+    title: "&b&l等級"
+    info:
+      - "&7等級值：&b%level%"
+  rank-management:
+    title: "&b&l等級管理 &8&l- &b%rank%"
+    setlevel:
+      prompt: "&e請輸入新的等級值：&b（輸入 &6##CANCEL &b取消）"
+      name: "&6設定等級值"
+      lore:
+        - "&7點擊設定等級值"
+        - "&7目前：&b%level%"
