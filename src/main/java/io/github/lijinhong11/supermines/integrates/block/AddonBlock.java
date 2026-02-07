@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+//TODO: use MittelLib (although it is not finished)
 public class AddonBlock {
     private final String key;
     private final String id;

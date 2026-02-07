@@ -336,6 +336,115 @@ public class SuperMinesCommand {
                                                             sender,
                                                             "command.treasures.matched_blocks.remove_success",
                                                             MessageReplacement.replace("%block%", block.toString()));
+                                        }),
+                                new CommandAPICommand("addCommand")
+                                        .withPermission(Constants.Permission.TREASURES)
+                                        .withArguments(
+                                                new StringArgument("id")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getTreasuresList())),
+                                                new GreedyStringArgument("command"))
+                                        .executes((sender, args) -> {
+                                            String id = NullUtils.tryString((String) args.get("id"));
+                                            String command = NullUtils.tryString((String) args.get("command"));
+                                            Treasure treasure = SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .getTreasure(id);
+                                            if (treasure == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessages(sender, "command.treasure-not-exists");
+                                                return;
+                                            }
+                                            if (command.isEmpty()) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.treasures.command-empty");
+                                                return;
+                                            }
+                                            treasure.addConsoleCommand(command);
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            sender,
+                                                            "command.treasures.add-command.success",
+                                                            MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+                                        }),
+                                new CommandAPICommand("removeCommand")
+                                        .withPermission(Constants.Permission.TREASURES)
+                                        .withArguments(
+                                                new StringArgument("id")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getTreasuresList())),
+                                                new GreedyStringArgument("command"))
+                                        .executes((sender, args) -> {
+                                            String id = NullUtils.tryString((String) args.get("id"));
+                                            String command = NullUtils.tryString((String) args.get("command"));
+                                            Treasure treasure = SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .getTreasure(id);
+                                            if (treasure == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessages(sender, "command.treasure-not-exists");
+                                                return;
+                                            }
+                                            List<String> commands = treasure.getConsoleCommands();
+                                            if (commands == null || !commands.remove(command)) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.treasures.remove-command.not-found");
+                                                return;
+                                            }
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            sender,
+                                                            "command.treasures.remove-command.success",
+                                                            MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+                                        }),
+                                new CommandAPICommand("listCommands")
+                                        .withPermission(Constants.Permission.TREASURES)
+                                        .withArguments(new StringArgument("id")
+                                                .includeSuggestions(ArgumentSuggestions.strings(getTreasuresList())))
+                                        .executes((sender, args) -> {
+                                            String id = NullUtils.tryString((String) args.get("id"));
+                                            Treasure treasure = SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .getTreasure(id);
+                                            if (treasure == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessages(sender, "command.treasure-not-exists");
+                                                return;
+                                            }
+                                            List<String> commands = treasure.getConsoleCommands();
+                                            if (commands == null || commands.isEmpty()) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(
+                                                                sender,
+                                                                "command.treasures.list-commands.empty",
+                                                                MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+                                                return;
+                                            }
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            sender,
+                                                            "command.treasures.list-commands.head",
+                                                            MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+                                            for (int i = 0; i < commands.size(); i++) {
+                                                int index = i + 1;
+                                                String cmd = commands.get(i);
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(
+                                                                sender,
+                                                                "command.treasures.list-commands.line",
+                                                                MessageReplacement.replace("%index%", String.valueOf(index)),
+                                                                MessageReplacement.replace("%command%", cmd));
+                                            }
                                         })))
 
                 // Rank

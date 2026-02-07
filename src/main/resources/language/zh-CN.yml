@@ -55,6 +55,9 @@ command:
       - "&e/sm treasures setDisplayName <宝藏> <显示名称> &7- &a设置宝藏显示名称"
       - "&e/sm treasures addMatch <宝藏> <方块> &7- &a添加匹配方块"
       - "&e/sm treasures removeMatch <宝藏> <方块> &7- &a移除匹配方块"
+      - "&e/sm treasures addCommand <宝藏> <指令> &7- &a添加控制台指令（可使用PlaceholderAPI/MiniPlaceholders占位符）"
+      - "&e/sm treasures removeCommand <宝藏> <指令> &7- &a移除一条指令"
+      - "&e/sm treasures listCommands <宝藏> &7- &a列出宝藏的全部指令"
     ranks:
       - "&e/sm ranks list &7- &a列出所有等级"
       - "&e/sm ranks create <id> <显示名称> <等级> &7- &a添加等级"
@@ -119,6 +122,16 @@ command:
       not_exists: "&c该方块不在列表中！"
       add_success: "&a方块 &b%block% &a已添加到宝藏 &d%treasure%"
       remove_success: "&a方块 &b%block% &a已从宝藏 &d%treasure% &a中移除"
+    command-empty: "&c指令不能为空！"
+    add-command:
+      success: "&a已为宝藏 &d%treasure% &a添加指令。"
+    remove-command:
+      success: "&a已从宝藏 &d%treasure% &a中移除指令。"
+      not-found: "&c该指令不在宝藏的指令列表中。"
+    list-commands:
+      empty: "&e宝藏 &d%treasure% &e暂无控制台/玩家指令。"
+      head: "&6宝藏 &d%treasure% &6的指令列表："
+      line: "&7%index%. &f%command%"
   ranks:
     set-display-name: "&a等级 &d%rank% &a的显示名称已设置为 &b%displayName%"
     set-level: "&a等级 &d%rank% &a的等级值已设置为 &b%level%"

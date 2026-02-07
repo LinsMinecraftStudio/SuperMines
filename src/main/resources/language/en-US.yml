@@ -55,6 +55,9 @@ command:
       - "&e/sm treasures setDisplayName <treasure> <displayName> &7- &aSet the display name"
       - "&e/sm treasures addMatch <treasure> <block> &7- &aAdd match block"
       - "&e/sm treasures removeMatch <treasure> <block> &7- &aRemove match block"
+      - "&e/sm treasures addCommand <treasure> <command> &7- &aAdd a console command (can use PlaceholderAPI/MiniPlaceholders placeholders)"
+      - "&e/sm treasures removeCommand <treasure> <command> &7- &aRemove a command"
+      - "&e/sm treasures listCommands <treasure> &7- &aList all commands for a treasure"
     ranks:
       - "&e/sm ranks list &7- &aList all ranks"
       - "&e/sm ranks create <id> <displayName> <level> &7- &aAdd a rank"
@@ -119,6 +122,16 @@ command:
       not_exists: "&cThe block isn't in the list!"
       add_success: "&aThe block &b%block% &ahas been added to the treasure &d%treasure%"
       remove_success: "&aThe block &b%block% &ahas been removed from the treasure &d%treasure%"
+    command-empty: "&cThe command cannot be empty!"
+    add-command:
+      success: "&aCommand added to treasure &d%treasure%&a."
+    remove-command:
+      success: "&aCommand removed from treasure &d%treasure%&a."
+      not-found: "&cThat command is not in the treasure's list."
+    list-commands:
+      empty: "&eTreasure &d%treasure% &ehas no console commands."
+      head: "&6Console commands for &d%treasure%&6:"
+      line: "&7%index%. &f%command%"
   ranks:
     set-display-name: "&aThe display name of rank &d%rank% &ais set to &b%displayName%"
     set-level: "&aThe level of rank &d%rank% &ais set to &b%level%"

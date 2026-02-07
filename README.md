@@ -7,19 +7,6 @@
 A powerful, easy-to-use, and free-to-use mine plugin for Paper servers. 
 </div>
 
-## Notification: Migrate to 1.1.0 from 1.0.1
-### Breaking changes
-1. Files
-   * treasures.yml
-     * Change `matchedMaterials` to `matchedBlocks`
-     
-2. API
-   * PlayerData can store multi ranks in a set
-
-3. Placeholders
-   * Players can have multi ranks so that the placeholder `%supermines_rank%` (or something like that) will not work!
-   * Use `%supermines_hasrank_RANKID%` to check whether the player has the rank.
-
 ## Features
 * MiniPlaceholders/PlaceholdersAPI support
 * Folia support

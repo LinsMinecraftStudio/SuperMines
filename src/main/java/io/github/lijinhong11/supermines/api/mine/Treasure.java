@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Represents a treasure that can be dropped/executed when mining blocks in a mine.
+ * Represents a treasure that can be dropped/executed when mining blocks in a
+ * mine.
  */
 public final class Treasure implements Identified {
     private final Set<AddonBlock> matchedMaterials;
@@ -40,7 +41,8 @@ public final class Treasure implements Identified {
      * @param itemStack   the item stack to drop
      * @param chance      the drop chance (0-100)
      */
-    public Treasure(@NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack, @Range(from = 0, to = 100) double chance) {
+    public Treasure(@NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack,
+            @Range(from = 0, to = 100) double chance) {
         this(id, displayName, itemStack, chance, Set.of(), List.of());
     }
 
@@ -52,7 +54,8 @@ public final class Treasure implements Identified {
      * @param itemStack   the item stack to drop
      * @param chance      the drop chance (0-100)
      */
-    public Treasure(@NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack, @Range(from = 0, to = 100) double chance, @Nullable List<String> consoleCommands) {
+    public Treasure(@NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack,
+            @Range(from = 0, to = 100) double chance, @Nullable List<String> consoleCommands) {
         this(id, displayName, itemStack, chance, Set.of(), consoleCommands);
     }
 
@@ -66,7 +69,9 @@ public final class Treasure implements Identified {
      * @param matchedMaterials the set of materials that can trigger this treasure
      */
     public Treasure(
-            @NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack, @Range(from = 0, to = 100) double chance, @NotNull Set<AddonBlock> matchedMaterials, @Nullable List<String> consoleCommands) {
+            @NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack,
+            @Range(from = 0, to = 100) double chance, @NotNull Set<AddonBlock> matchedMaterials,
+            @Nullable List<String> consoleCommands) {
         Preconditions.checkNotNull(id, "id");
         Preconditions.checkNotNull(matchedMaterials, "matchedMaterials");
         Preconditions.checkArgument(chance >= 0 && chance <= 100, "the chane must beteen 0~100");
@@ -91,7 +96,7 @@ public final class Treasure implements Identified {
     /**
      * Give the treasure to a player.
      *
-     * @param player the player
+     * @param player   the player
      * @param dropItem determine whether to drop item directly
      */
     public void giveToPlayer(@NotNull Player player, boolean dropItem) {

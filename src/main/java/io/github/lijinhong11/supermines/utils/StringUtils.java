@@ -39,7 +39,8 @@ public class StringUtils {
 
         if (Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
             String plain = COMPONENT_PLAIN.serialize(result);
-            return COMPONENT_PLAIN.serialize(MiniMessage.miniMessage().deserialize(plain, MiniPlaceholders.getGlobalPlaceholders()));
+            return COMPONENT_PLAIN
+                    .serialize(MiniMessage.miniMessage().deserialize(plain, MiniPlaceholders.getGlobalPlaceholders()));
         }
 
         return text;
