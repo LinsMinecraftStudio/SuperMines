@@ -8,8 +8,7 @@ import org.bukkit.entity.Player;
 
 public final class SelectionValidator {
 
-    private SelectionValidator() {
-    }
+    private SelectionValidator() {}
 
     public static boolean validateSingleLocation(Player player, Location loc) {
         if (loc == null || loc.getWorld() == null) {
@@ -20,17 +19,13 @@ public final class SelectionValidator {
 
         int y = loc.getBlockY();
         if (y < world.getMinHeight() || y >= world.getMaxHeight()) {
-            SuperMines.getInstance()
-                    .getLanguageManager()
-                    .sendMessage(player, "command.pos.invalid-height");
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos.invalid-height");
             return false;
         }
 
         WorldBorder border = world.getWorldBorder();
         if (!border.isInside(loc)) {
-            SuperMines.getInstance()
-                    .getLanguageManager()
-                    .sendMessage(player, "command.pos.outside-border");
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos.outside-border");
             return false;
         }
 
@@ -44,21 +39,14 @@ public final class SelectionValidator {
         if (other == null) return true;
 
         if (!other.getWorld().equals(newLoc.getWorld())) {
-            SuperMines.getInstance()
-                    .getLanguageManager()
-                    .sendMessage(player, "command.pos.different-world");
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos.different-world");
             return false;
         }
 
         return true;
     }
 
-    public static boolean validateAll(
-            Player player,
-            AreaSelection current,
-            Location newLoc
-    ) {
-        return validateSingleLocation(player, newLoc)
-                && validateWorldConsistency(player, current, newLoc);
+    public static boolean validateAll(Player player, AreaSelection current, Location newLoc) {
+        return validateSingleLocation(player, newLoc) && validateWorldConsistency(player, current, newLoc);
     }
 }

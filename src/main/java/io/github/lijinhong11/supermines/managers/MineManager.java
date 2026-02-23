@@ -2,14 +2,15 @@ package io.github.lijinhong11.supermines.managers;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import io.github.lijinhong11.mittellib.hook.ContentProviders;
+import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.math.BlockPos;
+import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
-import io.github.lijinhong11.supermines.api.mine.Treasure;
-import io.github.lijinhong11.supermines.api.pos.BlockPos;
-import io.github.lijinhong11.supermines.api.pos.CuboidArea;
-import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
-import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
+import io.github.lijinhong11.supermines.api.mine.Treasure;;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
+import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,8 +19,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
 
 public class MineManager extends AbstractFileObjectManager<Mine> {
     private final Map<String, Mine> mines = new HashMap<>();
@@ -82,12 +81,12 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         BlockPos blockPos1 = new BlockPos(pos1.getInt("x"), pos1.getInt("y"), pos1.getInt("z"));
         BlockPos blockPos2 = new BlockPos(pos2.getInt("x"), pos2.getInt("y"), pos2.getInt("z"));
 
-        Map<AddonBlock, Double> blockSpawnEntries = new HashMap<>();
+        Map<PackedBlock, Double> blockSpawnEntries = new HashMap<>();
 
         ConfigurationSection blockSpawn = section.getConfigurationSection("blockSpawnEntries");
         if (blockSpawn != null) {
             for (String m : blockSpawn.getKeys(false)) {
-                AddonBlock block = BlockAddon.getAddonBlock(m);
+                PackedBlock block = ContentProviders.getBlock(m);
                 if (block == null) {
                     continue;
                 }
@@ -149,7 +148,8 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("treasures", treasures);
 
         Map<String, Double> blockSpawnEntries = new HashMap<>();
-        for (Map.Entry<AddonBlock, Double> entry : object.getBlockSpawnEntries().entrySet()) {
+        for (Map.Entry<PackedBlock, Double> entry :
+                object.getBlockSpawnEntries().entrySet()) {
             blockSpawnEntries.put(entry.getKey().toString(), entry.getValue());
         }
 

@@ -1,8 +1,8 @@
 package io.github.lijinhong11.supermines.utils;
 
+import io.github.lijinhong11.mittellib.message.LanguageManager;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
-import io.github.lijinhong11.supermines.message.LanguageManager;
-import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.miniplaceholders.api.MiniPlaceholders;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
@@ -39,8 +39,8 @@ public class StringUtils {
 
         if (Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
             String plain = COMPONENT_PLAIN.serialize(result);
-            return COMPONENT_PLAIN
-                    .serialize(MiniMessage.miniMessage().deserialize(plain, MiniPlaceholders.getGlobalPlaceholders()));
+            return COMPONENT_PLAIN.serialize(
+                    MiniMessage.miniMessage().deserialize(plain, MiniPlaceholders.getGlobalPlaceholders()));
         }
 
         return text;

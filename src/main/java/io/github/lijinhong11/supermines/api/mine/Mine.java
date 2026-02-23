@@ -2,17 +2,20 @@ package io.github.lijinhong11.supermines.api.mine;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import io.github.lijinhong11.mittellib.hook.content.MinecraftContentProvider;
+import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.math.BlockPos;
+import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.supermines.api.SuperMinesAPI;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
-import io.github.lijinhong11.supermines.api.pos.BlockPos;
-import io.github.lijinhong11.supermines.api.pos.CuboidArea;
-import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
-import io.github.lijinhong11.supermines.integrates.block.MinecraftBlockAddon;
 import io.github.lijinhong11.supermines.managers.database.StringRankSet;
-import io.github.lijinhong11.supermines.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,10 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * The mine object.
  */
@@ -33,7 +32,7 @@ public final class Mine implements Identified {
     private final String id;
 
     private final World world;
-    private final Map<AddonBlock, Double> blockSpawnEntries;
+    private final Map<PackedBlock, Double> blockSpawnEntries;
 
     private final List<Treasure> treasures;
     private final Set<String> allowedRankIds;
@@ -56,7 +55,7 @@ public final class Mine implements Identified {
             Component displayName,
             World world,
             CuboidArea area,
-            Map<AddonBlock, Double> blockSpawnEntries,
+            Map<PackedBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
         this(
@@ -77,7 +76,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<AddonBlock, Double> blockSpawnEntries,
+            Map<PackedBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
         this(
@@ -100,7 +99,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<AddonBlock, Double> blockSpawnEntries,
+            Map<PackedBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -126,7 +125,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<AddonBlock, Double> blockSpawnEntries,
+            Map<PackedBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -155,7 +154,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<AddonBlock, Double> blockSpawnEntries,
+            Map<PackedBlock, Double> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -240,7 +239,7 @@ public final class Mine implements Identified {
             throw new IllegalArgumentException("Chance must be between 1 and 100");
         }
 
-        blockSpawnEntries.put(MinecraftBlockAddon.createForMaterial(material), chance);
+        blockSpawnEntries.put(new MinecraftContentProvider.PackedMinecraftBlock(material), chance);
     }
 
     /**
@@ -250,7 +249,7 @@ public final class Mine implements Identified {
      * @param chance the spawn chance (must be between 1 and 100)
      * @throws IllegalArgumentException if chance is not between 1 and 100
      */
-    public void addBlockSpawnEntry(@NotNull AddonBlock block, double chance) {
+    public void addBlockSpawnEntry(@NotNull PackedBlock block, double chance) {
         if (chance < 1 || chance > 100) {
             throw new IllegalArgumentException("Chance must be between 1 and 100");
         }
@@ -263,7 +262,7 @@ public final class Mine implements Identified {
      *
      * @param blockSpawnEntries the map of blocks to their spawn chances
      */
-    public void addBlockSpawnEntries(Map<AddonBlock, Double> blockSpawnEntries) {
+    public void addBlockSpawnEntries(Map<PackedBlock, Double> blockSpawnEntries) {
         this.blockSpawnEntries.putAll(blockSpawnEntries);
     }
 
@@ -273,7 +272,7 @@ public final class Mine implements Identified {
      * @param material the material to remove
      */
     public void removeBlockSpawnEntry(@NotNull Material material) {
-        blockSpawnEntries.remove(MinecraftBlockAddon.createForMaterial(material));
+        blockSpawnEntries.remove(new MinecraftContentProvider.PackedMinecraftBlock(material));
     }
 
     /**
@@ -281,7 +280,7 @@ public final class Mine implements Identified {
      *
      * @param block the addon block to remove
      */
-    public void removeBlockSpawnEntry(@NotNull AddonBlock block) {
+    public void removeBlockSpawnEntry(@NotNull PackedBlock block) {
         blockSpawnEntries.remove(block);
     }
 
@@ -290,7 +289,7 @@ public final class Mine implements Identified {
      *
      * @param blocks the list of blocks to remove
      */
-    public void removeBlockSpawnEntries(List<AddonBlock> blocks) {
+    public void removeBlockSpawnEntries(List<PackedBlock> blocks) {
         blocks.forEach(blockSpawnEntries::remove);
     }
 
@@ -469,7 +468,7 @@ public final class Mine implements Identified {
      *
      * @return a map of blocks to their spawn chances
      */
-    public Map<AddonBlock, Double> getBlockSpawnEntries() {
+    public Map<PackedBlock, Double> getBlockSpawnEntries() {
         return blockSpawnEntries;
     }
 

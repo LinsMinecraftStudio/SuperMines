@@ -1,9 +1,12 @@
 package io.github.lijinhong11.supermines.utils;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.Identified;
-import io.github.lijinhong11.supermines.message.MessageReplacement;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
@@ -12,15 +15,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 public class Constants {
     public static final int PERCENTAGE_MAX = 100;
     public static final int PERCENTAGE_MIN = 0;
 
-    private Constants() {
-    }
+    private Constants() {}
 
     public static class Texts {
         public static final String DATABASE_FILE = "data/data.db";
@@ -31,8 +30,7 @@ public class Constants {
     public static class Keys {
         public static final NamespacedKey WAND_KEY = new NamespacedKey(SuperMines.getInstance(), "supermines_wand");
 
-        private Keys() {
-        }
+        private Keys() {}
     }
 
     public static class Items {
@@ -167,8 +165,7 @@ public class Constants {
                                         MessageReplacement.replace("level", String.valueOf(i))))
                         .build();
 
-        private Items() {
-        }
+        private Items() {}
     }
 
     public static class Permission {

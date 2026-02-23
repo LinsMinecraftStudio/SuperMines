@@ -2,13 +2,12 @@ package io.github.lijinhong11.supermines.api.data;
 
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.supermines.api.iface.Identified;
-import io.github.lijinhong11.supermines.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import java.util.Objects;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 /**
  * Represents a rank that can be assigned to players for mine access control.

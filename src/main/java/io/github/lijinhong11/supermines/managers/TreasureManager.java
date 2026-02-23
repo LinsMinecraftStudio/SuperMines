@@ -2,21 +2,21 @@ package io.github.lijinhong11.supermines.managers;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import io.github.lijinhong11.mittellib.hook.ContentProviders;
+import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.item.MittelItem;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
-import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
-import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     private final Map<String, Treasure> treasures = new HashMap<>();
@@ -47,7 +47,23 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
             section.set("chance", 1);
         }
 
-        ItemStack item = section.getObject("itemStack", byte[].class) == null ? null : ItemStack.deserializeBytes(section.getObject("itemStack", byte[].class));
+        ItemStack item = null;
+        if (section.contains("item")) {
+            ConfigurationSection itemSection = section.getConfigurationSection("item");
+            if (itemSection != null) {
+                item = MittelItem.readFromSection(itemSection).get();
+            }
+        } else if (section.contains("itemStack")) {
+            item = section.getObject("itemStack", byte[].class) == null
+                    ? null
+                    : ItemStack.deserializeBytes(section.getObject("itemStack", byte[].class));
+            if (item != null) {
+                ConfigurationSection cs = section.createSection("item");
+                new MittelItem(item).write(cs);
+
+                section.set("itemStack", null);
+            }
+        }
 
         return new Treasure(
                 id,
@@ -55,7 +71,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
                 item,
                 chance,
                 section.getStringList("matchedBlocks").stream()
-                        .map(BlockAddon::getAddonBlock)
+                        .map(ContentProviders::getBlock)
                         .collect(Collectors.toSet()),
                 section.getStringList("commands"));
     }
@@ -67,9 +83,10 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         section.set("chance", object.getChance());
         section.set(
                 "matchedBlocks",
-                object.getMatchedBlocks().stream().map(AddonBlock::toString).toList());
-        if (object.getItemStack() != null) {
-            section.set("itemStack", object.getItemStack().serializeAsBytes());
+                object.getMatchedBlocks().stream().map(PackedBlock::getId).toList());
+        if (object.getSerializableItemStack() != null) {
+            ConfigurationSection cs = section.createSection("item");
+            object.getSerializableItemStack().write(cs);
         }
         if (object.getConsoleCommands() != null) {
             section.set("commands", object.getConsoleCommands());

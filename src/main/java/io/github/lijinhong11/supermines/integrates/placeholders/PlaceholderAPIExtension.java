@@ -3,7 +3,7 @@ package io.github.lijinhong11.supermines.integrates.placeholders;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
-import io.github.lijinhong11.supermines.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -36,7 +36,8 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
             if (args[0].equalsIgnoreCase("bestrank")) {
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
-                return ComponentUtils.serializeLegacy(data.getRank().getBestValuedRank().getDisplayName());
+                return ComponentUtils.serializeLegacy(
+                        data.getRank().getBestValuedRank().getDisplayName());
             } else if (args[0].equalsIgnoreCase("biggestranklevel")) {
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
@@ -52,7 +53,8 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                 OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
-                return ComponentUtils.serializeLegacy(data.getRank().getBestValuedRank().getDisplayName());
+                return ComponentUtils.serializeLegacy(
+                        data.getRank().getBestValuedRank().getDisplayName());
             } else if (args[0].equalsIgnoreCase("biggestranklevel")) {
                 String playerName = args[1];
                 OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
@@ -67,7 +69,8 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                 return String.valueOf(data.getMinedBlocks());
             } else if (args[0].equalsIgnoreCase("hasrank")) {
                 String rank = args[1];
-                PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+                PlayerData data =
+                        SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
                 return String.valueOf(data.getRank().matchRank(rank));
             }
         } else if (args.length == 3) {
@@ -108,7 +111,8 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
             } else if (args[0].equalsIgnoreCase("hasrank")) {
                 String rank = args[1];
                 OfflinePlayer p2 = Bukkit.getOfflinePlayer(args[2]);
-                PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
+                PlayerData data =
+                        SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
                 return String.valueOf(data.getRank().matchRank(rank));
             }
         }

@@ -22,12 +22,14 @@ public class MiniPlaceholderExtension {
                         OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
-                        return Tag.selfClosingInserting(data.getRank().getBestValuedRank().getDisplayName());
+                        return Tag.selfClosingInserting(
+                                data.getRank().getBestValuedRank().getDisplayName());
                     } else {
                         OfflinePlayer p = (OfflinePlayer) a;
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
-                        return Tag.selfClosingInserting(data.getRank().getBestValuedRank().getDisplayName());
+                        return Tag.selfClosingInserting(
+                                data.getRank().getBestValuedRank().getDisplayName());
                     }
                 })
                 .audiencePlaceholder("biggestRankLevel", (a, args, ctx) -> {
@@ -36,12 +38,14 @@ public class MiniPlaceholderExtension {
                         OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
-                        return Tag.selfClosingInserting(Component.text(data.getRank().getBiggestRankLevel()));
+                        return Tag.selfClosingInserting(
+                                Component.text(data.getRank().getBiggestRankLevel()));
                     } else {
                         OfflinePlayer p = (OfflinePlayer) a;
                         PlayerData data =
                                 SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
-                        return Tag.selfClosingInserting(Component.text(data.getRank().getBiggestRankLevel()));
+                        return Tag.selfClosingInserting(
+                                Component.text(data.getRank().getBiggestRankLevel()));
                     }
                 })
                 .audiencePlaceholder("minedBlocks", (a, args, ctx) -> {
@@ -69,8 +73,10 @@ public class MiniPlaceholderExtension {
                         player = Bukkit.getOfflinePlayer(args.pop().value());
                     }
 
-                    PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
-                    return Tag.selfClosingInserting(Component.text(data.getRank().matchRank(rankId)));
+                    PlayerData data =
+                            SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+                    return Tag.selfClosingInserting(
+                            Component.text(data.getRank().matchRank(rankId)));
                 })
                 .globalPlaceholder("mine_blocksbroken", (args, ctx) -> {
                     String mineId = args.popOr("missing_mine_id").value();

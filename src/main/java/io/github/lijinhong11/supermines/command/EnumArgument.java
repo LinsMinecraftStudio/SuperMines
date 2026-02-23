@@ -6,7 +6,6 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CommandAPIArgumentType;
 import dev.jorel.commandapi.executors.CommandArguments;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +18,8 @@ public class EnumArgument<E extends Enum<E>> extends Argument<E> {
 
         this.enumClass = enumClass;
 
-        List<String> suggestions = new ArrayList<>(Arrays.stream(enumClass.getEnumConstants()).map(Enum::toString).toList());
+        List<String> suggestions = new ArrayList<>(
+                Arrays.stream(enumClass.getEnumConstants()).map(Enum::toString).toList());
 
         includeSuggestions(ArgumentSuggestions.strings(suggestions));
     }
@@ -35,7 +35,8 @@ public class EnumArgument<E extends Enum<E>> extends Argument<E> {
     }
 
     @Override
-    public <Source> E parseArgument(CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
+    public <Source> E parseArgument(
+            CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
         return Enum.valueOf(enumClass, s.toUpperCase());
     }
 }

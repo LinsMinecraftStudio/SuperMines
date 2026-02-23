@@ -2,13 +2,12 @@ package io.github.lijinhong11.supermines.managers.abstracts;
 
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
 import io.github.lijinhong11.supermines.SuperMines;
-import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractDatabaseObjectManager<T> {
     private final DatabaseConnection connection;

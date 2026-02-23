@@ -1,19 +1,17 @@
 package io.github.lijinhong11.supermines.utils.chat;
 
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-
-import javax.annotation.Nonnull;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import javax.annotation.Nonnull;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public final class ChatInput {
 
     static ChatInputListener listener;
 
-    private ChatInput() {
-    }
+    private ChatInput() {}
 
     /**
      * This method waits for the Player to write something in chat.

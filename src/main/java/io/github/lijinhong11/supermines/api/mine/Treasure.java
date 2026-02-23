@@ -1,11 +1,15 @@
 package io.github.lijinhong11.supermines.api.mine;
 
 import com.google.common.base.Preconditions;
+import io.github.lijinhong11.mittellib.hook.content.MinecraftContentProvider;
+import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.item.MittelItem;
 import io.github.lijinhong11.supermines.api.iface.Identified;
-import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
-import io.github.lijinhong11.supermines.integrates.block.MinecraftBlockAddon;
-import io.github.lijinhong11.supermines.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.StringUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,16 +19,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Represents a treasure that can be dropped/executed when mining blocks in a
  * mine.
  */
 public final class Treasure implements Identified {
-    private final Set<AddonBlock> matchedMaterials;
+    private final Set<PackedBlock> matchedMaterials;
 
     private final String id;
     private double chance;
@@ -41,7 +41,10 @@ public final class Treasure implements Identified {
      * @param itemStack   the item stack to drop
      * @param chance      the drop chance (0-100)
      */
-    public Treasure(@NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack,
+    public Treasure(
+            @NotNull String id,
+            @Nullable Component displayName,
+            @Nullable ItemStack itemStack,
             @Range(from = 0, to = 100) double chance) {
         this(id, displayName, itemStack, chance, Set.of(), List.of());
     }
@@ -54,8 +57,12 @@ public final class Treasure implements Identified {
      * @param itemStack   the item stack to drop
      * @param chance      the drop chance (0-100)
      */
-    public Treasure(@NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack,
-            @Range(from = 0, to = 100) double chance, @Nullable List<String> consoleCommands) {
+    public Treasure(
+            @NotNull String id,
+            @Nullable Component displayName,
+            @Nullable ItemStack itemStack,
+            @Range(from = 0, to = 100) double chance,
+            @Nullable List<String> consoleCommands) {
         this(id, displayName, itemStack, chance, Set.of(), consoleCommands);
     }
 
@@ -69,8 +76,11 @@ public final class Treasure implements Identified {
      * @param matchedMaterials the set of materials that can trigger this treasure
      */
     public Treasure(
-            @NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack,
-            @Range(from = 0, to = 100) double chance, @NotNull Set<AddonBlock> matchedMaterials,
+            @NotNull String id,
+            @Nullable Component displayName,
+            @Nullable ItemStack itemStack,
+            @Range(from = 0, to = 100) double chance,
+            @NotNull Set<PackedBlock> matchedMaterials,
             @Nullable List<String> consoleCommands) {
         Preconditions.checkNotNull(id, "id");
         Preconditions.checkNotNull(matchedMaterials, "matchedMaterials");
@@ -158,6 +168,17 @@ public final class Treasure implements Identified {
     }
 
     /**
+     * Gets the serializable item stack
+     */
+    public @Nullable MittelItem getSerializableItemStack() {
+        if (itemStack == null) {
+            return null;
+        }
+
+        return new MittelItem(itemStack);
+    }
+
+    /**
      * Sets the item stack that will be dropped when this treasure is triggered.
      *
      * @param itemStack the item stack to set
@@ -192,7 +213,7 @@ public final class Treasure implements Identified {
      * @param material the material to add
      */
     public void addMatchedMaterial(Material material) {
-        addMatchedBlock(MinecraftBlockAddon.createForMaterial(material));
+        addMatchedBlock(new MinecraftContentProvider.PackedMinecraftBlock(material));
     }
 
     /**
@@ -200,7 +221,7 @@ public final class Treasure implements Identified {
      *
      * @param block the block to add
      */
-    public void addMatchedBlock(AddonBlock block) {
+    public void addMatchedBlock(PackedBlock block) {
         matchedMaterials.add(block);
     }
 
@@ -210,7 +231,7 @@ public final class Treasure implements Identified {
      * @param material the material to remove
      */
     public void removeMatchedMaterial(Material material) {
-        matchedMaterials.remove(MinecraftBlockAddon.createForMaterial(material));
+        matchedMaterials.remove(new MinecraftContentProvider.PackedMinecraftBlock(material));
     }
 
     /**
@@ -218,7 +239,7 @@ public final class Treasure implements Identified {
      *
      * @param block the block to remove
      */
-    public void removeMatchedBlock(AddonBlock block) {
+    public void removeMatchedBlock(PackedBlock block) {
         matchedMaterials.remove(block);
     }
 
@@ -227,7 +248,7 @@ public final class Treasure implements Identified {
      *
      * @return a set of matched blocks
      */
-    public Set<AddonBlock> getMatchedBlocks() {
+    public Set<PackedBlock> getMatchedBlocks() {
         return matchedMaterials;
     }
 

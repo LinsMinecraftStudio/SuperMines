@@ -4,19 +4,22 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
+import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.math.CuboidArea;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
+import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
-import io.github.lijinhong11.supermines.api.pos.CuboidArea;
 import io.github.lijinhong11.supermines.gui.GuiManager;
-import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
-import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.*;
 import io.github.lijinhong11.supermines.utils.selection.AreaSelection;
 import io.github.lijinhong11.supermines.utils.selection.SelectionValidator;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,9 +27,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class SuperMinesCommand {
     private static final Map<UUID, AreaSelection> selectionMap = new ConcurrentHashMap<>();
@@ -36,9 +36,7 @@ public class SuperMinesCommand {
 
         var mineManager = SuperMines.getInstance().getMineManager();
         if (mineManager.getMine(loc) != null) {
-            SuperMines.getInstance()
-                    .getLanguageManager()
-                    .sendMessage(player, "command.pos.in-mine");
+            SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.pos.in-mine");
             return;
         }
 
@@ -53,9 +51,7 @@ public class SuperMinesCommand {
             sel = new AreaSelection(null, null);
         }
 
-        sel = isPos1
-                ? new AreaSelection(loc, sel.pos2())
-                : new AreaSelection(sel.pos1(), loc);
+        sel = isPos1 ? new AreaSelection(loc, sel.pos2()) : new AreaSelection(sel.pos1(), loc);
 
         selectionMap.put(uuid, sel);
 
@@ -64,11 +60,7 @@ public class SuperMinesCommand {
 
         SuperMines.getInstance()
                 .getLanguageManager()
-                .sendMessage(
-                        player,
-                        isPos1 ? "command.pos.set.pos1" : "command.pos.set.pos2",
-                        pos
-                );
+                .sendMessage(player, isPos1 ? "command.pos.set.pos1" : "command.pos.set.pos2", pos);
     }
 
     public void register() {
@@ -85,13 +77,12 @@ public class SuperMinesCommand {
                         .withSubcommands(
                                 new CommandAPICommand("create")
                                         .withPermission(Constants.Permission.TREASURES)
-                                        .withArguments(
-                                                new StringArgument("id"),
-                                                new DoubleArgument("chance", 1, 100))
+                                        .withArguments(new StringArgument("id"), new DoubleArgument("chance", 1, 100))
                                         .withOptionalArguments(new DisplayNameArgument())
                                         .executesPlayer((player, args) -> {
                                             String id = args.getByClassOrDefault("id", String.class, "");
-                                            Optional<Component> displayName = args.getOptionalByClass("displayName", Component.class);
+                                            Optional<Component> displayName =
+                                                    args.getOptionalByClass("displayName", Component.class);
                                             double chance = args.getByClassOrDefault("chance", double.class, 0d);
                                             if (!id.matches(Constants.Texts.ID_PATTERN)) {
                                                 SuperMines.getInstance()
@@ -108,7 +99,8 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
-                                            Treasure treasure = new Treasure(id, displayName.orElse(Component.text(id)), is, chance);
+                                            Treasure treasure = new Treasure(
+                                                    id, displayName.orElse(Component.text(id)), is, chance);
                                             SuperMines.getInstance()
                                                     .getTreasureManager()
                                                     .addTreasure(treasure);
@@ -258,7 +250,7 @@ public class SuperMinesCommand {
                                                 new BlockArgument("block"))
                                         .executes((sender, args) -> {
                                             String id = NullUtils.tryString((String) args.get("id"));
-                                            AddonBlock block = (AddonBlock) args.get("block");
+                                            PackedBlock block = (PackedBlock) args.get("block");
 
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
@@ -280,8 +272,7 @@ public class SuperMinesCommand {
                                             if (treasure.getMatchedBlocks().contains(block)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
-                                                        .sendMessage(
-                                                                sender, "command.treasures.matched_blocks.exists");
+                                                        .sendMessage(sender, "command.treasures.matched_blocks.exists");
                                                 return;
                                             }
 
@@ -289,7 +280,8 @@ public class SuperMinesCommand {
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
-                                                            sender, "command.treasures.matched_blocks.add_success",
+                                                            sender,
+                                                            "command.treasures.matched_blocks.add_success",
                                                             MessageReplacement.replace("%block%", block.toString()));
                                         }),
                                 new CommandAPICommand("removeMatch")
@@ -301,7 +293,7 @@ public class SuperMinesCommand {
                                                 new BlockArgument("block"))
                                         .executes((sender, args) -> {
                                             String id = NullUtils.tryString((String) args.get("id"));
-                                            AddonBlock block = (AddonBlock) args.get("block");
+                                            PackedBlock block = (PackedBlock) args.get("block");
 
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
@@ -324,8 +316,7 @@ public class SuperMinesCommand {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
                                                         .sendMessage(
-                                                                sender,
-                                                                "command.treasures.matched_blocks.not_exists");
+                                                                sender, "command.treasures.matched_blocks.not_exists");
                                                 return;
                                             }
 
@@ -368,7 +359,8 @@ public class SuperMinesCommand {
                                                     .sendMessage(
                                                             sender,
                                                             "command.treasures.add-command.success",
-                                                            MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+                                                            MessageReplacement.replace(
+                                                                    "%treasure%", treasure.getRawDisplayName()));
                                         }),
                                 new CommandAPICommand("removeCommand")
                                         .withPermission(Constants.Permission.TREASURES)
@@ -393,7 +385,8 @@ public class SuperMinesCommand {
                                             if (commands == null || !commands.remove(command)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
-                                                        .sendMessage(sender, "command.treasures.remove-command.not-found");
+                                                        .sendMessage(
+                                                                sender, "command.treasures.remove-command.not-found");
                                                 return;
                                             }
                                             SuperMines.getInstance()
@@ -401,7 +394,8 @@ public class SuperMinesCommand {
                                                     .sendMessage(
                                                             sender,
                                                             "command.treasures.remove-command.success",
-                                                            MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+                                                            MessageReplacement.replace(
+                                                                    "%treasure%", treasure.getRawDisplayName()));
                                         }),
                                 new CommandAPICommand("listCommands")
                                         .withPermission(Constants.Permission.TREASURES)
@@ -425,7 +419,8 @@ public class SuperMinesCommand {
                                                         .sendMessage(
                                                                 sender,
                                                                 "command.treasures.list-commands.empty",
-                                                                MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+                                                                MessageReplacement.replace(
+                                                                        "%treasure%", treasure.getRawDisplayName()));
                                                 return;
                                             }
                                             SuperMines.getInstance()
@@ -433,7 +428,8 @@ public class SuperMinesCommand {
                                                     .sendMessage(
                                                             sender,
                                                             "command.treasures.list-commands.head",
-                                                            MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+                                                            MessageReplacement.replace(
+                                                                    "%treasure%", treasure.getRawDisplayName()));
                                             for (int i = 0; i < commands.size(); i++) {
                                                 int index = i + 1;
                                                 String cmd = commands.get(i);
@@ -442,7 +438,8 @@ public class SuperMinesCommand {
                                                         .sendMessage(
                                                                 sender,
                                                                 "command.treasures.list-commands.line",
-                                                                MessageReplacement.replace("%index%", String.valueOf(index)),
+                                                                MessageReplacement.replace(
+                                                                        "%index%", String.valueOf(index)),
                                                                 MessageReplacement.replace("%command%", cmd));
                                             }
                                         })))
@@ -472,7 +469,8 @@ public class SuperMinesCommand {
                                                 new IntegerArgument("level", 1, Integer.MAX_VALUE))
                                         .executesPlayer((player, args) -> {
                                             String id = NullUtils.tryString((String) args.get("rankId"));
-                                            Component displayName = args.getByClassOrDefault("displayName", Component.class, Component.text(id));
+                                            Component displayName = args.getByClassOrDefault(
+                                                    "displayName", Component.class, Component.text(id));
                                             int level = args.getByClassOrDefault("level", int.class, 0);
 
                                             if (!id.matches(Constants.Texts.ID_PATTERN)) {
@@ -483,8 +481,8 @@ public class SuperMinesCommand {
                                             }
 
                                             if (SuperMines.getInstance()
-                                                    .getRankManager()
-                                                    .getRank(id)
+                                                            .getRankManager()
+                                                            .getRank(id)
                                                     != null) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
@@ -510,8 +508,8 @@ public class SuperMinesCommand {
                                         .executesPlayer((player, args) -> {
                                             String id = NullUtils.tryString((String) args.get("rankId"));
                                             if (SuperMines.getInstance()
-                                                    .getRankManager()
-                                                    .getRank(id)
+                                                            .getRankManager()
+                                                            .getRank(id)
                                                     == null) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
@@ -686,9 +684,7 @@ public class SuperMinesCommand {
                                                                 MessageReplacement.replace(
                                                                         "%rank%", rank.getRawDisplayName()));
                                             }
-                                        })
-                        )
-                )
+                                        })))
                 // Other
                 .withSubcommand(new CommandAPICommand("pos1")
                         .withPermission(Constants.Permission.POS_SET)
@@ -848,7 +844,7 @@ public class SuperMinesCommand {
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
                             double chance = (double) args.get("chance");
-                            AddonBlock block = (AddonBlock) args.get("block");
+                            PackedBlock block = (PackedBlock) args.get("block");
 
                             if (block == null) {
                                 SuperMines.getInstance()
@@ -899,7 +895,7 @@ public class SuperMinesCommand {
                         .withArguments(new StringArgument("mineId"), new BlockArgument("block"))
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
-                            AddonBlock block = (AddonBlock) args.get("block");
+                            PackedBlock block = (PackedBlock) args.get("block");
 
                             if (block == null) {
                                 SuperMines.getInstance()

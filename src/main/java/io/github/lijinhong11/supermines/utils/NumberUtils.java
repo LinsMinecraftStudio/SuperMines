@@ -1,14 +1,12 @@
 package io.github.lijinhong11.supermines.utils;
 
 import io.github.lijinhong11.supermines.SuperMines;
-import org.bukkit.command.CommandSender;
-
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import org.bukkit.command.CommandSender;
 
 public class NumberUtils {
-    private NumberUtils() {
-    }
+    private NumberUtils() {}
 
     public static boolean matchChance(double chancePercent) {
         return (chancePercent / 100) >= 1 || ThreadLocalRandom.current().nextDouble(1) < (chancePercent / 100);

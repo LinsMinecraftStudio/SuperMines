@@ -5,7 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.CommandAPIArgumentType;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.lijinhong11.supermines.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import net.kyori.adventure.text.Component;
 
 public class DisplayNameArgument extends Argument<Component> {
@@ -24,7 +24,8 @@ public class DisplayNameArgument extends Argument<Component> {
     }
 
     @Override
-    public <Source> Component parseArgument(CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
+    public <Source> Component parseArgument(
+            CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
         return ComponentUtils.deserialize(s);
     }
 }

@@ -4,25 +4,38 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import io.github.lijinhong11.supermines.utils.Constants;
+import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import net.kyori.adventure.text.Component;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 public class ListGUI {
-    public static <T> void openList(Player p, Component title, Collection<T> objects, Function<T, ItemStack> itemFunction, Consumer<T> remove, Runnable add, Runnable back) {
+    public static <T> void openList(
+            Player p,
+            Component title,
+            Collection<T> objects,
+            Function<T, ItemStack> itemFunction,
+            Consumer<T> remove,
+            Runnable add,
+            Runnable back) {
         openList(p, title, objects, itemFunction, add, back, (e, t, gui) -> {
             remove.accept(t);
             gui.removePageItem(itemFunction.apply(t));
         });
     }
 
-    public static <T> void openList(Player p, Component title, Collection<T> objects, Function<T, ItemStack> itemFunction, Runnable add, Runnable back, TriConsumer<InventoryClickEvent, T, PaginatedGui> run) {
+    public static <T> void openList(
+            Player p,
+            Component title,
+            Collection<T> objects,
+            Function<T, ItemStack> itemFunction,
+            Runnable add,
+            Runnable back,
+            TriConsumer<InventoryClickEvent, T, PaginatedGui> run) {
         PaginatedGui gui = Gui.paginated()
                 .rows(6)
                 .pageSize(45)

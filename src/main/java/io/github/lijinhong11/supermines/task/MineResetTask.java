@@ -1,25 +1,24 @@
 package io.github.lijinhong11.supermines.task;
 
 import com.tcoded.folialib.wrapper.task.WrappedTask;
+import io.github.lijinhong11.mittellib.hook.ContentProviders;
+import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.math.BlockPos;
+import io.github.lijinhong11.mittellib.math.CuboidArea;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineResetEvent;
 import io.github.lijinhong11.supermines.api.mine.Mine;
-import io.github.lijinhong11.supermines.api.pos.BlockPos;
-import io.github.lijinhong11.supermines.api.pos.CuboidArea;
-import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
-import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
-import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 class MineResetTask extends AbstractTask {
     private final Mine mine;
@@ -43,8 +42,8 @@ class MineResetTask extends AbstractTask {
     private void doReset() {
         CuboidArea ca = mine.getArea();
         List<BlockPos> blockPosList = ca.asPosList();
-        Map<AddonBlock, Double> blockSpawnEntries = mine.getBlockSpawnEntries();
-        Map<BlockPos, AddonBlock> generated = new HashMap<>();
+        Map<PackedBlock, Double> blockSpawnEntries = mine.getBlockSpawnEntries();
+        Map<BlockPos, PackedBlock> generated = new HashMap<>();
 
         if (blockSpawnEntries.isEmpty()) {
             return;
@@ -55,8 +54,8 @@ class MineResetTask extends AbstractTask {
             Material material = loc.getBlock().getType();
             if (mine.isOnlyFillAirWhenRegenerate() && !material.isAir()) continue;
 
-            AddonBlock selected = null;
-            for (Map.Entry<AddonBlock, Double> entry : blockSpawnEntries.entrySet()) {
+            PackedBlock selected = null;
+            for (Map.Entry<PackedBlock, Double> entry : blockSpawnEntries.entrySet()) {
                 if (NumberUtils.matchChance(entry.getValue())) {
                     selected = entry.getKey();
                     break;
@@ -84,11 +83,11 @@ class MineResetTask extends AbstractTask {
         if (!mine.isOnlyFillAirWhenRegenerate()) {
             for (BlockPos pos : blockPosList) {
                 Location loc = pos.toLocation(mine.getWorld());
-                tm.runSync(loc, () -> BlockAddon.removeAddonBlock(loc));
+                tm.runSync(loc, () -> ContentProviders.destroyBlock(loc));
             }
         }
 
-        for (Map.Entry<BlockPos, AddonBlock> entry : generated.entrySet()) {
+        for (Map.Entry<BlockPos, PackedBlock> entry : generated.entrySet()) {
             Location loc = entry.getKey().toLocation(mine.getWorld());
             tm.runSync(loc, () -> entry.getValue().place(loc));
             SkillsBlockPlace.markAsEarnable(loc);

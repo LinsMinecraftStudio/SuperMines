@@ -6,18 +6,23 @@ import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import io.github.lijinhong11.mittellib.hook.ContentProviders;
+import io.github.lijinhong11.mittellib.hook.content.MinecraftContentProvider;
+import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
-import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
-import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
-import io.github.lijinhong11.supermines.integrates.block.MinecraftBlockAddon;
-import io.github.lijinhong11.supermines.message.MessageReplacement;
-import io.github.lijinhong11.supermines.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.chat.ChatInput;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,12 +30,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class GuiManager {
     // GUI position constants (keeping original layout)
@@ -92,11 +91,23 @@ public class GuiManager {
                 .rows(3)
                 .create();
 
-        putItem(GENERAL_MINES_ROW, GENERAL_MINES_COL, gui, ItemBuilder.from(Constants.Items.MINES.apply(p)),
+        putItem(
+                GENERAL_MINES_ROW,
+                GENERAL_MINES_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.MINES.apply(p)),
                 e -> openMineList(p));
-        putItem(GENERAL_TREASURES_ROW, GENERAL_TREASURES_COL, gui, ItemBuilder.from(Constants.Items.TREASURES.apply(p)),
+        putItem(
+                GENERAL_TREASURES_ROW,
+                GENERAL_TREASURES_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.TREASURES.apply(p)),
                 e -> openTreasureList(p));
-        putItem(GENERAL_RANKS_ROW, GENERAL_RANKS_COL, gui, ItemBuilder.from(Constants.Items.RANKS.apply(p)),
+        putItem(
+                GENERAL_RANKS_ROW,
+                GENERAL_RANKS_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.RANKS.apply(p)),
                 e -> openRankList(p));
 
         gui.open(p);
@@ -130,9 +141,13 @@ public class GuiManager {
         placeCommon(p, gui, mine, mine.getDisplayIcon(), reopen, back);
 
         // Display Icon
-        putItem(MINE_DISPLAY_ICON_ROW, MINE_DISPLAY_ICON_COL, gui,
-                ItemBuilder.from(Constants.Items.SET_DISPLAY_ICON.apply(p, mine.getDisplayIcon())), e -> {
-                    AddonBlock m = openMaterialChooser(p, reopen);
+        putItem(
+                MINE_DISPLAY_ICON_ROW,
+                MINE_DISPLAY_ICON_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.SET_DISPLAY_ICON.apply(p, mine.getDisplayIcon())),
+                e -> {
+                    PackedBlock m = openMaterialChooser(p, reopen);
                     if (m != null) {
                         mine.setDisplayIcon(m.toItem().getType());
                         reopen.run();
@@ -140,14 +155,18 @@ public class GuiManager {
                 });
 
         // Regenerate Seconds
-        putItem(MINE_REGEN_SECONDS_ROW, MINE_REGEN_SECONDS_COL, gui,
-                ItemBuilder.from(Constants.Items.SET_REGEN_SECONDS.apply(p, mine.getRegenerateSeconds())), e -> {
-                    if (!checkPermission(p, Constants.Permission.SET_RESET_TIME))
-                        return;
+        putItem(
+                MINE_REGEN_SECONDS_ROW,
+                MINE_REGEN_SECONDS_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.SET_REGEN_SECONDS.apply(p, mine.getRegenerateSeconds())),
+                e -> {
+                    if (!checkPermission(p, Constants.Permission.SET_RESET_TIME)) return;
 
                     gui.close(p);
-                    SuperMines.getInstance().getLanguageManager().sendMessage(p,
-                            "gui.mine-management.set_reset_time.prompt");
+                    SuperMines.getInstance()
+                            .getLanguageManager()
+                            .sendMessage(p, "gui.mine-management.set_reset_time.prompt");
                     handleIntegerInput(p, result -> {
                         mine.setRegenerateSeconds(result);
                         SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
@@ -156,23 +175,30 @@ public class GuiManager {
                 });
 
         // Only Fill Air
-        putItem(MINE_ONLY_FILL_AIR_ROW, MINE_ONLY_FILL_AIR_COL, gui,
-                ItemBuilder.from(Constants.Items.ONLY_FILL_AIR.apply(p, mine.isOnlyFillAirWhenRegenerate())), e -> {
-                    if (!checkPermission(p, Constants.Permission.SET_ONLY_FILL_AIR))
-                        return;
+        putItem(
+                MINE_ONLY_FILL_AIR_ROW,
+                MINE_ONLY_FILL_AIR_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.ONLY_FILL_AIR.apply(p, mine.isOnlyFillAirWhenRegenerate())),
+                e -> {
+                    if (!checkPermission(p, Constants.Permission.SET_ONLY_FILL_AIR)) return;
                     mine.setOnlyFillAirWhenRegenerate(!mine.isOnlyFillAirWhenRegenerate());
                     reopen.run();
                 });
 
         // Required Rank Level
-        putItem(MINE_REQUIRED_RANK_ROW, MINE_REQUIRED_RANK_COL, gui,
-                ItemBuilder.from(Constants.Items.SET_REQUIRED_RANK_LEVEL.apply(p, mine.getRequiredRankLevel())), e -> {
-                    if (!checkPermission(p, Constants.Permission.SET_REQUIRED_LEVEL))
-                        return;
+        putItem(
+                MINE_REQUIRED_RANK_ROW,
+                MINE_REQUIRED_RANK_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.SET_REQUIRED_RANK_LEVEL.apply(p, mine.getRequiredRankLevel())),
+                e -> {
+                    if (!checkPermission(p, Constants.Permission.SET_REQUIRED_LEVEL)) return;
 
                     gui.close(p);
-                    SuperMines.getInstance().getLanguageManager().sendMessage(p,
-                            "gui.mine-management.set_required_lvl.prompt");
+                    SuperMines.getInstance()
+                            .getLanguageManager()
+                            .sendMessage(p, "gui.mine-management.set_required_lvl.prompt");
                     handleIntegerInput(p, result -> {
                         mine.setRequiredRankLevel(result);
                         SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
@@ -181,10 +207,13 @@ public class GuiManager {
                 });
 
         // Block Spawn Entries
-        putItem(MINE_BLOCK_SPAWN_ROW, MINE_BLOCK_SPAWN_COL, gui,
-                ItemBuilder.from(Constants.Items.BLOCK_SPAWN_ENTRIES.apply(p)), e -> {
-                    if (!checkPermission(p, Constants.Permission.BLOCK_GENERATE))
-                        return;
+        putItem(
+                MINE_BLOCK_SPAWN_ROW,
+                MINE_BLOCK_SPAWN_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.BLOCK_SPAWN_ENTRIES.apply(p)),
+                e -> {
+                    if (!checkPermission(p, Constants.Permission.BLOCK_GENERATE)) return;
                     openBlockSpawnEntries(p, mine);
                 });
 
@@ -199,7 +228,7 @@ public class GuiManager {
         fillPageButtons(p, gui, back);
 
         putItem(BLOCK_SPAWN_ADD_ROW, BLOCK_SPAWN_ADD_COL, gui, ItemBuilder.from(Constants.Items.ADD.apply(p)), e -> {
-            AddonBlock m = openBlockChooser(p, b -> true, reopen);
+            PackedBlock m = openBlockChooser(p, b -> true, reopen);
             if (m != null) {
                 SuperMines.getInstance()
                         .getLanguageManager()
@@ -211,15 +240,14 @@ public class GuiManager {
             }
         });
 
-        for (Map.Entry<AddonBlock, Double> entry : mine.getBlockSpawnEntries().entrySet()) {
+        for (Map.Entry<PackedBlock, Double> entry : mine.getBlockSpawnEntries().entrySet()) {
             MessageReplacement r = MessageReplacement.replace("%precent%", String.valueOf(entry.getValue()));
             List<Component> lore = SuperMines.getInstance()
                     .getLanguageManager()
                     .getMsgComponentList(p, "gui.mine-management.block_spawn.each_lore", r);
-            AddonBlock block = entry.getKey();
+            PackedBlock block = entry.getKey();
             GuiItem item = ItemBuilder.from(block.toItem()).lore(lore).asGuiItem(e -> {
-                if (!checkPermission(p, Constants.Permission.BLOCK_GENERATE))
-                    return;
+                if (!checkPermission(p, Constants.Permission.BLOCK_GENERATE)) return;
 
                 ClickType type = e.getClick();
                 if (type.isLeftClick()) {
@@ -244,14 +272,19 @@ public class GuiManager {
     }
 
     private static void addBlockSpawnEntry(Player p, Mine mine, Material material) {
-        addBlockSpawnEntry(p, mine, MinecraftBlockAddon.createForMaterial(material));
+        addBlockSpawnEntry(p, mine, new MinecraftContentProvider.PackedMinecraftBlock(material));
     }
 
-    private static void addBlockSpawnEntry(Player p, Mine mine, AddonBlock material) {
-        handleDoubleInput(p, Constants.PERCENTAGE_MIN, Constants.PERCENTAGE_MAX, result -> {
-            mine.addBlockSpawnEntry(material, result);
-            openBlockSpawnEntries(p, mine);
-        }, "gui.input.invalid-precent");
+    private static void addBlockSpawnEntry(Player p, Mine mine, PackedBlock material) {
+        handleDoubleInput(
+                p,
+                Constants.PERCENTAGE_MIN,
+                Constants.PERCENTAGE_MAX,
+                result -> {
+                    mine.addBlockSpawnEntry(material, result);
+                    openBlockSpawnEntries(p, mine);
+                },
+                "gui.input.invalid-precent");
     }
 
     public static void openTreasureList(Player p) {
@@ -283,23 +316,36 @@ public class GuiManager {
         placeCommon(p, gui, treasure, Material.CHEST, reopen, back);
 
         // Chance
-        putItem(TREASURE_CHANCE_ROW, TREASURE_CHANCE_COL, gui,
-                ItemBuilder.from(Constants.Items.SET_CHANCE.apply(p, treasure.getChance())), e -> {
-                    if (!checkPermission(p, Constants.Permission.TREASURES))
-                        return;
+        putItem(
+                TREASURE_CHANCE_ROW,
+                TREASURE_CHANCE_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.SET_CHANCE.apply(p, treasure.getChance())),
+                e -> {
+                    if (!checkPermission(p, Constants.Permission.TREASURES)) return;
 
                     gui.close(p);
-                    SuperMines.getInstance().getLanguageManager().sendMessage(p,
-                            "gui.treasure-management.set_chance.prompt");
-                    handleDoubleInput(p, Constants.PERCENTAGE_MIN, Constants.PERCENTAGE_MAX, result -> {
-                        treasure.setChance(result);
-                        reopen.run();
-                    }, "gui.input.invalid-precent");
+                    SuperMines.getInstance()
+                            .getLanguageManager()
+                            .sendMessage(p, "gui.treasure-management.set_chance.prompt");
+                    handleDoubleInput(
+                            p,
+                            Constants.PERCENTAGE_MIN,
+                            Constants.PERCENTAGE_MAX,
+                            result -> {
+                                treasure.setChance(result);
+                                reopen.run();
+                            },
+                            "gui.input.invalid-precent");
                 });
 
         // Matched Materials
-        putItem(TREASURE_MATCHED_MATERIALS_ROW, TREASURE_MATCHED_MATERIALS_COL, gui,
-                ItemBuilder.from(Constants.Items.MATCHED_MATERIALS.apply(p)), e -> openMatchedMaterials(p, treasure));
+        putItem(
+                TREASURE_MATCHED_MATERIALS_ROW,
+                TREASURE_MATCHED_MATERIALS_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.MATCHED_MATERIALS.apply(p)),
+                e -> openMatchedMaterials(p, treasure));
 
         putTreasureItemStack(gui, p, treasure);
     }
@@ -321,8 +367,7 @@ public class GuiManager {
         clone.setItemMeta(meta);
 
         putItem(TREASURE_ITEMSTACK_ROW, TREASURE_ITEMSTACK_COL, gui, ItemBuilder.from(clone), e -> {
-            if (!checkPermission(p, Constants.Permission.TREASURES))
-                return;
+            if (!checkPermission(p, Constants.Permission.TREASURES)) return;
 
             ClickType type = e.getClick();
             if (type.isRightClick()) {
@@ -340,7 +385,9 @@ public class GuiManager {
     }
 
     private static void openMatchedMaterials(Player p, Treasure treasure) {
-        ListGUI.openList(p, SuperMines.getInstance()
+        ListGUI.openList(
+                p,
+                SuperMines.getInstance()
                         .getLanguageManager()
                         .getMsgComponent(p, "gui.treasure-management.matched_materials.title"),
                 treasure.getMatchedBlocks(),
@@ -348,18 +395,19 @@ public class GuiManager {
                     List<Component> lore = SuperMines.getInstance()
                             .getLanguageManager()
                             .getMsgComponentList(p, "gui.treasure-management.matched_materials.each_lore");
-                    return ItemBuilder.from(t.toItem())
-                            .lore(lore)
-                            .build();
-                }, treasure::removeMatchedBlock, () -> {
-                    AddonBlock m = openBlockChooser(p, b -> true, null);
+                    return ItemBuilder.from(t.toItem()).lore(lore).build();
+                },
+                treasure::removeMatchedBlock,
+                () -> {
+                    PackedBlock m = openBlockChooser(p, b -> true, null);
 
                     if (!treasure.getMatchedBlocks().contains(m)) {
                         treasure.addMatchedBlock(m);
                     }
 
                     openMatchedMaterials(p, treasure);
-                }, () -> openTreasureManagementGui(p, treasure));
+                },
+                () -> openTreasureManagementGui(p, treasure));
     }
 
     public static void openRankList(Player p) {
@@ -389,10 +437,13 @@ public class GuiManager {
 
         placeCommon(p, gui, rank, Material.NAME_TAG, reopen, back);
 
-        putItem(RANK_LEVEL_ROW, RANK_LEVEL_COL, gui,
-                ItemBuilder.from(Constants.Items.SET_RANK_LEVEL.apply(p, rank.getLevel())), e -> {
-                    if (!checkPermission(p, Constants.Permission.RANKS))
-                        return;
+        putItem(
+                RANK_LEVEL_ROW,
+                RANK_LEVEL_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.SET_RANK_LEVEL.apply(p, rank.getLevel())),
+                e -> {
+                    if (!checkPermission(p, Constants.Permission.RANKS)) return;
 
                     gui.close(p);
                     SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.rank-management.setlevel.prompt");
@@ -444,8 +495,8 @@ public class GuiManager {
         });
     }
 
-    private static void handleDoubleInput(Player p, double min, double max, Consumer<Double> onSuccess,
-                                          String errorKey) {
+    private static void handleDoubleInput(
+            Player p, double min, double max, Consumer<Double> onSuccess, String errorKey) {
         ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
             if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
                 return;
@@ -472,13 +523,29 @@ public class GuiManager {
                         PAGINATION_END_COL,
                         ItemBuilder.from(Constants.Items.BACKGROUND).asGuiItem(e -> e.setCancelled(true)));
 
-        putItem(PAGINATION_ROW, PAGINATION_CLOSE_COL, gui, ItemBuilder.from(Constants.Items.CLOSE.apply(p)),
+        putItem(
+                PAGINATION_ROW,
+                PAGINATION_CLOSE_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.CLOSE.apply(p)),
                 e -> gui.close(p));
-        putItem(PAGINATION_ROW, PAGINATION_PREVIOUS_COL, gui, ItemBuilder.from(Constants.Items.PREVIOUS_PAGE.apply(p)),
+        putItem(
+                PAGINATION_ROW,
+                PAGINATION_PREVIOUS_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.PREVIOUS_PAGE.apply(p)),
                 e -> gui.previous());
-        putItem(PAGINATION_ROW, PAGINATION_NEXT_COL, gui, ItemBuilder.from(Constants.Items.NEXT_PAGE.apply(p)),
+        putItem(
+                PAGINATION_ROW,
+                PAGINATION_NEXT_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.NEXT_PAGE.apply(p)),
                 e -> gui.next());
-        putItem(PAGINATION_ROW, PAGINATION_BACK_COL, gui, ItemBuilder.from(Constants.Items.BACK.apply(p)),
+        putItem(
+                PAGINATION_ROW,
+                PAGINATION_BACK_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.BACK.apply(p)),
                 e -> reopen.run());
     }
 
@@ -502,13 +569,15 @@ public class GuiManager {
                 ItemBuilder.from(icon)
                         .name(object.getDisplayName())
                         .lore(ComponentUtils.deserialize("&7&lID: " + object.getId())),
-                e -> {
-                });
+                e -> {});
 
-        putItem(MANAGEMENT_DISPLAY_NAME_ROW, MANAGEMENT_DISPLAY_NAME_COL, gui,
-                ItemBuilder.from(Constants.Items.SET_DISPLAY_NAME.apply(p, object)), e -> {
-                    if (!checkPermission(p, Constants.Permission.SET_DISPLAY_NAME))
-                        return;
+        putItem(
+                MANAGEMENT_DISPLAY_NAME_ROW,
+                MANAGEMENT_DISPLAY_NAME_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.SET_DISPLAY_NAME.apply(p, object)),
+                e -> {
+                    if (!checkPermission(p, Constants.Permission.SET_DISPLAY_NAME)) return;
 
                     gui.close(p);
                     SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.set_display_name.prompt");
@@ -521,30 +590,36 @@ public class GuiManager {
                     });
                 });
 
-        putItem(MANAGEMENT_BACK_ROW, MANAGEMENT_BACK_COL, gui, ItemBuilder.from(Constants.Items.BACK.apply(p)),
+        putItem(
+                MANAGEMENT_BACK_ROW,
+                MANAGEMENT_BACK_COL,
+                gui,
+                ItemBuilder.from(Constants.Items.BACK.apply(p)),
                 e -> back.run());
     }
 
-    private static AddonBlock openMaterialChooser(Player p, Runnable reopen) {
-        return openBlockChooser(p, b -> b.getKey().isBlank(), "material", reopen);
+    private static PackedBlock openMaterialChooser(Player p, Runnable reopen) {
+        return openBlockChooser(p, b -> b instanceof MinecraftContentProvider.PackedMinecraftBlock, "material", reopen);
     }
 
-    private static AddonBlock openBlockChooser(Player p, Predicate<AddonBlock> predicate, Runnable reopen) {
+    private static PackedBlock openBlockChooser(Player p, Predicate<PackedBlock> predicate, Runnable reopen) {
         return openBlockChooser(p, predicate, "block", reopen);
     }
 
-    private static AddonBlock openBlockChooser(Player p, Predicate<AddonBlock> predicate, String title, Runnable reopen) {
+    private static PackedBlock openBlockChooser(
+            Player p, Predicate<PackedBlock> predicate, String title, Runnable reopen) {
         PaginatedGui gui = createPaginatedGui(p, "gui." + title + "-chooser.title", 45);
         fillPageButtons(p, gui, reopen);
 
-        AtomicReference<AddonBlock> selected = new AtomicReference<>();
+        AtomicReference<PackedBlock> selected = new AtomicReference<>();
 
-        for (AddonBlock block : BlockAddon.getAllBlocks()) {
-            if (block.toItem().getType().isAir() || !predicate.test(block)) {
+        for (PackedBlock block : ContentProviders.getAllUsableBlocks()) {
+            ItemStack item = block.toItem();
+            if (item == null || !predicate.test(block)) {
                 continue;
             }
 
-            GuiItem guiItem = ItemBuilder.from(block.toItem()).asGuiItem(e -> {
+            GuiItem guiItem = ItemBuilder.from(item).asGuiItem(e -> {
                 selected.set(block);
                 reopen.run();
                 e.setCancelled(true);

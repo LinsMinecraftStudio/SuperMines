@@ -7,20 +7,19 @@ import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CommandAPIArgumentType;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.lijinhong11.supermines.integrates.block.AddonBlock;
-import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
+import io.github.lijinhong11.mittellib.hook.ContentProviders;
+import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 
-public class BlockArgument extends Argument<AddonBlock> {
+public class BlockArgument extends Argument<PackedBlock> {
     public BlockArgument(String nodeName) {
         super(nodeName, StringArgumentType.string());
 
-        includeSuggestions(ArgumentSuggestions.strings(BlockAddon.getBlockSuggestions()));
+        includeSuggestions(ArgumentSuggestions.strings(ContentProviders.getBlockSuggestions()));
     }
 
-
     @Override
-    public Class<AddonBlock> getPrimitiveType() {
-        return AddonBlock.class;
+    public Class<PackedBlock> getPrimitiveType() {
+        return PackedBlock.class;
     }
 
     @Override
@@ -29,7 +28,9 @@ public class BlockArgument extends Argument<AddonBlock> {
     }
 
     @Override
-    public <Source> AddonBlock parseArgument(CommandContext<Source> commandContext, String s, CommandArguments commandArguments) throws CommandSyntaxException {
-        return BlockAddon.getAddonBlock(s);
+    public <Source> PackedBlock parseArgument(
+            CommandContext<Source> commandContext, String s, CommandArguments commandArguments)
+            throws CommandSyntaxException {
+        return ContentProviders.getBlock(s);
     }
 }

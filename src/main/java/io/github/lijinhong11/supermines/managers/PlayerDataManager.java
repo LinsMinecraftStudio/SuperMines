@@ -5,13 +5,12 @@ import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractDatabaseObjectManager;
 import io.github.lijinhong11.supermines.managers.database.StringRankSet;
-import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData> {
     private final Map<UUID, PlayerData> playerDataMap = new HashMap<>();
@@ -28,8 +27,7 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
         }
     }
 
-    @Nullable
-    public PlayerData getPlayerData(String name) {
+    @Nullable public PlayerData getPlayerData(String name) {
         for (PlayerData object : playerDataMap.values()) {
             if (object.getPlayerName().equals(name)) {
                 return object;
@@ -47,7 +45,8 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
         PlayerData playerData = getPlayerData(playerUUID);
 
         if (playerData == null) {
-            playerData = new PlayerData(Bukkit.getOfflinePlayer(playerUUID).getName(), playerUUID, new StringRankSet(Rank.DEFAULT));
+            playerData = new PlayerData(
+                    Bukkit.getOfflinePlayer(playerUUID).getName(), playerUUID, new StringRankSet(Rank.DEFAULT));
             super.saveObject(playerData);
             playerDataMap.put(playerUUID, playerData);
         }

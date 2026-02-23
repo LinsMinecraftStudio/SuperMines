@@ -2,15 +2,14 @@ package io.github.lijinhong11.supermines.managers;
 
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
-import io.github.lijinhong11.supermines.utils.ComponentUtils;
-import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class RankManager extends AbstractFileObjectManager<Rank> {
     private final Map<String, Rank> ranks = new HashMap<>();

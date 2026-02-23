@@ -1,10 +1,10 @@
 package io.github.lijinhong11.supermines.task;
 
 import com.tcoded.folialib.wrapper.task.WrappedTask;
+import io.github.lijinhong11.mittellib.message.LanguageManager;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
-import io.github.lijinhong11.supermines.message.LanguageManager;
-import io.github.lijinhong11.supermines.message.MessageReplacement;
 import io.github.lijinhong11.supermines.utils.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -7,9 +7,8 @@ import io.github.lijinhong11.mdatabase.serialization.annotations.PrimaryKey;
 import io.github.lijinhong11.mdatabase.serialization.annotations.Table;
 import io.github.lijinhong11.supermines.managers.database.RankConverter;
 import io.github.lijinhong11.supermines.managers.database.StringRankSet;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents player data stored in the database, including mining statistics
@@ -34,8 +33,7 @@ public final class PlayerData {
     @Column(name = "rank")
     private StringRankSet rank = new StringRankSet();
 
-    public PlayerData() {
-    }
+    public PlayerData() {}
 
     public PlayerData(String playerName, UUID playerUUID, StringRankSet rank) {
         this.playerName = playerName;

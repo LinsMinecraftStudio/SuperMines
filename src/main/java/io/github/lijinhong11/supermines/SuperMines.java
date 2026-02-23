@@ -5,8 +5,8 @@ import io.github.lijinhong11.mdatabase.DatabaseConnection;
 import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
 import io.github.lijinhong11.mdatabase.impl.DatabaseConnections;
+import io.github.lijinhong11.mittellib.utils.ConfigFileUtil;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
-import io.github.lijinhong11.supermines.integrates.block.BlockAddon;
 import io.github.lijinhong11.supermines.integrates.placeholders.MiniPlaceholderExtension;
 import io.github.lijinhong11.supermines.integrates.placeholders.PlaceholderAPIExtension;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
@@ -17,15 +17,13 @@ import io.github.lijinhong11.supermines.managers.MineManager;
 import io.github.lijinhong11.supermines.managers.PlayerDataManager;
 import io.github.lijinhong11.supermines.managers.RankManager;
 import io.github.lijinhong11.supermines.managers.TreasureManager;
-import io.github.lijinhong11.supermines.message.LanguageManager;
+import io.github.lijinhong11.supermines.message.LanguageManagerEx;
 import io.github.lijinhong11.supermines.task.TaskMaker;
-import io.github.lijinhong11.supermines.utils.ConfigFileUtil;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.Metrics;
+import java.io.File;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 @SuppressWarnings("deprecation")
 public class SuperMines extends JavaPlugin {
@@ -36,7 +34,7 @@ public class SuperMines extends JavaPlugin {
     private RankManager rankManager;
     private PlayerDataManager playerDataManager;
 
-    private LanguageManager languageManager;
+    private LanguageManagerEx languageManager;
 
     private FoliaLib foliaLibImpl;
     private TaskMaker taskMaker;
@@ -55,40 +53,43 @@ public class SuperMines extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("""
-                
+        getLogger()
+                .info(
+                        """
+
                 ==============================
                        SuperMines v%s
                         Author: mmmjjkx
                            Enjoy :)
                 ==============================
-                """.formatted(getDescription().getVersion()));
+                """
+                                .formatted(getDescription().getVersion()));
 
         try {
             Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
         } catch (Exception e) {
-            getLogger().info("""
-                    
+            getLogger()
+                    .info(
+                            """
+
                     ==============================
                     SuperMines detected that you are using Spigot server software.
                     Some important features will not work!!!!
                     You may experience some errors, but I'm sorry.
                     SuperMines suggest you to change to Paper.
-                    
+
                     Why?
                     Paper has a lot of performance improvements and a lot benefits.
                     Some developers are changed to use Paper to develop their plugins.
-                    
+
                     Download Paper and improve your server!
-                    
+
                     You can download Paper @ https://papermc.io/downloads/paper
                     ==============================
                     """);
         }
 
-        languageManager = new LanguageManager(this);
-
-        BlockAddon.init();
+        languageManager = new LanguageManagerEx(this);
 
         treasureManager = new TreasureManager();
         rankManager = new RankManager();
@@ -133,7 +134,15 @@ public class SuperMines extends JavaPlugin {
         String username = remote.getString("username");
         String password = remote.getString("password");
 
-        DatabaseConnection conn = DatabaseConnections.createByType(type, new File(getDataFolder(), Constants.Texts.DATABASE_FILE), ip, port, database, username, password, new DatabaseParameters());
+        DatabaseConnection conn = DatabaseConnections.createByType(
+                type,
+                new File(getDataFolder(), Constants.Texts.DATABASE_FILE),
+                ip,
+                port,
+                database,
+                username,
+                password,
+                new DatabaseParameters());
 
         playerDataManager = new PlayerDataManager(conn);
     }
@@ -174,7 +183,7 @@ public class SuperMines extends JavaPlugin {
         return playerDataManager;
     }
 
-    public LanguageManager getLanguageManager() {
+    public LanguageManagerEx getLanguageManager() {
         return languageManager;
     }
 
