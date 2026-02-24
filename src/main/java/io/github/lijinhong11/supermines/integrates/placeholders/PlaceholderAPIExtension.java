@@ -1,10 +1,10 @@
 package io.github.lijinhong11.supermines.integrates.placeholders;
 
 import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
-import io.github.lijinhong11.supermines.utils.NumberUtils;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -36,7 +36,7 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
             if (args[0].equalsIgnoreCase("bestrank")) {
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
-                return ComponentUtils.serializeLegacy(
+                return ComponentUtils.serialize(
                         data.getRank().getBestValuedRank().getDisplayName());
             } else if (args[0].equalsIgnoreCase("biggestranklevel")) {
                 PlayerData data =
@@ -53,7 +53,7 @@ public class PlaceholderAPIExtension extends PlaceholderExpansion {
                 OfflinePlayer p2 = Bukkit.getOfflinePlayer(playerName);
                 PlayerData data =
                         SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p2.getUniqueId());
-                return ComponentUtils.serializeLegacy(
+                return ComponentUtils.serialize(
                         data.getRank().getBestValuedRank().getDisplayName());
             } else if (args[0].equalsIgnoreCase("biggestranklevel")) {
                 String playerName = args[1];

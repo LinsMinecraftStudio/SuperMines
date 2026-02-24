@@ -1,15 +1,3 @@
-time:
-  second: "second"
-  seconds: "seconds"
-  minute: "minute"
-  minutes: "minutes"
-  hour: "hour"
-  hours: "hours"
-common:
-  location-format: "&fX: &b%x%, &fY: &b%y%, &fZ: &b%z%"
-  no-permission: "&cYou don't have permission to do that!"
-  enabled: "&aEnabled"
-  disabled: "&cDisabled"
 wand:
   name: "&eSuper&aMine &dPosition Set Wand"
   lore:

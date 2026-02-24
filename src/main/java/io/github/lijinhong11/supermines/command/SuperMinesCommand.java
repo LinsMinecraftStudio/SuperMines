@@ -4,10 +4,12 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
+import io.github.lijinhong11.mittellib.MittelLib;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
@@ -15,7 +17,8 @@ import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.gui.GuiManager;
-import io.github.lijinhong11.supermines.utils.*;
+import io.github.lijinhong11.supermines.utils.Constants;
+import io.github.lijinhong11.supermines.utils.NullUtils;
 import io.github.lijinhong11.supermines.utils.selection.AreaSelection;
 import io.github.lijinhong11.supermines.utils.selection.SelectionValidator;
 import java.util.*;
@@ -55,7 +58,7 @@ public class SuperMinesCommand {
 
         selectionMap.put(uuid, sel);
 
-        String parsed = StringUtils.parseLocation(player, loc);
+        String parsed = SuperMines.getInstance().getLanguageManager().getParsedBlockLocation(player, loc);
         MessageReplacement pos = MessageReplacement.replace("%pos%", parsed);
 
         SuperMines.getInstance()
@@ -1176,7 +1179,7 @@ public class SuperMinesCommand {
 
                             Location loc = p.getLocation();
                             mine.setTeleportLocation(loc);
-                            String parsed = StringUtils.parseLocation(p, loc);
+                            String parsed = SuperMines.getInstance().getLanguageManager().getParsedBlockLocation(p, loc);
                             MessageReplacement pos = MessageReplacement.replace("%pos%", parsed);
                             SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.teleport.set", pos);
                         }))

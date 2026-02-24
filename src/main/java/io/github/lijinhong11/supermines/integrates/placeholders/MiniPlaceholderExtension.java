@@ -1,9 +1,9 @@
 package io.github.lijinhong11.supermines.integrates.placeholders;
 
+import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
-import io.github.lijinhong11.supermines.utils.NumberUtils;
 import io.github.miniplaceholders.api.Expansion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;

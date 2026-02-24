@@ -144,7 +144,7 @@
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MittelLib</artifactId>
-            <version>1.0.1-20260224.125306-1</version>
+            <version>1.0.1-20260224.172907-3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

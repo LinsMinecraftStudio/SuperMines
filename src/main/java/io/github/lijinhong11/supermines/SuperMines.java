@@ -5,7 +5,9 @@ import io.github.lijinhong11.mdatabase.DatabaseConnection;
 import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
 import io.github.lijinhong11.mdatabase.impl.DatabaseConnections;
-import io.github.lijinhong11.mittellib.utils.ConfigFileUtil;
+import io.github.lijinhong11.mittellib.MittelLib;
+import io.github.lijinhong11.mittellib.message.LanguageManager;
+import io.github.lijinhong11.mittellib.utils.ConfigFileUtils;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
 import io.github.lijinhong11.supermines.integrates.placeholders.MiniPlaceholderExtension;
 import io.github.lijinhong11.supermines.integrates.placeholders.PlaceholderAPIExtension;
@@ -17,7 +19,6 @@ import io.github.lijinhong11.supermines.managers.MineManager;
 import io.github.lijinhong11.supermines.managers.PlayerDataManager;
 import io.github.lijinhong11.supermines.managers.RankManager;
 import io.github.lijinhong11.supermines.managers.TreasureManager;
-import io.github.lijinhong11.supermines.message.LanguageManagerEx;
 import io.github.lijinhong11.supermines.task.TaskMaker;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.Metrics;
@@ -34,7 +35,7 @@ public class SuperMines extends JavaPlugin {
     private RankManager rankManager;
     private PlayerDataManager playerDataManager;
 
-    private LanguageManagerEx languageManager;
+    private LanguageManager languageManager;
 
     private FoliaLib foliaLibImpl;
     private TaskMaker taskMaker;
@@ -48,7 +49,7 @@ public class SuperMines extends JavaPlugin {
         instance = this;
         foliaLibImpl = new FoliaLib(this);
 
-        ConfigFileUtil.completeFile(this, "config.yml");
+        ConfigFileUtils.completeFile(this, "config.yml");
     }
 
     @Override
@@ -89,7 +90,7 @@ public class SuperMines extends JavaPlugin {
                     """);
         }
 
-        languageManager = new LanguageManagerEx(this);
+        languageManager = MittelLib.getInstance().getLanguageManager(this);
 
         treasureManager = new TreasureManager();
         rankManager = new RankManager();
@@ -183,7 +184,7 @@ public class SuperMines extends JavaPlugin {
         return playerDataManager;
     }
 
-    public LanguageManagerEx getLanguageManager() {
+    public LanguageManager getLanguageManager() {
         return languageManager;
     }
 

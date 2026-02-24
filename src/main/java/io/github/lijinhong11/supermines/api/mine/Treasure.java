@@ -5,8 +5,9 @@ import io.github.lijinhong11.mittellib.hook.content.MinecraftContentProvider;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.item.MittelItem;
 import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.api.iface.Identified;
-import io.github.lijinhong11.supermines.utils.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -120,7 +121,7 @@ public final class Treasure implements Identified {
 
         if (this.consoleCommands != null) {
             for (String consoleCommand : this.consoleCommands) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), StringUtils.parsePlaceholders(consoleCommand));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), StringUtils.parsePlaceholders(player, consoleCommand));
             }
         }
     }

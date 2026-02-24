@@ -1,5 +1,6 @@
 package io.github.lijinhong11.supermines.gui;
 
+import com.google.common.base.Preconditions;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.util.GuiFiller;
 import dev.triumphteam.gui.guis.BaseGui;
@@ -11,13 +12,13 @@ import io.github.lijinhong11.mittellib.hook.content.MinecraftContentProvider;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.chat.ChatInput;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.utils.Constants;
-import io.github.lijinhong11.supermines.utils.chat.ChatInput;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,6 +31,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 public class GuiManager {
     // GUI position constants (keeping original layout)
@@ -121,7 +123,7 @@ public class GuiManager {
             Material mat = mine.getDisplayIcon() == null ? Constants.Items.DEFAULT_MINE_ICON : mine.getDisplayIcon();
             GuiItem guiItem = ItemBuilder.from(mat)
                     .name(mine.getDisplayName())
-                    .lore(SuperMines.getInstance().getLanguageManager().getMineInfo(p, mine))
+                    .lore(getMineInfo(p, mine))
                     .asGuiItem(e -> {
                         openMineManagementGui(p, mine);
                         e.setCancelled(true);
@@ -295,7 +297,7 @@ public class GuiManager {
             Material mat = Material.CHEST;
             GuiItem guiItem = ItemBuilder.from(mat)
                     .name(treasure.getDisplayName())
-                    .lore(SuperMines.getInstance().getLanguageManager().getTreasureInfo(p, treasure))
+                    .lore(getTreasureInfo(p, treasure))
                     .asGuiItem(e -> {
                         openTreasureManagementGui(p, treasure);
                         e.setCancelled(true);
@@ -418,7 +420,7 @@ public class GuiManager {
             Material mat = Material.NAME_TAG;
             GuiItem guiItem = ItemBuilder.from(mat)
                     .name(rank.getDisplayName())
-                    .lore(SuperMines.getInstance().getLanguageManager().getRankInfo(p, rank))
+                    .lore(getRankInfo(p, rank))
                     .asGuiItem(e -> {
                         openRankManagementGui(p, rank);
                         e.setCancelled(true);
@@ -630,5 +632,31 @@ public class GuiManager {
 
         gui.open(p);
         return selected.get();
+    }
+
+    private static List<Component> getMineInfo(@NotNull Player p, @NotNull Mine mine) {
+        Preconditions.checkNotNull(mine, "mine cannot be null");
+        MessageReplacement world =
+                MessageReplacement.replace("%world%", mine.getWorld().getName());
+        MessageReplacement regenerateSeconds =
+                MessageReplacement.replace("%regenerate_seconds%", String.valueOf(mine.getRegenerateSeconds()));
+        MessageReplacement pos1 =
+                MessageReplacement.replace("%pos1%", mine.getArea().pos1().toString());
+        MessageReplacement pos2 =
+                MessageReplacement.replace("%pos2%", mine.getArea().pos2().toString());
+        return SuperMines.getInstance().getLanguageManager().getMsgComponentList(p, "gui.mines.info", world, regenerateSeconds, pos1, pos2);
+    }
+
+    private static List<Component> getTreasureInfo(@NotNull Player p, @NotNull Treasure treasure) {
+        MessageReplacement chance = MessageReplacement.replace("%chance%", String.valueOf(treasure.getChance()));
+        MessageReplacement matchedMaterials = MessageReplacement.replace(
+                "%matched_materials%",
+                String.valueOf(treasure.getMatchedBlocks().size()));
+        return SuperMines.getInstance().getLanguageManager().getMsgComponentList(p, "gui.treasures.info", chance, matchedMaterials);
+    }
+
+    private static List<Component> getRankInfo(@NotNull Player p, @NotNull Rank rank) {
+        MessageReplacement level = MessageReplacement.replace("%level%", String.valueOf(rank.getLevel()));
+        return SuperMines.getInstance().getLanguageManager().getMsgComponentList(p, "gui.ranks.info", level);
     }
 }

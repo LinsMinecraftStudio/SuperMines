@@ -1,15 +1,3 @@
-time:
-  second: "秒"
-  seconds: "秒"
-  minute: "分钟"
-  minutes: "分钟"
-  hour: "小时"
-  hours: "小时"
-common:
-  location-format: "&fX: &b%x%, &fY: &b%y%, &fZ: &b%z%"
-  no-permission: "&c你没有权限这么做！"
-  enabled: "&a已启用"
-  disabled: "&c已禁用"
 wand:
   name: "&eSuper&aMines &d位置设置棒"
   lore:

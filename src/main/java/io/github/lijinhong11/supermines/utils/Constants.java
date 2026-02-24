@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.utils;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
+import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import java.util.function.BiFunction;
