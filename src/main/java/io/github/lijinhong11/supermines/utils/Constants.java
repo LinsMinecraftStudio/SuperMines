@@ -4,11 +4,9 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.Identified;
-
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -24,7 +22,6 @@ public class Constants {
     public static class Texts {
         public static final String DATABASE_FILE = "data/data.db";
         public static final String ID_PATTERN = "^[a-zA-Z0-9_-]+$";
-        public static final Component RESET = Component.empty().decoration(TextDecoration.ITALIC, false);
     }
 
     public static class Keys {
@@ -66,104 +63,76 @@ public class Constants {
         public static final Function<Player, ItemStack> RANKS = player -> ItemBuilder.from(Material.NAME_TAG)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.ranks.title"))
                 .build();
-        public static final BiFunction<Player, Identified, ItemStack> SET_DISPLAY_NAME = (p, i) -> ItemBuilder.from(
-                        Material.NAME_TAG)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.set_display_name.name"))
-                .lore(SuperMines.getInstance()
+        public static final BiFunction<Player, Identified, ItemStack> SET_DISPLAY_NAME =
+                (p, i) -> SuperMines.getInstance()
                         .getLanguageManager()
-                        .getMsgComponentList(
+                        .getMessagedItem(
+                                Material.NAME_TAG,
+                                "gui.set_display_name",
                                 p,
-                                "gui.set_display_name.lore",
-                                MessageReplacement.replace("%name%", i.getRawDisplayName())))
-                .build();
+                                MessageReplacement.replace("%name%", i.getRawDisplayName()));
         public static final Function<Player, ItemStack> ADD = p -> ItemBuilder.from(Material.PAPER)
                 .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.add"))
                 .build();
         // mine management
         public static final BiFunction<Player, Material, ItemStack> SET_DISPLAY_ICON =
-                (p, m) -> ItemBuilder.from(Material.STONE)
-                        .name(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponent(p, "gui.mine-management.set_display_icon.name"))
-                        .lore(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponentList(
-                                        p,
-                                        "gui.mine-management.set_display_icon.lore",
-                                        MessageReplacement.replace("%material%", m.toString())))
-                        .build();
+                (p, m) -> SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMessagedItem(
+                                Material.PAINTING,
+                                "gui.mine-management.set_display_icon",
+                                p,
+                                MessageReplacement.replace("%material%", m.toString()));
+
         public static final BiFunction<Player, Integer, ItemStack> SET_REGEN_SECONDS =
-                (p, i) -> ItemBuilder.from(Material.CLOCK)
-                        .name(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponent(p, "gui.mine-management.set_regen_seconds.name"))
-                        .lore(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponentList(
-                                        p,
-                                        "gui.mine-management.set_regen_seconds.lore",
-                                        MessageReplacement.replace("%seconds%", String.valueOf(i))))
-                        .build();
-        public static final BiFunction<Player, Boolean, ItemStack> ONLY_FILL_AIR =
-                (p, b) -> ItemBuilder.from(Material.BARRIER)
-                        .name(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponent(p, "gui.mine-management.only_fill_air.name"))
-                        .lore(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponentList(
-                                        p,
-                                        "gui.mine-management.only_fill_air.lore",
-                                        MessageReplacement.replace("%status%", StringUtils.getBooleanStatus(p, b))))
-                        .build();
+                (p, i) -> SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMessagedItem(
+                                Material.CLOCK,
+                                "gui.mine-management.set_regen_seconds.name",
+                                p,
+                                MessageReplacement.replace("%seconds%", String.valueOf(i)));
+        public static final BiFunction<Player, Boolean, ItemStack> ONLY_FILL_AIR = (p, b) -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(
+                        Material.BARRIER,
+                        "gui.mine-management.only_fill_air",
+                        p,
+                        MessageReplacement.replace("%status%", StringUtils.getBooleanStatus(p, b)));
         public static final BiFunction<Player, Integer, ItemStack> SET_REQUIRED_RANK_LEVEL =
-                (p, i) -> ItemBuilder.from(Material.NAME_TAG)
-                        .name(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponent(p, "gui.mine-management.set_required_lvl.name"))
-                        .lore(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponentList(
-                                        p,
-                                        "gui.mine-management.set_required_lvl.lore",
-                                        MessageReplacement.replace("%level%", String.valueOf(i))))
-                        .build();
+                (p, i) -> SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMessagedItem(
+                                Material.BEACON,
+                                "gui.mine-management.set_required_lvl.name",
+                                p,
+                                MessageReplacement.replace("%level%", String.valueOf(i)));
         public static final Function<Player, ItemStack> BLOCK_SPAWN_ENTRIES = p -> ItemBuilder.from(Material.COAL_ORE)
                 .name(SuperMines.getInstance()
                         .getLanguageManager()
                         .getMsgComponent(p, "gui.mine-management.block_spawn_entries.name"))
                 .build();
         // treasure management
-        public static final BiFunction<Player, Double, ItemStack> SET_CHANCE =
-                (p, i) -> ItemBuilder.from(Material.BRUSH)
-                        .name(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponent(p, "gui.treasure-management.set_chance.name"))
-                        .lore(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponentList(
-                                        p,
-                                        "gui.treasure-management.set_chance.lore",
-                                        MessageReplacement.replace("%chance%", String.valueOf(i))))
-                        .build();
+        public static final BiFunction<Player, Double, ItemStack> SET_CHANCE = (p, i) -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(
+                        Material.BRUSH,
+                        "gui.treasure-management.set_chance",
+                        p,
+                        MessageReplacement.replace("%chance%", String.valueOf(i)));
         public static final Function<Player, ItemStack> MATCHED_MATERIALS = p -> ItemBuilder.from(Material.STONE)
                 .name(SuperMines.getInstance()
                         .getLanguageManager()
                         .getMsgComponent(p, "gui.treasure-management.matched_materials.title"))
                 .build();
         // rank management
-        public static final BiFunction<Player, Integer, ItemStack> SET_RANK_LEVEL =
-                (p, i) -> ItemBuilder.from(Material.NAME_TAG)
-                        .name(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponent(p, "gui.ranks-management.setlevel.name"))
-                        .lore(SuperMines.getInstance()
-                                .getLanguageManager()
-                                .getMsgComponentList(
-                                        p,
-                                        "gui.rank-management.setlevel.lore",
-                                        MessageReplacement.replace("level", String.valueOf(i))))
-                        .build();
+        public static final BiFunction<Player, Integer, ItemStack> SET_RANK_LEVEL = (p, i) -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(
+                        Material.NAME_TAG,
+                        "gui.ranks-management.setlevel",
+                        p,
+                        MessageReplacement.replace("level", String.valueOf(i)));
 
         private Items() {}
     }

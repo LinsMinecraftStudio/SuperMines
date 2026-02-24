@@ -1,8 +1,8 @@
 package io.github.lijinhong11.supermines.managers;
 
+import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
-import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

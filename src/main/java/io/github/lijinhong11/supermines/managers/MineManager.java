@@ -8,7 +8,7 @@ import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
-import io.github.lijinhong11.supermines.api.mine.Treasure;;
+import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
