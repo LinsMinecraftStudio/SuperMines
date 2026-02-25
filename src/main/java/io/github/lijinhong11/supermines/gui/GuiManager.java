@@ -259,7 +259,7 @@ public class GuiManager {
                             .sendMessage(
                                     p,
                                     "gui.mine-management.block_spawn.set_precent_prompt",
-                                    MessageReplacement.replace("%material%", block.toString()));
+                                    MessageReplacement.replace("%material%", block.getId()));
                     addBlockSpawnEntry(p, mine, block);
                 } else if (type.isRightClick()) {
                     mine.removeBlockSpawnEntry(block);

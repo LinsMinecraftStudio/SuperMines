@@ -36,7 +36,7 @@ public class EnumArgument<E extends Enum<E>> extends Argument<E> {
 
     @Override
     public <Source> E parseArgument(
-            CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
-        return Enum.valueOf(enumClass, s.toUpperCase());
+            CommandContext<Source> commandContext, String key, CommandArguments commandArguments) {
+        return Enum.valueOf(enumClass, commandContext.getArgument(key, String.class).toUpperCase());
     }
 }

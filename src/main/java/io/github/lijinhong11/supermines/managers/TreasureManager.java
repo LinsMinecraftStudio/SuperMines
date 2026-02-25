@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.item.MittelItem;
+import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import java.util.Collection;
@@ -78,7 +79,6 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
 
     @Override
     protected void putObject(@NotNull ConfigurationSection section, Treasure object) {
-        section.set("id", object.getId());
         section.set("displayName", MiniMessage.miniMessage().serialize(object.getDisplayName()));
         section.set("chance", object.getChance());
         section.set(
@@ -122,7 +122,9 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     public void removeTreasure(@NotNull String key) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "treasure id cannot be null or empty");
 
-        treasures.remove(key);
+        Treasure treasure = treasures.remove(key);
+        SuperMines.getInstance().getMineManager().getAllMines().forEach(m -> m.removeTreasure(treasure));
+
         super.remove(key);
     }
 

@@ -96,20 +96,20 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         }
 
         List<String> treasures = section.getStringList("treasures");
-        List<Treasure> treasureList = treasures.stream()
+        List<Treasure> treasureList = new ArrayList<>(treasures.stream()
                 .filter(treasure ->
                         SuperMines.getInstance().getTreasureManager().getTreasure(treasure) != null)
                 .map(t -> SuperMines.getInstance().getTreasureManager().getTreasure(t))
-                .toList();
+                .toList());
 
         Set<String> allowedRankIds = new HashSet<>();
         if (section.contains("allowedRankIds")) {
-            allowedRankIds = new HashSet<>(section.getStringList("allowedRankIds"));
+            allowedRankIds.addAll(section.getStringList("allowedRankIds"));
         }
 
         Set<Integer> resetWarningSeconds = new HashSet<>();
         if (section.contains("resetWarningSeconds")) {
-            resetWarningSeconds = new HashSet<>(section.getIntegerList("resetWarningSeconds"));
+            resetWarningSeconds.addAll(section.getIntegerList("resetWarningSeconds"));
         }
 
         return new Mine(
@@ -150,7 +150,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         Map<String, Double> blockSpawnEntries = new HashMap<>();
         for (Map.Entry<PackedBlock, Double> entry :
                 object.getBlockSpawnEntries().entrySet()) {
-            blockSpawnEntries.put(entry.getKey().toString(), entry.getValue());
+            blockSpawnEntries.put(entry.getKey().getId(), entry.getValue());
         }
 
         ConfigurationSection blockSpawn = section.createSection("blockSpawnEntries");

@@ -25,7 +25,7 @@ public class DisplayNameArgument extends Argument<Component> {
 
     @Override
     public <Source> Component parseArgument(
-            CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
-        return ComponentUtils.deserialize(s);
+            CommandContext<Source> commandContext, String key, CommandArguments commandArguments) {
+        return ComponentUtils.deserialize(commandContext.getArgument(key, String.class));
     }
 }

@@ -1,5 +1,6 @@
 package io.github.lijinhong11.supermines.command;
 
+import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -29,8 +30,11 @@ public class BlockArgument extends Argument<PackedBlock> {
 
     @Override
     public <Source> PackedBlock parseArgument(
-            CommandContext<Source> commandContext, String s, CommandArguments commandArguments)
-            throws CommandSyntaxException {
-        return ContentProviders.getBlock(s);
+            CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
+        try {
+            return ContentProviders.getBlock(new StringReader(commandContext.getArgument(s, String.class)).readQuotedString());
+        } catch (CommandSyntaxException e) {
+            return ContentProviders.getBlock(commandContext.getArgument(s, String.class));
+        }
     }
 }

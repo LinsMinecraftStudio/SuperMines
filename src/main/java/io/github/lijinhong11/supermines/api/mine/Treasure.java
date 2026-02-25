@@ -9,6 +9,7 @@ import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
@@ -47,7 +48,7 @@ public final class Treasure implements Identified {
             @Nullable Component displayName,
             @Nullable ItemStack itemStack,
             @Range(from = 0, to = 100) double chance) {
-        this(id, displayName, itemStack, chance, Set.of(), List.of());
+        this(id, displayName, itemStack, chance, new HashSet<>(), new ArrayList<>());
     }
 
     /**

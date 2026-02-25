@@ -4,7 +4,6 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
-import io.github.lijinhong11.mittellib.MittelLib;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
@@ -94,6 +93,14 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
+                                            Treasure tr = SuperMines.getInstance().getTreasureManager().getTreasure(id);
+                                            if (tr != null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessages(player, "command.treasures.create.exists");
+                                                return;
+                                            }
+
                                             ItemStack is = player.getInventory().getItemInMainHand();
                                             if (is.getType().isAir()) {
                                                 SuperMines.getInstance()
@@ -136,7 +143,7 @@ public class SuperMinesCommand {
                                             if (treasure == null) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
-                                                        .sendMessages(player, "command.treasures.remove.not-exists");
+                                                        .sendMessages(player, "command.treasures-not-exists");
                                                 return;
                                             }
 
@@ -285,7 +292,8 @@ public class SuperMinesCommand {
                                                     .sendMessage(
                                                             sender,
                                                             "command.treasures.matched_blocks.add_success",
-                                                            MessageReplacement.replace("%block%", block.toString()));
+                                                            MessageReplacement.replace("%block%", block.getId()),
+                                                            MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
                                         }),
                                 new CommandAPICommand("removeMatch")
                                         .withPermission(Constants.Permission.TREASURES)
@@ -329,7 +337,8 @@ public class SuperMinesCommand {
                                                     .sendMessage(
                                                             sender,
                                                             "command.treasures.matched_blocks.remove_success",
-                                                            MessageReplacement.replace("%block%", block.toString()));
+                                                            MessageReplacement.replace("%block%", block.getId()),
+                                                            MessageReplacement.replace("%treasure%", treasure.getId()));
                                         }),
                                 new CommandAPICommand("addCommand")
                                         .withPermission(Constants.Permission.TREASURES)
@@ -890,7 +899,7 @@ public class SuperMinesCommand {
                                             sender,
                                             "command.block-generate.success",
                                             MessageReplacement.replace("%mine%", mine.getRawDisplayName()),
-                                            MessageReplacement.replace("%block%", block.toString()),
+                                            MessageReplacement.replace("%block%", block.getId()),
                                             MessageReplacement.replace("%chance%", String.valueOf(chance)));
                         }))
                 .withSubcommand(new CommandAPICommand("removeBlockGenerate")
