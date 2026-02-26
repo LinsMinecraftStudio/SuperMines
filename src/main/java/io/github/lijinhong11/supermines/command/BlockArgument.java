@@ -1,9 +1,7 @@
 package io.github.lijinhong11.supermines.command;
 
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CommandAPIArgumentType;
@@ -13,7 +11,7 @@ import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 
 public class BlockArgument extends Argument<PackedBlock> {
     public BlockArgument(String nodeName) {
-        super(nodeName, StringArgumentType.string());
+        super(nodeName, StringArgumentType.greedyString());
 
         includeSuggestions(ArgumentSuggestions.strings(ContentProviders.getBlockSuggestions()));
     }
@@ -31,10 +29,6 @@ public class BlockArgument extends Argument<PackedBlock> {
     @Override
     public <Source> PackedBlock parseArgument(
             CommandContext<Source> commandContext, String s, CommandArguments commandArguments) {
-        try {
-            return ContentProviders.getBlock(new StringReader(commandContext.getArgument(s, String.class)).readQuotedString());
-        } catch (CommandSyntaxException e) {
-            return ContentProviders.getBlock(commandContext.getArgument(s, String.class));
-        }
+        return ContentProviders.getBlock(commandContext.getArgument(s, String.class));
     }
 }

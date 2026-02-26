@@ -79,6 +79,10 @@ class MineResetTask extends AbstractTask {
                     .sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
         }
 
+        new MineResetEvent(mine).callEvent();
+
+        mine.setBlocksBroken(0);
+
         TaskMaker tm = SuperMines.getInstance().getTaskMaker();
         if (!mine.isOnlyFillAirWhenRegenerate()) {
             for (BlockPos pos : blockPosList) {
@@ -92,10 +96,6 @@ class MineResetTask extends AbstractTask {
             tm.runSync(loc, () -> entry.getValue().place(loc));
             SkillsBlockPlace.markAsEarnable(loc);
         }
-
-        new MineResetEvent(mine).callEvent();
-
-        mine.setBlocksBroken(0);
     }
 
     public void refreshNextResetTime() {

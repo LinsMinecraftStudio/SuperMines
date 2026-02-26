@@ -21,7 +21,7 @@ public class PlayerListener implements Listener {
         }
 
         Block block1 = loc.getBlock();
-        Block block2 = loc.add(0, 1, 0).getBlock();
+        Block block2 = loc.clone().add(0, 1, 0).getBlock();
         if (block1.getType().isSolid() || block2.getType().isSolid()) {
             if (mine.getTeleportLocation() == null) {
                 p.teleportAsync(mine.getArea().getCenterLocation(block1.getWorld()));

@@ -851,8 +851,9 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
-                                new BlockArgument("block"),
-                                new DoubleArgument("chance", 1, 100))
+                                new DoubleArgument("chance", 1, 100),
+                                new BlockArgument("block")
+                        )
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
                             double chance = (double) args.get("chance");
