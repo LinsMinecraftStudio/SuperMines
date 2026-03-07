@@ -7,7 +7,6 @@ import io.github.lijinhong11.mittellib.item.MittelItem;
 import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.api.iface.Identified;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -122,7 +121,8 @@ public final class Treasure implements Identified {
 
         if (this.consoleCommands != null) {
             for (String consoleCommand : this.consoleCommands) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), StringUtils.parsePlaceholders(player, consoleCommand));
+                Bukkit.dispatchCommand(
+                        Bukkit.getConsoleSender(), StringUtils.parsePlaceholders(player, consoleCommand));
             }
         }
     }

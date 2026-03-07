@@ -644,7 +644,9 @@ public class GuiManager {
                 MessageReplacement.replace("%pos1%", mine.getArea().pos1().toString());
         MessageReplacement pos2 =
                 MessageReplacement.replace("%pos2%", mine.getArea().pos2().toString());
-        return SuperMines.getInstance().getLanguageManager().getMsgComponentList(p, "gui.mines.info", world, regenerateSeconds, pos1, pos2);
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponentList(p, "gui.mines.info", world, regenerateSeconds, pos1, pos2);
     }
 
     private static List<Component> getTreasureInfo(@NotNull Player p, @NotNull Treasure treasure) {
@@ -652,7 +654,9 @@ public class GuiManager {
         MessageReplacement matchedMaterials = MessageReplacement.replace(
                 "%matched_materials%",
                 String.valueOf(treasure.getMatchedBlocks().size()));
-        return SuperMines.getInstance().getLanguageManager().getMsgComponentList(p, "gui.treasures.info", chance, matchedMaterials);
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponentList(p, "gui.treasures.info", chance, matchedMaterials);
     }
 
     private static List<Component> getRankInfo(@NotNull Player p, @NotNull Rank rank) {

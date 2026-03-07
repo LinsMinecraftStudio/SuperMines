@@ -93,7 +93,9 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
-                                            Treasure tr = SuperMines.getInstance().getTreasureManager().getTreasure(id);
+                                            Treasure tr = SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .getTreasure(id);
                                             if (tr != null) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
@@ -293,7 +295,8 @@ public class SuperMinesCommand {
                                                             sender,
                                                             "command.treasures.matched_blocks.add_success",
                                                             MessageReplacement.replace("%block%", block.getId()),
-                                                            MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+                                                            MessageReplacement.replace(
+                                                                    "%treasure%", treasure.getRawDisplayName()));
                                         }),
                                 new CommandAPICommand("removeMatch")
                                         .withPermission(Constants.Permission.TREASURES)
@@ -852,8 +855,7 @@ public class SuperMinesCommand {
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
                                 new DoubleArgument("chance", 1, 100),
-                                new BlockArgument("block")
-                        )
+                                new BlockArgument("block"))
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
                             double chance = (double) args.get("chance");
@@ -1189,7 +1191,9 @@ public class SuperMinesCommand {
 
                             Location loc = p.getLocation();
                             mine.setTeleportLocation(loc);
-                            String parsed = SuperMines.getInstance().getLanguageManager().getParsedBlockLocation(p, loc);
+                            String parsed = SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .getParsedBlockLocation(p, loc);
                             MessageReplacement pos = MessageReplacement.replace("%pos%", parsed);
                             SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.teleport.set", pos);
                         }))

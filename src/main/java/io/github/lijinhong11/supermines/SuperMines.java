@@ -9,8 +9,7 @@ import io.github.lijinhong11.mittellib.MittelLib;
 import io.github.lijinhong11.mittellib.message.LanguageManager;
 import io.github.lijinhong11.mittellib.utils.ConfigFileUtils;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
-import io.github.lijinhong11.supermines.integrates.placeholders.MiniPlaceholderExtension;
-import io.github.lijinhong11.supermines.integrates.placeholders.PlaceholderAPIExtension;
+import io.github.lijinhong11.supermines.integrates.placeholders.SuperMinesPlaceholders;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
 import io.github.lijinhong11.supermines.listeners.PlayerListener;
 import io.github.lijinhong11.supermines.listeners.WandListener;
@@ -159,13 +158,7 @@ public class SuperMines extends JavaPlugin {
     }
 
     private void setupPlaceholders() {
-        if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new PlaceholderAPIExtension().register();
-        }
-
-        if (getServer().getPluginManager().isPluginEnabled("MiniPlaceholders")) {
-            MiniPlaceholderExtension.register();
-        }
+        new SuperMinesPlaceholders().register();
     }
 
     public MineManager getMineManager() {

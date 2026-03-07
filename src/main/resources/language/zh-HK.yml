@@ -18,7 +18,7 @@ command:
       - "&e/sm setRequiredLevel <礦區> <等級> &7- &a設定礦區所需的最低等級"
       - "&e/sm addAllowedRank <礦區> <等級> &7- &a允許指定等級進入礦區"
       - "&e/sm removeAllowedRank <礦區> <等級> &7- &a禁止指定等級進入礦區"
-      - "&e/sm setBlockGenerate <礦區> <方塊> <機率> &7- &a設定礦區生成方塊的機率"
+      - "&e/sm setBlockGenerate <礦區> <機率> <方塊> &7- &a設定礦區生成方塊的機率"
       - "&e/sm setDisplayName <礦區> <顯示名稱> &7- &a設定礦區顯示名稱"
       - "&e/sm setDisplayIcon <礦區> <物品> &7- &a設定礦區顯示圖示"
       - "&e/sm removeBlockGenerate <礦區> <方塊> &7- &a移除礦區的方塊生成"
