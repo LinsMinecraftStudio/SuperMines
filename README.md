@@ -10,10 +10,11 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 ## Features
 * MiniPlaceholders/PlaceholdersAPI support
 * Folia support
-* ItemsAdder/Oraxen/Nexo support
+* ItemsAdder/Oraxen/Nexo/CraftEngine block support
 * Rank system
 * Allow/Disallow earn xp from mine blocks
 * Great I18n for players
+* Item Serialization System using MittelLib
 * More coming soon...
 
 ## Screenshots
