@@ -12,6 +12,7 @@ import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
+import io.github.lijinhong11.supermines.api.events.MineCreateEvent;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
@@ -1333,6 +1334,8 @@ public class SuperMinesCommand {
         Mine mine = new Mine(id, name, player.getWorld(), ca, new HashMap<>(), 0, false);
         SuperMines.getInstance().getMineManager().addMine(mine);
         SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.success");
+
+        new MineCreateEvent(mine).callEvent();
     }
 
     private void redefineMine(Player player, String id) {

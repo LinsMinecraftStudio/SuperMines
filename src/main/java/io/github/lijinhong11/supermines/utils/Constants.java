@@ -99,7 +99,7 @@ public class Constants {
                         Material.BARRIER,
                         "gui.mine-management.only_fill_air",
                         p,
-                        MessageReplacement.replace("%status%", StringUtils.getBooleanStatus(p, b)));
+                        MessageReplacement.replace("%status%", StringUtils.toBooleanStatus(p, b)));
         public static final BiFunction<Player, Integer, ItemStack> SET_REQUIRED_RANK_LEVEL =
                 (p, i) -> SuperMines.getInstance()
                         .getLanguageManager()

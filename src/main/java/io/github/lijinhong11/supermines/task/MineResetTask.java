@@ -6,11 +6,12 @@ import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
+import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineResetEvent;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
-import io.github.lijinhong11.supermines.utils.NumberUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,7 @@ class MineResetTask extends AbstractTask {
             }
 
             if (selected == null && !blockSpawnEntries.isEmpty()) {
-                selected = NumberUtils.weightedRandom(blockSpawnEntries);
+                selected = weightedRandom(blockSpawnEntries);
             }
 
             generated.put(pos, selected);
@@ -101,4 +102,20 @@ class MineResetTask extends AbstractTask {
     public void refreshNextResetTime() {
         this.nextResetTime.set(System.currentTimeMillis() + mine.getRegenerateSeconds() * 1000L);
     }
+
+    private <T> T weightedRandom(Map<T, Double> map) {
+        double totalWeight =
+                map.values().stream().mapToDouble(Double::doubleValue).sum();
+        double random = Math.random() * totalWeight;
+        double current = 0.0;
+        for (Map.Entry<T, Double> entry : map.entrySet()) {
+            current += entry.getValue();
+            if (random <= current) {
+                return entry.getKey();
+            }
+        }
+
+        return map.keySet().iterator().next();
+    }
+
 }

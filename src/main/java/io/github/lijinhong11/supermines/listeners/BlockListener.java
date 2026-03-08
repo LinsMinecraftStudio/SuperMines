@@ -1,11 +1,12 @@
 package io.github.lijinhong11.supermines.listeners;
 
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
+import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
-import io.github.lijinhong11.supermines.utils.NumberUtils;
+
 import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

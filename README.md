@@ -17,6 +17,9 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 * Item Serialization System using MittelLib
 * More coming soon...
 
+## Road Map
+1. Replace chance to weight
+
 ## Screenshots
 ![](/media/command_help.png)
 ![](/media/mine.png)
