@@ -7,6 +7,7 @@ import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.NumberUtils;
+import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineResetEvent;
 import io.github.lijinhong11.supermines.api.mine.Mine;
@@ -43,7 +44,7 @@ class MineResetTask extends AbstractTask {
     private void doReset() {
         CuboidArea ca = mine.getArea();
         List<BlockPos> blockPosList = ca.asPosList();
-        Map<PackedBlock, Double> blockSpawnEntries = mine.getBlockSpawnEntries();
+        WeightedRandomMap<PackedBlock> blockSpawnEntries = mine.getBlockSpawnEntries();
         Map<BlockPos, PackedBlock> generated = new HashMap<>();
 
         if (blockSpawnEntries.isEmpty()) {
@@ -56,7 +57,7 @@ class MineResetTask extends AbstractTask {
             if (mine.isOnlyFillAirWhenRegenerate() && !material.isAir()) continue;
 
             PackedBlock selected = null;
-            for (Map.Entry<PackedBlock, Double> entry : blockSpawnEntries.entrySet()) {
+            for (Map.Entry<PackedBlock, Double> entry : blockSpawnEntries.object2DoubleEntrySet()) {
                 if (NumberUtils.matchChance(entry.getValue())) {
                     selected = entry.getKey();
                     break;
@@ -64,7 +65,7 @@ class MineResetTask extends AbstractTask {
             }
 
             if (selected == null && !blockSpawnEntries.isEmpty()) {
-                selected = weightedRandom(blockSpawnEntries);
+                selected = blockSpawnEntries.randomOne();
             }
 
             generated.put(pos, selected);
@@ -102,20 +103,4 @@ class MineResetTask extends AbstractTask {
     public void refreshNextResetTime() {
         this.nextResetTime.set(System.currentTimeMillis() + mine.getRegenerateSeconds() * 1000L);
     }
-
-    private <T> T weightedRandom(Map<T, Double> map) {
-        double totalWeight =
-                map.values().stream().mapToDouble(Double::doubleValue).sum();
-        double random = Math.random() * totalWeight;
-        double current = 0.0;
-        for (Map.Entry<T, Double> entry : map.entrySet()) {
-            current += entry.getValue();
-            if (random <= current) {
-                return entry.getKey();
-            }
-        }
-
-        return map.keySet().iterator().next();
-    }
-
 }

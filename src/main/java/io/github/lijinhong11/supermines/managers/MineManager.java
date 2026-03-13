@@ -6,6 +6,7 @@ import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
+import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
@@ -81,7 +82,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         BlockPos blockPos1 = new BlockPos(pos1.getInt("x"), pos1.getInt("y"), pos1.getInt("z"));
         BlockPos blockPos2 = new BlockPos(pos2.getInt("x"), pos2.getInt("y"), pos2.getInt("z"));
 
-        Map<PackedBlock, Double> blockSpawnEntries = new HashMap<>();
+        WeightedRandomMap<PackedBlock> blockSpawnEntries = new WeightedRandomMap<>();
 
         ConfigurationSection blockSpawn = section.getConfigurationSection("blockSpawnEntries");
         if (blockSpawn != null) {
@@ -132,8 +133,8 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
     protected void putObject(@NotNull ConfigurationSection section, Mine object) {
         section.set("displayName", MiniMessage.miniMessage().serialize(object.getDisplayName()));
         section.set("world", object.getWorld().getName());
-        section.set("pos1", object.getArea().pos1().toMap());
-        section.set("pos2", object.getArea().pos2().toMap());
+        object.getArea().pos1().write(section.createSection("pos1"));
+        object.getArea().pos2().write(section.createSection("pos2"));
         section.set("regenerateSeconds", object.getRegenerateSeconds());
         section.set("onlyFillAirWhenRegenerate", object.isOnlyFillAirWhenRegenerate());
         section.set("displayIcon", object.getDisplayIcon().toString());
@@ -149,7 +150,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
 
         Map<String, Double> blockSpawnEntries = new HashMap<>();
         for (Map.Entry<PackedBlock, Double> entry :
-                object.getBlockSpawnEntries().entrySet()) {
+                object.getBlockSpawnEntries().object2DoubleEntrySet()) {
             blockSpawnEntries.put(entry.getKey().getId(), entry.getValue());
         }
 

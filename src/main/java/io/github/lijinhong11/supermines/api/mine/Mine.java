@@ -7,6 +7,7 @@ import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.api.SuperMinesAPI;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
@@ -32,7 +33,7 @@ public final class Mine implements Identified {
     private final String id;
 
     private final World world;
-    private final Map<PackedBlock, Double> blockSpawnEntries;
+    private final WeightedRandomMap<PackedBlock> blockSpawnEntries;
 
     private final List<Treasure> treasures;
     private final Set<String> allowedRankIds;
@@ -55,7 +56,7 @@ public final class Mine implements Identified {
             Component displayName,
             World world,
             CuboidArea area,
-            Map<PackedBlock, Double> blockSpawnEntries,
+            WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
         this(
@@ -76,7 +77,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<PackedBlock, Double> blockSpawnEntries,
+            WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
         this(
@@ -99,7 +100,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<PackedBlock, Double> blockSpawnEntries,
+            WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -125,7 +126,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<PackedBlock, Double> blockSpawnEntries,
+            WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -154,7 +155,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             CuboidArea area,
-            Map<PackedBlock, Double> blockSpawnEntries,
+            WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -262,7 +263,7 @@ public final class Mine implements Identified {
      *
      * @param blockSpawnEntries the map of blocks to their spawn chances
      */
-    public void addBlockSpawnEntries(Map<PackedBlock, Double> blockSpawnEntries) {
+    public void addBlockSpawnEntries(WeightedRandomMap<PackedBlock> blockSpawnEntries) {
         this.blockSpawnEntries.putAll(blockSpawnEntries);
     }
 
@@ -468,7 +469,7 @@ public final class Mine implements Identified {
      *
      * @return a map of blocks to their spawn chances
      */
-    public Map<PackedBlock, Double> getBlockSpawnEntries() {
+    public WeightedRandomMap<PackedBlock> getBlockSpawnEntries() {
         return blockSpawnEntries;
     }
 
