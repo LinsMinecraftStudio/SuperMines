@@ -61,8 +61,8 @@ public class GuiManager {
     private static final int MINE_BLOCK_SPAWN_ROW = 4;
     private static final int MINE_BLOCK_SPAWN_COL = 5;
 
-    private static final int TREASURE_CHANCE_ROW = 3;
-    private static final int TREASURE_CHANCE_COL = 4;
+    private static final int TREASURE_WEIGHT_ROW = 3;
+    private static final int TREASURE_WEIGHT_COL = 4;
     private static final int TREASURE_ITEMSTACK_ROW = 3;
     private static final int TREASURE_ITEMSTACK_COL = 6;
     private static final int TREASURE_MATCHED_MATERIALS_ROW = 3;
@@ -258,7 +258,7 @@ public class GuiManager {
                             .getLanguageManager()
                             .sendMessage(
                                     p,
-                                    "gui.mine-management.block_spawn.set_precent_prompt",
+                                    "gui.mine-management.block_spawn.set_weight_prompt",
                                     MessageReplacement.replace("%material%", block.getId()));
                     addBlockSpawnEntry(p, mine, block);
                 } else if (type.isRightClick()) {
@@ -280,13 +280,12 @@ public class GuiManager {
     private static void addBlockSpawnEntry(Player p, Mine mine, PackedBlock material) {
         handleDoubleInput(
                 p,
-                Constants.PERCENTAGE_MIN,
-                Constants.PERCENTAGE_MAX,
+                Constants.WEIGHT_MIN,
                 result -> {
                     mine.addBlockSpawnEntry(material, result);
                     openBlockSpawnEntries(p, mine);
                 },
-                "gui.input.invalid-precent");
+                "gui.input.invalid-number");
     }
 
     public static void openTreasureList(Player p) {
@@ -317,28 +316,27 @@ public class GuiManager {
 
         placeCommon(p, gui, treasure, Material.CHEST, reopen, back);
 
-        // Chance
+        // Weight
         putItem(
-                TREASURE_CHANCE_ROW,
-                TREASURE_CHANCE_COL,
+                TREASURE_WEIGHT_ROW,
+                TREASURE_WEIGHT_COL,
                 gui,
-                ItemBuilder.from(Constants.Items.SET_CHANCE.apply(p, treasure.getChance())),
+                ItemBuilder.from(Constants.Items.SET_WEIGHT.apply(p, treasure.getWeight())),
                 e -> {
                     if (!checkPermission(p, Constants.Permission.TREASURES)) return;
 
                     gui.close(p);
                     SuperMines.getInstance()
                             .getLanguageManager()
-                            .sendMessage(p, "gui.treasure-management.set_chance.prompt");
+                            .sendMessage(p, "gui.treasure-management.set_weight.prompt");
                     handleDoubleInput(
                             p,
-                            Constants.PERCENTAGE_MIN,
-                            Constants.PERCENTAGE_MAX,
+                            Constants.WEIGHT_MIN,
                             result -> {
-                                treasure.setChance(result);
+                                treasure.setWeight(result);
                                 reopen.run();
                             },
-                            "gui.input.invalid-precent");
+                            "gui.input.invalid-number");
                 });
 
         // Matched Materials
@@ -353,33 +351,47 @@ public class GuiManager {
     }
 
     private static void putTreasureItemStack(BaseGui gui, Player p, Treasure t) {
-        ItemStack clone = t.getItemStack().clone();
-        ItemMeta meta = clone.getItemMeta();
-        Component newName = SuperMines.getInstance()
-                .getLanguageManager()
-                .getMsgComponent(
-                        p,
-                        "gui.treasure-management.itemstack.name",
-                        MessageReplacement.replace("%name%", ComponentUtils.serialize(meta.displayName())));
+        ItemStack base = t.getItemStack();
+        ItemStack display = base == null
+                ? ItemBuilder.from(Material.BARRIER)
+                        .name(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponent(p, "gui.treasure-management.itemstack.none"))
+                        .lore(SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMsgComponentList(p, "gui.treasure-management.itemstack.none_lore"))
+                        .build()
+                : base.clone();
 
-        meta.displayName(newName);
-        meta.lore(SuperMines.getInstance()
-                .getLanguageManager()
-                .getMsgComponentList(p, "gui.treasure-management.itemstack.lore"));
-        clone.setItemMeta(meta);
+        if (display.getItemMeta() != null && base != null) {
+            ItemMeta meta = display.getItemMeta();
+            Component newName = SuperMines.getInstance()
+                    .getLanguageManager()
+                    .getMsgComponent(
+                            p,
+                            "gui.treasure-management.itemstack.name",
+                            MessageReplacement.replace("%name%", ComponentUtils.serialize(meta.displayName())));
 
-        putItem(TREASURE_ITEMSTACK_ROW, TREASURE_ITEMSTACK_COL, gui, ItemBuilder.from(clone), e -> {
+            meta.displayName(newName);
+            meta.lore(SuperMines.getInstance()
+                    .getLanguageManager()
+                    .getMsgComponentList(p, "gui.treasure-management.itemstack.lore"));
+            display.setItemMeta(meta);
+        }
+
+        putItem(TREASURE_ITEMSTACK_ROW, TREASURE_ITEMSTACK_COL, gui, ItemBuilder.from(display), e -> {
             if (!checkPermission(p, Constants.Permission.TREASURES)) return;
 
             ClickType type = e.getClick();
             if (type.isRightClick()) {
-                if (p.getInventory().firstEmpty() != -1) {
+                if (t.getItemStack() != null && p.getInventory().firstEmpty() != -1) {
                     p.getInventory().addItem(t.getItemStack());
                 }
             } else if (type.isLeftClick()) {
                 ItemStack item = p.getItemOnCursor();
-                if (!item.getType().isAir()) {
+                if (item != null && !item.getType().isAir()) {
                     t.setItemStack(item);
+                    p.setItemOnCursor(null);
                     putTreasureItemStack(gui, p, t);
                 }
             }
@@ -497,8 +509,7 @@ public class GuiManager {
         });
     }
 
-    private static void handleDoubleInput(
-            Player p, double min, double max, Consumer<Double> onSuccess, String errorKey) {
+    private static void handleDoubleInput(Player p, double min, Consumer<Double> onSuccess, String errorKey) {
         ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
             if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
                 return;
@@ -506,7 +517,7 @@ public class GuiManager {
 
             try {
                 double value = Double.parseDouble(result);
-                if (value >= max || value < min) {
+                if (value < min) {
                     throw new NumberFormatException();
                 }
                 onSuccess.accept(value);
@@ -650,13 +661,13 @@ public class GuiManager {
     }
 
     private static List<Component> getTreasureInfo(@NotNull Player p, @NotNull Treasure treasure) {
-        MessageReplacement chance = MessageReplacement.replace("%chance%", String.valueOf(treasure.getChance()));
+        MessageReplacement weight = MessageReplacement.replace("%weight%", String.valueOf(treasure.getWeight()));
         MessageReplacement matchedMaterials = MessageReplacement.replace(
                 "%matched_materials%",
                 String.valueOf(treasure.getMatchedBlocks().size()));
         return SuperMines.getInstance()
                 .getLanguageManager()
-                .getMsgComponentList(p, "gui.treasures.info", chance, matchedMaterials);
+                .getMsgComponentList(p, "gui.treasures.info", weight, matchedMaterials);
     }
 
     private static List<Component> getRankInfo(@NotNull Player p, @NotNull Rank rank) {

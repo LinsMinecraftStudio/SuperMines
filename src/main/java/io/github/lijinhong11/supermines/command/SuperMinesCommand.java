@@ -80,13 +80,13 @@ public class SuperMinesCommand {
                         .withSubcommands(
                                 new CommandAPICommand("create")
                                         .withPermission(Constants.Permission.TREASURES)
-                                        .withArguments(new StringArgument("id"), new DoubleArgument("chance", 1, 100))
+                                        .withArguments(new StringArgument("id"), new DoubleArgument("weight", 0.0001))
                                         .withOptionalArguments(new DisplayNameArgument())
                                         .executesPlayer((player, args) -> {
                                             String id = args.getByClassOrDefault("id", String.class, "");
                                             Optional<Component> displayName =
                                                     args.getOptionalByClass("displayName", Component.class);
-                                            double chance = args.getByClassOrDefault("chance", double.class, 0d);
+                                            double weight = args.getByClassOrDefault("weight", double.class, 1d);
                                             if (!id.matches(Constants.Texts.ID_PATTERN)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
@@ -106,14 +106,11 @@ public class SuperMinesCommand {
 
                                             ItemStack is = player.getInventory().getItemInMainHand();
                                             if (is.getType().isAir()) {
-                                                SuperMines.getInstance()
-                                                        .getLanguageManager()
-                                                        .sendMessages(player, "command.treasures.no-item-in-hand");
-                                                return;
+                                                is = null; // allow empty reward treasure
                                             }
 
                                             Treasure treasure = new Treasure(
-                                                    id, displayName.orElse(Component.text(id)), is, chance);
+                                                    id, displayName.orElse(Component.text(id)), is, weight);
                                             SuperMines.getInstance()
                                                     .getTreasureManager()
                                                     .addTreasure(treasure);
@@ -190,16 +187,17 @@ public class SuperMinesCommand {
                                                             MessageReplacement.replace(
                                                                     "%treasure%", treasure.getRawDisplayName()));
                                         }),
-                                new CommandAPICommand("setChance")
+                                new CommandAPICommand("setWeight")
+                                        .withAliases("setChance")
                                         .withPermission(Constants.Permission.TREASURES)
                                         .withArguments(
                                                 new StringArgument("id")
                                                         .includeSuggestions(
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
-                                                new DoubleArgument("chance", 1, 100))
+                                                new DoubleArgument("weight", 0.0001))
                                         .executes((sender, args) -> {
                                             String id = (String) args.getOrDefault("id", "");
-                                            double chance = args.getByClassOrDefault("chance", double.class, 0d);
+                                            double weight = args.getByClassOrDefault("weight", double.class, 1d);
                                             Treasure treasure = SuperMines.getInstance()
                                                     .getTreasureManager()
                                                     .getTreasure(id);
@@ -210,14 +208,16 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
-                                            treasure.setChance(chance);
+                                            treasure.setWeight(weight);
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
                                                             sender,
-                                                            "command.treasures.set-chance",
+                                                            "command.treasures.set-weight",
                                                             MessageReplacement.replace(
-                                                                    "%treasure%", treasure.getRawDisplayName()));
+                                                                    "%treasure%", treasure.getRawDisplayName()),
+                                                            MessageReplacement.replace(
+                                                                    "%weight%", String.valueOf(weight)));
                                         }),
                                 new CommandAPICommand("setItem")
                                         .withPermission(Constants.Permission.TREASURES)
@@ -855,11 +855,11 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
-                                new DoubleArgument("chance", 1, 100),
+                                new DoubleArgument("weight", 0.0001),
                                 new BlockArgument("block"))
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
-                            double chance = (double) args.getOrDefault("chance", 0);
+                            double weight = (double) args.getOrDefault("weight", 0);
                             PackedBlock block = (PackedBlock) args.get("block");
 
                             if (block == null) {
@@ -878,25 +878,7 @@ public class SuperMinesCommand {
                                 return;
                             }
 
-                            double rest = mine.calculateRestChance();
-                            double wasSet = mine.getBlockSpawnEntries().getOrDefault(block, 0d);
-                            if (wasSet > 0) {
-                                if (chance > wasSet && (chance - wasSet > rest)) {
-                                    SuperMines.getInstance()
-                                            .getLanguageManager()
-                                            .sendMessage(sender, "command.block-generate.chance-too-high");
-                                    return;
-                                }
-                            } else {
-                                if (chance > rest) {
-                                    SuperMines.getInstance()
-                                            .getLanguageManager()
-                                            .sendMessage(sender, "command.block-generate.chance-too-high");
-                                    return;
-                                }
-                            }
-
-                            mine.addBlockSpawnEntry(block, chance);
+                            mine.addBlockSpawnEntry(block, weight);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -904,7 +886,7 @@ public class SuperMinesCommand {
                                             "command.block-generate.success",
                                             MessageReplacement.replace("%mine%", mine.getRawDisplayName()),
                                             MessageReplacement.replace("%block%", block.getId()),
-                                            MessageReplacement.replace("%chance%", String.valueOf(chance)));
+                                            MessageReplacement.replace("%weight%", String.valueOf(weight)));
                         }))
                 .withSubcommand(new CommandAPICommand("removeBlockGenerate")
                         .withPermission(Constants.Permission.BLOCK_GENERATE)

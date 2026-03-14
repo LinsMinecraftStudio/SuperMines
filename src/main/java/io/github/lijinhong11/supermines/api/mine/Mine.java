@@ -229,33 +229,29 @@ public final class Mine implements Identified {
     }
 
     /**
-     * Adds a block spawn entry with the specified material and chance.
+     * Adds a block spawn entry with the specified material and weight.
      *
      * @param material the material of the block to spawn
-     * @param chance   the spawn chance (must be between 1 and 100)
-     * @throws IllegalArgumentException if chance is not between 1 and 100
+     * @param weight   the spawn weight (> 0)
+     * @throws IllegalArgumentException if weight is not greater than 0
      */
-    public void addBlockSpawnEntry(@NotNull Material material, double chance) {
-        if (chance < 1 || chance > 100) {
-            throw new IllegalArgumentException("Chance must be between 1 and 100");
-        }
+    public void addBlockSpawnEntry(@NotNull Material material, double weight) {
+        Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
 
-        blockSpawnEntries.put(new MinecraftContentProvider.PackedMinecraftBlock(material), chance);
+        blockSpawnEntries.put(new MinecraftContentProvider.PackedMinecraftBlock(material), weight);
     }
 
     /**
-     * Adds a block spawn entry with the specified material and chance.
+     * Adds a block spawn entry with the specified material and weight.
      *
      * @param block  the block to spawn
-     * @param chance the spawn chance (must be between 1 and 100)
-     * @throws IllegalArgumentException if chance is not between 1 and 100
+     * @param weight the spawn weight (> 0)
+     * @throws IllegalArgumentException if weight is not greater than 0
      */
-    public void addBlockSpawnEntry(@NotNull PackedBlock block, double chance) {
-        if (chance < 1 || chance > 100) {
-            throw new IllegalArgumentException("Chance must be between 1 and 100");
-        }
+    public void addBlockSpawnEntry(@NotNull PackedBlock block, double weight) {
+        Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
 
-        blockSpawnEntries.put(block, chance);
+        blockSpawnEntries.put(block, weight);
     }
 
     /**
@@ -467,7 +463,7 @@ public final class Mine implements Identified {
     /**
      * Gets all block spawn entries for this mine.
      *
-     * @return a map of blocks to their spawn chances
+     * @return a map of blocks to their spawn weights
      */
     public WeightedRandomMap<PackedBlock> getBlockSpawnEntries() {
         return blockSpawnEntries;
@@ -581,20 +577,6 @@ public final class Mine implements Identified {
     public void setWarningSeconds(Set<Integer> warningSeconds) {
         this.warningSeconds.clear();
         this.warningSeconds.addAll(warningSeconds);
-    }
-
-    /**
-     * Calculates the remaining chance percentage after all block spawn entries.
-     *
-     * @return the remaining chance (out of 100)
-     */
-    public double calculateRestChance() {
-        double max = 100;
-        for (double chance : blockSpawnEntries.values()) {
-            max -= chance;
-        }
-
-        return max;
     }
 
     /**

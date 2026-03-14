@@ -1,7 +1,7 @@
 package io.github.lijinhong11.supermines.listeners;
 
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
-import io.github.lijinhong11.mittellib.utils.NumberUtils;
+import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
@@ -58,13 +58,17 @@ public class BlockListener implements Listener {
 
         List<Treasure> treasures = mine.getTreasures();
         if (!treasures.isEmpty()) {
+            var brokenBlock = ContentProviders.getBlockByLocation(loc);
+            WeightedRandomMap<Treasure> weightedTreasures = new WeightedRandomMap<>();
             for (Treasure treasure : treasures) {
-                if (treasure.getMatchedBlocks().contains(ContentProviders.getBlockByLocation(loc))) {
-                    double chance = treasure.getChance();
-                    if (NumberUtils.matchChance(chance)) {
-                        treasure.giveToPlayer(player, true);
-                    }
+                if (treasure.getMatchedBlocks().contains(brokenBlock) && treasure.getWeight() > 0) {
+                    weightedTreasures.put(treasure, treasure.getWeight());
                 }
+            }
+
+            Treasure selected = weightedTreasures.randomOne();
+            if (selected != null) {
+                selected.giveToPlayer(player, true);
             }
         }
     }

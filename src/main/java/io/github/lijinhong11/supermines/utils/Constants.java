@@ -15,8 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 public class Constants {
-    public static final int PERCENTAGE_MAX = 100;
-    public static final int PERCENTAGE_MIN = 0;
+    public static final double WEIGHT_MAX = Double.MAX_VALUE;
+    public static final double WEIGHT_MIN = 0.0001d;
 
     private Constants() {}
 
@@ -114,13 +114,13 @@ public class Constants {
                         .getMsgComponent(p, "gui.mine-management.block_spawn_entries.name"))
                 .build();
         // treasure management
-        public static final BiFunction<Player, Double, ItemStack> SET_CHANCE = (p, i) -> SuperMines.getInstance()
+        public static final BiFunction<Player, Double, ItemStack> SET_WEIGHT = (p, i) -> SuperMines.getInstance()
                 .getLanguageManager()
                 .getMessagedItem(
                         Material.BRUSH,
-                        "gui.treasure-management.set_chance",
+                        "gui.treasure-management.set_weight",
                         p,
-                        MessageReplacement.replace("%chance%", String.valueOf(i)));
+                        MessageReplacement.replace("%weight%", String.valueOf(i)));
         public static final Function<Player, ItemStack> MATCHED_MATERIALS = p -> ItemBuilder.from(Material.STONE)
                 .name(SuperMines.getInstance()
                         .getLanguageManager()

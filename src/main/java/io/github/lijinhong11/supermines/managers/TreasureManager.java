@@ -42,10 +42,10 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
             return null;
         }
 
-        double chance = section.getDouble("chance");
-        if (chance <= 0 || chance > 100) {
-            chance = 1;
-            section.set("chance", 1);
+        double weight = section.contains("weight") ? section.getDouble("weight") : section.getDouble("chance");
+        if (weight <= 0) {
+            weight = 1;
+            section.set("weight", 1);
         }
 
         ItemStack item = null;
@@ -70,7 +70,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
                 id,
                 MiniMessage.miniMessage().deserialize(section.getString("displayName", id)),
                 item,
-                chance,
+                weight,
                 section.getStringList("matchedBlocks").stream()
                         .map(ContentProviders::getBlock)
                         .collect(Collectors.toSet()),
@@ -80,7 +80,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     @Override
     protected void putObject(@NotNull ConfigurationSection section, Treasure object) {
         section.set("displayName", MiniMessage.miniMessage().serialize(object.getDisplayName()));
-        section.set("chance", object.getChance());
+        section.set("weight", object.getWeight());
         section.set(
                 "matchedBlocks",
                 object.getMatchedBlocks().stream().map(PackedBlock::getId).toList());

@@ -6,7 +6,6 @@ import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
-import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineResetEvent;
@@ -56,18 +55,7 @@ class MineResetTask extends AbstractTask {
             Material material = loc.getBlock().getType();
             if (mine.isOnlyFillAirWhenRegenerate() && !material.isAir()) continue;
 
-            PackedBlock selected = null;
-            for (Map.Entry<PackedBlock, Double> entry : blockSpawnEntries.object2DoubleEntrySet()) {
-                if (NumberUtils.matchChance(entry.getValue())) {
-                    selected = entry.getKey();
-                    break;
-                }
-            }
-
-            if (selected == null && !blockSpawnEntries.isEmpty()) {
-                selected = blockSpawnEntries.randomOne();
-            }
-
+            PackedBlock selected = blockSpawnEntries.randomOne();
             generated.put(pos, selected);
         }
 

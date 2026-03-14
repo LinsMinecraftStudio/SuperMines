@@ -28,7 +28,7 @@ public final class Treasure implements Identified {
     private final Set<PackedBlock> matchedMaterials;
 
     private final String id;
-    private double chance;
+    private double weight;
 
     private Component displayName;
     private @Nullable ItemStack itemStack;
@@ -40,14 +40,14 @@ public final class Treasure implements Identified {
      * @param id          the unique identifier for this treasure
      * @param displayName the display name component
      * @param itemStack   the item stack to drop
-     * @param chance      the drop chance (0-100)
+     * @param weight      the selection weight (> 0)
      */
     public Treasure(
             @NotNull String id,
             @Nullable Component displayName,
             @Nullable ItemStack itemStack,
-            @Range(from = 0, to = 100) double chance) {
-        this(id, displayName, itemStack, chance, new HashSet<>(), new ArrayList<>());
+            double weight) {
+        this(id, displayName, itemStack, weight, new HashSet<>(), new ArrayList<>());
     }
 
     /**
@@ -56,15 +56,15 @@ public final class Treasure implements Identified {
      * @param id          the unique identifier for this treasure
      * @param displayName the display name component
      * @param itemStack   the item stack to drop
-     * @param chance      the drop chance (0-100)
+     * @param weight      the selection weight (> 0)
      */
     public Treasure(
             @NotNull String id,
             @Nullable Component displayName,
             @Nullable ItemStack itemStack,
-            @Range(from = 0, to = 100) double chance,
+            double weight,
             @Nullable List<String> consoleCommands) {
-        this(id, displayName, itemStack, chance, Set.of(), consoleCommands);
+        this(id, displayName, itemStack, weight, Set.of(), consoleCommands);
     }
 
     /**
@@ -73,24 +73,24 @@ public final class Treasure implements Identified {
      * @param id               the unique identifier for this treasure
      * @param displayName      the display name component
      * @param itemStack        the item stack to drop
-     * @param chance           the drop chance (0-100)
+     * @param weight           the selection weight (> 0)
      * @param matchedMaterials the set of materials that can trigger this treasure
      */
     public Treasure(
             @NotNull String id,
             @Nullable Component displayName,
             @Nullable ItemStack itemStack,
-            @Range(from = 0, to = 100) double chance,
+            double weight,
             @NotNull Set<PackedBlock> matchedMaterials,
             @Nullable List<String> consoleCommands) {
         Preconditions.checkNotNull(id, "id");
         Preconditions.checkNotNull(matchedMaterials, "matchedMaterials");
-        Preconditions.checkArgument(chance >= 0 && chance <= 100, "the chane must beteen 0~100");
+        Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
 
         this.id = id;
         this.displayName = displayName;
         this.itemStack = itemStack;
-        this.chance = chance;
+        this.weight = weight;
         this.matchedMaterials = matchedMaterials;
         this.consoleCommands = consoleCommands;
     }
@@ -194,19 +194,31 @@ public final class Treasure implements Identified {
      *
      * @return the drop chance (0-100)
      */
-    public double getChance() {
-        return chance;
+    public double getWeight() {
+        return weight;
     }
 
     /**
-     * Sets the drop chance of this treasure.
+     * Sets the selection weight of this treasure.
      *
-     * @param chance the drop chance (0-100)
+     * @param weight the selection weight (> 0)
      */
-    public void setChance(@Range(from = 0, to = 100) double chance) {
-        Preconditions.checkArgument(chance >= 0 && chance <= 100, "the chane must beteen 0~100");
+    public void setWeight(double weight) {
+        Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
 
-        this.chance = chance;
+        this.weight = weight;
+    }
+
+    /** @deprecated Use {@link #getWeight()} instead. */
+    @Deprecated(since = "1.3.0", forRemoval = true)
+    public double getChance() {
+        return getWeight();
+    }
+
+    /** @deprecated Use {@link #setWeight(double)} instead. */
+    @Deprecated(since = "1.3.0", forRemoval = true)
+    public void setChance(@Range(from = 0, to = 100) double chance) {
+        setWeight(chance);
     }
 
     /**
