@@ -49,6 +49,10 @@
                             <pattern>io.github.lijinhong11.mdatabase</pattern>
                             <shadedPattern>io.github.lijinhong11.supermines.libraries.database</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>dev.triumphteam.gui</pattern>
+                            <shadedPattern>io.github.lijinhong11.supermines.libraries.gui</shadedPattern>
+                        </relocation>
                     </relocations>
                     <filters>
                         <filter>
@@ -151,7 +155,7 @@
             <groupId>dev.triumphteam</groupId>
             <artifactId>triumph-gui</artifactId>
             <version>3.1.13</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>

@@ -9,16 +9,18 @@ import org.jetbrains.annotations.NotNull;
  * Represents an event when a mine resets.
  */
 public class MineResetEvent extends Event {
+    private static final HandlerList HANDLERS = new HandlerList();
+
     private final Mine mine;
 
     public MineResetEvent(Mine mine) {
-        super(true);
+        super(false);
 
         this.mine = mine;
     }
 
     public static HandlerList getHandlerList() {
-        return new HandlerList();
+        return HANDLERS;
     }
 
     public Mine getMine() {
@@ -27,6 +29,6 @@ public class MineResetEvent extends Event {
 
     @Override
     public @NotNull HandlerList getHandlers() {
-        return new HandlerList();
+        return HANDLERS;
     }
 }

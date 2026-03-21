@@ -15,6 +15,7 @@ import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -59,6 +60,54 @@ class MineResetTask extends AbstractTask {
             generated.put(pos, selected);
         }
 
+        if (!mine.isOnlyFillAirWhenRegenerate()) {
+            runDestroyPhase(blockPosList, generated);
+            return;
+        }
+
+        runPlacePhase(generated);
+    }
+
+    private void runDestroyPhase(List<BlockPos> blockPosList, Map<BlockPos, PackedBlock> generated) {
+        TaskMaker tm = SuperMines.getInstance().getTaskMaker();
+        if (blockPosList.isEmpty()) {
+            runPlacePhase(generated);
+            return;
+        }
+
+        AtomicInteger pending = new AtomicInteger(blockPosList.size());
+        for (BlockPos pos : blockPosList) {
+            Location loc = pos.toLocation(mine.getWorld());
+            tm.runSync(loc, () -> {
+                ContentProviders.destroyBlock(loc);
+                if (pending.decrementAndGet() == 0) {
+                    runPlacePhase(generated);
+                }
+            });
+        }
+    }
+
+    private void runPlacePhase(Map<BlockPos, PackedBlock> generated) {
+        TaskMaker tm = SuperMines.getInstance().getTaskMaker();
+        if (generated.isEmpty()) {
+            finishReset();
+            return;
+        }
+
+        AtomicInteger pending = new AtomicInteger(generated.size());
+        for (Map.Entry<BlockPos, PackedBlock> entry : generated.entrySet()) {
+            Location loc = entry.getKey().toLocation(mine.getWorld());
+            tm.runSync(loc, () -> {
+                entry.getValue().place(loc);
+                SkillsBlockPlace.markAsEarnable(loc);
+                if (pending.decrementAndGet() == 0) {
+                    finishReset();
+                }
+            });
+        }
+    }
+
+    private void finishReset() {
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (mine.getTeleportLocation() != null && mine.isPlayerInMine(p)) {
                 p.teleportAsync(mine.getTeleportLocation());
@@ -69,23 +118,8 @@ class MineResetTask extends AbstractTask {
                     .sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
         }
 
-        new MineResetEvent(mine).callEvent();
-
         mine.setBlocksBroken(0);
-
-        TaskMaker tm = SuperMines.getInstance().getTaskMaker();
-        if (!mine.isOnlyFillAirWhenRegenerate()) {
-            for (BlockPos pos : blockPosList) {
-                Location loc = pos.toLocation(mine.getWorld());
-                tm.runSync(loc, () -> ContentProviders.destroyBlock(loc));
-            }
-        }
-
-        for (Map.Entry<BlockPos, PackedBlock> entry : generated.entrySet()) {
-            Location loc = entry.getKey().toLocation(mine.getWorld());
-            tm.runSync(loc, () -> entry.getValue().place(loc));
-            SkillsBlockPlace.markAsEarnable(loc);
-        }
+        new MineResetEvent(mine).callEvent();
     }
 
     public void refreshNextResetTime() {
