@@ -18,7 +18,7 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 * More coming soon...
 
 ## Road Map
-1. Replace chance to weight
+1. Sphere-area Mines
 
 ## Screenshots
 ![](/media/command_help.png)

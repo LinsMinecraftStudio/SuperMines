@@ -42,11 +42,7 @@ public final class Treasure implements Identified {
      * @param itemStack   the item stack to drop
      * @param weight      the selection weight (> 0)
      */
-    public Treasure(
-            @NotNull String id,
-            @Nullable Component displayName,
-            @Nullable ItemStack itemStack,
-            double weight) {
+    public Treasure(@NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack, double weight) {
         this(id, displayName, itemStack, weight, new HashSet<>(), new ArrayList<>());
     }
 

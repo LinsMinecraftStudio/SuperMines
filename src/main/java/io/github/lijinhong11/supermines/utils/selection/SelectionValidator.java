@@ -7,7 +7,6 @@ import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 
 public final class SelectionValidator {
-
     private SelectionValidator() {}
 
     public static boolean validateSingleLocation(Player player, Location loc) {

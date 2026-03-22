@@ -11,7 +11,6 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineResetEvent;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
