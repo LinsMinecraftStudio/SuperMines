@@ -136,7 +136,7 @@
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MDatabase</artifactId>
-            <version>1.0.4</version>
+            <version>1.1.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -148,7 +148,7 @@
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MittelLib</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

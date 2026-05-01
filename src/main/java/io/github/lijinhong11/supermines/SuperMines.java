@@ -6,7 +6,7 @@ import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
 import io.github.lijinhong11.mdatabase.impl.DatabaseConnections;
 import io.github.lijinhong11.mittellib.MittelLib;
-import io.github.lijinhong11.mittellib.message.LanguageManager;
+import io.github.lijinhong11.mittellib.message.SyncLanguageManager;
 import io.github.lijinhong11.mittellib.utils.ConfigFileUtils;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
 import io.github.lijinhong11.supermines.integrates.placeholders.SuperMinesPlaceholders;
@@ -34,7 +34,7 @@ public class SuperMines extends JavaPlugin {
     private RankManager rankManager;
     private PlayerDataManager playerDataManager;
 
-    private LanguageManager languageManager;
+    private SyncLanguageManager languageManager;
 
     private FoliaLib foliaLibImpl;
     private TaskMaker taskMaker;
@@ -177,7 +177,7 @@ public class SuperMines extends JavaPlugin {
         return playerDataManager;
     }
 
-    public LanguageManager getLanguageManager() {
+    public SyncLanguageManager getLanguageManager() {
         return languageManager;
     }
 

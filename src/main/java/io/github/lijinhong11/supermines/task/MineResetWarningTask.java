@@ -1,8 +1,8 @@
 package io.github.lijinhong11.supermines.task;
 
 import com.tcoded.folialib.wrapper.task.WrappedTask;
-import io.github.lijinhong11.mittellib.message.LanguageManager;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
+import io.github.lijinhong11.mittellib.message.SyncLanguageManager;
 import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 class MineResetWarningTask extends AbstractTask {
-    private static final LanguageManager lm = SuperMines.getInstance().getLanguageManager();
+    private static final SyncLanguageManager lm = SuperMines.getInstance().getLanguageManager();
 
     private final Mine mine;
     private final int second;
