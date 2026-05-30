@@ -20,8 +20,10 @@ import io.github.lijinhong11.supermines.managers.RankManager;
 import io.github.lijinhong11.supermines.managers.TreasureManager;
 import io.github.lijinhong11.supermines.task.TaskMaker;
 import io.github.lijinhong11.supermines.utils.Constants;
-import io.github.lijinhong11.supermines.utils.Metrics;
+
 import java.io.File;
+
+import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -136,7 +138,7 @@ public class SuperMines extends JavaPlugin {
 
         DatabaseConnection conn = DatabaseConnections.createByType(
                 type,
-                new File(getDataFolder(), Constants.Texts.DATABASE_FILE),
+                new File(getDataFolder(), Constants.DATABASE_FILE),
                 ip,
                 port,
                 database,

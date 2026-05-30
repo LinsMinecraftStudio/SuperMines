@@ -12,19 +12,14 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 public class Constants {
-    public static final double WEIGHT_MAX = Double.MAX_VALUE;
-    public static final double WEIGHT_MIN = 0.0001d;
+    public static final String DATABASE_FILE = "data/data.db";
+    public static final String ID_PATTERN = "^[a-zA-Z0-9_-]+$";
+    public static final double WEIGHT_MIN = 0.001d;
 
     private Constants() {}
-
-    public static class Texts {
-        public static final String DATABASE_FILE = "data/data.db";
-        public static final String ID_PATTERN = "^[a-zA-Z0-9_-]+$";
-    }
 
     public static class Keys {
         public static final NamespacedKey WAND_KEY = new NamespacedKey(SuperMines.getInstance(), "supermines_wand");
@@ -126,7 +121,7 @@ public class Constants {
                         .getLanguageManager()
                         .getMessagedItem(
                                 Material.CLOCK,
-                                "gui.mine-management.set_regen_seconds.name",
+                                "gui.mine-management.set_regen_seconds",
                                 p,
                                 MessageReplacement.replace("%seconds%", String.valueOf(i)));
 
@@ -143,7 +138,7 @@ public class Constants {
                         .getLanguageManager()
                         .getMessagedItem(
                                 Material.BEACON,
-                                "gui.mine-management.set_required_lvl.name",
+                                "gui.mine-management.set_required_lvl",
                                 p,
                                 MessageReplacement.replace("%level%", String.valueOf(i)));
 
@@ -219,5 +214,7 @@ public class Constants {
         public static final String TELEPORT = "supermines.teleport";
 
         public static final String BYPASS_RANK = "supermines.bypass.rank";
+
+        private Permission() {}
     }
 }

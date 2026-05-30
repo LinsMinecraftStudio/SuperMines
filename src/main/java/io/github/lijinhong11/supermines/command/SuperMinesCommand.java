@@ -87,7 +87,7 @@ public class SuperMinesCommand {
                                             Optional<Component> displayName =
                                                     args.getOptionalByClass("displayName", Component.class);
                                             double weight = args.getByClassOrDefault("weight", double.class, 1d);
-                                            if (!id.matches(Constants.Texts.ID_PATTERN)) {
+                                            if (!id.matches(Constants.ID_PATTERN)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
                                                         .sendMessages(player, "command.invalid-id");
@@ -110,7 +110,7 @@ public class SuperMinesCommand {
                                             }
 
                                             Treasure treasure = new Treasure(
-                                                    id, displayName.orElse(Component.text(id)), is, weight);
+                                                    id, displayName.orElse(ComponentUtils.text(id)), is, weight);
                                             SuperMines.getInstance()
                                                     .getTreasureManager()
                                                     .addTreasure(treasure);
@@ -486,10 +486,10 @@ public class SuperMinesCommand {
                                         .executesPlayer((player, args) -> {
                                             String id = (String) args.getOrDefault("rankId", "");
                                             Component displayName = args.getByClassOrDefault(
-                                                    "displayName", Component.class, Component.text(id));
+                                                    "displayName", Component.class, ComponentUtils.text(id));
                                             int level = args.getByClassOrDefault("level", int.class, 0);
 
-                                            if (!id.matches(Constants.Texts.ID_PATTERN)) {
+                                            if (!id.matches(Constants.ID_PATTERN)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
                                                         .sendMessages(player, "command.invalid-id");
@@ -727,7 +727,7 @@ public class SuperMinesCommand {
                         .executesPlayer((player, args) -> {
                             String id = (String) args.getOrDefault("id", "");
                             Component displayName = args.getOptionalByClass("displayName", Component.class)
-                                    .orElse(Component.text(id));
+                                    .orElse(ComponentUtils.text(id));
                             createMine(player, id, displayName);
                         }))
                 .withSubcommand(new CommandAPICommand("redefine")
@@ -1290,7 +1290,7 @@ public class SuperMinesCommand {
             return null;
         }
 
-        if (!id.matches(Constants.Texts.ID_PATTERN)) {
+        if (!id.matches(Constants.ID_PATTERN)) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.invalid-id");
             return null;
         }
@@ -1312,7 +1312,7 @@ public class SuperMinesCommand {
     private void createMine(Player player, String id, Component displayName) {
         CuboidArea ca = getSelectedArea(player, id, true);
         if (ca == null) return;
-        Component name = displayName == null ? Component.text(id) : displayName;
+        Component name = displayName == null ? ComponentUtils.text(id) : displayName;
         Mine mine = new Mine(id, name, player.getWorld(), ca, new WeightedRandomMap<>(), 0, false);
         SuperMines.getInstance().getMineManager().addMine(mine);
         SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.success");

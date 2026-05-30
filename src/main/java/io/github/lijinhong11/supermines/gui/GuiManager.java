@@ -152,7 +152,7 @@ public class GuiManager {
     }
 
     private static void openBlockSpawnEntries(Player p, Mine mine) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui.mine-management.block_spawn.title", () -> openMineManagementGui(p, mine));
+        PaginatedChestGUI gui = buildPagedGUI(p, "gui.mine-management.block_spawn_entries.name", () -> openMineManagementGui(p, mine));
 
         gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
             openBlockChooser(p, b -> true, chosen -> {
@@ -160,7 +160,7 @@ public class GuiManager {
                         .getLanguageManager()
                         .sendMessage(
                                 p,
-                                "gui.mine-management.block_spawn.add_prompt",
+                                "gui.mine-management.block_spawn_entries.add_prompt",
                                 MessageReplacement.replace("%material%", chosen.toString()));
                 addBlockSpawnEntry(p, mine, chosen);
             });
@@ -168,10 +168,10 @@ public class GuiManager {
         }));
 
         for (Map.Entry<PackedBlock, Double> entry : mine.getBlockSpawnEntries().object2DoubleEntrySet()) {
-            MessageReplacement r = MessageReplacement.replace("%precent%", String.valueOf(entry.getValue()));
+            MessageReplacement r = MessageReplacement.replace("%percent%", String.valueOf(entry.getValue()));
             List<Component> lore = SuperMines.getInstance()
                     .getLanguageManager()
-                    .getMsgComponentList(p, "gui.mine-management.block_spawn.each_lore", r);
+                    .getMsgComponentList(p, "gui.mine-management.block_spawn_entries.each_lore", r);
             PackedBlock block = entry.getKey();
             ItemStack itemStack = block.toItem();
             itemStack.editMeta(meta -> meta.lore(lore));
@@ -185,7 +185,7 @@ public class GuiManager {
                             .getLanguageManager()
                             .sendMessage(
                                     p,
-                                    "gui.mine-management.block_spawn.set_weight_prompt",
+                                    "gui.mine-management.block_spawn_entries.set_weight_prompt",
                                     MessageReplacement.replace("%material%", block.getId()));
                     addBlockSpawnEntry(p, mine, block);
                 } else if (e.getClick().isRightClick()) {
@@ -396,19 +396,19 @@ public class GuiManager {
                         "xcccccccx",
                         "xcccccccx",
                         "xcccccccx",
-                        "xpxxxxxnb")
+                        "xxxpxnxbx")
                 .content('c')
                 .previousPage('p', ButtonItem.unclickable(Constants.Items.PREVIOUS_PAGE.apply(p)))
                 .nextPage('n', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))
-                .bind('b', ButtonItem.unclickable(Constants.Items.BACKGROUND));
+                .bind('x', ButtonItem.unclickable(Constants.Items.BACKGROUND));
 
         if (back != null) {
-            builder = builder.bind('k', ButtonItem.clickable(Constants.Items.BACK.apply(p), (g, e) -> {
+            builder = builder.bind('b', ButtonItem.clickable(Constants.Items.BACK.apply(p), (g, e) -> {
                 back.run();
                 return false;
             }));
         } else {
-            builder.bind('k', ButtonItem.unclickable(Constants.Items.BACKGROUND));
+            builder.bind('b', ButtonItem.unclickable(Constants.Items.BACKGROUND));
         }
 
         return builder.build();
@@ -509,7 +509,13 @@ public class GuiManager {
     }
 
     private static void openMaterialChooser(Player p, Consumer<PackedBlock> callback) {
-        openBlockChooser(p, b -> b instanceof MinecraftContentProvider.PackedMinecraftBlock, "material", callback);
+        openBlockChooser(p, b -> {
+            if (b instanceof MinecraftContentProvider.PackedMinecraftBlock(Material material)) {
+                return material.isBlock() && material.isItem();
+            } else {
+                return true;
+            }
+        }, "material", callback);
     }
 
     private static void openBlockChooser(Player p, Predicate<PackedBlock> predicate, Runnable reopen) {

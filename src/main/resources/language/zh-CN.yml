@@ -6,6 +6,7 @@
 command:
   help:
     general:
+      - "&aSuperMines 帮助"
       - "&e/sm create <id> [显示名] &7- &a创建矿区"
       - "&e/sm help &7- &a显示此帮助"
       - "&e/sm info <矿区> &7- &a查看矿区信息"

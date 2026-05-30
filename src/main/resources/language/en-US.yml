@@ -6,6 +6,7 @@
 command:
   help:
     general:
+      - "&aSuperMines Help"
       - "&e/sm create <id> [displayName] &7- &aCreate a mine"
       - "&e/sm help &7- &aShow this help message"
       - "&e/sm info <mine> &7- &aShow info of a mine"
