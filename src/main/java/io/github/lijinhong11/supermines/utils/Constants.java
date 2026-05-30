@@ -1,10 +1,10 @@
 package io.github.lijinhong11.supermines.utils;
 
-import dev.triumphteam.gui.builder.item.ItemBuilder;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.Identified;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 public class Constants {
@@ -33,37 +34,68 @@ public class Constants {
 
     public static class Items {
         public static final Material DEFAULT_MINE_ICON = Material.STONE;
-        public static final ItemStack BACKGROUND = ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE)
-                .name(Component.space())
-                .build();
-        public static final Function<Player, ItemStack> WAND = player -> ItemBuilder.from(Material.BLAZE_ROD)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "wand.name"))
-                .lore(SuperMines.getInstance().getLanguageManager().getMsgComponentList(player, "wand.lore"))
-                .pdc(c -> c.set(Keys.WAND_KEY, PersistentDataType.BOOLEAN, true))
-                .build();
-        // functional buttons
-        public static final Function<Player, ItemStack> PREVIOUS_PAGE = player -> ItemBuilder.from(Material.PAPER)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.previous"))
-                .build();
-        public static final Function<Player, ItemStack> NEXT_PAGE = player -> ItemBuilder.from(Material.PAPER)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.next"))
-                .build();
-        public static final Function<Player, ItemStack> BACK = player -> ItemBuilder.from(Material.ARROW)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.back"))
-                .build();
-        public static final Function<Player, ItemStack> CLOSE = player -> ItemBuilder.from(Material.BARRIER)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.close"))
-                .build();
-        /* general gui & common */
-        public static final Function<Player, ItemStack> MINES = player -> ItemBuilder.from(Material.STONE)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.mines.title"))
-                .build();
-        public static final Function<Player, ItemStack> TREASURES = player -> ItemBuilder.from(Material.CHEST)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.treasures.title"))
-                .build();
-        public static final Function<Player, ItemStack> RANKS = player -> ItemBuilder.from(Material.NAME_TAG)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.ranks.title"))
-                .build();
+
+        public static final ItemStack BACKGROUND = createItem(Material.BLACK_STAINED_GLASS_PANE, Component.empty());
+
+        public static final Function<Player, ItemStack> WAND = player -> {
+            ItemStack item = new ItemStack(Material.BLAZE_ROD);
+            item.editMeta(meta -> {
+                meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "wand.name"));
+                meta.lore(SuperMines.getInstance().getLanguageManager().getMsgComponentList(player, "wand.lore"));
+                meta.getPersistentDataContainer().set(Keys.WAND_KEY, PersistentDataType.BOOLEAN, true);
+            });
+            return item;
+        };
+
+        public static final Function<Player, ItemStack> PREVIOUS_PAGE = player -> {
+            ItemStack item = new ItemStack(Material.PAPER);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.previous")));
+            return item;
+        };
+
+        public static final Function<Player, ItemStack> NEXT_PAGE = player -> {
+            ItemStack item = new ItemStack(Material.PAPER);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.next")));
+            return item;
+        };
+
+        public static final Function<Player, ItemStack> BACK = player -> {
+            ItemStack item = new ItemStack(Material.ARROW);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.back")));
+            return item;
+        };
+
+        public static final Function<Player, ItemStack> CLOSE = player -> {
+            ItemStack item = new ItemStack(Material.BARRIER);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.close")));
+            return item;
+        };
+
+        public static final Function<Player, ItemStack> MINES = player -> {
+            ItemStack item = new ItemStack(Material.STONE);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.mines.title")));
+            return item;
+        };
+
+        public static final Function<Player, ItemStack> TREASURES = player -> {
+            ItemStack item = new ItemStack(Material.CHEST);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.treasures.title")));
+            return item;
+        };
+
+        public static final Function<Player, ItemStack> RANKS = player -> {
+            ItemStack item = new ItemStack(Material.NAME_TAG);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.ranks.title")));
+            return item;
+        };
+
         public static final BiFunction<Player, Identified, ItemStack> SET_DISPLAY_NAME =
                 (p, i) -> SuperMines.getInstance()
                         .getLanguageManager()
@@ -72,10 +104,14 @@ public class Constants {
                                 "gui.set_display_name",
                                 p,
                                 MessageReplacement.replace("%name%", i.getRawDisplayName()));
-        public static final Function<Player, ItemStack> ADD = p -> ItemBuilder.from(Material.PAPER)
-                .name(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.add"))
-                .build();
-        // mine management
+
+        public static final Function<Player, ItemStack> ADD = p -> {
+            ItemStack item = new ItemStack(Material.PAPER);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.add")));
+            return item;
+        };
+
         public static final BiFunction<Player, Material, ItemStack> SET_DISPLAY_ICON =
                 (p, m) -> SuperMines.getInstance()
                         .getLanguageManager()
@@ -93,6 +129,7 @@ public class Constants {
                                 "gui.mine-management.set_regen_seconds.name",
                                 p,
                                 MessageReplacement.replace("%seconds%", String.valueOf(i)));
+
         public static final BiFunction<Player, Boolean, ItemStack> ONLY_FILL_AIR = (p, b) -> SuperMines.getInstance()
                 .getLanguageManager()
                 .getMessagedItem(
@@ -100,6 +137,7 @@ public class Constants {
                         "gui.mine-management.only_fill_air",
                         p,
                         MessageReplacement.replace("%status%", StringUtils.toBooleanStatus(p, b)));
+
         public static final BiFunction<Player, Integer, ItemStack> SET_REQUIRED_RANK_LEVEL =
                 (p, i) -> SuperMines.getInstance()
                         .getLanguageManager()
@@ -108,12 +146,16 @@ public class Constants {
                                 "gui.mine-management.set_required_lvl.name",
                                 p,
                                 MessageReplacement.replace("%level%", String.valueOf(i)));
-        public static final Function<Player, ItemStack> BLOCK_SPAWN_ENTRIES = p -> ItemBuilder.from(Material.COAL_ORE)
-                .name(SuperMines.getInstance()
-                        .getLanguageManager()
-                        .getMsgComponent(p, "gui.mine-management.block_spawn_entries.name"))
-                .build();
-        // treasure management
+
+        public static final Function<Player, ItemStack> BLOCK_SPAWN_ENTRIES = p -> {
+            ItemStack item = new ItemStack(Material.COAL_ORE);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance()
+                            .getLanguageManager()
+                            .getMsgComponent(p, "gui.mine-management.block_spawn_entries.name")));
+            return item;
+        };
+
         public static final BiFunction<Player, Double, ItemStack> SET_WEIGHT = (p, i) -> SuperMines.getInstance()
                 .getLanguageManager()
                 .getMessagedItem(
@@ -121,12 +163,16 @@ public class Constants {
                         "gui.treasure-management.set_weight",
                         p,
                         MessageReplacement.replace("%weight%", String.valueOf(i)));
-        public static final Function<Player, ItemStack> MATCHED_MATERIALS = p -> ItemBuilder.from(Material.STONE)
-                .name(SuperMines.getInstance()
-                        .getLanguageManager()
-                        .getMsgComponent(p, "gui.treasure-management.matched_materials.title"))
-                .build();
-        // rank management
+
+        public static final Function<Player, ItemStack> MATCHED_MATERIALS = p -> {
+            ItemStack item = new ItemStack(Material.STONE);
+            item.editMeta(meta ->
+                    meta.displayName(SuperMines.getInstance()
+                            .getLanguageManager()
+                            .getMsgComponent(p, "gui.treasure-management.matched_materials.title")));
+            return item;
+        };
+
         public static final BiFunction<Player, Integer, ItemStack> SET_RANK_LEVEL = (p, i) -> SuperMines.getInstance()
                 .getLanguageManager()
                 .getMessagedItem(
@@ -134,6 +180,17 @@ public class Constants {
                         "gui.ranks-management.setlevel",
                         p,
                         MessageReplacement.replace("level", String.valueOf(i)));
+
+        private static ItemStack createItem(Material material, Component displayName, Component... lore) {
+            ItemStack item = new ItemStack(material);
+            item.editMeta(meta -> {
+                meta.displayName(displayName);
+                if (lore.length > 0) {
+                    meta.lore(List.of(lore));
+                }
+            });
+            return item;
+        }
 
         private Items() {}
     }

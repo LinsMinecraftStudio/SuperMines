@@ -205,18 +205,6 @@ public final class Treasure implements Identified {
         this.weight = weight;
     }
 
-    /** @deprecated Use {@link #getWeight()} instead. */
-    @Deprecated(since = "1.3.0", forRemoval = true)
-    public double getChance() {
-        return getWeight();
-    }
-
-    /** @deprecated Use {@link #setWeight(double)} instead. */
-    @Deprecated(since = "1.3.0", forRemoval = true)
-    public void setChance(@Range(from = 0, to = 100) double chance) {
-        setWeight(chance);
-    }
-
     /**
      * Adds a material that can trigger this treasure when mined.
      *

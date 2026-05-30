@@ -6,7 +6,7 @@
 
     <groupId>io.github.lijinhong11</groupId>
     <artifactId>SuperMines</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -48,10 +48,6 @@
                         <relocation>
                             <pattern>io.github.lijinhong11.mdatabase</pattern>
                             <shadedPattern>io.github.lijinhong11.supermines.libraries.database</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>dev.triumphteam.gui</pattern>
-                            <shadedPattern>io.github.lijinhong11.supermines.libraries.gui</shadedPattern>
                         </relocation>
                     </relocations>
                     <filters>
@@ -136,7 +132,7 @@
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MDatabase</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -148,22 +144,9 @@
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MittelLib</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.6</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>dev.triumphteam</groupId>
-            <artifactId>triumph-gui</artifactId>
-            <version>3.1.13</version>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- CommandAPI -->
         <dependency>
             <groupId>dev.jorel</groupId>
