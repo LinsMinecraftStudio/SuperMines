@@ -1,0 +1,251 @@
+wand:
+  name: "&eSuper&aMine &dVarinha de Seleção"
+  lore:
+    - "&aClique esquerdo para definir posição 1"
+    - "&aClique direito para definir posição 2"
+command:
+  help:
+    general:
+      - "&aAjuda do SuperMines"
+      - "&e/sm create <id> [displayName] &7- &aCriar uma mina"
+      - "&e/sm help &7- &aMostrar esta mensagem de ajuda"
+      - "&e/sm info <mine> &7- &aMostrar informações de uma mina"
+      - "&e/sm list &7- &aListar todas as minas"
+      - "&e/sm gui &7- &aMostrar interface"
+      - "&e/sm treasures &7- &aMostrar ajuda sobre tesouros"
+      - "&e/sm ranks &7- &aMostrar ajuda sobre cargos"
+      - "&e/sm addTreasure <mine> <treasure> &7- &aAdicionar um tesouro à mina"
+      - "&e/sm removeTreasure <mine> <treasure> &7- &aRemover um tesouro da mina"
+      - "&e/sm setRequiredLevel <mine> <rankLevel> &7- &aDefinir o nível de cargo necessário"
+      - "&e/sm addAllowedRank <mine> <rank> &7- &aAdicionar cargos permitidos à mina"
+      - "&e/sm removeAllowedRank <mine> <rank> &7- &aRemover cargos permitidos da mina"
+      - "&e/sm setBlockGenerate <mine> <weight> <block> &7- &aFazer o bloco gerar na mina"
+      - "&e/sm setDisplayName <mine> <displayName> &7- &aDefinir o nome de exibição da mina"
+      - "&e/sm setDisplayIcon <mine> <item> &7- &aDefinir o ícone de exibição da mina"
+      - "&e/sm removeBlockGenerate <mine> <block> &7- &aParar a geração do bloco na mina"
+      - "&e/sm addResetWarning <mine> <restSeconds> &7- &aAdicionar aviso de reset"
+      - "&e/sm removeResetWarning <mine> <restSeconds> &7- &aRemover aviso de reset"
+      - "&e/sm setResetTime <mine> <resetSeconds> &7- &aDefinir tempo de reset da mina"
+      - "&e/sm settp/setteleport <mine> &7- &aDefinir local de teleporte da mina"
+      - "&e/sm tp/teleport <mine> &7- &aTeleportar para a mina"
+      - "&e/sm setOnlyFillAir <mine> <onlyFillAir> &7- &aDefinir mina para preencher só ar"
+      - "&e/sm reset <mine> &7- &aResetar uma mina"
+      - "&e/sm pos1 [position] &7- &aDefinir posição 1 de uma área"
+      - "&e/sm pos2 [position] &7- &aDefinir posição 2 de uma área"
+      - "&e/sm wand &7- &aObter uma varinha"
+      - "&e/sm remove <mine> &7- &aRemover uma mina"
+      - "&e/sm reload &7- &aRecarregar o plugin"
+    treasures:
+      - "&e/sm treasures list &7- &aListar todos os tesouros"
+      - "&e/sm treasures create <id> <displayName> <weight> &7- &aAdicionar um tesouro (segure o item na mão)"
+      - "&e/sm treasures remove <treasure> &7- &aRemover um tesouro"
+      - "&e/sm treasures setItem <treasure> &7- &aDefinir o item de recompensa (segure o item na mão)"
+      - "&e/sm treasures setWeight <treasure> <weight> &7- &aDefinir o peso de um tesouro"
+      - "&e/sm treasures setDisplayName <treasure> <displayName> &7- &aDefinir o nome de exibição"
+      - "&e/sm treasures addMatch <treasure> <block> &7- &aAdicionar bloco correspondente"
+      - "&e/sm treasures removeMatch <treasure> <block> &7- &aRemover bloco correspondente"
+      - "&e/sm treasures addCommand <treasure> <command> &7- &aAdicionar comando de console (pode usar placeholders)"
+      - "&e/sm treasures removeCommand <treasure> <command> &7- &aRemover um comando"
+      - "&e/sm treasures listCommands <treasure> &7- &aListar comandos do tesouro"
+    ranks:
+      - "&e/sm ranks list &7- &aListar todos os cargos"
+      - "&e/sm ranks create <id> <displayName> <level> &7- &aAdicionar um cargo"
+      - "&e/sm ranks remove <rank> &7- &aRemover um cargo"
+      - "&e/sm ranks giveRank <player> <rank> [notify] &7- &aDefinir cargo de um jogador"
+      - "&e/sm ranks takeRank <player> <rank> [notify] &7- &aRemover cargo de um jogador"
+      - "&e/sm ranks setDisplayName <rank> <displayName> &7- &aDefinir nome do cargo"
+      - "&e/sm ranks setLevel <rank> <level> &7- &aDefinir nível do cargo"
+  pos:
+    invalid-height: "&cA posição selecionada está fora do limite de altura do mundo."
+    outside-border: "&cA posição selecionada está fora da borda do mundo."
+    different-world: "&cPosição 1 e Posição 2 devem estar no mesmo mundo."
+    in-mine: "&cVocê não pode selecionar uma posição dentro de uma mina existente."
+    set:
+      pos1: "&aPosição 1 definida para &e%pos%&a."
+      pos2: "&aPosição 2 definida para &e%pos%&a."
+  create:
+    exists: "&cJá existe uma mina com esse ID!"
+    success: "&aA mina foi criada com sucesso!"
+    no-selection: "&cVocê não selecionou uma posição!"
+    selection-not-finished: "&cVocê não terminou de selecionar uma área cúbica!"
+  fillair:
+    enabled: "&aAgora a mina &b%mine% &asó preencherá ar com blocos ao resetar"
+    disabled: "&aAgora a mina &b%mine% &afará um reset completo com blocos"
+  redefine:
+    success: "&aA área da mina foi redefinida com sucesso!"
+  remove:
+    success: "&aA mina foi removida com sucesso!"
+  reset:
+    time-set: "&aO tempo de reset da mina &b%mine% &afoi definido para &b%time%"
+    success: "&aA mina foi resetada com sucesso!"
+    stop-reset: "&aA mina &b%mine% &avai parar de resetar"
+  resetwarning:
+    time-too-long: "&cO tempo de reset não deve exceder o tempo de reset da mina!"
+    started: "&aO aviso de reset da mina será iniciado!"
+    stopped: "&aO aviso de reset da mina foi parado!"
+  block-generate:
+    success: "&aAgora o bloco &d%block% &aserá gerado na mina &b%mine% &acom peso &b%weight%"
+    removed: "&aA geração do bloco foi removida da mina &b%mine% &acom sucesso!"
+  list:
+    head:
+      mine: "&6Minas: "
+    separator: "&7, "
+    color: "&b"
+    ordered: "&e%order%. &a%content%"
+  teleport:
+    set: "&aO local de teleporte da mina &b%mine% &afoi definido para &d%loc%"
+    no-loc: "&cO local de teleporte não está definido. Contate um operador."
+  treasures:
+    no-item-in-hand: "&cVocê deve segurar um item na mão!"
+    set-item: "&aO tesouro &d%treasure% &afoi alterado"
+    set-weight: "&aO peso do tesouro &d%treasure% &afoi definido para &b%weight%"
+    set-display-name: "&aO nome do tesouro &d%treasure% &afoi definido para &b%displayName%"
+    create:
+      exists: "&cJá existe um tesouro com esse ID!"
+      success: "&aO tesouro &d%treasure% &afoi criado com sucesso!"
+    remove:
+      success: "&aO tesouro &d%treasure% &afoi removido com sucesso!"
+    matched_blocks:
+      exists: "&cO bloco já existe na lista!"
+      not_exists: "&cO bloco não está na lista!"
+      add_success: "&aO bloco &b%block% &afoi adicionado ao tesouro &d%treasure%"
+      remove_success: "&aO bloco &b%block% &afoi removido do tesouro &d%treasure%"
+    command-empty: "&cO comando não pode estar vazio!"
+    add-command:
+      success: "&aComando adicionado ao tesouro &d%treasure%&a."
+    remove-command:
+      success: "&aComando removido do tesouro &d%treasure%&a."
+      not-found: "&cEsse comando não está na lista do tesouro."
+    list-commands:
+      empty: "&eTesouro &d%treasure% &enão tem comandos de console."
+      head: "&6Comandos de console para &d%treasure%&6:"
+      line: "&7%index%. &f%command%"
+  ranks:
+    set-display-name: "&aO nome do cargo &d%rank% &afoi definido para &b%displayName%"
+    set-level: "&aO nível do cargo &d%rank% &afoi definido para &b%level%"
+    give-rank: "&aO cargo &d%rank% &afoi dado a &b%player%"
+    give-rank-notify: "&aO cargo &d%rank% foi dado a você"
+    take-rank: "&cO cargo &d%rank% &cfoi removido de &b%player%"
+    take-rank-notify: "&cSeu cargo &d%rank% &cfoi removido"
+    allowed: "&aAgora a mina &b%mine% &apermite o cargo &d%rank% &ana mina"
+    disallowed: "&aAgora a mina &b%mine% &anão permite o cargo &d%rank% &ana mina"
+    level-less-than-1: "&cO nível não pode ser menor que 1!"
+    create:
+      exists: "&cJá existe um cargo com esse ID!"
+      success: "&aO cargo &b%rank% &afoi criado com sucesso!"
+    remove:
+      success: "&aO cargo &b%rank% &afoi removido com sucesso!"
+  reload:
+    safe-tip: "&cNota: para segurança, apenas arquivos de configuração e mensagens serão recarregados"
+    success: "&aRecarregado com sucesso!"
+  set-display-name: "&aO nome da mina &d%mine% &afoi definido para &b%displayName%"
+  set-display-icon: "&aO ícone da mina &d%mine% &afoi definido para &b%item%"
+  mine-not-exists: "&cA mina não existe!"
+  rank-not-exists: "&cO cargo não existe!"
+  treasure-not-exists: "&cO tesouro não existe!"
+  invalid-material: "&cMaterial inválido!"
+  invalid-block: "&cBloco inválido!"
+  invalid-id: "&cCaracteres inválidos no ID!"
+  pos-in-mine: "&cA localização escolhida já está em uma mina!"
+mine:
+  no-place: "&cVocê não pode colocar blocos dentro da mina!"
+  reset: "&aMina &b%mine% &afoi resetada!"
+  reset_warning: "&cMina &b%mine% &cserá resetada em &b%time%"
+gui:
+  previous: "&ePágina Anterior"
+  next: "&ePróxima Página"
+  back: "&cVoltar"
+  close: "&cFechar"
+  add: "&dAdicionar"
+  material-chooser:
+    title: "&dEscolher um material"
+  block-chooser:
+    title: "&dEscolher um bloco"
+  input:
+    invalid-number: "&cNúmero inválido! O número não pode ser menor que 0!"
+    invalid-percent: "&cPorcentagem inválida! O valor deve ser positivo e menor ou igual a 100"
+  set_display_name:
+    prompt: "&eDigite o novo nome de exibição no chat: &b(Suporta códigos de cor, digite &6##CANCEL &bpara cancelar)"
+    name: "&6Definir Nome de Exibição"
+    lore:
+      - "&7Clique para definir o nome de exibição da mina"
+      - "&7Atual: &b%name%"
+  general:
+    title: "&eSuper&aMines"
+  mines:
+    title: "&7&lMinas"
+    info:
+      - "&7Mundo: &a%world%"
+      - "&7Tempo de Reset: &b%regenerate_seconds%"
+      - "&7Posição: &ede %pos1% até %pos2%"
+  mine-management:
+    title: "&7&lGerenciar Mina &8&l- &7%mine%"
+    set_display_icon:
+      name: "&6Definir Ícone de Exibição"
+      lore:
+        - "&7Clique para definir o ícone de exibição da mina"
+        - "&7Atual: &b%material%"
+    set_regen_seconds:
+      prompt: "&eDigite o novo tempo de reset no chat: &b(digite &6##CANCEL &bpara cancelar)"
+      name: "&bDefinir Tempo de Reset"
+      lore:
+        - "&7Clique para definir o tempo de reset da mina"
+        - "&7Unidade: Segundo(s)"
+        - "&7Atual: &b%seconds%"
+    set_required_lvl:
+      prompt: "&eDigite o novo nível de cargo necessário no chat: &b(digite &6##CANCEL &bpara cancelar)"
+      name: "&bDefinir Nível de Cargo Necessário"
+      lore:
+        - "&7Clique para definir o nível de cargo necessário da mina"
+        - "&7Atual: &b%level%"
+    only_fill_air:
+      name: "&aPreencher Apenas Ar ao Resetar"
+      lore:
+        - "&7Clique para decidir se apenas ar será preenchido ao resetar"
+        - "&7Atual: &b%status%"
+    block_spawn_entries:
+      name: "&bLista de Blocos Gerados"
+      set_weight_prompt: "&eDigite o novo peso do material &d%material% &eno chat: &b(digite &6##CANCEL &bpara cancelar)"
+      add_prompt: "&eDigite o peso do bloco: &b(digite &6##CANCEL &bpara cancelar)"
+      each_lore:
+        - "&7Peso: &e%weight%"
+        - "&7Clique esquerdo para alterar peso"
+        - "&7Clique direito para remover"
+  treasures:
+    title: "&e&lTesouros"
+    info:
+      - "&7Peso: &e%weight%"
+      - "&7Materiais Correspondentes: &a%matched_materials%"
+  treasure-management:
+    title: "&e&lGerenciar Tesouro &8&l- &e%treasure%"
+    set_weight:
+      name: "&aDefinir Peso"
+      lore:
+        - "&7Clique para definir o peso"
+        - "&7Atual: &b%weight%"
+      prompt: "&eDigite o novo peso do tesouro no chat: &b(digite &6##CANCEL &bpara cancelar)"
+    itemstack:
+      name: "&dDefinir Item"
+      lore:
+        - "&7Clique esquerdo para definir o item do cursor"
+        - "&7Clique direito para pegar o item"
+      none: "&cNenhum item de recompensa (apenas comandos se houver)"
+      none_lore:
+        - "&7Tesouro atual não tem recompensa de item"
+        - "&7Clique esquerdo com um item no cursor para definir"
+    matched_materials:
+      title: "&bMateriais Correspondentes"
+      each_lore:
+        - "&7Clique para remover"
+  ranks:
+    title: "&b&lCargos"
+    info:
+      - "&7Nível: &b%level%"
+  rank-management:
+    title: "&b&lGerenciar Cargo &8&l- &b%rank%"
+    setlevel:
+      prompt: "&eDigite o novo nível do cargo no chat: &b(digite &6##CANCEL &bpara cancelar)"
+      name: "&6Definir Nível do Cargo"
+      lore:
+        - "&7Clique para definir o nível do cargo"
+        - "&7Atual: &b%level%"
