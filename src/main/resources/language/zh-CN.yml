@@ -159,6 +159,8 @@ gui:
   add: "&d添加"
   material-chooser:
     title: "&d选择材料"
+  block-chooser:
+    title: "&d选择方块"
   input:
     invalid-number: "&c无效数字！"
     invalid-percent: "&c无效百分比！数值必须大于 0 且不超过 100"
@@ -204,6 +206,11 @@ gui:
     block_spawn_entries:
       name: "&b生成方块列表"
       set_weight_prompt: "&e输入方块 &d%material% &e的权重：&b(输入 &6##CANCEL &b取消)"
+      add_prompt: "&e输入应用到此方块的权重：&b(输入 &6##CANCEL &b取消)"
+      each_lore:
+        - "&7权重: &e%weight%"
+        - "&7左键修改权重"
+        - "&7右键移除"
   treasures:
     title: "&e&l宝藏"
     info:

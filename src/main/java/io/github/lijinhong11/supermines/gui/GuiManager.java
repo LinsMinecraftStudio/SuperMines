@@ -162,13 +162,14 @@ public class GuiManager {
                                 p,
                                 "gui.mine-management.block_spawn_entries.add_prompt",
                                 MessageReplacement.replace("%material%", chosen.toString()));
+                p.closeInventory();
                 addBlockSpawnEntry(p, mine, chosen);
             });
             return false;
         }));
 
         for (Map.Entry<PackedBlock, Double> entry : mine.getBlockSpawnEntries().object2DoubleEntrySet()) {
-            MessageReplacement r = MessageReplacement.replace("%percent%", String.valueOf(entry.getValue()));
+            MessageReplacement r = MessageReplacement.replace("%weight%", String.valueOf(entry.getValue()));
             List<Component> lore = SuperMines.getInstance()
                     .getLanguageManager()
                     .getMsgComponentList(p, "gui.mine-management.block_spawn_entries.each_lore", r);
@@ -449,7 +450,7 @@ public class GuiManager {
 
             try {
                 int value = Integer.parseUnsignedInt(result);
-                onSuccess.accept(value);
+                SuperMines.getInstance().getTaskMaker().runSync(() -> onSuccess.accept(value));
             } catch (NumberFormatException ex) {
                 SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.input.invalid-number");
             }
@@ -467,7 +468,7 @@ public class GuiManager {
                 if (value < min) {
                     throw new NumberFormatException();
                 }
-                onSuccess.accept(value);
+                SuperMines.getInstance().getTaskMaker().runSync(() -> onSuccess.accept(value));
             } catch (NumberFormatException ex) {
                 SuperMines.getInstance().getLanguageManager().sendMessage(p, errorKey);
             }
@@ -513,7 +514,7 @@ public class GuiManager {
             if (b instanceof MinecraftContentProvider.PackedMinecraftBlock(Material material)) {
                 return material.isBlock() && material.isItem();
             } else {
-                return true;
+                return false;
             }
         }, "material", callback);
     }

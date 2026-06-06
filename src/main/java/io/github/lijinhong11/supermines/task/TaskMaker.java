@@ -33,6 +33,10 @@ public class TaskMaker {
         }
     }
 
+    public void runSync(Runnable runnable) {
+        scheduler.runNextTick(t -> runnable.run());
+    }
+
     public void runSync(Location loc, Runnable runnable) {
         if (loc.getWorld() == null) {
             return;

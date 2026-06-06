@@ -159,6 +159,8 @@ gui:
   add: "&dAdd"
   material-chooser:
     title: "&dChoose a material"
+  block-chooser:
+    title: "&dChoose a block"
   input:
     invalid-number: "&cInvalid number! The number cannot be less than 0!"
     invalid-percent: "&cInvalid Percentage! The value must be a positive number and less than or equal to 100"
@@ -204,6 +206,11 @@ gui:
     block_spawn_entries:
       name: "&bGenerated Block List"
       set_weight_prompt: "&eEnter the new weight of material &d%material% &ein the chat: &b(type &6##CANCEL &bto cancel)"
+      add_prompt: "&eEnter the weight of the block: &b(type &6##CANCEL &bto cancel)"
+      each_lore:
+        - "&7Weight: &e%weight%"
+        - "&7Left-click to change weight"
+        - "&7Right-click to remove"
   treasures:
     title: "&e&lTreasures"
     info:
