@@ -19,6 +19,7 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 
 ## Road Map
 1. Sphere-area Mines
+2. Generation conditions
 
 ## Screenshots
 ![](/media/command_help.png)
