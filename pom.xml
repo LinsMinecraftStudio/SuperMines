@@ -6,7 +6,7 @@
 
     <groupId>io.github.lijinhong11</groupId>
     <artifactId>SuperMines</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MittelLib</artifactId>
-            <version>1.0.6</version>
+            <version>1.0.8</version>
             <scope>provided</scope>
         </dependency>
         <!-- CommandAPI -->

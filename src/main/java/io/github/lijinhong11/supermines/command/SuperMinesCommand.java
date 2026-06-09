@@ -723,32 +723,34 @@ public class SuperMinesCommand {
                         }))
                 .withSubcommand(new CommandAPICommand("sphere")
                         .withPermission(Constants.Permission.POS_SET)
-                        .executesPlayer((PlayerCommandExecutor) (player, args) -> {
-                            UUID uuid = player.getUniqueId();
-                            boolean enabled = sphereModePlayers.remove(uuid);
-                            if (!enabled) {
-                                sphereModePlayers.add(uuid);
-                                selectionMap.remove(uuid);
-                            }
-                            SuperMines.getInstance()
-                                    .getLanguageManager()
-                                    .sendMessage(player, enabled ? "command.pos.sphere.disabled" : "command.pos.sphere.enabled");
-                        })
-                        .withOptionalArguments(new IntegerArgument("radius", 1))
+                        .withOptionalArguments(new IntegerArgument("radius", 1, Integer.MAX_VALUE))
                         .executesPlayer((player, args) -> {
-                            int radius = (int) args.get("radius");
                             UUID uuid = player.getUniqueId();
-                            AreaSelection sel = selectionMap.get(uuid);
-                            Location center = sel != null && sel.pos1() != null ? sel.pos1() : player.getLocation();
-                            Location pos2 = center.clone().add(radius, 0, 0);
-                            sel = new AreaSelection(center, pos2, true);
-                            selectionMap.put(uuid, sel);
-                            SuperMines.getInstance()
-                                    .getLanguageManager()
-                                    .sendMessage(player, "command.pos.sphere.radius-set",
-                                            MessageReplacement.replace("%radius%", String.valueOf(radius)),
-                                            MessageReplacement.replace("%center%", SuperMines.getInstance()
-                                                    .getLanguageManager().getParsedBlockLocation(player, center)));
+                            Integer radiusObj = args.getByClassOrDefault("radius", Integer.class, null);
+                            if (radiusObj != null) {
+                                int radius = radiusObj;
+                                AreaSelection sel = selectionMap.get(uuid);
+                                Location center = sel != null && sel.pos1() != null ? sel.pos1() : player.getLocation();
+                                Location pos2 = center.clone().add(radius, 0, 0);
+                                sel = new AreaSelection(center, pos2, true);
+                                sphereModePlayers.add(uuid);
+                                selectionMap.put(uuid, sel);
+                                SuperMines.getInstance()
+                                        .getLanguageManager()
+                                        .sendMessage(player, "command.pos.sphere.radius-set",
+                                                MessageReplacement.replace("%radius%", String.valueOf(radius)),
+                                                MessageReplacement.replace("%center%", SuperMines.getInstance()
+                                                        .getLanguageManager().getParsedBlockLocation(player, center)));
+                            } else {
+                                boolean enabled = sphereModePlayers.remove(uuid);
+                                if (!enabled) {
+                                    sphereModePlayers.add(uuid);
+                                    selectionMap.remove(uuid);
+                                }
+                                SuperMines.getInstance()
+                                        .getLanguageManager()
+                                        .sendMessage(player, enabled ? "command.pos.sphere.disabled" : "command.pos.sphere.enabled");
+                            }
                         }))
 
                 .withSubcommand(new CommandAPICommand("auto-pickup")

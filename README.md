@@ -22,7 +22,7 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 * Broadcast control
    * Set `mine.broadcast-reset-messages` in config.yml to set send scope for reset/warning messages
    * You can set these messages to be seen by all players in the server or players in the mine
-* GUI— powered by MittelLib (Triumph-GUI replaced)
+* GUI to edit mines
 * More coming soon…
 
 ## Road Map

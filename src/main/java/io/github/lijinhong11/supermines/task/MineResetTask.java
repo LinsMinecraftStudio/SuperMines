@@ -23,10 +23,16 @@ import org.bukkit.entity.Player;
 
 class MineResetTask extends AbstractTask {
     private final Mine mine;
+    private final boolean manualReset;
     private final AtomicLong nextResetTime = new AtomicLong();
 
     MineResetTask(Mine mine) {
+        this(mine, false);
+    }
+
+    MineResetTask(Mine mine, boolean manualReset) {
         this.mine = mine;
+        this.manualReset = manualReset;
         refreshNextResetTime();
     }
 
@@ -36,7 +42,7 @@ class MineResetTask extends AbstractTask {
 
     @Override
     public void run(WrappedTask wrappedTask) {
-        if (mine.getRegenerateSeconds() < 1) {
+        if (!manualReset && mine.getRegenerateSeconds() < 1) {
             cancel();
             return;
         }
