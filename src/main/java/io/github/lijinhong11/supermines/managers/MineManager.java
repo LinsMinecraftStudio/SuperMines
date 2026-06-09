@@ -4,8 +4,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
+import io.github.lijinhong11.mittellib.math.SphereArea;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
@@ -41,8 +43,6 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         String id = section.getCurrentPath();
         String displayName = section.getString("displayName", id);
         String worldName = section.getString("world");
-        ConfigurationSection pos1 = section.getConfigurationSection("pos1");
-        ConfigurationSection pos2 = section.getConfigurationSection("pos2");
         int regenerateSeconds = section.getInt("regenerateSeconds", 0);
         boolean onlyFillAirWhenRegenerate = section.getBoolean("onlyFillAirWhenRegenerate", false);
         Material displayIcon = Material.getMaterial(section.getString("displayIcon", "STONE"));
@@ -62,14 +62,6 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
             return null;
         }
 
-        if (pos1 == null) {
-            return null;
-        }
-
-        if (pos2 == null) {
-            return null;
-        }
-
         if (displayIcon == null) {
             return null;
         }
@@ -79,8 +71,26 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
             section.set("regenerateSeconds", regenerateSeconds);
         }
 
-        BlockPos blockPos1 = new BlockPos(pos1.getInt("x"), pos1.getInt("y"), pos1.getInt("z"));
-        BlockPos blockPos2 = new BlockPos(pos2.getInt("x"), pos2.getInt("y"), pos2.getInt("z"));
+        AreaOfBlocks area;
+        String areaType = section.getString("areaType", "CUBOID");
+        if ("SPHERE".equalsIgnoreCase(areaType)) {
+            ConfigurationSection centerSec = section.getConfigurationSection("center");
+            int radius = section.getInt("radius", 0);
+            if (centerSec == null || radius <= 0) {
+                return null;
+            }
+            BlockPos center = new BlockPos(centerSec.getInt("x"), centerSec.getInt("y"), centerSec.getInt("z"));
+            area = new SphereArea(center, radius);
+        } else {
+            ConfigurationSection pos1 = section.getConfigurationSection("pos1");
+            ConfigurationSection pos2 = section.getConfigurationSection("pos2");
+            if (pos1 == null || pos2 == null) {
+                return null;
+            }
+            BlockPos blockPos1 = new BlockPos(pos1.getInt("x"), pos1.getInt("y"), pos1.getInt("z"));
+            BlockPos blockPos2 = new BlockPos(pos2.getInt("x"), pos2.getInt("y"), pos2.getInt("z"));
+            area = new CuboidArea(blockPos1, blockPos2);
+        }
 
         WeightedRandomMap<PackedBlock> blockSpawnEntries = new WeightedRandomMap<>();
 
@@ -113,12 +123,12 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
             resetWarningSeconds.addAll(section.getIntegerList("resetWarningSeconds"));
         }
 
-        return new Mine(
+        Mine mine = new Mine(
                 id,
                 MiniMessage.miniMessage().deserialize(displayName),
                 displayIcon,
                 world,
-                new CuboidArea(blockPos1, blockPos2),
+                area,
                 blockSpawnEntries,
                 regenerateSeconds,
                 onlyFillAirWhenRegenerate,
@@ -127,16 +137,27 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
                 allowedRankIds,
                 loc,
                 resetWarningSeconds);
+        mine.setAutoPickup(section.getBoolean("autoPickup", false));
+        return mine;
     }
 
     @Override
     protected void putObject(@NotNull ConfigurationSection section, Mine object) {
         section.set("displayName", MiniMessage.miniMessage().serialize(object.getDisplayName()));
         section.set("world", object.getWorld().getName());
-        object.getArea().pos1().write(section.createSection("pos1"));
-        object.getArea().pos2().write(section.createSection("pos2"));
+        AreaOfBlocks area = object.getArea();
+        if (area instanceof SphereArea sa) {
+            section.set("areaType", "SPHERE");
+            sa.center().write(section.createSection("center"));
+            section.set("radius", sa.radius());
+        } else if (area instanceof CuboidArea ca) {
+            section.set("areaType", "CUBOID");
+            ca.pos1().write(section.createSection("pos1"));
+            ca.pos2().write(section.createSection("pos2"));
+        }
         section.set("regenerateSeconds", object.getRegenerateSeconds());
         section.set("onlyFillAirWhenRegenerate", object.isOnlyFillAirWhenRegenerate());
+        section.set("autoPickup", object.isAutoPickup());
         section.set("displayIcon", object.getDisplayIcon().toString());
         section.set("requiredRankLevel", object.getRequiredRankLevel());
         section.set("allowedRankIds", object.getAllowedRankIds().stream().toList());

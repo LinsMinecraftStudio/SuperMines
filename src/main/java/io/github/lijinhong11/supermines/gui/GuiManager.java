@@ -8,6 +8,8 @@ import io.github.lijinhong11.mittellib.gui.item.ButtonItem;
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.hook.content.MinecraftContentProvider;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.math.CuboidArea;
+import io.github.lijinhong11.mittellib.math.SphereArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.chat.ChatInput;
@@ -145,6 +147,16 @@ public class GuiManager {
                 (g, e) -> {
                     if (!checkPermission(p, Constants.Permission.BLOCK_GENERATE)) return false;
                     openBlockSpawnEntries(p, mine);
+                    return false;
+                }));
+
+        // Auto Pickup
+        gui.putItem(slot(4, 7), ButtonItem.clickable(
+                Constants.Items.AUTO_PICKUP.apply(p, mine.isAutoPickup()),
+                (g, e) -> {
+                    if (!checkPermission(p, Constants.Permission.SET_AUTO_PICKUP)) return false;
+                    mine.setAutoPickup(!mine.isAutoPickup());
+                    reopen.run();
                     return false;
                 }));
 
@@ -552,13 +564,28 @@ public class GuiManager {
                 MessageReplacement.replace("%world%", mine.getWorld().getName());
         MessageReplacement regenerateSeconds =
                 MessageReplacement.replace("%regenerate_seconds%", String.valueOf(mine.getRegenerateSeconds()));
-        MessageReplacement pos1 =
-                MessageReplacement.replace("%pos1%", mine.getArea().pos1().toString());
-        MessageReplacement pos2 =
-                MessageReplacement.replace("%pos2%", mine.getArea().pos2().toString());
+        if (mine.getArea() instanceof SphereArea sa) {
+            MessageReplacement center =
+                    MessageReplacement.replace("%center%", sa.center().toString());
+            MessageReplacement radius =
+                    MessageReplacement.replace("%radius%", String.valueOf(sa.radius()));
+            return SuperMines.getInstance()
+                    .getLanguageManager()
+                    .getMsgComponentList(p, "gui.mines.info-sphere", world, regenerateSeconds, center, radius);
+        } else if (mine.getArea() instanceof CuboidArea ca) {
+            MessageReplacement pos1 =
+                    MessageReplacement.replace("%pos1%", ca.pos1().toString());
+            MessageReplacement pos2 =
+                    MessageReplacement.replace("%pos2%", ca.pos2().toString());
+            return SuperMines.getInstance()
+                    .getLanguageManager()
+                    .getMsgComponentList(p, "gui.mines.info", world, regenerateSeconds, pos1, pos2);
+        }
+        MessageReplacement info =
+                MessageReplacement.replace("%area%", mine.getArea().toString());
         return SuperMines.getInstance()
                 .getLanguageManager()
-                .getMsgComponentList(p, "gui.mines.info", world, regenerateSeconds, pos1, pos2);
+                .getMsgComponentList(p, "gui.mines.info", world, regenerateSeconds, info);
     }
 
     private static List<Component> getTreasureInfo(@NotNull Player p, @NotNull Treasure treasure) {

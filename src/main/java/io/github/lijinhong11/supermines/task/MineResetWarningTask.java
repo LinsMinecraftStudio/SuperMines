@@ -10,8 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 class MineResetWarningTask extends AbstractTask {
-    private static final SyncLanguageManager lm = SuperMines.getInstance().getLanguageManager();
-
     private final Mine mine;
     private final int second;
 
@@ -22,13 +20,16 @@ class MineResetWarningTask extends AbstractTask {
 
     @Override
     public void run(WrappedTask wrappedTask) {
+        boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
         MessageReplacement mineName = MessageReplacement.replace("%mine%", mine.getRawDisplayName());
         for (Player p : Bukkit.getOnlinePlayers()) {
-            lm.sendMessage(
-                    p,
-                    "mine.reset_warning",
-                    mineName,
-                    MessageReplacement.replace("%time%", NumberUtils.formatSeconds(p, second)));
+            if (broadcast || mine.isPlayerInMine(p)) {
+                SuperMines.getInstance().getLanguageManager().sendMessage(
+                        p,
+                        "mine.reset_warning",
+                        mineName,
+                        MessageReplacement.replace("%time%", NumberUtils.formatSeconds(p, second)));
+            }
         }
     }
 }

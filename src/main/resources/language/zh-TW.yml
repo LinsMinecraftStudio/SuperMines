@@ -63,6 +63,10 @@ command:
     set:
       pos1: "&a位置1設為 &e%pos%&a。"
       pos2: "&a位置2設為 &e%pos%&a。"
+    sphere:
+      enabled: "&a球形模式已啟用。位置1為中心，位置2設定半徑。"
+      disabled: "&a球形模式已停用。位置1和位置2框選區域。"
+      radius-set: "&a球形已設置！中心: &e%center%&a，半徑: &b%radius%"
   create:
     exists: "&c該 ID 的礦區已存在！"
     success: "&a礦區建立成功！"
@@ -71,6 +75,9 @@ command:
   fillair:
     enabled: "&a礦區 &b%mine% &a重置時僅填充空氣"
     disabled: "&a礦區 &b%mine% &a重置時將完整填充"
+  auto-pickup:
+    enabled: "&a自動拾取已啟用。挖掘的物品將直接進入背包。"
+    disabled: "&a自動拾取已停用。挖掘的物品將掉落在地面。"
   redefine:
     success: "&a礦區範圍重新定義成功！"
   remove:
@@ -178,6 +185,11 @@ gui:
       - "&7世界: &a%world%"
       - "&7重置時間: &b%regenerate_seconds%"
       - "&7範圍: &e從 %pos1% 到 %pos2%"
+    info-sphere:
+      - "&7世界: &a%world%"
+      - "&7重置時間: &b%regenerate_seconds%"
+      - "&7中心: &e%center%"
+      - "&7半徑: &b%radius%"
   mine-management:
     title: "&7&l礦區管理 &8&l- &7%mine%"
     set_display_icon:
@@ -202,6 +214,12 @@ gui:
       name: "&a重置時僅填充空氣"
       lore:
         - "&7點擊切換是否僅填充空氣"
+        - "&7目前: &b%status%"
+    auto_pickup:
+      name: "&e自動拾取"
+      lore:
+        - "&7點擊切換此礦區的自動拾取"
+        - "&7開啟後挖掘的物品將直接進入背包"
         - "&7目前: &b%status%"
     block_spawn_entries:
       name: "&b生成方塊列表"

@@ -133,6 +133,14 @@ public class Constants {
                         p,
                         MessageReplacement.replace("%status%", StringUtils.toBooleanStatus(p, b)));
 
+        public static final BiFunction<Player, Boolean, ItemStack> AUTO_PICKUP = (p, b) -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(
+                        Material.HOPPER,
+                        "gui.mine-management.auto_pickup",
+                        p,
+                        MessageReplacement.replace("%status%", StringUtils.toBooleanStatus(p, b)));
+
         public static final BiFunction<Player, Integer, ItemStack> SET_REQUIRED_RANK_LEVEL =
                 (p, i) -> SuperMines.getInstance()
                         .getLanguageManager()
@@ -208,6 +216,7 @@ public class Constants {
         public static final String SET_DISPLAY_NAME = "supermines.set_display_name";
         public static final String SET_DISPLAY_ICON = "supermines.set_display_icon";
         public static final String SET_ONLY_FILL_AIR = "supermines.set_only_fill_air";
+        public static final String SET_AUTO_PICKUP = "supermines.set_auto_pickup";
         public static final String SET_REQUIRED_LEVEL = "supermines.set_required_level";
         public static final String SET_RESET_TIME = "supermines.set_reset_time";
         public static final String SET_TELEPORT = "supermines.set_teleport";

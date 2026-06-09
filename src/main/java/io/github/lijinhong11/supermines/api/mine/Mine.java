@@ -4,8 +4,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import io.github.lijinhong11.mittellib.hook.content.MinecraftContentProvider;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
+import io.github.lijinhong11.mittellib.math.SphereArea;
 import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.api.SuperMinesAPI;
@@ -44,9 +46,10 @@ public final class Mine implements Identified {
 
     private Material displayIcon;
     private Component displayName;
-    private CuboidArea area;
+    private AreaOfBlocks area;
     private int regenerateSeconds;
     private boolean onlyFillAirWhenRegenerate;
+    private boolean autoPickup;
     private int requiredRankLevel;
     private Location tpLoc;
 
@@ -55,7 +58,7 @@ public final class Mine implements Identified {
             String id,
             Component displayName,
             World world,
-            CuboidArea area,
+            AreaOfBlocks area,
             WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
@@ -76,7 +79,7 @@ public final class Mine implements Identified {
             Component displayName,
             Material displayIcon,
             World world,
-            CuboidArea area,
+            AreaOfBlocks area,
             WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
@@ -99,7 +102,7 @@ public final class Mine implements Identified {
             Component displayName,
             Material displayIcon,
             World world,
-            CuboidArea area,
+            AreaOfBlocks area,
             WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
@@ -125,7 +128,7 @@ public final class Mine implements Identified {
             Component displayName,
             Material displayIcon,
             World world,
-            CuboidArea area,
+            AreaOfBlocks area,
             WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
@@ -154,7 +157,7 @@ public final class Mine implements Identified {
             Component displayName,
             Material displayIcon,
             World world,
-            CuboidArea area,
+            AreaOfBlocks area,
             WeightedRandomMap<PackedBlock> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
@@ -179,7 +182,7 @@ public final class Mine implements Identified {
         this.requiredRankLevel = requiredRankLevel;
         this.allowedRankIds = allowedRankIds;
         this.warningSeconds = warningSeconds;
-        this.tpLoc = tpLoc == null ? area.getCenterLocation(world) : tpLoc;
+        this.tpLoc = tpLoc;
     }
 
     /**
@@ -423,19 +426,19 @@ public final class Mine implements Identified {
     /**
      * Gets the area of this mine.
      *
-     * @return the cuboid area
+     * @return the area
      */
-    public CuboidArea getArea() {
+    public AreaOfBlocks getArea() {
         return area;
     }
 
     /**
      * Sets the area of this mine.
      *
-     * @param area the cuboid area (cannot be null)
+     * @param area the area (cannot be null)
      * @throws NullPointerException if area is null
      */
-    public void setArea(@NotNull CuboidArea area) {
+    public void setArea(@NotNull AreaOfBlocks area) {
         Preconditions.checkNotNull(area, "area cannot be null");
 
         this.area = area;
@@ -508,6 +511,14 @@ public final class Mine implements Identified {
         this.onlyFillAirWhenRegenerate = onlyFillAirWhenRegenerate;
     }
 
+    public boolean isAutoPickup() {
+        return autoPickup;
+    }
+
+    public void setAutoPickup(boolean autoPickup) {
+        this.autoPickup = autoPickup;
+    }
+
     /**
      * Gets the required rank level for this mine.
      *
@@ -577,6 +588,55 @@ public final class Mine implements Identified {
     public void setWarningSeconds(Set<Integer> warningSeconds) {
         this.warningSeconds.clear();
         this.warningSeconds.addAll(warningSeconds);
+    }
+
+    public Location getCenterLocation() {
+        return getAreaCenter(world);
+    }
+
+    public Location getSafeTopLocation() {
+        int topY;
+        int centerX;
+        int centerZ;
+
+        if (area instanceof CuboidArea ca) {
+            topY = ca.getMax().y();
+            centerX = (ca.getMin().x() + ca.getMax().x()) / 2;
+            centerZ = (ca.getMin().z() + ca.getMax().z()) / 2;
+        } else if (area instanceof SphereArea sa) {
+            topY = sa.center().y() + sa.radius();
+            centerX = sa.center().x();
+            centerZ = sa.center().z();
+        } else {
+            return world.getSpawnLocation();
+        }
+
+        for (int dx = 0; dx <= 5; dx++) {
+            for (int dz = 0; dz <= 5; dz++) {
+                for (int signX : new int[]{-1, 1}) {
+                    for (int signZ : new int[]{-1, 1}) {
+                        int x = centerX + signX * dx;
+                        int z = centerZ + signZ * dz;
+                        Location feet = new Location(world, x + 0.5, topY + 1, z + 0.5);
+                        if (feet.getBlock().getType().isAir()
+                                && feet.clone().add(0, 1, 0).getBlock().getType().isAir()) {
+                            return feet;
+                        }
+                    }
+                }
+            }
+        }
+
+        return new Location(world, centerX + 0.5, topY + 2, centerZ + 0.5);
+    }
+
+    private Location getAreaCenter(World world) {
+        if (area instanceof CuboidArea ca) {
+            return ca.getCenterLocation(world);
+        } else if (area instanceof SphereArea sa) {
+            return sa.center().toLocation(world);
+        }
+        return world.getSpawnLocation();
     }
 
     /**

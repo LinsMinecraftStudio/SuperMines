@@ -14,14 +14,14 @@ mine:
   # Allow to players earn XP from skill plugins in mines
   # Note: support mcMMO and AuraSkills
   allow-earn-xp: true
+  # Whether to broadcast reset and warning messages to all players
+  # Set to false to only send messages to players inside the mine
+  broadcast-reset-messages: true
   # Auto pickup settings
   auto-pickup:
     # Whether to enable auto pickup
     # You can use "/mine auto-pickup-toggle" to toggle the state
     enabled: false
-    # Enabled mines
-    # Leave empty to use in all mines
-    mines: []
     # Player who has this permission can use the feature
     # Set to empty to let all players can use
     permission: ""

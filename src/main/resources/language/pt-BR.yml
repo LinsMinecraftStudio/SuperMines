@@ -63,14 +63,21 @@ command:
     set:
       pos1: "&aPosição 1 definida para &e%pos%&a."
       pos2: "&aPosição 2 definida para &e%pos%&a."
+    sphere:
+      enabled: "&aModo esfera ativado. pos1 será o centro e pos2 definirá o raio."
+      disabled: "&aModo esfera desativado. pos1 e pos2 definirão uma área cúbica."
+      radius-set: "&aEsfera definida! Centro: &e%center%&a, Raio: &b%radius%"
   create:
     exists: "&cJá existe uma mina com esse ID!"
     success: "&aA mina foi criada com sucesso!"
     no-selection: "&cVocê não selecionou uma posição!"
-    selection-not-finished: "&cVocê não terminou de selecionar uma área cúbica!"
+    selection-not-finished: "&cVocê não terminou de selecionar uma área!"
   fillair:
     enabled: "&aAgora a mina &b%mine% &asó preencherá ar com blocos ao resetar"
     disabled: "&aAgora a mina &b%mine% &afará um reset completo com blocos"
+  auto-pickup:
+    enabled: "&aColeta automática ativada. Itens minerados irão direto para o inventário."
+    disabled: "&aColeta automática desativada. Itens minerados cairão no chão."
   redefine:
     success: "&aA área da mina foi redefinida com sucesso!"
   remove:
@@ -178,6 +185,11 @@ gui:
       - "&7Mundo: &a%world%"
       - "&7Tempo de Reset: &b%regenerate_seconds%"
       - "&7Posição: &ede %pos1% até %pos2%"
+    info-sphere:
+      - "&7Mundo: &a%world%"
+      - "&7Tempo de Reset: &b%regenerate_seconds%"
+      - "&7Centro: &e%center%"
+      - "&7Raio: &b%radius%"
   mine-management:
     title: "&7&lGerenciar Mina &8&l- &7%mine%"
     set_display_icon:
@@ -202,6 +214,12 @@ gui:
       name: "&aPreencher Apenas Ar ao Resetar"
       lore:
         - "&7Clique para decidir se apenas ar será preenchido ao resetar"
+        - "&7Atual: &b%status%"
+    auto_pickup:
+      name: "&eColeta Automática"
+      lore:
+        - "&7Clique para ativar/desativar a coleta automática"
+        - "&7Quando ativo, itens minerados vão direto ao inventário"
         - "&7Atual: &b%status%"
     block_spawn_entries:
       name: "&bLista de Blocos Gerados"

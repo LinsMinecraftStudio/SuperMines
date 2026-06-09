@@ -8,14 +8,36 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import java.util.List;
 import org.bukkit.Location;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class BlockListener implements Listener {
+
+    public static boolean isPlayerAutoPickupActive(Player player) {
+        String perm = SuperMines.getInstance().getConfig().getString("auto-pickup.permission", "");
+        if (!perm.isEmpty() && !player.hasPermission(perm)) return false;
+
+        PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+        return data.isAutoPickup();
+    }
+
+    public static void togglePlayerAutoPickup(Player player) {
+        PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+        data.setAutoPickup(!data.isAutoPickup());
+    }
+
+    public static boolean getPlayerAutoPickup(Player player) {
+        PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+        return data.isAutoPickup();
+    }
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void placeBlock(BlockPlaceEvent e) {
         Player p = e.getPlayer();
@@ -55,6 +77,8 @@ public class BlockListener implements Listener {
         playerData.addMinedBlocks(1);
         mine.plusBlocksBroken();
 
+        boolean autoPickup = mine.isAutoPickup() || isPlayerAutoPickupActive(player);
+
         List<Treasure> treasures = mine.getTreasures();
         if (!treasures.isEmpty()) {
             var brokenBlock = ContentProviders.getBlockByLocation(loc);
@@ -67,8 +91,26 @@ public class BlockListener implements Listener {
 
             Treasure selected = weightedTreasures.randomOne();
             if (selected != null) {
-                selected.giveToPlayer(player, true);
+                selected.giveToPlayer(player, !autoPickup);
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockDropItems(BlockDropItemEvent e) {
+        Location loc = e.getBlock().getLocation();
+        Mine mine = SuperMines.getInstance().getMineManager().getMine(loc);
+        if (mine == null) return;
+
+        Player player = e.getPlayer();
+        if (!mine.isAutoPickup() && !isPlayerAutoPickupActive(player)) return;
+
+        List<Item> drops = e.getItems();
+        for (Item item : drops) {
+            ItemStack stack = item.getItemStack();
+            player.getInventory().addItem(stack).values()
+                    .forEach(leftover -> player.getWorld().dropItemNaturally(player.getLocation(), leftover));
+        }
+        e.setCancelled(true);
     }
 }

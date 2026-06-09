@@ -4,13 +4,13 @@ import com.tcoded.folialib.wrapper.task.WrappedTask;
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.BlockPos;
-import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineResetEvent;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,17 +36,22 @@ class MineResetTask extends AbstractTask {
 
     @Override
     public void run(WrappedTask wrappedTask) {
-        refreshNextResetTime();
+        if (mine.getRegenerateSeconds() < 1) {
+            cancel();
+            return;
+        }
+
         doReset();
     }
 
     private void doReset() {
-        CuboidArea ca = mine.getArea();
-        List<BlockPos> blockPosList = ca.asPosList();
+        List<BlockPos> blockPosList = mine.getArea().asPosList();
         WeightedRandomMap<PackedBlock> blockSpawnEntries = mine.getBlockSpawnEntries();
         Map<BlockPos, PackedBlock> generated = new HashMap<>();
+        List<BlockPos> toDestroy = new ArrayList<>();
 
         if (blockSpawnEntries.isEmpty()) {
+            finishReset();
             return;
         }
 
@@ -57,10 +62,13 @@ class MineResetTask extends AbstractTask {
 
             PackedBlock selected = blockSpawnEntries.randomOne();
             generated.put(pos, selected);
+            if (!material.isAir()) {
+                toDestroy.add(pos);
+            }
         }
 
-        if (!mine.isOnlyFillAirWhenRegenerate()) {
-            runDestroyPhase(blockPosList, generated);
+        if (!mine.isOnlyFillAirWhenRegenerate() || !toDestroy.isEmpty()) {
+            runDestroyPhase(toDestroy, generated);
             return;
         }
 
@@ -96,7 +104,12 @@ class MineResetTask extends AbstractTask {
         AtomicInteger pending = new AtomicInteger(generated.size());
         for (Map.Entry<BlockPos, PackedBlock> entry : generated.entrySet()) {
             Location loc = entry.getKey().toLocation(mine.getWorld());
+
             tm.runSync(loc, () -> {
+                if (!loc.getBlock().getType().isAir()) {
+                    ContentProviders.destroyBlock(loc);
+                }
+
                 entry.getValue().place(loc);
                 SkillsBlockPlace.markAsEarnable(loc);
                 if (pending.decrementAndGet() == 0) {
@@ -107,17 +120,21 @@ class MineResetTask extends AbstractTask {
     }
 
     private void finishReset() {
+        boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (mine.getTeleportLocation() != null && mine.isPlayerInMine(p)) {
-                p.teleportAsync(mine.getTeleportLocation());
+            if (mine.isPlayerInMine(p)) {
+                p.teleportAsync(mine.getTeleportLocation() != null ? mine.getTeleportLocation() : mine.getSafeTopLocation());
             }
 
-            SuperMines.getInstance()
-                    .getLanguageManager()
-                    .sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
+            if (broadcast || mine.isPlayerInMine(p)) {
+                SuperMines.getInstance()
+                        .getLanguageManager()
+                        .sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
+            }
         }
 
         mine.setBlocksBroken(0);
+        refreshNextResetTime();
         new MineResetEvent(mine).callEvent();
     }
 

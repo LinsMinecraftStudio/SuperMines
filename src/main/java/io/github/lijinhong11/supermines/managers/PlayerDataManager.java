@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.managers;
 
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
+import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractDatabaseObjectManager;
@@ -27,7 +28,7 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
         }
     }
 
-    @Nullable public PlayerData getPlayerData(String name) {
+    public @Nullable PlayerData getPlayerData(String name) {
         for (PlayerData object : playerDataMap.values()) {
             if (object.getPlayerName().equals(name)) {
                 return object;
@@ -45,8 +46,9 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
         PlayerData playerData = getPlayerData(playerUUID);
 
         if (playerData == null) {
+            boolean autoEnable = SuperMines.getInstance().getConfig().getBoolean("auto-pickup.auto-enable", false);
             playerData = new PlayerData(
-                    Bukkit.getOfflinePlayer(playerUUID).getName(), playerUUID, new StringRankSet(Rank.DEFAULT));
+                    Bukkit.getOfflinePlayer(playerUUID).getName(), playerUUID, new StringRankSet(Rank.DEFAULT), autoEnable);
             super.saveObject(playerData);
             playerDataMap.put(playerUUID, playerData);
         }

@@ -13,13 +13,21 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 * ItemsAdder/Oraxen/Nexo/CraftEngine block support
 * Rank system
 * Allow/Disallow earn xp from mine blocks
-* Great I18n for players
+* Great I18n for players — Translation based on Client language
+   * Supported Translations: en-US pt-BR zh-CN zh-TW
+   * *Some translations uses AI*, you can make a PR if you encounter some wrong usages about translations.
 * Item Serialization System using MittelLib
-* More coming soon...
+* Create spherical mines via `/sm sphere <radius>`
+* Auto pickup — per-mine toggle + per-player toggle (`/sm auto-pickup`), items go directly to players' inventories
+* Broadcast control
+   * Set `mine.broadcast-reset-messages` in config.yml to set send scope for reset/warning messages
+   * You can set these messages to be seen by all players in the server or players in the mine
+* GUI— powered by MittelLib (Triumph-GUI replaced)
+* More coming soon…
 
 ## Road Map
-1. Sphere-area Mines
-2. Generation conditions
+1. Generation conditions
+2. particles???
 
 ## Screenshots
 ![](/media/command_help.png)

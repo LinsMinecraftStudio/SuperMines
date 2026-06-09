@@ -5,7 +5,7 @@ import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
-import io.github.lijinhong11.mittellib.math.CuboidArea;
+import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.NumberUtils;
@@ -18,6 +18,7 @@ import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.gui.GuiManager;
+import io.github.lijinhong11.supermines.listeners.BlockListener;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.selection.AreaSelection;
 import io.github.lijinhong11.supermines.utils.selection.SelectionValidator;
@@ -33,6 +34,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 public class SuperMinesCommand {
     private static final Map<UUID, AreaSelection> selectionMap = new ConcurrentHashMap<>();
+    private static final Set<UUID> sphereModePlayers = new HashSet<>();
 
     public static void handlePos(Player player, boolean isPos1, Location forcedLoc) {
         Location loc = forcedLoc != null ? forcedLoc : player.getLocation();
@@ -50,11 +52,12 @@ public class SuperMinesCommand {
             return;
         }
 
+        boolean sphereMode = sphereModePlayers.contains(uuid);
         if (sel == null) {
-            sel = new AreaSelection(null, null);
+            sel = new AreaSelection(null, null, sphereMode);
         }
 
-        sel = isPos1 ? new AreaSelection(loc, sel.pos2()) : new AreaSelection(sel.pos1(), loc);
+        sel = isPos1 ? new AreaSelection(loc, sel.pos2(), sphereMode) : new AreaSelection(sel.pos1(), loc, sphereMode);
 
         selectionMap.put(uuid, sel);
 
@@ -80,7 +83,7 @@ public class SuperMinesCommand {
                         .withSubcommands(
                                 new CommandAPICommand("create")
                                         .withPermission(Constants.Permission.TREASURES)
-                                        .withArguments(new StringArgument("id"), new DoubleArgument("weight", 0.0001))
+                                        .withArguments(new StringArgument("id"), new DoubleArgument("weight", Constants.WEIGHT_MIN))
                                         .withOptionalArguments(new DisplayNameArgument())
                                         .executesPlayer((player, args) -> {
                                             String id = args.getByClassOrDefault("id", String.class, "");
@@ -194,7 +197,7 @@ public class SuperMinesCommand {
                                                 new StringArgument("id")
                                                         .includeSuggestions(
                                                                 ArgumentSuggestions.strings(getTreasuresList())),
-                                                new DoubleArgument("weight", 0.0001))
+                                                new DoubleArgument("weight", Constants.WEIGHT_MIN))
                                         .executes((sender, args) -> {
                                             String id = (String) args.getOrDefault("id", "");
                                             double weight = args.getByClassOrDefault("weight", double.class, 1d);
@@ -718,6 +721,45 @@ public class SuperMinesCommand {
                             Location loc = (Location) args.get("loc");
                             handlePos(player, false, loc);
                         }))
+                .withSubcommand(new CommandAPICommand("sphere")
+                        .withPermission(Constants.Permission.POS_SET)
+                        .executesPlayer((PlayerCommandExecutor) (player, args) -> {
+                            UUID uuid = player.getUniqueId();
+                            boolean enabled = sphereModePlayers.remove(uuid);
+                            if (!enabled) {
+                                sphereModePlayers.add(uuid);
+                                selectionMap.remove(uuid);
+                            }
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(player, enabled ? "command.pos.sphere.disabled" : "command.pos.sphere.enabled");
+                        })
+                        .withOptionalArguments(new IntegerArgument("radius", 1))
+                        .executesPlayer((player, args) -> {
+                            int radius = (int) args.get("radius");
+                            UUID uuid = player.getUniqueId();
+                            AreaSelection sel = selectionMap.get(uuid);
+                            Location center = sel != null && sel.pos1() != null ? sel.pos1() : player.getLocation();
+                            Location pos2 = center.clone().add(radius, 0, 0);
+                            sel = new AreaSelection(center, pos2, true);
+                            selectionMap.put(uuid, sel);
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(player, "command.pos.sphere.radius-set",
+                                            MessageReplacement.replace("%radius%", String.valueOf(radius)),
+                                            MessageReplacement.replace("%center%", SuperMines.getInstance()
+                                                    .getLanguageManager().getParsedBlockLocation(player, center)));
+                        }))
+
+                .withSubcommand(new CommandAPICommand("auto-pickup")
+                        .withPermission(Constants.Permission.POS_SET)
+                        .executesPlayer((PlayerCommandExecutor) (player, args) -> {
+                            BlockListener.togglePlayerAutoPickup(player);
+                            boolean state = BlockListener.getPlayerAutoPickup(player);
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(player, state ? "command.auto-pickup.enabled" : "command.auto-pickup.disabled");
+                        }))
 
                 // Mines
                 .withSubcommand(new CommandAPICommand("create")
@@ -855,7 +897,7 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("mineId")
                                         .includeSuggestions(ArgumentSuggestions.strings(getMineList())),
-                                new DoubleArgument("weight", 0.0001),
+                                new DoubleArgument("weight", Constants.WEIGHT_MIN),
                                 new BlockArgument("block"))
                         .executes((sender, args) -> {
                             String mineId = (String) args.get("mineId");
@@ -1284,7 +1326,7 @@ public class SuperMinesCommand {
         SuperMines.getInstance().getLanguageManager().sendMessages(sender, "command.help.general");
     }
 
-    private CuboidArea getSelectedArea(Player player, String id, boolean checkExists) {
+    private AreaOfBlocks getSelectedArea(Player player, String id, boolean checkExists) {
         if (checkExists && SuperMines.getInstance().getMineManager().getMine(id) != null) {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.exists");
             return null;
@@ -1306,14 +1348,14 @@ public class SuperMinesCommand {
             return null;
         }
 
-        return sel.toCuboidArea();
+        return sel.toArea();
     }
 
     private void createMine(Player player, String id, Component displayName) {
-        CuboidArea ca = getSelectedArea(player, id, true);
-        if (ca == null) return;
+        AreaOfBlocks area = getSelectedArea(player, id, true);
+        if (area == null) return;
         Component name = displayName == null ? ComponentUtils.text(id) : displayName;
-        Mine mine = new Mine(id, name, player.getWorld(), ca, new WeightedRandomMap<>(), 0, false);
+        Mine mine = new Mine(id, name, player.getWorld(), area, new WeightedRandomMap<>(), 0, false);
         SuperMines.getInstance().getMineManager().addMine(mine);
         SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.success");
 
@@ -1326,9 +1368,9 @@ public class SuperMinesCommand {
             SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.mine-not-exists");
             return;
         }
-        CuboidArea ca = getSelectedArea(player, id, false);
-        if (ca == null) return;
-        mine.setArea(ca);
+        AreaOfBlocks area = getSelectedArea(player, id, false);
+        if (area == null) return;
+        mine.setArea(area);
         SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.redefine.success");
     }
 

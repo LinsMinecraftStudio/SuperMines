@@ -33,12 +33,16 @@ public final class PlayerData {
     @Column(name = "rank")
     private StringRankSet rank = new StringRankSet();
 
+    @Column(name = "auto_pickup")
+    private boolean autoPickup;
+
     public PlayerData() {}
 
-    public PlayerData(String playerName, UUID playerUUID, StringRankSet rank) {
+    public PlayerData(String playerName, UUID playerUUID, StringRankSet rank, boolean autoPickup) {
         this.playerName = playerName;
         this.playerUUID = playerUUID;
         this.rank = rank;
+        this.autoPickup = autoPickup;
     }
 
     public String getPlayerName() {
@@ -73,5 +77,13 @@ public final class PlayerData {
 
     public void addMinedBlocks(int amount) {
         this.minedBlocks += amount;
+    }
+
+    public boolean isAutoPickup() {
+        return autoPickup;
+    }
+
+    public void setAutoPickup(boolean autoPickup) {
+        this.autoPickup = autoPickup;
     }
 }

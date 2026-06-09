@@ -63,14 +63,21 @@ command:
     set:
       pos1: "&aPosition 1 set to &e%pos%&a."
       pos2: "&aPosition 2 set to &e%pos%&a."
+    sphere:
+      enabled: "&aSphere mode enabled. pos1 will be the center and pos2 will set the radius."
+      disabled: "&aSphere mode disabled. pos1 and pos2 will set a cuboid area."
+      radius-set: "&aSphere set! Center: &e%center%&a, Radius: &b%radius%"
   create:
     exists: "&cA mine with that id already existed!"
     success: "&aThe mine is created successfully!"
     no-selection: "&cYou have not selected a position!"
-    selection-not-finished: "&cYou have not finished selecting a cuboid area!"
+    selection-not-finished: "&cYou have not finished selecting an area!"
   fillair:
     enabled: "&aNow mine &b%mine% &awill only fill air with blocks when reset"
     disabled: "&aNow mine &b%mine% &awill do a full reset with blocks"
+  auto-pickup:
+    enabled: "&aAuto pickup enabled. Mined items will go directly to your inventory."
+    disabled: "&aAuto pickup disabled. Mined items will drop on the ground."
   redefine:
     success: "&aThe mine's area is redefined successfully!"
   remove:
@@ -178,6 +185,11 @@ gui:
       - "&7World: &a%world%"
       - "&7Reset Time: &b%regenerate_seconds%"
       - "&7Position: &efrom %pos1% to %pos2%"
+    info-sphere:
+      - "&7World: &a%world%"
+      - "&7Reset Time: &b%regenerate_seconds%"
+      - "&7Center: &e%center%"
+      - "&7Radius: &b%radius%"
   mine-management:
     title: "&7&lMine Management &8&l- &7%mine%"
     set_display_icon:
@@ -202,6 +214,12 @@ gui:
       name: "&aOnly Fill Air When Reset"
       lore:
         - "&7Click to decide whether only fill air when the mine reset"
+        - "&7Current: &b%status%"
+    auto_pickup:
+      name: "&eAuto Pickup"
+      lore:
+        - "&7Click to toggle auto pickup for this mine"
+        - "&7When enabled, mined items go directly to your inventory"
         - "&7Current: &b%status%"
     block_spawn_entries:
       name: "&bGenerated Block List"
