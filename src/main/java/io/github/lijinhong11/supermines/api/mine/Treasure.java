@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mittellib.hook.content.MinecraftContentProvider;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.item.MittelItem;
-import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 /**
  * Represents a treasure that can be dropped/executed when mining blocks in a

@@ -1,6 +1,6 @@
 package io.github.lijinhong11.supermines.managers;
 
-import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import java.util.Collection;

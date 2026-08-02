@@ -1,7 +1,7 @@
 package io.github.lijinhong11.supermines.api.data;
 
 import com.google.common.base.Preconditions;
-import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import java.util.Objects;
 import javax.annotation.ParametersAreNonnullByDefault;

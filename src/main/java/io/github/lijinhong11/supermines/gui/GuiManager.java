@@ -1,17 +1,19 @@
 package io.github.lijinhong11.supermines.gui;
 
 import com.google.common.base.Preconditions;
-import io.github.lijinhong11.mittellib.gui.MittelGUI;
-import io.github.lijinhong11.mittellib.gui.impl.ChestGUI;
-import io.github.lijinhong11.mittellib.gui.impl.PaginatedChestGUI;
-import io.github.lijinhong11.mittellib.gui.item.ButtonItem;
+import io.github.lijinhong11.mittellib.gui.inventory.MittelGUI;
+import io.github.lijinhong11.mittellib.gui.inventory.choosers.MaterialChooser;
+import io.github.lijinhong11.mittellib.gui.inventory.impl.ChestGUI;
+import io.github.lijinhong11.mittellib.gui.inventory.impl.PaginatedChestGUI;
+import io.github.lijinhong11.mittellib.gui.inventory.item.ButtonItem;
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.hook.content.MinecraftContentProvider;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
+import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.math.SphereArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
-import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.chat.ChatInput;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.Rank;
@@ -167,7 +169,7 @@ public class GuiManager {
         PaginatedChestGUI gui = buildPagedGUI(p, "gui.mine-management.block_spawn_entries.name", () -> openMineManagementGui(p, mine));
 
         gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
-            openBlockChooser(p, b -> true, chosen -> {
+            MaterialChooser.openUsableBlockChooser(p, chosen -> {
                 SuperMines.getInstance()
                         .getLanguageManager()
                         .sendMessage(
@@ -347,7 +349,7 @@ public class GuiManager {
                     return item;
                 },
                 treasure::removeMatchedBlock,
-                () -> openBlockChooser(p, b -> true, chosen -> {
+                () -> MaterialChooser.openUsableBlockChooser(p, chosen -> {
                     if (!treasure.getMatchedBlocks().contains(chosen)) {
                         treasure.addMatchedBlock(chosen);
                     }
@@ -528,20 +530,12 @@ public class GuiManager {
             } else {
                 return false;
             }
-        }, "material", callback);
-    }
-
-    private static void openBlockChooser(Player p, Predicate<PackedBlock> predicate, Runnable reopen) {
-        openBlockChooser(p, predicate, "block", chosen -> reopen.run());
-    }
-
-    private static void openBlockChooser(Player p, Predicate<PackedBlock> predicate, Consumer<PackedBlock> callback) {
-        openBlockChooser(p, predicate, "block", callback);
+        }, callback);
     }
 
     private static void openBlockChooser(
-            Player p, Predicate<PackedBlock> predicate, String titleKey, Consumer<PackedBlock> callback) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui." + titleKey + "-chooser.title", null);
+            Player p, Predicate<PackedBlock> predicate, Consumer<PackedBlock> callback) {
+        PaginatedChestGUI gui = buildPagedGUI(p, "gui.material-chooser.title", null);
 
         for (PackedBlock block : ContentProviders.getAllUsableBlocks()) {
             ItemStack item = block.toItem();
@@ -564,19 +558,19 @@ public class GuiManager {
                 MessageReplacement.replace("%world%", mine.getWorld().getName());
         MessageReplacement regenerateSeconds =
                 MessageReplacement.replace("%regenerate_seconds%", String.valueOf(mine.getRegenerateSeconds()));
-        if (mine.getArea() instanceof SphereArea sa) {
+        if (mine.getArea() instanceof SphereArea(BlockPos center1, int radius1)) {
             MessageReplacement center =
-                    MessageReplacement.replace("%center%", sa.center().toString());
+                    MessageReplacement.replace("%center%", center1.toString());
             MessageReplacement radius =
-                    MessageReplacement.replace("%radius%", String.valueOf(sa.radius()));
+                    MessageReplacement.replace("%radius%", String.valueOf(radius1));
             return SuperMines.getInstance()
                     .getLanguageManager()
                     .getMsgComponentList(p, "gui.mines.info-sphere", world, regenerateSeconds, center, radius);
-        } else if (mine.getArea() instanceof CuboidArea ca) {
+        } else if (mine.getArea() instanceof CuboidArea(BlockPos pos3, BlockPos pos4)) {
             MessageReplacement pos1 =
-                    MessageReplacement.replace("%pos1%", ca.pos1().toString());
+                    MessageReplacement.replace("%pos1%", pos3.toString());
             MessageReplacement pos2 =
-                    MessageReplacement.replace("%pos2%", ca.pos2().toString());
+                    MessageReplacement.replace("%pos2%", pos4.toString());
             return SuperMines.getInstance()
                     .getLanguageManager()
                     .getMsgComponentList(p, "gui.mines.info", world, regenerateSeconds, pos1, pos2);

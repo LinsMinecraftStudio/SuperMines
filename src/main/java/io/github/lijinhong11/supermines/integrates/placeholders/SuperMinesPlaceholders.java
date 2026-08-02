@@ -1,7 +1,7 @@
 package io.github.lijinhong11.supermines.integrates.placeholders;
 
 import io.github.lijinhong11.mittellib.hook.placeholder.UniversalPlaceholderExpansion;
-import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;

@@ -8,7 +8,7 @@ import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.math.SphereArea;
-import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.api.SuperMinesAPI;
 import io.github.lijinhong11.supermines.api.data.PlayerData;

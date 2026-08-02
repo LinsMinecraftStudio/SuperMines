@@ -5,7 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.CommandAPIArgumentType;
 import dev.jorel.commandapi.executors.CommandArguments;
-import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import net.kyori.adventure.text.Component;
 
 public class DisplayNameArgument extends Argument<Component> {

@@ -1,8 +1,8 @@
 package io.github.lijinhong11.supermines.gui;
 
-import io.github.lijinhong11.mittellib.gui.MittelGUI;
-import io.github.lijinhong11.mittellib.gui.impl.PaginatedChestGUI;
-import io.github.lijinhong11.mittellib.gui.item.ButtonItem;
+import io.github.lijinhong11.mittellib.gui.inventory.MittelGUI;
+import io.github.lijinhong11.mittellib.gui.inventory.impl.PaginatedChestGUI;
+import io.github.lijinhong11.mittellib.gui.inventory.item.ButtonItem;
 import io.github.lijinhong11.supermines.utils.Constants;
 import java.util.Collection;
 import java.util.function.Consumer;

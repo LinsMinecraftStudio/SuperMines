@@ -24,7 +24,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.46.1</version>
+                <version>3.8.0</version>
                 <configuration>
                     <java>
                         <importOrder/>
@@ -110,19 +110,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>dev.folia</groupId>
-            <artifactId>folia-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>[26.1.2.build.+, 26.2)</version>
             <scope>provided</scope>
         </dependency>
 
         <!-- Libraries -->
-        <dependency>
-            <groupId>io.github.lijinhong11</groupId>
-            <artifactId>MDatabase</artifactId>
-            <version>1.1.2</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>com.tcoded</groupId>
             <artifactId>FoliaLib</artifactId>
@@ -132,7 +126,7 @@
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MittelLib</artifactId>
-            <version>1.0.8</version>
+            <version>1.2.2</version>
             <scope>provided</scope>
         </dependency>
         <!-- CommandAPI -->

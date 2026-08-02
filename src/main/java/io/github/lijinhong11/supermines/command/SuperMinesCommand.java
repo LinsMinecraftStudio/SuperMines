@@ -7,7 +7,7 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
-import io.github.lijinhong11.mittellib.utils.ComponentUtils;
+import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
