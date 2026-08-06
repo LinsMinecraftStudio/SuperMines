@@ -228,7 +228,93 @@ gui:
       each_lore:
         - "&7权重: &e%weight%"
         - "&7左键修改权重"
+        - "&7Shift+左键编辑生成条件"
         - "&7右键移除"
+      conditions:
+        title: "&d生成条件"
+        chooser_title: "&d选择条件类型"
+        each_lore:
+          - "&7左键编辑"
+          - "&7右键移除"
+        types:
+          add_lore:
+            - "&7点击添加此条件"
+          chance:
+            name: "&b概率"
+          surface:
+            name: "&b表层"
+          mineY:
+            name: "&b矿内Y"
+          border:
+            name: "&b边界"
+          biome:
+            name: "&b群系"
+          and:
+            name: "&a全部满足 (AND)"
+          or:
+            name: "&6任一满足 (OR)"
+          not:
+            name: "&c取反 (NOT)"
+        description:
+          chance:
+            - "&7概率: &b%chance%"
+          surface:
+            - "&7深度: &b%depth%"
+          mineY:
+            - "&7Y: &b%min%&7 ~ &b%max%"
+          border:
+            - "&7模式: &b%mode%"
+          biome:
+            - "&7群系: &b%biomes%"
+          and:
+            - "&7子条件数: &b%amount%"
+          or:
+            - "&7子条件数: &b%amount%"
+          not:
+            - "&7内部条件: &b%inner%"
+        leaf:
+          title: "&d条件: &b%type%"
+          chance:
+            name: "&b概率"
+            lore:
+              - "&7当前: &e%value%"
+              - "&7点击设置"
+            prompt: "&e请在聊天中输入概率 (0 到 1): &b(输入 &6##CANCEL &b取消)"
+          surface:
+            name: "&b表层深度"
+            lore:
+              - "&7当前: &e%value%"
+              - "&7点击设置"
+            prompt: "&e请在聊天中输入表层深度: &b(输入 &6##CANCEL &b取消)"
+          mineY_min:
+            name: "&b最小矿内Y"
+            lore:
+              - "&7当前: &e%value%"
+              - "&7点击设置"
+            prompt: "&e请在聊天中输入最小Y (自矿区底部起): &b(输入 &6##CANCEL &b取消)"
+          mineY_max:
+            name: "&b最大矿内Y"
+            lore:
+              - "&7当前: &e%value%"
+              - "&7点击设置"
+            prompt: "&e请在聊天中输入最大Y (自矿区底部起): &b(输入 &6##CANCEL &b取消)"
+          border:
+            name: "&b边界模式"
+            lore:
+              - "&7当前: &e%value%"
+              - "&7点击切换 RIM / CORE"
+          biome:
+            name: "&b群系"
+            lore:
+              - "&7当前: &e%value%"
+              - "&7点击设置"
+            prompt: "&e请在聊天中输入用逗号分隔的群系名称: &b(输入 &6##CANCEL &b取消)"
+        and:
+          title: "&a全部满足 (AND)"
+        or:
+          title: "&6任一满足 (OR)"
+        not:
+          title: "&c取反 (NOT)"
   treasures:
     title: "&e&l宝藏"
     info:

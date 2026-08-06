@@ -228,7 +228,93 @@ gui:
       each_lore:
         - "&7Weight: &e%weight%"
         - "&7Left-click to change weight"
+        - "&7Shift+Left-click to edit generation conditions"
         - "&7Right-click to remove"
+      conditions:
+        title: "&dGeneration Conditions"
+        chooser_title: "&dChoose a condition type"
+        each_lore:
+          - "&7Left-click to edit"
+          - "&7Right-click to remove"
+        types:
+          add_lore:
+            - "&7Click to add this condition"
+          chance:
+            name: "&bChance"
+          surface:
+            name: "&bSurface"
+          mineY:
+            name: "&bMine Y"
+          border:
+            name: "&bBorder"
+          biome:
+            name: "&bBiome"
+          and:
+            name: "&aAll (AND)"
+          or:
+            name: "&6Any (OR)"
+          not:
+            name: "&cNot (Inverse)"
+        description:
+          chance:
+            - "&7Chance: &b%chance%"
+          surface:
+            - "&7Depth: &b%depth%"
+          mineY:
+            - "&7Y: &b%min%&7 ~ &b%max%"
+          border:
+            - "&7Mode: &b%mode%"
+          biome:
+            - "&7Biomes: &b%biomes%"
+          and:
+            - "&7Sub-conditions: &b%amount%"
+          or:
+            - "&7Sub-conditions: &b%amount%"
+          not:
+            - "&7Inner: &b%inner%"
+        leaf:
+          title: "&dCondition: &b%type%"
+          chance:
+            name: "&bChance"
+            lore:
+              - "&7Current: &e%value%"
+              - "&7Click to set"
+            prompt: "&eEnter the chance (0 to 1) in the chat: &b(type &6##CANCEL &bto cancel)"
+          surface:
+            name: "&bSurface Depth"
+            lore:
+              - "&7Current: &e%value%"
+              - "&7Click to set"
+            prompt: "&eEnter the surface depth in the chat: &b(type &6##CANCEL &bto cancel)"
+          mineY_min:
+            name: "&bMin Y In Mine"
+            lore:
+              - "&7Current: &e%value%"
+              - "&7Click to set"
+            prompt: "&eEnter the min Y (from the bottom of the mine) in the chat: &b(type &6##CANCEL &bto cancel)"
+          mineY_max:
+            name: "&bMax Y In Mine"
+            lore:
+              - "&7Current: &e%value%"
+              - "&7Click to set"
+            prompt: "&eEnter the max Y (from the bottom of the mine) in the chat: &b(type &6##CANCEL &bto cancel)"
+          border:
+            name: "&bBorder Mode"
+            lore:
+              - "&7Current: &e%value%"
+              - "&7Click to toggle RIM / CORE"
+          biome:
+            name: "&bBiomes"
+            lore:
+              - "&7Current: &e%value%"
+              - "&7Click to set"
+            prompt: "&eEnter biome names separated by commas in the chat: &b(type &6##CANCEL &bto cancel)"
+        and:
+          title: "&aAll (AND)"
+        or:
+          title: "&6Any (OR)"
+        not:
+          title: "&cNot (Inverse)"
   treasures:
     title: "&e&lTreasures"
     info:

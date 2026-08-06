@@ -14,6 +14,7 @@ import io.github.lijinhong11.supermines.api.SuperMinesAPI;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
+import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.managers.database.StringRankSet;
 import io.github.lijinhong11.supermines.utils.Constants;
 import java.util.*;
@@ -35,7 +36,7 @@ public final class Mine implements Identified {
     private final String id;
 
     private final World world;
-    private final WeightedRandomMap<PackedBlock> blockSpawnEntries;
+    private final WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries;
 
     private final List<Treasure> treasures;
     private final Set<String> allowedRankIds;
@@ -59,7 +60,7 @@ public final class Mine implements Identified {
             Component displayName,
             World world,
             AreaOfBlocks area,
-            WeightedRandomMap<PackedBlock> blockSpawnEntries,
+            WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
         this(
@@ -80,7 +81,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             AreaOfBlocks area,
-            WeightedRandomMap<PackedBlock> blockSpawnEntries,
+            WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate) {
         this(
@@ -103,7 +104,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             AreaOfBlocks area,
-            WeightedRandomMap<PackedBlock> blockSpawnEntries,
+            WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -129,7 +130,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             AreaOfBlocks area,
-            WeightedRandomMap<PackedBlock> blockSpawnEntries,
+            WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -158,7 +159,7 @@ public final class Mine implements Identified {
             Material displayIcon,
             World world,
             AreaOfBlocks area,
-            WeightedRandomMap<PackedBlock> blockSpawnEntries,
+            WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries,
             int regenerateSeconds,
             boolean onlyFillAirWhenRegenerate,
             List<Treasure> treasures,
@@ -167,8 +168,7 @@ public final class Mine implements Identified {
             @Nullable Location tpLoc,
             Set<Integer> warningSeconds) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "Mine ID cannot be null or empty");
-        Preconditions.checkArgument(
-                id.matches(Constants.ID_PATTERN), "Mine ID cannot contain special characters");
+        Preconditions.checkArgument(id.matches(Constants.ID_PATTERN), "Mine ID cannot contain special characters");
 
         this.id = id;
         this.displayName = displayName;
@@ -241,7 +241,7 @@ public final class Mine implements Identified {
     public void addBlockSpawnEntry(@NotNull Material material, double weight) {
         Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
 
-        blockSpawnEntries.put(new MinecraftContentProvider.PackedMinecraftBlock(material), weight);
+        blockSpawnEntries.put(new BlockSpawnEntry(new MinecraftContentProvider.PackedMinecraftBlock(material)), weight);
     }
 
     /**
@@ -254,7 +254,7 @@ public final class Mine implements Identified {
     public void addBlockSpawnEntry(@NotNull PackedBlock block, double weight) {
         Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
 
-        blockSpawnEntries.put(block, weight);
+        blockSpawnEntries.put(new BlockSpawnEntry(block), weight);
     }
 
     /**
@@ -262,7 +262,7 @@ public final class Mine implements Identified {
      *
      * @param blockSpawnEntries the map of blocks to their spawn chances
      */
-    public void addBlockSpawnEntries(WeightedRandomMap<PackedBlock> blockSpawnEntries) {
+    public void addBlockSpawnEntries(WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries) {
         this.blockSpawnEntries.putAll(blockSpawnEntries);
     }
 
@@ -272,7 +272,7 @@ public final class Mine implements Identified {
      * @param material the material to remove
      */
     public void removeBlockSpawnEntry(@NotNull Material material) {
-        blockSpawnEntries.remove(new MinecraftContentProvider.PackedMinecraftBlock(material));
+        removeBlockSpawnEntry(new MinecraftContentProvider.PackedMinecraftBlock(material));
     }
 
     /**
@@ -281,7 +281,10 @@ public final class Mine implements Identified {
      * @param block the addon block to remove
      */
     public void removeBlockSpawnEntry(@NotNull PackedBlock block) {
-        blockSpawnEntries.remove(block);
+        blockSpawnEntries.keySet().stream()
+                .filter(entry -> entry.getId().equals(block.getId()))
+                .findFirst()
+                .ifPresent(blockSpawnEntries::remove);
     }
 
     /**
@@ -290,7 +293,7 @@ public final class Mine implements Identified {
      * @param blocks the list of blocks to remove
      */
     public void removeBlockSpawnEntries(List<PackedBlock> blocks) {
-        blocks.forEach(blockSpawnEntries::remove);
+        blocks.forEach(this::removeBlockSpawnEntry);
     }
 
     /**
@@ -468,7 +471,7 @@ public final class Mine implements Identified {
      *
      * @return a map of blocks to their spawn weights
      */
-    public WeightedRandomMap<PackedBlock> getBlockSpawnEntries() {
+    public WeightedRandomMap<BlockSpawnEntry> getBlockSpawnEntries() {
         return blockSpawnEntries;
     }
 
@@ -613,13 +616,17 @@ public final class Mine implements Identified {
 
         for (int dx = 0; dx <= 5; dx++) {
             for (int dz = 0; dz <= 5; dz++) {
-                for (int signX : new int[]{-1, 1}) {
-                    for (int signZ : new int[]{-1, 1}) {
+                for (int signX : new int[] {-1, 1}) {
+                    for (int signZ : new int[] {-1, 1}) {
                         int x = centerX + signX * dx;
                         int z = centerZ + signZ * dz;
                         Location feet = new Location(world, x + 0.5, topY + 1, z + 0.5);
                         if (feet.getBlock().getType().isAir()
-                                && feet.clone().add(0, 1, 0).getBlock().getType().isAir()) {
+                                && feet.clone()
+                                        .add(0, 1, 0)
+                                        .getBlock()
+                                        .getType()
+                                        .isAir()) {
                             return feet;
                         }
                     }

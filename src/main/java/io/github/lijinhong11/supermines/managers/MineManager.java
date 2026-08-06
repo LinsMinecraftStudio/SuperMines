@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.managers;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import io.github.lijinhong11.mittellib.configuration.ReadWriteObject;
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
@@ -10,8 +11,11 @@ import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.math.SphereArea;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
+import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
+import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
+import io.github.lijinhong11.supermines.api.mine.generation.conditions.ConditionLoader;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -92,7 +96,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
             area = new CuboidArea(blockPos1, blockPos2);
         }
 
-        WeightedRandomMap<PackedBlock> blockSpawnEntries = new WeightedRandomMap<>();
+        WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries = new WeightedRandomMap<>();
 
         ConfigurationSection blockSpawn = section.getConfigurationSection("blockSpawnEntries");
         if (blockSpawn != null) {
@@ -102,7 +106,25 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
                     continue;
                 }
 
-                blockSpawnEntries.put(block, blockSpawn.getDouble(m, 1));
+                ConfigurationSection entrySection = blockSpawn.getConfigurationSection(m);
+                if (entrySection == null) {
+                    blockSpawnEntries.put(new BlockSpawnEntry(block), blockSpawn.getDouble(m, 1));
+                    continue;
+                }
+
+                double weight = entrySection.getDouble("weight", 1);
+                Set<IGenerateCondition> conditions = new HashSet<>();
+                ConfigurationSection condSection = entrySection.getConfigurationSection("conditions");
+                if (condSection != null) {
+                    for (String key : condSection.getKeys(false)) {
+                        ConfigurationSection cond = condSection.getConfigurationSection(key);
+                        if (cond != null) {
+                            conditions.add(ConditionLoader.deserialize(cond));
+                        }
+                    }
+                }
+
+                blockSpawnEntries.put(new BlockSpawnEntry(block, conditions), weight);
             }
         }
 
@@ -169,15 +191,25 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         }
         section.set("treasures", treasures);
 
-        Map<String, Double> blockSpawnEntries = new HashMap<>();
-        for (Map.Entry<PackedBlock, Double> entry :
-                object.getBlockSpawnEntries().object2DoubleEntrySet()) {
-            blockSpawnEntries.put(entry.getKey().getId(), entry.getValue());
-        }
-
         ConfigurationSection blockSpawn = section.createSection("blockSpawnEntries");
-        for (Map.Entry<String, Double> entry : blockSpawnEntries.entrySet()) {
-            blockSpawn.set(entry.getKey(), entry.getValue());
+        for (Map.Entry<BlockSpawnEntry, Double> entry :
+                object.getBlockSpawnEntries().object2DoubleEntrySet()) {
+            BlockSpawnEntry spawnEntry = entry.getKey();
+            ConfigurationSection child = blockSpawn.createSection(spawnEntry.getId());
+            child.set("weight", entry.getValue());
+
+            Set<IGenerateCondition> conditions = spawnEntry.getConditions();
+            if (!conditions.isEmpty()) {
+                ConfigurationSection condSection = child.createSection("conditions");
+                int i = 0;
+                for (IGenerateCondition condition : conditions) {
+                    ConfigurationSection cond = condSection.createSection(String.valueOf(i++));
+                    cond.set("condition", condition.key());
+                    if (condition instanceof ReadWriteObject rw) {
+                        rw.write(cond);
+                    }
+                }
+            }
         }
 
         if (object.getTeleportLocation() != null) {

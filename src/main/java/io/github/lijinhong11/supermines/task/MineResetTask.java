@@ -9,6 +9,7 @@ import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineResetEvent;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ class MineResetTask extends AbstractTask {
 
     private void doReset() {
         List<BlockPos> blockPosList = mine.getArea().asPosList();
-        WeightedRandomMap<PackedBlock> blockSpawnEntries = mine.getBlockSpawnEntries();
+        WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries = mine.getBlockSpawnEntries();
         Map<BlockPos, PackedBlock> generated = new HashMap<>();
         List<BlockPos> toDestroy = new ArrayList<>();
 
@@ -66,7 +67,11 @@ class MineResetTask extends AbstractTask {
             Material material = loc.getBlock().getType();
             if (mine.isOnlyFillAirWhenRegenerate() && !material.isAir()) continue;
 
-            PackedBlock selected = blockSpawnEntries.randomOne();
+            BlockSpawnEntry selected = selectEntry(blockSpawnEntries, pos);
+            if (selected == null) {
+                selected = blockSpawnEntries.randomOne();
+            }
+
             generated.put(pos, selected);
             if (!material.isAir()) {
                 toDestroy.add(pos);
@@ -79,6 +84,17 @@ class MineResetTask extends AbstractTask {
         }
 
         runPlacePhase(generated);
+    }
+
+    private BlockSpawnEntry selectEntry(WeightedRandomMap<BlockSpawnEntry> entries, BlockPos pos) {
+        WeightedRandomMap<BlockSpawnEntry> passing = new WeightedRandomMap<>();
+        for (BlockSpawnEntry entry : entries.keySet()) {
+            if (entry.canGenerate(mine, pos)) {
+                passing.put(entry, entries.getWeight(entry));
+            }
+        }
+
+        return passing.isEmpty() ? null : passing.randomOne();
     }
 
     private void runDestroyPhase(List<BlockPos> blockPosList, Map<BlockPos, PackedBlock> generated) {
@@ -129,7 +145,8 @@ class MineResetTask extends AbstractTask {
         boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (mine.isPlayerInMine(p)) {
-                p.teleportAsync(mine.getTeleportLocation() != null ? mine.getTeleportLocation() : mine.getSafeTopLocation());
+                p.teleportAsync(
+                        mine.getTeleportLocation() != null ? mine.getTeleportLocation() : mine.getSafeTopLocation());
             }
 
             if (broadcast || mine.isPlayerInMine(p)) {

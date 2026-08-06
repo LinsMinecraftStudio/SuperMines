@@ -126,7 +126,7 @@
         <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MittelLib</artifactId>
-            <version>1.2.2</version>
+            <version>1.2.6</version>
             <scope>provided</scope>
         </dependency>
         <!-- CommandAPI -->

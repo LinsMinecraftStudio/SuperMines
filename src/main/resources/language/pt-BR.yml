@@ -227,8 +227,94 @@ gui:
       add_prompt: "&eDigite o peso do bloco: &b(digite &6##CANCEL &bpara cancelar)"
       each_lore:
         - "&7Peso: &e%weight%"
-        - "&7Clique esquerdo para alterar peso"
+        - "&7Clique esquerdo para alterar o peso"
+        - "&7Shift+Clique esquerdo para editar condições de geração"
         - "&7Clique direito para remover"
+      conditions:
+        title: "&dCondições de Geração"
+        chooser_title: "&dEscolha um tipo de condição"
+        each_lore:
+          - "&7Clique esquerdo para editar"
+          - "&7Clique direito para remover"
+        types:
+          add_lore:
+            - "&7Clique para adicionar esta condição"
+          chance:
+            name: "&bChance"
+          surface:
+            name: "&bSuperfície"
+          mineY:
+            name: "&bY da Mina"
+          border:
+            name: "&bBorda"
+          biome:
+            name: "&bBioma"
+          and:
+            name: "&aTodos (E)"
+          or:
+            name: "&6Qualquer (OU)"
+          not:
+            name: "&cNegação (NÃO)"
+        description:
+          chance:
+            - "&7Chance: &b%chance%"
+          surface:
+            - "&7Profundidade: &b%depth%"
+          mineY:
+            - "&7Y: &b%min%&7 ~ &b%max%"
+          border:
+            - "&7Modo: &b%mode%"
+          biome:
+            - "&7Biomas: &b%biomes%"
+          and:
+            - "&7Sub-condições: &b%amount%"
+          or:
+            - "&7Sub-condições: &b%amount%"
+          not:
+            - "&7Interno: &b%inner%"
+        leaf:
+          title: "&dCondição: &b%type%"
+          chance:
+            name: "&bChance"
+            lore:
+              - "&7Atual: &e%value%"
+              - "&7Clique para definir"
+            prompt: "&eDigite a chance (0 a 1) no chat: &b(digite &6##CANCEL &bpara cancelar)"
+          surface:
+            name: "&bProfundidade da Superfície"
+            lore:
+              - "&7Atual: &e%value%"
+              - "&7Clique para definir"
+            prompt: "&eDigite a profundidade da superfície no chat: &b(digite &6##CANCEL &bpara cancelar)"
+          mineY_min:
+            name: "&bY Mínimo da Mina"
+            lore:
+              - "&7Atual: &e%value%"
+              - "&7Clique para definir"
+            prompt: "&eDigite o Y mínimo (do fundo da mina) no chat: &b(digite &6##CANCEL &bpara cancelar)"
+          mineY_max:
+            name: "&bY Máximo da Mina"
+            lore:
+              - "&7Atual: &e%value%"
+              - "&7Clique para definir"
+            prompt: "&eDigite o Y máximo (do fundo da mina) no chat: &b(digite &6##CANCEL &bpara cancelar)"
+          border:
+            name: "&bModo da Borda"
+            lore:
+              - "&7Atual: &e%value%"
+              - "&7Clique para alternar RIM / CORE"
+          biome:
+            name: "&bBiomas"
+            lore:
+              - "&7Atual: &e%value%"
+              - "&7Clique para definir"
+            prompt: "&eDigite nomes de biomas separados por vírgula no chat: &b(digite &6##CANCEL &bpara cancelar)"
+        and:
+          title: "&aTodos (E)"
+        or:
+          title: "&6Qualquer (OU)"
+        not:
+          title: "&cNegação (NÃO)"
   treasures:
     title: "&e&lTesouros"
     info:
