@@ -25,7 +25,6 @@ import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.AndGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.BiomeGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.BorderGenerateCondition;
-import io.github.lijinhong11.supermines.api.mine.generation.conditions.ChanceGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.MineYGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.NotGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.OrGenerateCondition;
@@ -663,14 +662,13 @@ public class GuiManager {
 
     private static IGenerateCondition createDefaultCondition(String typeKey) {
         return switch (typeKey) {
-            case "chance" -> new ChanceGenerateCondition(0.5);
             case "surface" -> new SurfaceGenerateCondition(1);
             case "mineY" -> new MineYGenerateCondition(0, 0);
             case "border" -> new BorderGenerateCondition(BorderGenerateCondition.Mode.RIM);
             case "biome" -> new BiomeGenerateCondition(List.of("PLAINS"));
             case "and" -> new AndGenerateCondition(new ArrayList<>());
             case "or" -> new OrGenerateCondition(new ArrayList<>());
-            case "not" -> new NotGenerateCondition(new ChanceGenerateCondition(0.5));
+            case "not" -> new NotGenerateCondition(new AndGenerateCondition(new ArrayList<>()));
             default -> throw new IllegalArgumentException("Unknown condition type: " + typeKey);
         };
     }
@@ -682,8 +680,8 @@ public class GuiManager {
             IGenerateCondition node,
             Consumer<IGenerateCondition> onSave,
             Runnable back) {
-        if (node instanceof AndGenerateCondition and) {
-            openCompositeEditor(
+        switch (node) {
+            case AndGenerateCondition and -> openCompositeEditor(
                     p,
                     mine,
                     entry,
@@ -692,8 +690,7 @@ public class GuiManager {
                     AndGenerateCondition::new,
                     new ArrayList<>(and.getConditions()),
                     back);
-        } else if (node instanceof OrGenerateCondition or) {
-            openCompositeEditor(
+            case OrGenerateCondition or -> openCompositeEditor(
                     p,
                     mine,
                     entry,
@@ -702,10 +699,8 @@ public class GuiManager {
                     OrGenerateCondition::new,
                     new ArrayList<>(or.getConditions()),
                     back);
-        } else if (node instanceof NotGenerateCondition not) {
-            openNotEditor(p, mine, entry, not, onSave, back);
-        } else {
-            openLeafEditor(p, mine, entry, node, onSave, back);
+            case NotGenerateCondition not -> openNotEditor(p, mine, entry, not, onSave, back);
+            case null, default -> openLeafEditor(p, mine, entry, node, onSave, back);
         }
     }
 
@@ -856,34 +851,7 @@ public class GuiManager {
             return false;
         }));
 
-        if (node instanceof ChanceGenerateCondition chance) {
-            gui.putItem(
-                    slot(3, 5), ButtonItem.clickable(getMessagedLeafItem(p, "chance", chance.getChance()), (g, e) -> {
-                        p.closeInventory();
-                        SuperMines.getInstance()
-                                .getLanguageManager()
-                                .sendMessage(
-                                        p,
-                                        "gui.mine-management.block_spawn_entries.conditions.leaf.chance" + ".prompt");
-                        handleDoubleInput(
-                                p,
-                                0,
-                                result -> {
-                                    if (result > 1) {
-                                        SuperMines.getInstance()
-                                                .getLanguageManager()
-                                                .sendMessage(p, "gui.input.invalid-number");
-                                        openLeafEditor(p, mine, entry, node, onSave, back);
-                                        return;
-                                    }
-                                    ChanceGenerateCondition updated = new ChanceGenerateCondition(result);
-                                    onSave.accept(updated);
-                                    openLeafEditor(p, mine, entry, updated, onSave, back);
-                                },
-                                "gui.input.invalid-number");
-                        return false;
-                    }));
-        } else if (node instanceof SurfaceGenerateCondition surface) {
+        if (node instanceof SurfaceGenerateCondition surface) {
             gui.putItem(
                     slot(3, 5), ButtonItem.clickable(getMessagedLeafItem(p, "surface", surface.getDepth()), (g, e) -> {
                         p.closeInventory();
@@ -1045,9 +1013,7 @@ public class GuiManager {
 
     private static MessageReplacement[] getConditionReplacements(IGenerateCondition condition) {
         List<MessageReplacement> result = new ArrayList<>();
-        if (condition instanceof ChanceGenerateCondition c) {
-            result.add(MessageReplacement.replace("%chance%", String.valueOf(c.getChance())));
-        } else if (condition instanceof SurfaceGenerateCondition s) {
+        if (condition instanceof SurfaceGenerateCondition s) {
             result.add(MessageReplacement.replace("%depth%", String.valueOf(s.getDepth())));
         } else if (condition instanceof MineYGenerateCondition m) {
             result.add(MessageReplacement.replace("%min%", String.valueOf(m.getMinYInMine())));

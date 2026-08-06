@@ -254,7 +254,8 @@ public final class Mine implements Identified {
     public void addBlockSpawnEntry(@NotNull PackedBlock block, double weight) {
         Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
 
-        blockSpawnEntries.put(new BlockSpawnEntry(block), weight);
+        BlockSpawnEntry entry = block instanceof BlockSpawnEntry b ? b : new BlockSpawnEntry(block);
+        blockSpawnEntries.put(entry, weight);
     }
 
     /**

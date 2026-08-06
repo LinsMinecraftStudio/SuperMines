@@ -239,8 +239,6 @@ gui:
         types:
           add_lore:
             - "&7点击添加此条件"
-          chance:
-            name: "&b概率"
           surface:
             name: "&b表层"
           mineY:
@@ -256,8 +254,6 @@ gui:
           not:
             name: "&c取反 (NOT)"
         description:
-          chance:
-            - "&7概率: &b%chance%"
           surface:
             - "&7深度: &b%depth%"
           mineY:
@@ -274,12 +270,6 @@ gui:
             - "&7内部条件: &b%inner%"
         leaf:
           title: "&d条件: &b%type%"
-          chance:
-            name: "&b概率"
-            lore:
-              - "&7当前: &e%value%"
-              - "&7点击设置"
-            prompt: "&e请在聊天中输入概率 (0 到 1): &b(输入 &6##CANCEL &b取消)"
           surface:
             name: "&b表层深度"
             lore:

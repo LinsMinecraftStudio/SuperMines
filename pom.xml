@@ -6,7 +6,7 @@
 
     <groupId>io.github.lijinhong11</groupId>
     <artifactId>SuperMines</artifactId>
-    <version>1.5.1</version>
+    <version>1.6.0</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -44,10 +44,6 @@
                         <relocation>
                             <pattern>com.tcoded.folialib</pattern>
                             <shadedPattern>io.github.lijinhong11.supermines.libraries.folialib</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io.github.lijinhong11.mdatabase</pattern>
-                            <shadedPattern>io.github.lijinhong11.supermines.libraries.database</shadedPattern>
                         </relocation>
                     </relocations>
                     <filters>
@@ -133,7 +129,7 @@
         <dependency>
             <groupId>dev.jorel</groupId>
             <artifactId>commandapi-bukkit-core</artifactId>
-            <version>11.1.0</version>
+            <version>12.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

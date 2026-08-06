@@ -239,8 +239,6 @@ gui:
         types:
           add_lore:
             - "&7Clique para adicionar esta condição"
-          chance:
-            name: "&bChance"
           surface:
             name: "&bSuperfície"
           mineY:
@@ -256,8 +254,6 @@ gui:
           not:
             name: "&cNegação (NÃO)"
         description:
-          chance:
-            - "&7Chance: &b%chance%"
           surface:
             - "&7Profundidade: &b%depth%"
           mineY:
@@ -274,12 +270,6 @@ gui:
             - "&7Interno: &b%inner%"
         leaf:
           title: "&dCondição: &b%type%"
-          chance:
-            name: "&bChance"
-            lore:
-              - "&7Atual: &e%value%"
-              - "&7Clique para definir"
-            prompt: "&eDigite a chance (0 a 1) no chat: &b(digite &6##CANCEL &bpara cancelar)"
           surface:
             name: "&bProfundidade da Superfície"
             lore:

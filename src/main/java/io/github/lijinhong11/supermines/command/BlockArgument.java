@@ -11,7 +11,7 @@ import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 
 public class BlockArgument extends Argument<PackedBlock> {
     public BlockArgument(String nodeName) {
-        super(nodeName, StringArgumentType.greedyString());
+        super(nodeName, StringArgumentType::greedyString);
 
         includeSuggestions(ArgumentSuggestions.strings(ContentProviders.getBlockSuggestions()));
     }

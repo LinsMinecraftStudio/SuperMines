@@ -18,7 +18,6 @@ public final class ConditionLoader {
     static {
         LOADERS.put("mineY", MineYGenerateCondition::new);
         LOADERS.put("placeholder", PlaceholderGenerateCondition::new);
-        LOADERS.put("chance", ChanceGenerateCondition::new);
         LOADERS.put("surface", SurfaceGenerateCondition::new);
         LOADERS.put("border", BorderGenerateCondition::new);
         LOADERS.put("biome", BiomeGenerateCondition::new);

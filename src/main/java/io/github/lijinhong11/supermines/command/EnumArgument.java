@@ -14,7 +14,7 @@ public class EnumArgument<E extends Enum<E>> extends Argument<E> {
     private final Class<E> enumClass;
 
     public EnumArgument(String argName, Class<E> enumClass) {
-        super(argName, StringArgumentType.string());
+        super(argName, StringArgumentType::string);
 
         this.enumClass = enumClass;
 

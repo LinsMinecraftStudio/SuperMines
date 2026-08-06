@@ -10,7 +10,7 @@ import net.kyori.adventure.text.Component;
 
 public class DisplayNameArgument extends Argument<Component> {
     public DisplayNameArgument() {
-        super("displayName", StringArgumentType.greedyString());
+        super("displayName", StringArgumentType::greedyString);
     }
 
     @Override
