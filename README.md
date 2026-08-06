@@ -3,8 +3,18 @@
 
 <a href="https://hangar.papermc.io/lijinhong11/SuperMines"><img alt="hangar" height="40" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg"></a>
 
-A powerful, easy-to-use, and free-to-use mine plugin for Paper servers. 
+A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 </div>
+
+[简体中文](README_CN.md)
+
+## Why SuperMines
+
+- **Always full, always fresh** — mines are always completely filled after every reset; regeneration time is fully customizable, so players always have something to mine
+- **Every block, finely tuned** — ItemsAdder / Oraxen / Nexo / CraftEngine custom block support; ore placement is decided by generation conditions: surface layer, random chance, in-mine Y range, mine border, or biomes — chain them freely
+- **Mining that hooks players** — auto-pickup drops items straight into your inventory; a rank & XP system built on blocks broken (with optional mcMMO / AuraSkills XP), giving upgrades a clear goal
+- **Manage at a glance** — a full GUI to edit mines, and one command creates a spherical mine
+- **Plug & play** — 4 languages auto-matched to each player's client; Folia-friendly, stays smooth under load
 
 ## Features
 * MiniPlaceholders/PlaceholdersAPI support
@@ -25,65 +35,20 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 * GUI to edit mines
 * More coming soon…
 
-## Generation Conditions
-Every mine's fill table (`blockSpawnEntries`) can attach a set of *generation conditions* to each block. On a mine reset, every coordinate is filled only with a block whose conditions all pass, and the winner is chosen by weight among the passing blocks. If no block passes for a coordinate, a random block is picked as a fallback so a mine is **always completely filled**.
-
-Configure them under a mine's `blockSpawnEntries`:
-
-```yaml
-blockSpawnEntries:
-  minecraft:stone:
-    weight: 5
-  minecraft:iron_ore:
-    weight: 1
-    conditions:
-      "0":
-        condition: surface
-        depth: 3
-      "1":
-        condition: chance
-        chance: 0.5
-```
-
-### Built-in Conditions
-Each condition section starts with a `condition` key that picks its type.
-
-- `chance` — the block spawns with the given probability `chance` (0–1). Great for sparse/shiny ores.
-- `surface` — the block only appears within `depth` layers of the mine's top surface.
-- `mineY` — the block only appears inside the in-mine Y band `minYInMine` / `maxYInMine` (relative to the mine's bottom).
-- `border` — the block only appears on the mine's rim (`mode: RIM`, default) or on its interior (`mode: CORE`).
-- `biome` — the block only appears where the target's world biome is in the `biomes` list (e.g. `PLAINS`, `FOREST`).
-
-### Composite Conditions
-- `and` — requires **all** nested `conditions` to pass.
-- `or` — passes if **any** nested condition passes.
-- `not` — the inverse of a single `inner` condition.
-
-```yaml
-condition: and
-conditions:
-  - condition: surface
-    depth: 2
-  - condition: not
-    inner:
-      condition: border
-      mode: RIM
-```
-
-Conditions nest arbitrarily, so complex layouts (e.g. diamond only on the surface rim of a desert mine) are just a few lines of YAML.
-
 ## Road Map
 1. particles???
 
 ## Screenshots
-![](/media/command_help.png)
-![](/media/mine.png)
+
+![image.png](https://www.nexusmc.cn/uploads/images/i9Fj9queNK_gxqUdzX-yO.webp)
+
+![image.png](https://www.nexusmc.cn/uploads/images/LALclEe1BsYf72To81QWy.webp)
+
+![2026-06-10_00.22.08.png](https://www.nexusmc.cn/uploads/images/2c1yaj_pV9PQNe65R87y2.webp)
 
 ## Downloads
-[Hangar](https://hangar.papermc.io/lijinhong11/SuperMines)  
-[Modrinth](https://modrinth.com/plugin/supermines)
+
+[Hangar](https://hangar.papermc.io/lijinhong11/SuperMines) · [Modrinth](https://modrinth.com/plugin/supermines)
 
 ## API
-See [the API class](./src/main/java/io/github/lijinhong11/supermines/api/SuperMinesAPI.java)
-
-For registering generation conditions, use  `ConditionLoader.register(key, loader)`.
+See [the API class](https://github.com/LinsMinecraftStudio/SuperMines/blob/main/src/main/java/io/github/lijinhong11/supermines/api/SuperMinesAPI.java)
