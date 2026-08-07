@@ -1,6 +1,5 @@
 package io.github.lijinhong11.supermines.task;
 
-import com.tcoded.folialib.wrapper.task.WrappedTask;
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.BlockPos;
@@ -17,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,7 +43,7 @@ class MineResetTask extends AbstractTask {
     }
 
     @Override
-    public void run(WrappedTask wrappedTask) {
+    public void run(ScheduledTask ScheduledTask) {
         if (!manualReset && mine.getRegenerateSeconds() < 1) {
             cancel();
             return;

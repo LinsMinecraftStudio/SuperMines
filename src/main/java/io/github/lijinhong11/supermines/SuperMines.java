@@ -1,6 +1,5 @@
 package io.github.lijinhong11.supermines;
 
-import com.tcoded.folialib.FoliaLib;
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
 import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
@@ -38,7 +37,6 @@ public class SuperMines extends JavaPlugin {
 
     private SyncLanguageManager languageManager;
 
-    private FoliaLib foliaLibImpl;
     private TaskMaker taskMaker;
 
     public static SuperMines getInstance() {
@@ -48,7 +46,6 @@ public class SuperMines extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        foliaLibImpl = new FoliaLib(this);
 
         ConfigFileUtils.completeFile(this, "config.yml");
     }
@@ -96,7 +93,7 @@ public class SuperMines extends JavaPlugin {
         treasureManager = new TreasureManager();
         rankManager = new RankManager();
         mineManager = new MineManager();
-        taskMaker = new TaskMaker(foliaLibImpl);
+        taskMaker = new TaskMaker();
 
         setupDatabase();
         setupListeners();

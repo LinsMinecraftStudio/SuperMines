@@ -607,10 +607,10 @@ public final class Mine implements Identified {
             topY = ca.getMax().y();
             centerX = (ca.getMin().x() + ca.getMax().x()) / 2;
             centerZ = (ca.getMin().z() + ca.getMax().z()) / 2;
-        } else if (area instanceof SphereArea sa) {
-            topY = sa.center().y() + sa.radius();
-            centerX = sa.center().x();
-            centerZ = sa.center().z();
+        } else if (area instanceof SphereArea(BlockPos center, int radius)) {
+            topY = center.y() + radius;
+            centerX = center.x();
+            centerZ = center.z();
         } else {
             return world.getSpawnLocation();
         }

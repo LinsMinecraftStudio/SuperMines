@@ -253,6 +253,8 @@ gui:
             name: "&6任一满足 (OR)"
           not:
             name: "&c取反 (NOT)"
+          placeholder:
+            name: "&b占位符"
         description:
           surface:
             - "&7深度: &b%depth%"
@@ -268,6 +270,10 @@ gui:
             - "&7子条件数: &b%amount%"
           not:
             - "&7内部条件: &b%inner%"
+          placeholder:
+            - "&7占位符: &b%placeholder%"
+            - "&7比较值: &b%compareContent%"
+            - "&7解析类型: &b%parseType%"
         leaf:
           title: "&d条件: &b%type%"
           surface:

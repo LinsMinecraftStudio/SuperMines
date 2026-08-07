@@ -1,6 +1,9 @@
 package io.github.lijinhong11.supermines.api.mine.generation.conditions;
 
+import io.github.lijinhong11.mittellib.configuration.ReadWriteObject;
 import io.github.lijinhong11.mittellib.math.BlockPos;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
+import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.miniplaceholders.api.MiniPlaceholders;
@@ -9,13 +12,18 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-public class PlaceholderGenerateCondition implements IGenerateCondition {
-    private String placeholder;
-    private String compareContent;
-    private ParseType parseType;
+import java.util.List;
+
+public class PlaceholderGenerateCondition implements IGenerateCondition, ReadWriteObject {
+    private final String placeholder;
+    private final String compareContent;
+    private final ParseType parseType;
 
     public PlaceholderGenerateCondition(ConfigurationSection cs) {
         this(cs.getString("placeholder"), cs.getString("compareContent"), ParseType.valueOf(cs.getString("parseType")));
@@ -28,7 +36,7 @@ public class PlaceholderGenerateCondition implements IGenerateCondition {
     }
 
     @Override
-    public String key() {
+    public @NonNull String key() {
         return "placeholder";
     }
 
@@ -48,6 +56,30 @@ public class PlaceholderGenerateCondition implements IGenerateCondition {
     }
 
     @Override
+    public @NonNull Material icon() {
+        return Material.GLASS_BOTTLE;
+    }
+
+    @Override
+    public @NonNull Component getDisplayName(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponent(player, "gui.mine-management.block_spawn_entries.conditions.types.placeholder.name");
+    }
+
+    @Override
+    public @NonNull List<Component> getLore(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponentList(
+                        player,
+                        "gui.mine-management.block_spawn_entries.conditions.description.placeholder",
+                        MessageReplacement.replace("%placeholder%", placeholder),
+                        MessageReplacement.replace("%compareContent%", compareContent),
+                        MessageReplacement.replace("%parseType%", parseType.toString()));
+    }
+
+    @Override
     public void write(ConfigurationSection cs) {
         cs.set("placeholder", placeholder);
         cs.set("compareContent", compareContent);
@@ -56,9 +88,7 @@ public class PlaceholderGenerateCondition implements IGenerateCondition {
 
     @Override
     public void read(ConfigurationSection cs) {
-        this.placeholder = cs.getString("placeholder");
-        this.compareContent = cs.getString("compareContent");
-        this.parseType = ParseType.valueOf(cs.getString("parseType"));
+        throw new UnsupportedOperationException();
     }
 
     public enum ParseType {

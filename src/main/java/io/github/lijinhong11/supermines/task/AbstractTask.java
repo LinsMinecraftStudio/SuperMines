@@ -1,18 +1,19 @@
 package io.github.lijinhong11.supermines.task;
 
-import com.tcoded.folialib.wrapper.task.WrappedTask;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+
 import java.util.function.Consumer;
 
-public abstract class AbstractTask implements Consumer<WrappedTask> {
-    private WrappedTask task;
+public abstract class AbstractTask implements Consumer<ScheduledTask> {
+    private ScheduledTask task;
 
     @Override
-    public void accept(WrappedTask wrappedTask) {
-        this.task = wrappedTask;
-        run(wrappedTask);
+    public void accept(ScheduledTask ScheduledTask) {
+        this.task = ScheduledTask;
+        run(ScheduledTask);
     }
 
-    protected abstract void run(WrappedTask task);
+    protected abstract void run(ScheduledTask task);
 
     public void cancel() {
         if (task == null) {

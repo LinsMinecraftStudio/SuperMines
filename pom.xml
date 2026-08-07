@@ -114,17 +114,12 @@
 
         <!-- Libraries -->
         <dependency>
-            <groupId>com.tcoded</groupId>
-            <artifactId>FoliaLib</artifactId>
-            <version>0.5.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>io.github.lijinhong11</groupId>
             <artifactId>MittelLib</artifactId>
             <version>1.2.6</version>
             <scope>provided</scope>
         </dependency>
+
         <!-- CommandAPI -->
         <dependency>
             <groupId>dev.jorel</groupId>

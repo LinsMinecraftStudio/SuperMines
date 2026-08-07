@@ -5,17 +5,25 @@ import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.math.SphereArea;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
+import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+
+import java.util.List;
 
 public class MineYGenerateCondition implements IGenerateCondition, ReadWriteObject {
     private final int minYInMine;
     private final int maxYInMine;
 
     @Override
-    public String key() {
+    public @NonNull String key() {
         return "mineY";
     }
 
@@ -55,6 +63,29 @@ public class MineYGenerateCondition implements IGenerateCondition, ReadWriteObje
         }
 
         return target.y() - mineY >= minYInMine && target.y() - mineY <= maxYInMine;
+    }
+
+    @Override
+    public @NonNull Material icon() {
+        return Material.LADDER;
+    }
+
+    @Override
+    public @NonNull Component getDisplayName(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponent(player, "gui.mine-management.block_spawn_entries.conditions.types.mineY.name");
+    }
+
+    @Override
+    public @NonNull List<Component> getLore(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponentList(
+                        player,
+                        "gui.mine-management.block_spawn_entries.conditions.description.mineY",
+                        MessageReplacement.replace("%min%", String.valueOf(minYInMine)),
+                        MessageReplacement.replace("%max%", String.valueOf(maxYInMine)));
     }
 
     @Override

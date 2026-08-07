@@ -2,11 +2,18 @@ package io.github.lijinhong11.supermines.api.mine.generation.conditions;
 
 import io.github.lijinhong11.mittellib.configuration.ReadWriteObject;
 import io.github.lijinhong11.mittellib.math.BlockPos;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
+import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import java.util.List;
+
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * A composite condition that passes when at least one sub-condition passes.
@@ -22,23 +29,13 @@ import org.jetbrains.annotations.NotNull;
  *     chance: 0.2
  * }</pre>
  */
-public class OrGenerateCondition implements IGenerateCondition, ReadWriteObject {
-    private final List<IGenerateCondition> conditions;
-
+public record OrGenerateCondition(List<IGenerateCondition> conditions) implements IGenerateCondition, ReadWriteObject {
     public OrGenerateCondition(ConfigurationSection cs) {
         this(loadSubConditions(cs));
     }
 
-    public OrGenerateCondition(List<IGenerateCondition> conditions) {
-        this.conditions = conditions;
-    }
-
-    public List<IGenerateCondition> getConditions() {
-        return conditions;
-    }
-
     @Override
-    public String key() {
+    public @NonNull String key() {
         return "or";
     }
 
@@ -51,6 +48,28 @@ public class OrGenerateCondition implements IGenerateCondition, ReadWriteObject 
         }
 
         return false;
+    }
+
+    @Override
+    public @NonNull Material icon() {
+        return Material.ORANGE_WOOL;
+    }
+
+    @Override
+    public @NonNull Component getDisplayName(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponent(player, "gui.mine-management.block_spawn_entries.conditions.types.or.name");
+    }
+
+    @Override
+    public @NonNull List<Component> getLore(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponentList(
+                        player,
+                        "gui.mine-management.block_spawn_entries.conditions.description.or",
+                        MessageReplacement.replace("%amount%", String.valueOf(conditions.size())));
     }
 
     private static List<IGenerateCondition> loadSubConditions(ConfigurationSection cs) {

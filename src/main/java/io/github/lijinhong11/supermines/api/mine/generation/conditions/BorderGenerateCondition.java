@@ -4,10 +4,18 @@ import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mittellib.configuration.ReadWriteObject;
 import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.math.BlockPos;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
+import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+
+import java.util.List;
 
 /**
  * A condition that only lets blocks generate on the rim (edge) or in the core (interior) of the
@@ -22,32 +30,47 @@ import org.jetbrains.annotations.NotNull;
  *
  * <p>{@code mode} accepts {@code RIM} (default) or {@code CORE}.
  */
-public class BorderGenerateCondition implements IGenerateCondition, ReadWriteObject {
-    private final Mode mode;
-
+public record BorderGenerateCondition(Mode mode) implements IGenerateCondition, ReadWriteObject {
     public BorderGenerateCondition(ConfigurationSection cs) {
         this(Mode.valueOf(cs.getString("mode", "RIM")));
     }
 
-    public BorderGenerateCondition(Mode mode) {
+    public BorderGenerateCondition {
         Preconditions.checkNotNull(mode, "mode cannot be null");
 
-        this.mode = mode;
-    }
-
-    public Mode getMode() {
-        return mode;
     }
 
     @Override
-    public String key() {
+    public @NonNull String key() {
         return "border";
     }
 
     @Override
     public boolean canGenerate(@NotNull Mine mine, @NotNull BlockPos target) {
         boolean onRim = isOnRim(mine.getArea(), target);
-        return mode == Mode.RIM ? onRim : !onRim;
+        return (mode == Mode.RIM) == onRim;
+    }
+
+    @Override
+    public @NonNull Material icon() {
+        return Material.OAK_FENCE;
+    }
+
+    @Override
+    public @NonNull Component getDisplayName(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponent(player, "gui.mine-management.block_spawn_entries.conditions.types.border.name");
+    }
+
+    @Override
+    public @NonNull List<Component> getLore(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponentList(
+                        player,
+                        "gui.mine-management.block_spawn_entries.conditions.description.border",
+                        MessageReplacement.replace("%mode%", mode.name()));
     }
 
     private static boolean isOnRim(AreaOfBlocks area, BlockPos target) {

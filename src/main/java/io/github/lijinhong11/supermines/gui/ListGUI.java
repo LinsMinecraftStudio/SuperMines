@@ -49,7 +49,7 @@ public class ListGUI {
                 .content('c')
                 .previousPage('p', ButtonItem.unclickable(Constants.Items.PREVIOUS_PAGE.apply(p)))
                 .nextPage('n', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))
-                .bind('x', ButtonItem.unclickable(Constants.Items.BACKGROUND))
+                .bind('x', ButtonItem.BACKGROUND)
                 .bind('a', ButtonItem.clickable(Constants.Items.ADD.apply(p), (gui, e) -> {
                     add.run();
                     return false;

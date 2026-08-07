@@ -6,10 +6,18 @@ import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.math.SphereArea;
+import io.github.lijinhong11.mittellib.message.MessageReplacement;
+import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+
+import java.util.List;
 
 /**
  * A condition that only lets blocks generate within a given distance from the top surface of the
@@ -22,25 +30,18 @@ import org.jetbrains.annotations.NotNull;
  * depth: 1
  * }</pre>
  */
-public class SurfaceGenerateCondition implements IGenerateCondition, ReadWriteObject {
-    private final int depth;
-
+public record SurfaceGenerateCondition(int depth) implements IGenerateCondition, ReadWriteObject {
     public SurfaceGenerateCondition(ConfigurationSection cs) {
         this(cs.getInt("depth", 1));
     }
 
-    public SurfaceGenerateCondition(int depth) {
+    public SurfaceGenerateCondition {
         Preconditions.checkArgument(depth >= 1, "depth must be greater than or equal to 1");
 
-        this.depth = depth;
-    }
-
-    public int getDepth() {
-        return depth;
     }
 
     @Override
-    public String key() {
+    public @NonNull String key() {
         return "surface";
     }
 
@@ -48,6 +49,30 @@ public class SurfaceGenerateCondition implements IGenerateCondition, ReadWriteOb
     public boolean canGenerate(@NotNull Mine mine, @NotNull BlockPos target) {
         int topY = getTopY(mine);
         return target.y() > topY - depth;
+    }
+
+    @Override
+    public @NonNull Material icon() {
+        return Material.GRASS_BLOCK;
+    }
+
+    @Override
+    public @NonNull Component getDisplayName(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponent(
+                        player,
+                        "gui.mine-management.block_spawn_entries.conditions.types.surface.name");
+    }
+
+    @Override
+    public @NonNull List<Component> getLore(@NotNull Player player) {
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponentList(
+                        player,
+                        "gui.mine-management.block_spawn_entries.conditions.description.surface",
+                        MessageReplacement.replace("%depth%", String.valueOf(depth)));
     }
 
     private static int getTopY(Mine mine) {

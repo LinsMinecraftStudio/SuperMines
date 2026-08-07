@@ -1,11 +1,10 @@
 package io.github.lijinhong11.supermines.task;
 
-import com.tcoded.folialib.wrapper.task.WrappedTask;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
-import io.github.lijinhong11.mittellib.message.SyncLanguageManager;
 import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -19,7 +18,7 @@ class MineResetWarningTask extends AbstractTask {
     }
 
     @Override
-    public void run(WrappedTask wrappedTask) {
+    public void run(ScheduledTask ScheduledTask) {
         boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
         MessageReplacement mineName = MessageReplacement.replace("%mine%", mine.getRawDisplayName());
         for (Player p : Bukkit.getOnlinePlayers()) {

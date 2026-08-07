@@ -253,6 +253,8 @@ gui:
             name: "&6Qualquer (OU)"
           not:
             name: "&cNegação (NÃO)"
+          placeholder:
+            name: "&bPlaceholder"
         description:
           surface:
             - "&7Profundidade: &b%depth%"
@@ -268,6 +270,10 @@ gui:
             - "&7Sub-condições: &b%amount%"
           not:
             - "&7Interno: &b%inner%"
+          placeholder:
+            - "&7Placeholder: &b%placeholder%"
+            - "&7Comparar: &b%compareContent%"
+            - "&7Tipo de análise: &b%parseType%"
         leaf:
           title: "&dCondição: &b%type%"
           surface:

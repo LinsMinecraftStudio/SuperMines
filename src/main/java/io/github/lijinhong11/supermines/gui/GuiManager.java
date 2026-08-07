@@ -52,7 +52,7 @@ public class GuiManager {
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.general.title"))
                 .size(27)
                 .structure("xxxxxxxxx", "xxMxTxRxx", "xxxxxxxxx")
-                .bind('x', ButtonItem.unclickable(Constants.Items.BACKGROUND))
+                .bind('x', ButtonItem.BACKGROUND)
                 .bind('M', ButtonItem.clickable(Constants.Items.MINES.apply(p), (g, e) -> {
                     openMineList(p);
                     return false;
@@ -424,7 +424,7 @@ public class GuiManager {
                 .content('c')
                 .previousPage('p', ButtonItem.unclickable(Constants.Items.PREVIOUS_PAGE.apply(p)))
                 .nextPage('n', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))
-                .bind('x', ButtonItem.unclickable(Constants.Items.BACKGROUND));
+                .bind('x', ButtonItem.BACKGROUND);
 
         if (back != null) {
             builder = builder.bind('b', ButtonItem.clickable(Constants.Items.BACK.apply(p), (g, e) -> {
@@ -432,7 +432,7 @@ public class GuiManager {
                 return false;
             }));
         } else {
-            builder.bind('b', ButtonItem.unclickable(Constants.Items.BACKGROUND));
+            builder.bind('b', ButtonItem.BACKGROUND);
         }
 
         return builder.build();
@@ -443,7 +443,7 @@ public class GuiManager {
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, titleKey, replacements))
                 .size(54)
                 .structure("xxxxxxxxx", "x       x", "x       x", "x       x", "x       x", "xxxxxxxxx")
-                .bind('x', ButtonItem.unclickable(Constants.Items.BACKGROUND))
+                .bind('x', ButtonItem.BACKGROUND)
                 .build();
     }
 
@@ -604,8 +604,6 @@ public class GuiManager {
         gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
             openConditionTypeChooser(
                     p,
-                    mine,
-                    entry,
                     condition -> {
                         entry.addGenerateCondition(condition);
                         IGenerateCondition[] holder = new IGenerateCondition[] {condition};
@@ -646,18 +644,30 @@ public class GuiManager {
     }
 
     private static void openConditionTypeChooser(
-            Player p, Mine mine, BlockSpawnEntry entry, Consumer<IGenerateCondition> onPick, Runnable back) {
+            Player p, Consumer<IGenerateCondition> onPick, Runnable back) {
         PaginatedChestGUI gui =
                 buildPagedGUI(p, "gui.mine-management.block_spawn_entries.conditions.chooser_title", back);
 
-        for (String key : new String[] {"chance", "surface", "mineY", "border", "biome", "and", "or", "not"}) {
-            gui.addPageItem(ButtonItem.clickable(getConditionTypeItem(p, key), (g, e) -> {
-                onPick.accept(createDefaultCondition(key));
+        for (String key : new String[] {"surface", "mineY", "border", "biome", "and", "or", "not"}) {
+            IGenerateCondition condition = createDefaultCondition(key);
+            gui.addPageItem(ButtonItem.clickable(getConditionTypeItem(p, condition), (g, e) -> {
+                onPick.accept(condition);
                 return false;
             }));
         }
 
         gui.open(p);
+    }
+
+    private static ItemStack getConditionTypeItem(Player p, IGenerateCondition condition) {
+        ItemStack item = new ItemStack(condition.icon());
+        item.editMeta(meta -> {
+            meta.displayName(condition.getDisplayName(p));
+            meta.lore(SuperMines.getInstance()
+                    .getLanguageManager()
+                    .getMsgComponentList(p, "gui.mine-management.block_spawn_entries.conditions.types.add_lore"));
+        });
+        return item;
     }
 
     private static IGenerateCondition createDefaultCondition(String typeKey) {
@@ -688,7 +698,7 @@ public class GuiManager {
                     onSave,
                     "gui.mine-management.block_spawn_entries.conditions.and.title",
                     AndGenerateCondition::new,
-                    new ArrayList<>(and.getConditions()),
+                    new ArrayList<>(and.conditions()),
                     back);
             case OrGenerateCondition or -> openCompositeEditor(
                     p,
@@ -697,10 +707,10 @@ public class GuiManager {
                     onSave,
                     "gui.mine-management.block_spawn_entries.conditions.or.title",
                     OrGenerateCondition::new,
-                    new ArrayList<>(or.getConditions()),
+                    new ArrayList<>(or.conditions()),
                     back);
             case NotGenerateCondition not -> openNotEditor(p, mine, entry, not, onSave, back);
-            case null, default -> openLeafEditor(p, mine, entry, node, onSave, back);
+            case null, default -> openLeafEditor(p, node, onSave, back);
         }
     }
 
@@ -718,8 +728,6 @@ public class GuiManager {
         gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
             openConditionTypeChooser(
                     p,
-                    mine,
-                    entry,
                     sub -> {
                         List<IGenerateCondition> updated = new ArrayList<>(current);
                         updated.add(sub);
@@ -800,14 +808,12 @@ public class GuiManager {
         }));
 
         NotGenerateCondition[] holder = new NotGenerateCondition[] {not};
-        gui.putItem(slot(3, 5), ButtonItem.clickable(getConditionItem(p, holder[0].getInner()), (g, e) -> {
+        gui.putItem(slot(3, 5), ButtonItem.clickable(getConditionItem(p, holder[0].inner()), (g, e) -> {
             if (!checkPermission(p, Constants.Permission.BLOCK_GENERATE)) return false;
 
             if (e.getClick().isRightClick()) {
                 openConditionTypeChooser(
                         p,
-                        mine,
-                        entry,
                         newInner -> {
                             holder[0] = new NotGenerateCondition(newInner);
                             onSave.accept(holder[0]);
@@ -821,7 +827,7 @@ public class GuiManager {
                     p,
                     mine,
                     entry,
-                    holder[0].getInner(),
+                    holder[0].inner(),
                     newInner -> {
                         holder[0] = new NotGenerateCondition(newInner);
                         onSave.accept(holder[0]);
@@ -836,8 +842,6 @@ public class GuiManager {
 
     private static void openLeafEditor(
             Player p,
-            Mine mine,
-            BlockSpawnEntry entry,
             IGenerateCondition node,
             Consumer<IGenerateCondition> onSave,
             Runnable back) {
@@ -851,9 +855,9 @@ public class GuiManager {
             return false;
         }));
 
-        if (node instanceof SurfaceGenerateCondition surface) {
-            gui.putItem(
-                    slot(3, 5), ButtonItem.clickable(getMessagedLeafItem(p, "surface", surface.getDepth()), (g, e) -> {
+        switch (node) {
+            case SurfaceGenerateCondition surface -> gui.putItem(
+                    slot(3, 5), ButtonItem.clickable(getMessagedLeafItem(p, "surface", surface.depth()), (g, e) -> {
                         p.closeInventory();
                         SuperMines.getInstance()
                                 .getLanguageManager()
@@ -865,70 +869,69 @@ public class GuiManager {
                                 SuperMines.getInstance()
                                         .getLanguageManager()
                                         .sendMessage(p, "gui.input.invalid-number");
-                                openLeafEditor(p, mine, entry, node, onSave, back);
+                                openLeafEditor(p, node, onSave, back);
                                 return;
                             }
                             SurfaceGenerateCondition updated = new SurfaceGenerateCondition(result);
                             onSave.accept(updated);
-                            openLeafEditor(p, mine, entry, updated, onSave, back);
+                            openLeafEditor(p, updated, onSave, back);
                         });
                         return false;
                     }));
-        } else if (node instanceof MineYGenerateCondition mineY) {
-            gui.putItem(
-                    slot(3, 4),
-                    ButtonItem.clickable(getMessagedLeafItem(p, "mineY_min", mineY.getMinYInMine()), (g, e) -> {
-                        p.closeInventory();
-                        SuperMines.getInstance()
-                                .getLanguageManager()
-                                .sendMessage(
-                                        p,
-                                        "gui.mine-management.block_spawn_entries.conditions.leaf.mineY_min"
-                                                + ".prompt");
-                        handleIntegerInput(p, result -> {
-                            MineYGenerateCondition updated = new MineYGenerateCondition(result, mineY.getMaxYInMine());
-                            onSave.accept(updated);
-                            openLeafEditor(p, mine, entry, updated, onSave, back);
-                        });
-                        return false;
-                    }));
-            gui.putItem(
-                    slot(3, 6),
-                    ButtonItem.clickable(getMessagedLeafItem(p, "mineY_max", mineY.getMaxYInMine()), (g, e) -> {
-                        p.closeInventory();
-                        SuperMines.getInstance()
-                                .getLanguageManager()
-                                .sendMessage(
-                                        p,
-                                        "gui.mine-management.block_spawn_entries.conditions.leaf.mineY_max"
-                                                + ".prompt");
-                        handleIntegerInput(p, result -> {
-                            MineYGenerateCondition updated = new MineYGenerateCondition(mineY.getMinYInMine(), result);
-                            onSave.accept(updated);
-                            openLeafEditor(p, mine, entry, updated, onSave, back);
-                        });
-                        return false;
-                    }));
-        } else if (node instanceof BorderGenerateCondition border) {
-            gui.putItem(
+            case MineYGenerateCondition mineY -> {
+                gui.putItem(
+                        slot(3, 4),
+                        ButtonItem.clickable(getMessagedLeafItem(p, "mineY_min", mineY.getMinYInMine()), (g, e) -> {
+                            p.closeInventory();
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(
+                                            p,
+                                            "gui.mine-management.block_spawn_entries.conditions.leaf.mineY_min"
+                                                    + ".prompt");
+                            handleIntegerInput(p, result -> {
+                                MineYGenerateCondition updated = new MineYGenerateCondition(result, mineY.getMaxYInMine());
+                                onSave.accept(updated);
+                                openLeafEditor(p, updated, onSave, back);
+                            });
+                            return false;
+                        }));
+                gui.putItem(
+                        slot(3, 6),
+                        ButtonItem.clickable(getMessagedLeafItem(p, "mineY_max", mineY.getMaxYInMine()), (g, e) -> {
+                            p.closeInventory();
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(
+                                            p,
+                                            "gui.mine-management.block_spawn_entries.conditions.leaf.mineY_max"
+                                                    + ".prompt");
+                            handleIntegerInput(p, result -> {
+                                MineYGenerateCondition updated = new MineYGenerateCondition(mineY.getMinYInMine(), result);
+                                onSave.accept(updated);
+                                openLeafEditor(p, updated, onSave, back);
+                            });
+                            return false;
+                        }));
+            }
+            case BorderGenerateCondition border -> gui.putItem(
                     slot(3, 5),
                     ButtonItem.clickable(
                             getMessagedLeafItem(
-                                    p, "border", border.getMode() == BorderGenerateCondition.Mode.RIM ? "RIM" : "CORE"),
+                                    p, "border", border.mode() == BorderGenerateCondition.Mode.RIM ? "RIM" : "CORE"),
                             (g, e) -> {
-                                BorderGenerateCondition.Mode next = border.getMode() == BorderGenerateCondition.Mode.RIM
+                                BorderGenerateCondition.Mode next = border.mode() == BorderGenerateCondition.Mode.RIM
                                         ? BorderGenerateCondition.Mode.CORE
                                         : BorderGenerateCondition.Mode.RIM;
                                 BorderGenerateCondition updated = new BorderGenerateCondition(next);
                                 onSave.accept(updated);
-                                openLeafEditor(p, mine, entry, updated, onSave, back);
+                                openLeafEditor(p, updated, onSave, back);
                                 return false;
                             }));
-        } else if (node instanceof BiomeGenerateCondition biome) {
-            gui.putItem(
+            case BiomeGenerateCondition biome -> gui.putItem(
                     slot(3, 5),
                     ButtonItem.clickable(
-                            getMessagedLeafItem(p, "biome", String.join(", ", biome.getBiomes())), (g, e) -> {
+                            getMessagedLeafItem(p, "biome", String.join(", ", biome.getStringBiomes())), (g, e) -> {
                                 p.closeInventory();
                                 SuperMines.getInstance()
                                         .getLanguageManager()
@@ -956,10 +959,12 @@ public class GuiManager {
                                     onSave.accept(updated);
                                     SuperMines.getInstance()
                                             .getTaskMaker()
-                                            .runSync(() -> openLeafEditor(p, mine, entry, updated, onSave, back));
+                                            .runSync(() -> openLeafEditor(p, updated, onSave, back));
                                 });
                                 return false;
                             }));
+            default -> {
+            }
         }
 
         gui.open(p);
@@ -976,75 +981,15 @@ public class GuiManager {
     }
 
     private static ItemStack getConditionItem(Player p, IGenerateCondition condition) {
-        String typeKey = condition.key();
-        ItemStack item = new ItemStack(getConditionMaterial(typeKey));
+        ItemStack item = new ItemStack(condition.icon());
         item.editMeta(meta -> {
-            meta.displayName(SuperMines.getInstance()
-                    .getLanguageManager()
-                    .getMsgComponent(
-                            p, "gui.mine-management.block_spawn_entries.conditions.types." + typeKey + ".name"));
-            List<Component> lore = new ArrayList<>(SuperMines.getInstance()
-                    .getLanguageManager()
-                    .getMsgComponentList(
-                            p,
-                            "gui.mine-management.block_spawn_entries.conditions.description." + typeKey,
-                            getConditionReplacements(condition)));
+            meta.displayName(condition.getDisplayName(p));
+            List<Component> lore = new ArrayList<>(condition.getLore(p));
             lore.addAll(SuperMines.getInstance()
                     .getLanguageManager()
                     .getMsgComponentList(p, "gui.mine-management.block_spawn_entries.conditions.each_lore"));
             meta.lore(lore);
         });
         return item;
-    }
-
-    private static ItemStack getConditionTypeItem(Player p, String typeKey) {
-        ItemStack item = new ItemStack(getConditionMaterial(typeKey));
-        item.editMeta(meta -> {
-            meta.displayName(SuperMines.getInstance()
-                    .getLanguageManager()
-                    .getMsgComponent(
-                            p, "gui.mine-management.block_spawn_entries.conditions.types." + typeKey + ".name"));
-            meta.lore(SuperMines.getInstance()
-                    .getLanguageManager()
-                    .getMsgComponentList(p, "gui.mine-management.block_spawn_entries.conditions.types.add_lore"));
-        });
-        return item;
-    }
-
-    private static MessageReplacement[] getConditionReplacements(IGenerateCondition condition) {
-        List<MessageReplacement> result = new ArrayList<>();
-        if (condition instanceof SurfaceGenerateCondition s) {
-            result.add(MessageReplacement.replace("%depth%", String.valueOf(s.getDepth())));
-        } else if (condition instanceof MineYGenerateCondition m) {
-            result.add(MessageReplacement.replace("%min%", String.valueOf(m.getMinYInMine())));
-            result.add(MessageReplacement.replace("%max%", String.valueOf(m.getMaxYInMine())));
-        } else if (condition instanceof BorderGenerateCondition b) {
-            result.add(MessageReplacement.replace("%mode%", b.getMode().name()));
-        } else if (condition instanceof BiomeGenerateCondition biome) {
-            result.add(MessageReplacement.replace("%biomes%", String.join(", ", biome.getBiomes())));
-        } else if (condition instanceof AndGenerateCondition and) {
-            result.add(MessageReplacement.replace(
-                    "%amount%", String.valueOf(and.getConditions().size())));
-        } else if (condition instanceof OrGenerateCondition or) {
-            result.add(MessageReplacement.replace(
-                    "%amount%", String.valueOf(or.getConditions().size())));
-        } else if (condition instanceof NotGenerateCondition not) {
-            result.add(MessageReplacement.replace("%inner%", not.getInner().key()));
-        }
-        return result.toArray(new MessageReplacement[0]);
-    }
-
-    private static Material getConditionMaterial(String typeKey) {
-        return switch (typeKey) {
-            case "chance" -> Material.PAPER;
-            case "surface" -> Material.GRASS_BLOCK;
-            case "mineY" -> Material.LADDER;
-            case "border" -> Material.OAK_FENCE;
-            case "biome" -> Material.OAK_SAPLING;
-            case "and" -> Material.GREEN_WOOL;
-            case "or" -> Material.ORANGE_WOOL;
-            case "not" -> Material.RED_WOOL;
-            default -> Material.NAME_TAG;
-        };
     }
 }

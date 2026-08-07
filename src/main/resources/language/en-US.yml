@@ -253,6 +253,8 @@ gui:
             name: "&6Any (OR)"
           not:
             name: "&cNot (Inverse)"
+          placeholder:
+            name: "&bPlaceholder"
         description:
           surface:
             - "&7Depth: &b%depth%"
@@ -268,6 +270,10 @@ gui:
             - "&7Sub-conditions: &b%amount%"
           not:
             - "&7Inner: &b%inner%"
+          placeholder:
+            - "&7Placeholder: &b%placeholder%"
+            - "&7Compare: &b%compareContent%"
+            - "&7Parse type: &b%parseType%"
         leaf:
           title: "&dCondition: &b%type%"
           surface:

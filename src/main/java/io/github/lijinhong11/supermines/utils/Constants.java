@@ -30,8 +30,6 @@ public class Constants {
     public static class Items {
         public static final Material DEFAULT_MINE_ICON = Material.STONE;
 
-        public static final ItemStack BACKGROUND = createItem(Material.BLACK_STAINED_GLASS_PANE, Component.empty());
-
         public static final Function<Player, ItemStack> WAND = player -> {
             ItemStack item = new ItemStack(Material.BLAZE_ROD);
             item.editMeta(meta -> {
