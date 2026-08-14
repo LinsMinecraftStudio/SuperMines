@@ -1,10 +1,14 @@
+import io.github.lijinhong11.nexusmcpublisher.VersionTag
+import java.nio.charset.StandardCharsets
+
 plugins {
     java
     id("com.diffplug.spotless") version "8.0.0"
+    id("io.github.lijinhong11.nexusmcpublisher") version "1.0.3"
 }
 
 group = "io.github.lijinhong11"
-version = "1.6.0"
+version = "1.6.1"
 
 repositories {
     mavenCentral()
@@ -25,6 +29,16 @@ java {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:26.1.2.build.+")
 
+    compileOnly("com.google.code.gson:gson:2.14.0") {
+        version { strictly("2.14.0") }
+    }
+    compileOnly("it.unimi.dsi:fastutil:8.5.16") {
+        version { strictly("8.5.16") }
+    }
+    compileOnly("com.google.guava:guava:33.5.0-jre") {
+        version { strictly("33.5.0-jre") }
+    }
+
     compileOnly("io.github.lijinhong11:MittelLib:1.2.7")
     compileOnly("io.github.lijinhong11:MDatabase:1.2.0")
     compileOnly("org.bstats:bstats-bukkit:3.2.1")
@@ -42,9 +56,6 @@ dependencies {
         exclude(group = "com.google.code.gson")
         exclude(group = "it.unimi.dsi")
     }
-
-    compileOnly("com.google.guava:guava:33.5.0-jre")
-    compileOnly("com.google.code.gson:gson:2.13.2")
 
     compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.3.0")
@@ -74,4 +85,13 @@ spotless {
         palantirJavaFormat()
         formatAnnotations()
     }
+}
+
+nexusMCPublisher {
+    resourceId.set("56db359b-d055-42ae-93c2-6a71b43ba0b3")
+    versionTag.set(VersionTag.RELEASE)
+    versionTitle = project.property("version") as String
+    changelog.set(file("changelog.txt").readLines(StandardCharsets.UTF_8).joinToString("\n"))
+    mcVersions.set(listOf("26.1", "26.1.1", "26.1.2", "26.2"))
+    token = System.getenv("NEXUSMC_API_TOKEN")
 }
