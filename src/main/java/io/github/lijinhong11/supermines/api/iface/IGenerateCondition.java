@@ -3,12 +3,11 @@ package io.github.lijinhong11.supermines.api.iface;
 import io.github.lijinhong11.mittellib.configuration.ReadWriteObject;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public interface IGenerateCondition extends ReadWriteObject {
     @NotNull String key();

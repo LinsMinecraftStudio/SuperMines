@@ -3,7 +3,7 @@ main: io.github.lijinhong11.supermines.SuperMines
 version: ${project.version}
 authors: ["mmmjjkx"]
 description: A mine plugin
-api-version: 1.20
+api-version: "26.1"
 folia-supported: true
 website: https://github.com/LinsMinecraftStudio/SuperMines
 depend:

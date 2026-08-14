@@ -42,50 +42,50 @@ public class Constants {
 
         public static final Function<Player, ItemStack> PREVIOUS_PAGE = player -> {
             ItemStack item = new ItemStack(Material.PAPER);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.previous")));
+            item.editMeta(meta -> meta.displayName(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.previous")));
             return item;
         };
 
         public static final Function<Player, ItemStack> NEXT_PAGE = player -> {
             ItemStack item = new ItemStack(Material.PAPER);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.next")));
+            item.editMeta(meta -> meta.displayName(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.next")));
             return item;
         };
 
         public static final Function<Player, ItemStack> BACK = player -> {
             ItemStack item = new ItemStack(Material.ARROW);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.back")));
+            item.editMeta(meta -> meta.displayName(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.back")));
             return item;
         };
 
         public static final Function<Player, ItemStack> CLOSE = player -> {
             ItemStack item = new ItemStack(Material.BARRIER);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.close")));
+            item.editMeta(meta -> meta.displayName(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.close")));
             return item;
         };
 
         public static final Function<Player, ItemStack> MINES = player -> {
             ItemStack item = new ItemStack(Material.STONE);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.mines.title")));
+            item.editMeta(meta -> meta.displayName(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.mines.title")));
             return item;
         };
 
         public static final Function<Player, ItemStack> TREASURES = player -> {
             ItemStack item = new ItemStack(Material.CHEST);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.treasures.title")));
+            item.editMeta(meta -> meta.displayName(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.treasures.title")));
             return item;
         };
 
         public static final Function<Player, ItemStack> RANKS = player -> {
             ItemStack item = new ItemStack(Material.NAME_TAG);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.ranks.title")));
+            item.editMeta(meta -> meta.displayName(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.ranks.title")));
             return item;
         };
 
@@ -100,8 +100,8 @@ public class Constants {
 
         public static final Function<Player, ItemStack> ADD = p -> {
             ItemStack item = new ItemStack(Material.PAPER);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.add")));
+            item.editMeta(meta -> meta.displayName(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.add")));
             return item;
         };
 
@@ -150,10 +150,9 @@ public class Constants {
 
         public static final Function<Player, ItemStack> BLOCK_SPAWN_ENTRIES = p -> {
             ItemStack item = new ItemStack(Material.COAL_ORE);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance()
-                            .getLanguageManager()
-                            .getMsgComponent(p, "gui.mine-management.block_spawn_entries.name")));
+            item.editMeta(meta -> meta.displayName(SuperMines.getInstance()
+                    .getLanguageManager()
+                    .getMsgComponent(p, "gui.mine-management.block_spawn_entries.name")));
             return item;
         };
 
@@ -167,10 +166,9 @@ public class Constants {
 
         public static final Function<Player, ItemStack> MATCHED_MATERIALS = p -> {
             ItemStack item = new ItemStack(Material.STONE);
-            item.editMeta(meta ->
-                    meta.displayName(SuperMines.getInstance()
-                            .getLanguageManager()
-                            .getMsgComponent(p, "gui.treasure-management.matched_materials.title")));
+            item.editMeta(meta -> meta.displayName(SuperMines.getInstance()
+                    .getLanguageManager()
+                    .getMsgComponent(p, "gui.treasure-management.matched_materials.title")));
             return item;
         };
 

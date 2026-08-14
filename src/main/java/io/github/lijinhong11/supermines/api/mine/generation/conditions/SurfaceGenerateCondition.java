@@ -10,14 +10,13 @@ import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
-
-import java.util.List;
 
 /**
  * A condition that only lets blocks generate within a given distance from the top surface of the
@@ -37,7 +36,6 @@ public record SurfaceGenerateCondition(int depth) implements IGenerateCondition,
 
     public SurfaceGenerateCondition {
         Preconditions.checkArgument(depth >= 1, "depth must be greater than or equal to 1");
-
     }
 
     @Override
@@ -60,9 +58,7 @@ public record SurfaceGenerateCondition(int depth) implements IGenerateCondition,
     public @NonNull Component getDisplayName(@NotNull Player player) {
         return SuperMines.getInstance()
                 .getLanguageManager()
-                .getMsgComponent(
-                        player,
-                        "gui.mine-management.block_spawn_entries.conditions.types.surface.name");
+                .getMsgComponent(player, "gui.mine-management.block_spawn_entries.conditions.types.surface.name");
     }
 
     @Override

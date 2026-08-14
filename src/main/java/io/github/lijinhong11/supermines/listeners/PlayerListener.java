@@ -23,7 +23,8 @@ public class PlayerListener implements Listener {
         Block block1 = loc.getBlock();
         Block block2 = loc.clone().add(0, 1, 0).getBlock();
         if (block1.getType().isSolid() || block2.getType().isSolid()) {
-            p.teleportAsync(mine.getTeleportLocation() != null ? mine.getTeleportLocation() : mine.getSafeTopLocation());
+            p.teleportAsync(
+                    mine.getTeleportLocation() != null ? mine.getTeleportLocation() : mine.getSafeTopLocation());
         }
     }
 }

@@ -108,8 +108,8 @@ public class BlockListener implements Listener {
         List<Item> drops = e.getItems();
         for (Item item : drops) {
             ItemStack stack = item.getItemStack();
-            player.getInventory().addItem(stack).values()
-                    .forEach(leftover -> player.getWorld().dropItemNaturally(player.getLocation(), leftover));
+            player.getInventory().addItem(stack).values().forEach(leftover -> player.getWorld()
+                    .dropItemNaturally(player.getLocation(), leftover));
         }
         e.setCancelled(true);
     }

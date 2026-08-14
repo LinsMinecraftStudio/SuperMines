@@ -39,13 +39,7 @@ public class ListGUI {
         MittelGUI.PagedChestBuilder builder = MittelGUI.pagedChestBuilder()
                 .title(title)
                 .size(54)
-                .structure(
-                        "xxxxxxxxx",
-                        "xcccccccx",
-                        "xcccccccx",
-                        "xcccccccx",
-                        "xcccccccx",
-                        "xaxpxnxkx")
+                .structure("xxxxxxxxx", "xcccccccx", "xcccccccx", "xcccccccx", "xcccccccx", "xaxpxnxkx")
                 .content('c')
                 .previousPage('p', ButtonItem.unclickable(Constants.Items.PREVIOUS_PAGE.apply(p)))
                 .nextPage('n', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))

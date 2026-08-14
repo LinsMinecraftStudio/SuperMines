@@ -1,7 +1,6 @@
 package io.github.lijinhong11.supermines.task;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-
 import java.util.function.Consumer;
 
 public abstract class AbstractTask implements Consumer<ScheduledTask> {

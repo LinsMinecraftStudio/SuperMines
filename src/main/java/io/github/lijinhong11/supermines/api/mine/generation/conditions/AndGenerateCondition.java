@@ -8,7 +8,6 @@ import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -76,8 +75,7 @@ public record AndGenerateCondition(List<IGenerateCondition> conditions) implemen
         return getSubGenerateConditions(cs);
     }
 
-    @NonNull
-    static List<IGenerateCondition> getSubGenerateConditions(ConfigurationSection cs) {
+    @NonNull static List<IGenerateCondition> getSubGenerateConditions(ConfigurationSection cs) {
         List<IGenerateCondition> result = new ArrayList<>();
         ConfigurationSection sub = cs.getConfigurationSection("conditions");
         if (sub == null) {

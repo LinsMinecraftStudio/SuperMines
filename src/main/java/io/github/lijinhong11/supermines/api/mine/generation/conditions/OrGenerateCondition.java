@@ -7,7 +7,6 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import java.util.List;
-
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;

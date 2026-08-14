@@ -8,14 +8,13 @@ import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
-
-import java.util.List;
 
 /**
  * A condition that only lets blocks generate on the rim (edge) or in the core (interior) of the
@@ -37,7 +36,6 @@ public record BorderGenerateCondition(Mode mode) implements IGenerateCondition, 
 
     public BorderGenerateCondition {
         Preconditions.checkNotNull(mode, "mode cannot be null");
-
     }
 
     @Override

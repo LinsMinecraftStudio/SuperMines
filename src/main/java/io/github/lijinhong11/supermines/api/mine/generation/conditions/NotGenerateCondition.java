@@ -7,14 +7,13 @@ import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
-
-import java.util.List;
 
 /**
  * A condition that inverts the result of a single nested sub-condition.
@@ -35,7 +34,6 @@ public record NotGenerateCondition(IGenerateCondition inner) implements IGenerat
 
     public NotGenerateCondition {
         Preconditions.checkNotNull(inner, "inner cannot be null");
-
     }
 
     @Override

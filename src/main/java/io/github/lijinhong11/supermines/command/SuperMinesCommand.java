@@ -7,8 +7,8 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
-import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.NumberUtils;
+import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
@@ -83,7 +83,9 @@ public class SuperMinesCommand {
                         .withSubcommands(
                                 new CommandAPICommand("create")
                                         .withPermission(Constants.Permission.TREASURES)
-                                        .withArguments(new StringArgument("id"), new DoubleArgument("weight", Constants.WEIGHT_MIN))
+                                        .withArguments(
+                                                new StringArgument("id"),
+                                                new DoubleArgument("weight", Constants.WEIGHT_MIN))
                                         .withOptionalArguments(new DisplayNameArgument())
                                         .executesPlayer((player, args) -> {
                                             String id = args.getByClassOrDefault("id", String.class, "");
@@ -737,10 +739,15 @@ public class SuperMinesCommand {
                                 selectionMap.put(uuid, sel);
                                 SuperMines.getInstance()
                                         .getLanguageManager()
-                                        .sendMessage(player, "command.pos.sphere.radius-set",
+                                        .sendMessage(
+                                                player,
+                                                "command.pos.sphere.radius-set",
                                                 MessageReplacement.replace("%radius%", String.valueOf(radius)),
-                                                MessageReplacement.replace("%center%", SuperMines.getInstance()
-                                                        .getLanguageManager().getParsedBlockLocation(player, center)));
+                                                MessageReplacement.replace(
+                                                        "%center%",
+                                                        SuperMines.getInstance()
+                                                                .getLanguageManager()
+                                                                .getParsedBlockLocation(player, center)));
                             } else {
                                 boolean enabled = sphereModePlayers.remove(uuid);
                                 if (!enabled) {
@@ -749,10 +756,11 @@ public class SuperMinesCommand {
                                 }
                                 SuperMines.getInstance()
                                         .getLanguageManager()
-                                        .sendMessage(player, enabled ? "command.pos.sphere.disabled" : "command.pos.sphere.enabled");
+                                        .sendMessage(
+                                                player,
+                                                enabled ? "command.pos.sphere.disabled" : "command.pos.sphere.enabled");
                             }
                         }))
-
                 .withSubcommand(new CommandAPICommand("auto-pickup")
                         .withPermission(Constants.Permission.POS_SET)
                         .executesPlayer((PlayerCommandExecutor) (player, args) -> {
@@ -760,7 +768,9 @@ public class SuperMinesCommand {
                             boolean state = BlockListener.getPlayerAutoPickup(player);
                             SuperMines.getInstance()
                                     .getLanguageManager()
-                                    .sendMessage(player, state ? "command.auto-pickup.enabled" : "command.auto-pickup.disabled");
+                                    .sendMessage(
+                                            player,
+                                            state ? "command.auto-pickup.enabled" : "command.auto-pickup.disabled");
                         }))
 
                 // Mines

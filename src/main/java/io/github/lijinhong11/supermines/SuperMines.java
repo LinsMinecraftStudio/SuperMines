@@ -19,9 +19,7 @@ import io.github.lijinhong11.supermines.managers.RankManager;
 import io.github.lijinhong11.supermines.managers.TreasureManager;
 import io.github.lijinhong11.supermines.task.TaskMaker;
 import io.github.lijinhong11.supermines.utils.Constants;
-
 import java.io.File;
-
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -151,7 +149,8 @@ public class SuperMines extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WandListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 
-        if (getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
+        if (getServer().getPluginManager().isPluginEnabled("WorldEdit")
+                || getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
             new WorldEditListener();
         }
     }

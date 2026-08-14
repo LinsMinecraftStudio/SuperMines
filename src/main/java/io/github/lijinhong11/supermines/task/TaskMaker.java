@@ -5,7 +5,6 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -63,24 +62,38 @@ public class TaskMaker {
         long delayMillis = resetTask.getNextResetTime() - System.currentTimeMillis() - warningSeconds * 1000L;
         if (delayMillis <= 0) {
             Bukkit.getAsyncScheduler().runNow(SuperMines.getInstance(), task);
-            Bukkit.getAsyncScheduler().runDelayed(
-                    SuperMines.getInstance(),
-                    t -> {
-                        Bukkit.getAsyncScheduler().runAtFixedRate(SuperMines.getInstance(), task, delayMillis / 50L, mine.getRegenerateSeconds(), TimeUnit.SECONDS);
-                        warningMap.put(warningSeconds, task);
-                    },
-                    delayMillis / 50,
-                    TimeUnit.SECONDS);
+            Bukkit.getAsyncScheduler()
+                    .runDelayed(
+                            SuperMines.getInstance(),
+                            t -> {
+                                Bukkit.getAsyncScheduler()
+                                        .runAtFixedRate(
+                                                SuperMines.getInstance(),
+                                                task,
+                                                delayMillis / 50L,
+                                                mine.getRegenerateSeconds(),
+                                                TimeUnit.SECONDS);
+                                warningMap.put(warningSeconds, task);
+                            },
+                            delayMillis / 50,
+                            TimeUnit.SECONDS);
             return;
         }
 
         warningMap.put(warningSeconds, task);
-        Bukkit.getAsyncScheduler().runAtFixedRate(SuperMines.getInstance(), task, delayMillis / 50L, mine.getRegenerateSeconds(), TimeUnit.SECONDS);
+        Bukkit.getAsyncScheduler()
+                .runAtFixedRate(
+                        SuperMines.getInstance(),
+                        task,
+                        delayMillis / 50L,
+                        mine.getRegenerateSeconds(),
+                        TimeUnit.SECONDS);
     }
 
     public void startMineResetTask(Mine mine) {
         MineResetTask task = new MineResetTask(mine);
-        Bukkit.getAsyncScheduler().runAtFixedRate(SuperMines.getInstance(), task, 1L, mine.getRegenerateSeconds(), TimeUnit.SECONDS);
+        Bukkit.getAsyncScheduler()
+                .runAtFixedRate(SuperMines.getInstance(), task, 1L, mine.getRegenerateSeconds(), TimeUnit.SECONDS);
         resetTasks.put(mine.getId(), task);
     }
 
