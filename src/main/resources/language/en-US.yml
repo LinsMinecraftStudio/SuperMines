@@ -55,6 +55,14 @@ command:
       - "&e/sm ranks takeRank <player> <rank> [notify] &7- &aTake away a player's rank (default notify is false)"
       - "&e/sm ranks setDisplayName <rank> <displayName> &7- &aSet a rank's display name"
       - "&e/sm ranks setLevel <rank> <level> &7- &aSet a rank's level"
+    regenpoints:
+      - "&e/sm regenpoints list &7- &aList all regen points"
+      - "&e/sm regenpoints create <id> <block> [seconds] [displayName] &7- &aAdd a regen point at the block you are looking at"
+      - "&e/sm regenpoints remove <point> &7- &aRemove a regen point"
+      - "&e/sm regenpoints setRespawnSeconds <point> <seconds> &7- &aSet the respawn delay of a regen point"
+      - "&e/sm regenpoints setBlock <point> <block> &7- &aSet the block that respawns"
+      - "&e/sm regenpoints setDisplayName <point> <displayName> &7- &aSet the display name"
+      - "&e/sm regenpoints tp <point> &7- &aTeleport to a regen point"
   pos:
     invalid-height: "&cThe selected position is outside the world height limit."
     outside-border: "&cThe selected position is outside the world border."
@@ -127,21 +135,34 @@ command:
       empty: "&eTreasure &d%treasure% &ehas no console commands."
       head: "&6Console commands for &d%treasure%&6:"
       line: "&7%index%. &f%command%"
-  ranks:
-    set-display-name: "&aThe display name of rank &d%rank% &ais set to &b%displayName%"
-    set-level: "&aThe level of rank &d%rank% &ais set to &b%level%"
-    give-rank: "&aThe rank &d%rank% &ahas been given to &b%player%"
-    give-rank-notify: "&aThe rank &d%rank% has been given to you"
-    take-rank: "&cThe rank &d%rank% &chas been taken away from &b%player%"
-    take-rank-notify: "&cYour rank &d%rank% &chas been taken away"
-    allowed: "&aNow mine &b%mine% &aallows rank &d%rank% &ato mine"
-    disallowed: "&aNow mine &b%mine% &adoes not allow rank &d%rank% &ato mine"
-    level-less-than-1: "&cThe level must not less than 1!"
+    ranks:
+      set-display-name: "&aThe display name of rank &d%rank% &ais set to &b%displayName%"
+      set-level: "&aThe level of rank &d%rank% &ais set to &b%level%"
+      give-rank: "&aThe rank &d%rank% &ahas been given to &b%player%"
+      give-rank-notify: "&aThe rank &d%rank% has been given to you"
+      take-rank: "&cThe rank &d%rank% &chas been taken away from &b%player%"
+      take-rank-notify: "&cYour rank &d%rank% &chas been taken away"
+      allowed: "&aNow mine &b%mine% &aallows rank &d%rank% &ato mine"
+      disallowed: "&aNow mine &b%mine% &adoes not allow rank &d%rank% &ato mine"
+      level-less-than-1: "&cThe level must not less than 1!"
+      create:
+        exists: "&cA rank with that id already existed!"
+        success: "&aThe rank &b%rank% &ahas been created successfully!"
+      remove:
+        success: "&aThe rank &b%rank% &ahas been removed successfully!"
+  regenpoints:
+    no-target-block: "&cYou must look at a block to create a regen point!"
+    already-exists: "&cA regen point already exists at that location!"
     create:
-      exists: "&cA rank with that id already existed!"
-      success: "&aThe rank &b%rank% &ahas been created successfully!"
+      exists: "&cA regen point with that id already existed!"
+      success: "&aThe regen point &d%point% &ahas been created successfully!"
     remove:
-      success: "&aThe rank &b%rank% &ahas been removed successfully!"
+      success: "&aThe regen point &d%point% &ahas been removed successfully!"
+    set-respawn-seconds: "&aThe respawn seconds of regen point &d%point% &ais set to &b%seconds%"
+    set-block: "&aThe block of regen point &d%point% &ais set to &b%block%"
+    set-display-name: "&aThe display name of regen point &d%point% &ais set to &b%displayName%"
+    point-not-exists: "&cThe regen point does not exist!"
+    last-block: "&cA regen point must contain at least one respawn block!"
   reload:
     safe-tip: "&cNote: To ensure the plugin works safely, it will only reload config and message files"
     success: "&aReload successfully!"
@@ -158,6 +179,8 @@ mine:
   no-place: "&cYou can't place blocks in the mine!"
   reset: "&aMine &b%mine% &ahas been reset!"
   reset_warning: "&cMine &b%mine% &cwill reset in &b%time%"
+regen-point:
+  no-place: "&cYou can't place blocks on a regen point!"
 gui:
   previous: "&ePrevious Page"
   next: "&eNext Page"
@@ -305,6 +328,23 @@ gui:
               - "&7Current: &e%value%"
               - "&7Click to set"
             prompt: "&eEnter biome names separated by commas in the chat: &b(type &6##CANCEL &bto cancel)"
+          placeholder:
+            name: "&bPlaceholder"
+            lore:
+              - "&7Current: &e%value%"
+              - "&7Click to set"
+            prompt: "&eEnter the placeholder expression in the chat: &b(type &6##CANCEL &bto cancel)"
+          placeholder_compare:
+            name: "&bExpected Value"
+            lore:
+              - "&7Current: &e%value%"
+              - "&7Click to set"
+            prompt: "&eEnter the expected placeholder value in the chat: &b(type &6##CANCEL &bto cancel)"
+          placeholder_parse_type:
+            name: "&bPlaceholder Provider"
+            lore:
+              - "&7Current: &e%value%"
+              - "&7Click to switch provider"
         and:
           title: "&aAll (AND)"
         or:
@@ -349,5 +389,62 @@ gui:
       lore:
         - "&7Click to set the rank level of the rank"
         - "&7Current: &b%level%"
+  regenpoints:
+    title: "&d&lRegen Points"
+    info:
+      - "&7World: &a%world%"
+      - "&7Position: &e%pos%"
+      - "&7Block: &b%block%"
+      - "&7Block Pool Size: &b%blocks%"
+      - "&7Independent Rewards: &e%rewards%"
+      - "&7Respawn Seconds: &b%seconds%"
+      - "&7Status: %status% &7(%remaining%s)"
+    status:
+      ready: "&aREADY"
+      respawning: "&eRESPAWNING"
+  regen-point-management:
+    title: "&d&lRegen Point Management &8&l- &d%point%"
+    set_respawn_seconds:
+      prompt: "&eEnter the new respawn seconds in the chat: &b(type &6##CANCEL &bto cancel)"
+      name: "&bSet Respawn Seconds"
+      lore:
+        - "&7Click to set the respawn delay of the point"
+        - "&7Unit: Second(s)"
+        - "&7Current: &b%seconds%"
+    set_block:
+      name: "&dBlock Pool"
+      lore:
+        - "&7Click to manage weighted respawn blocks"
+    blocks:
+      title: "&d&lRespawn Block Pool"
+      weight_prompt: "&eEnter the weight for &d%block%&e: &b(type &6##CANCEL &bto cancel)"
+      each_lore:
+        - "&7Weight: &e%weight%"
+        - "&7Probability: &b%probability%"
+        - "&7Left-click to change weight"
+        - "&7Right-click to remove"
+    rewards:
+      name: "&6Independent Rewards"
+      lore:
+        - "&7Click to manage independently rolled treasures"
+      title: "&6&lIndependent Rewards"
+      chooser_title: "&6Choose A Treasure"
+      chance_prompt: "&eEnter the independent chance for &d%treasure% &e(0-100): &b(type &6##CANCEL &bto cancel)"
+      each_lore:
+        - "&7Independent chance: &e%chance%%"
+        - "&7Left-click to change chance"
+        - "&7Right-click to remove"
+    respawn_now:
+      name: "&aRespawn Now"
+      lore:
+        - "&7Immediately restore this resource node"
+    remove:
+      name: "&cRemove Regen Point"
+      lore:
+        - "&7Permanently remove this resource node"
+    tp:
+      name: "&6Teleport To Point"
+      lore:
+        - "&7Click to teleport to the point"
 
 

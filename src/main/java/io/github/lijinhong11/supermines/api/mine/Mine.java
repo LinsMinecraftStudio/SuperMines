@@ -10,9 +10,11 @@ import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.math.SphereArea;
 import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
+import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.SuperMinesAPI;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
+import io.github.lijinhong11.supermines.api.events.MineEditEvent;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.managers.database.StringRankSet;
@@ -352,6 +354,7 @@ public final class Mine implements Identified {
     public void setTeleportLocation(@NotNull Location tpLoc) {
         Preconditions.checkNotNull(tpLoc, "teleport location cannot be null");
 
+        if (!allowEdit(MineEditEvent.Property.TELEPORT_LOCATION, this.tpLoc, tpLoc)) return;
         this.tpLoc = tpLoc;
     }
 
@@ -394,6 +397,7 @@ public final class Mine implements Identified {
     public void setDisplayName(@Nullable Component displayName) {
         Preconditions.checkNotNull(displayName, "display name cannot be null");
 
+        if (!allowEdit(MineEditEvent.Property.DISPLAY_NAME, this.displayName, displayName)) return;
         this.displayName = displayName;
     }
 
@@ -415,6 +419,7 @@ public final class Mine implements Identified {
     public void setDisplayIcon(Material displayIcon) {
         Preconditions.checkNotNull(displayIcon, "display icon cannot be null");
 
+        if (!allowEdit(MineEditEvent.Property.DISPLAY_ICON, this.displayIcon, displayIcon)) return;
         this.displayIcon = displayIcon;
     }
 
@@ -445,6 +450,7 @@ public final class Mine implements Identified {
     public void setArea(@NotNull AreaOfBlocks area) {
         Preconditions.checkNotNull(area, "area cannot be null");
 
+        if (!allowEdit(MineEditEvent.Property.AREA, this.area, area)) return;
         this.area = area;
     }
 
@@ -494,6 +500,7 @@ public final class Mine implements Identified {
     public void setRegenerateSeconds(@Range(from = 0, to = Integer.MAX_VALUE) int regenerateSeconds) {
         Preconditions.checkArgument(regenerateSeconds >= 0, "regenerate seconds must equal to or greater than 0");
 
+        if (!allowEdit(MineEditEvent.Property.RESET_SECONDS, this.regenerateSeconds, regenerateSeconds)) return;
         this.regenerateSeconds = regenerateSeconds;
     }
 
@@ -512,6 +519,8 @@ public final class Mine implements Identified {
      * @param onlyFillAirWhenRegenerate true to only fill air blocks, false to replace all blocks
      */
     public void setOnlyFillAirWhenRegenerate(boolean onlyFillAirWhenRegenerate) {
+        if (!allowEdit(MineEditEvent.Property.ONLY_FILL_AIR, this.onlyFillAirWhenRegenerate, onlyFillAirWhenRegenerate))
+            return;
         this.onlyFillAirWhenRegenerate = onlyFillAirWhenRegenerate;
     }
 
@@ -520,6 +529,7 @@ public final class Mine implements Identified {
     }
 
     public void setAutoPickup(boolean autoPickup) {
+        if (!allowEdit(MineEditEvent.Property.AUTO_PICKUP, this.autoPickup, autoPickup)) return;
         this.autoPickup = autoPickup;
     }
 
@@ -538,6 +548,7 @@ public final class Mine implements Identified {
      * @param requiredRankLevel the minimum rank level required
      */
     public void setRequiredRankLevel(int requiredRankLevel) {
+        if (!allowEdit(MineEditEvent.Property.REQUIRED_RANK_LEVEL, this.requiredRankLevel, requiredRankLevel)) return;
         this.requiredRankLevel = requiredRankLevel;
     }
 
@@ -547,7 +558,20 @@ public final class Mine implements Identified {
      * @param requiredRank the rank to use for the required level
      */
     public void setRequiredRankLevel(Rank requiredRank) {
-        this.requiredRankLevel = requiredRank.getLevel();
+        setRequiredRankLevel(requiredRank.getLevel());
+    }
+
+    private boolean allowEdit(MineEditEvent.Property property, Object oldValue, Object newValue) {
+        SuperMines plugin = SuperMines.getInstance();
+        if (plugin == null
+                || plugin.getMineManager() == null
+                || plugin.getMineManager().getMine(id) != this) {
+            return true;
+        }
+
+        MineEditEvent event = new MineEditEvent(this, property, oldValue, newValue);
+        event.callEvent();
+        return !event.isCancelled();
     }
 
     /**

@@ -39,16 +39,16 @@ public class ListGUI {
         MittelGUI.PagedChestBuilder builder = MittelGUI.pagedChestBuilder()
                 .title(title)
                 .size(54)
-                .structure("xxxxxxxxx", "xcccccccx", "xcccccccx", "xcccccccx", "xcccccccx", "xaxpxnxkx")
-                .content('c')
-                .previousPage('p', ButtonItem.unclickable(Constants.Items.PREVIOUS_PAGE.apply(p)))
-                .nextPage('n', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))
-                .bind('x', ButtonItem.BACKGROUND)
-                .bind('a', ButtonItem.clickable(Constants.Items.ADD.apply(p), (gui, e) -> {
+                .structure("XXXXXXXXX", "XCCCCCCCX", "XCCCCCCCX", "XCCCCCCCX", "XCCCCCCCX", "XAXPXNXKX")
+                .content('C')
+                .previousPage('P', ButtonItem.unclickable(Constants.Items.PREVIOUS_PAGE.apply(p)))
+                .nextPage('N', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))
+                .bind('X', ButtonItem.BACKGROUND)
+                .bind('A', ButtonItem.clickable(Constants.Items.ADD.apply(p), (gui, e) -> {
                     add.run();
                     return false;
                 }))
-                .bind('k', ButtonItem.clickable(Constants.Items.BACK.apply(p), (gui, e) -> {
+                .bind('K', ButtonItem.clickable(Constants.Items.BACK.apply(p), (gui, e) -> {
                     back.run();
                     return false;
                 }));

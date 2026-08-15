@@ -28,6 +28,30 @@ mine:
     # Whether to enable the feature to the player automatically
     auto-enable: false
 
+# Regen point settings
+# Regen points are single regenerable ore blocks, independent from mines
+regen-point:
+  # Allow place blocks on a regen point location
+  # When false, only operators can place blocks on regen point locations
+  allow-place: false
+  # Whether to show particles when a regen point respawns
+  particles: true
+  # The particle shown when a regen point respawns
+  particle: HAPPY_VILLAGER
+  # Whether to play a sound when a regen point respawns
+  sound: true
+  # The sound played when a regen point respawns
+  sound-name: BLOCK_NOTE_BLOCK_PLING
+  # Delay before retrying when another plugin cancels a scheduled respawn event
+  cancelled-respawn-retry-seconds: 5
+  protection:
+    # Prevent explosions from destroying regen point blocks
+    explosions: true
+    # Prevent pistons from moving blocks into or out of regen point locations
+    pistons: true
+    # Prevent fluids from flowing into regen point locations
+    fluids: true
+
 # Storage settings
 # Require restart
 storage:

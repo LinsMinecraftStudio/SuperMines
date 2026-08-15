@@ -124,6 +124,11 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
 
         Treasure treasure = treasures.remove(key);
         SuperMines.getInstance().getMineManager().getAllMines().forEach(m -> m.removeTreasure(treasure));
+        SuperMines.getInstance().getRegenPointManager().getAllRegenPoints().forEach(point -> {
+            if (point.getRewardChances().remove(key) != null) {
+                SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+            }
+        });
 
         super.remove(key);
     }

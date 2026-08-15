@@ -55,6 +55,14 @@ command:
       - "&e/sm ranks takeRank <玩家> <等级> [提示] &7- &a移除等级"
       - "&e/sm ranks setDisplayName <等级> <显示名> &7- &a设置等级显示名"
       - "&e/sm ranks setLevel <等级> <数值> &7- &a设置等级数值"
+    regenpoints:
+      - "&e/sm regenpoints list &7- &a列出所有再生矿点"
+      - "&e/sm regenpoints create <id> <方块> [秒数] [显示名] &7- &a在你注视的方块处创建再生矿点"
+      - "&e/sm regenpoints remove <矿点> &7- &a删除再生矿点"
+      - "&e/sm regenpoints setRespawnSeconds <矿点> <秒数> &7- &a设置再生矿点的复生时间"
+      - "&e/sm regenpoints setBlock <矿点> <方块> &7- &a设置复生的方块"
+      - "&e/sm regenpoints setDisplayName <矿点> <显示名> &7- &a设置显示名"
+      - "&e/sm regenpoints tp <矿点> &7- &a传送到再生矿点"
   pos:
     invalid-height: "&c所选位置超出世界高度限制。"
     outside-border: "&c所选位置在世界边界之外。"
@@ -127,21 +135,34 @@ command:
       empty: "&e宝藏 &d%treasure% &e没有控制台指令。"
       head: "&6宝藏 &d%treasure% &6的指令:"
       line: "&7%index%. &f%command%"
-  ranks:
-    set-display-name: "&a等级 &d%rank% &a的显示名设为 &b%displayName%"
-    set-level: "&a等级 &d%rank% &a的数值设为 &b%level%"
-    give-rank: "&a已给予 &b%player% &a等级 &d%rank%"
-    give-rank-notify: "&a你获得了等级 &d%rank%"
-    take-rank: "&c已移除 &b%player% &c的等级 &d%rank%"
-    take-rank-notify: "&c你的等级 &d%rank% &c被移除"
-    allowed: "&a矿区 &b%mine% &a现在允许等级 &d%rank% &a进入"
-    disallowed: "&a矿区 &b%mine% &a不再允许等级 &d%rank%"
-    level-less-than-1: "&c等级必须大于等于 1！"
+    ranks:
+      set-display-name: "&a等级 &d%rank% &a的显示名设为 &b%displayName%"
+      set-level: "&a等级 &d%rank% &a的数值设为 &b%level%"
+      give-rank: "&a已给予 &b%player% &a等级 &d%rank%"
+      give-rank-notify: "&a你获得了等级 &d%rank%"
+      take-rank: "&c已移除 &b%player% &c的等级 &d%rank%"
+      take-rank-notify: "&c你的等级 &d%rank% &c被移除"
+      allowed: "&a矿区 &b%mine% &a现在允许等级 &d%rank% &a进入"
+      disallowed: "&a矿区 &b%mine% &a不再允许等级 &d%rank%"
+      level-less-than-1: "&c等级必须大于等于 1！"
+      create:
+        exists: "&c该ID的等级已存在！"
+        success: "&a等级 &b%rank% &a创建成功！"
+      remove:
+        success: "&a等级 &b%rank% &a已删除！"
+  regenpoints:
+    no-target-block: "&c你必须注视一个方块才能创建再生矿点！"
+    already-exists: "&c该位置已存在再生矿点！"
     create:
-      exists: "&c该ID的等级已存在！"
-      success: "&a等级 &b%rank% &a创建成功！"
+      exists: "&c该ID的再生矿点已存在！"
+      success: "&a再生矿点 &d%point% &a创建成功！"
     remove:
-      success: "&a等级 &b%rank% &a已删除！"
+      success: "&a再生矿点 &d%point% &a已删除！"
+    set-respawn-seconds: "&a再生矿点 &d%point% &a的复生时间设为 &b%seconds%"
+    set-block: "&a再生矿点 &d%point% &a的复生方块设为 &b%block%"
+    set-display-name: "&a再生矿点 &d%point% &a的显示名设为 &b%displayName%"
+    point-not-exists: "&c该再生矿点不存在！"
+    last-block: "&c再生矿点必须至少保留一个复生方块！"
   reload:
     safe-tip: "&c注意：为保证安全，仅重载配置与消息文件"
     success: "&a重载成功！"
@@ -158,6 +179,8 @@ mine:
   no-place: "&c你不能在矿区内放置方块！"
   reset: "&a矿区 &b%mine% &a已重置！"
   reset_warning: "&c矿区 &b%mine% &c将在 &b%time% &c后重置"
+regen-point:
+  no-place: "&c你不能在再生矿点上放置方块！"
 gui:
   previous: "&e上一页"
   next: "&e下一页"
@@ -305,6 +328,23 @@ gui:
               - "&7当前: &e%value%"
               - "&7点击设置"
             prompt: "&e请在聊天中输入用逗号分隔的群系名称: &b(输入 &6##CANCEL &b取消)"
+          placeholder:
+            name: "&b占位符"
+            lore:
+              - "&7当前: &e%value%"
+              - "&7点击设置"
+            prompt: "&e在聊天中输入占位符表达式：&b(输入 &6##CANCEL &b取消)"
+          placeholder_compare:
+            name: "&b期望值"
+            lore:
+              - "&7当前: &e%value%"
+              - "&7点击设置"
+            prompt: "&e在聊天中输入占位符期望值：&b(输入 &6##CANCEL &b取消)"
+          placeholder_parse_type:
+            name: "&b占位符提供器"
+            lore:
+              - "&7当前: &e%value%"
+              - "&7点击切换提供器"
         and:
           title: "&a全部满足 (AND)"
         or:
@@ -349,3 +389,60 @@ gui:
       lore:
         - "&7点击设置等级数值"
         - "&7当前: &b%level%"
+  regenpoints:
+    title: "&d&l再生矿点"
+    info:
+      - "&7世界: &a%world%"
+      - "&7位置: &e%pos%"
+      - "&7方块: &b%block%"
+      - "&7方块池数量: &b%blocks%"
+      - "&7独立奖励数量: &e%rewards%"
+      - "&7复生时间: &b%seconds%"
+      - "&7状态: %status% &7(%remaining%秒)"
+    status:
+      ready: "&a可挖掘"
+      respawning: "&e复生中"
+  regen-point-management:
+    title: "&d&l再生矿点管理 &8&l- &d%point%"
+    set_respawn_seconds:
+      prompt: "&e在聊天输入新的复生时间：&b(输入 &6##CANCEL &b取消)"
+      name: "&b设置复生时间"
+      lore:
+        - "&7点击设置复生延迟"
+        - "&7单位: 秒"
+        - "&7当前: &b%seconds%"
+    set_block:
+      name: "&d复生方块池"
+      lore:
+        - "&7点击管理带权重的复生方块"
+    blocks:
+      title: "&d&l复生方块池"
+      weight_prompt: "&e输入方块 &d%block% &e的权重：&b(输入 &6##CANCEL &b取消)"
+      each_lore:
+        - "&7权重: &e%weight%"
+        - "&7概率: &b%probability%"
+        - "&7左键修改权重"
+        - "&7右键移除"
+    rewards:
+      name: "&6独立奖励"
+      lore:
+        - "&7点击管理独立判定的宝藏奖励"
+      title: "&6&l独立奖励"
+      chooser_title: "&6选择宝藏"
+      chance_prompt: "&e输入宝藏 &d%treasure% &e的独立概率 (0-100)：&b(输入 &6##CANCEL &b取消)"
+      each_lore:
+        - "&7独立概率: &e%chance%%"
+        - "&7左键修改概率"
+        - "&7右键移除"
+    respawn_now:
+      name: "&a立即复生"
+      lore:
+        - "&7立即恢复此资源节点"
+    remove:
+      name: "&c删除再生矿点"
+      lore:
+        - "&7永久删除此资源节点"
+    tp:
+      name: "&6传送到矿点"
+      lore:
+        - "&7点击传送到此矿点"

@@ -8,25 +8,22 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents an event when a mine is created.
+ * Represents an event before a mine is removed.
+ *
+ * <p>This event is cancellable. Cancelling keeps the mine registered.
  */
-public class MineCreateEvent extends Event implements Cancellable {
+public final class MineRemoveEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Mine mine;
     private boolean cancelled;
 
-    public MineCreateEvent(Mine mine) {
+    public MineRemoveEvent(@NotNull Mine mine) {
         super(!Bukkit.isPrimaryThread());
-
         this.mine = mine;
     }
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
-
-    public Mine getMine() {
+    public @NotNull Mine getMine() {
         return mine;
     }
 
@@ -38,6 +35,10 @@ public class MineCreateEvent extends Event implements Cancellable {
     @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLERS;
     }
 
     @Override

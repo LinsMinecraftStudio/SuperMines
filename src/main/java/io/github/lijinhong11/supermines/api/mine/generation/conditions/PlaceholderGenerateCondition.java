@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
-public class PlaceholderGenerateCondition implements IGenerateCondition, ReadWriteObject {
+public final class PlaceholderGenerateCondition implements IGenerateCondition, ReadWriteObject {
     private final String placeholder;
     private final String compareContent;
     private final ParseType parseType;
@@ -88,6 +88,18 @@ public class PlaceholderGenerateCondition implements IGenerateCondition, ReadWri
     @Override
     public void read(ConfigurationSection cs) {
         throw new UnsupportedOperationException();
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
+    public String getCompareContent() {
+        return compareContent;
+    }
+
+    public ParseType getParseType() {
+        return parseType;
     }
 
     public enum ParseType {

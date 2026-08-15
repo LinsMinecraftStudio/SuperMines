@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.api.events;
 
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,7 @@ public class MineResetEvent extends Event {
     private final Mine mine;
 
     public MineResetEvent(Mine mine) {
-        super(false);
+        super(!Bukkit.isPrimaryThread());
 
         this.mine = mine;
     }

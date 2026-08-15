@@ -8,26 +8,29 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Represents an event when a mine is created.
+ * Represents an event before a mine reset starts generating blocks.
+ *
+ * <p>This event is cancellable.
  */
-public class MineCreateEvent extends Event implements Cancellable {
+public final class MineResetStartEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Mine mine;
+    private final boolean manual;
     private boolean cancelled;
 
-    public MineCreateEvent(Mine mine) {
+    public MineResetStartEvent(@NotNull Mine mine, boolean manual) {
         super(!Bukkit.isPrimaryThread());
-
         this.mine = mine;
+        this.manual = manual;
     }
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
-
-    public Mine getMine() {
+    public @NotNull Mine getMine() {
         return mine;
+    }
+
+    public boolean isManual() {
+        return manual;
     }
 
     @Override
@@ -38,6 +41,10 @@ public class MineCreateEvent extends Event implements Cancellable {
     @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    public static @NotNull HandlerList getHandlerList() {
+        return HANDLERS;
     }
 
     @Override

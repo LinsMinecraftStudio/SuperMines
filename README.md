@@ -36,7 +36,10 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
 * More coming soon…
 
 ## Road Map
-1. particles???
+
+Nested generation conditions, global regen points, weighted block pools, and independent rewards are implemented.
+
+See the maintained [development roadmap](ROADMAP.md) for structure generation, mine events, ownership, visualization, and integrations.
 
 ## Screenshots
 

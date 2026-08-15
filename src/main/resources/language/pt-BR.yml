@@ -55,6 +55,14 @@ command:
       - "&e/sm ranks takeRank <player> <rank> [notify] &7- &aRemover cargo de um jogador"
       - "&e/sm ranks setDisplayName <rank> <displayName> &7- &aDefinir nome do cargo"
       - "&e/sm ranks setLevel <rank> <level> &7- &aDefinir nível do cargo"
+    regenpoints:
+      - "&e/sm regenpoints list &7- &aListar todos os pontos de regeneração"
+      - "&e/sm regenpoints create <id> <block> [seconds] [displayName] &7- &aCriar um ponto no bloco que você está olhando"
+      - "&e/sm regenpoints remove <point> &7- &aRemover um ponto de regeneração"
+      - "&e/sm regenpoints setRespawnSeconds <point> <seconds> &7- &aDefinir o atraso de regeneração"
+      - "&e/sm regenpoints setBlock <point> <block> &7- &aDefinir o bloco que regenera"
+      - "&e/sm regenpoints setDisplayName <point> <displayName> &7- &aDefinir o nome de exibição"
+      - "&e/sm regenpoints tp <point> &7- &aTeleportar para um ponto de regeneração"
   pos:
     invalid-height: "&cA posição selecionada está fora do limite de altura do mundo."
     outside-border: "&cA posição selecionada está fora da borda do mundo."
@@ -127,21 +135,34 @@ command:
       empty: "&eTesouro &d%treasure% &enão tem comandos de console."
       head: "&6Comandos de console para &d%treasure%&6:"
       line: "&7%index%. &f%command%"
-  ranks:
-    set-display-name: "&aO nome do cargo &d%rank% &afoi definido para &b%displayName%"
-    set-level: "&aO nível do cargo &d%rank% &afoi definido para &b%level%"
-    give-rank: "&aO cargo &d%rank% &afoi dado a &b%player%"
-    give-rank-notify: "&aO cargo &d%rank% foi dado a você"
-    take-rank: "&cO cargo &d%rank% &cfoi removido de &b%player%"
-    take-rank-notify: "&cSeu cargo &d%rank% &cfoi removido"
-    allowed: "&aAgora a mina &b%mine% &apermite o cargo &d%rank% &ana mina"
-    disallowed: "&aAgora a mina &b%mine% &anão permite o cargo &d%rank% &ana mina"
-    level-less-than-1: "&cO nível não pode ser menor que 1!"
+    ranks:
+      set-display-name: "&aO nome do cargo &d%rank% &afoi definido para &b%displayName%"
+      set-level: "&aO nível do cargo &d%rank% &afoi definido para &b%level%"
+      give-rank: "&aO cargo &d%rank% &afoi dado a &b%player%"
+      give-rank-notify: "&aO cargo &d%rank% foi dado a você"
+      take-rank: "&cO cargo &d%rank% &cfoi removido de &b%player%"
+      take-rank-notify: "&cSeu cargo &d%rank% &cfoi removido"
+      allowed: "&aAgora a mina &b%mine% &apermite o cargo &d%rank% &ana mina"
+      disallowed: "&aAgora a mina &b%mine% &anão permite o cargo &d%rank% &ana mina"
+      level-less-than-1: "&cO nível não pode ser menor que 1!"
+      create:
+        exists: "&cJá existe um cargo com esse ID!"
+        success: "&aO cargo &b%rank% &afoi criado com sucesso!"
+      remove:
+        success: "&aO cargo &b%rank% &afoi removido com sucesso!"
+  regenpoints:
+    no-target-block: "&cVocê deve olhar para um bloco para criar um ponto de regeneração!"
+    already-exists: "&cJá existe um ponto de regeneração nesse local!"
     create:
-      exists: "&cJá existe um cargo com esse ID!"
-      success: "&aO cargo &b%rank% &afoi criado com sucesso!"
+      exists: "&cJá existe um ponto de regeneração com esse ID!"
+      success: "&aO ponto de regeneração &d%point% &afoi criado com sucesso!"
     remove:
-      success: "&aO cargo &b%rank% &afoi removido com sucesso!"
+      success: "&aO ponto de regeneração &d%point% &afoi removido com sucesso!"
+    set-respawn-seconds: "&aO atraso do ponto &d%point% &afoi definido para &b%seconds%"
+    set-block: "&aO bloco do ponto &d%point% &afoi definido para &b%block%"
+    set-display-name: "&aO nome do ponto &d%point% &afoi definido para &b%displayName%"
+    point-not-exists: "&cO ponto de regeneração não existe!"
+    last-block: "&cUm ponto deve manter pelo menos um bloco de regeneração!"
   reload:
     safe-tip: "&cNota: para segurança, apenas arquivos de configuração e mensagens serão recarregados"
     success: "&aRecarregado com sucesso!"
@@ -158,6 +179,8 @@ mine:
   no-place: "&cVocê não pode colocar blocos dentro da mina!"
   reset: "&aMina &b%mine% &afoi resetada!"
   reset_warning: "&cMina &b%mine% &cserá resetada em &b%time%"
+regen-point:
+  no-place: "&cVocê não pode colocar blocos em um ponto de regeneração!"
 gui:
   previous: "&ePágina Anterior"
   next: "&ePróxima Página"
@@ -305,6 +328,23 @@ gui:
               - "&7Atual: &e%value%"
               - "&7Clique para definir"
             prompt: "&eDigite nomes de biomas separados por vírgula no chat: &b(digite &6##CANCEL &bpara cancelar)"
+          placeholder:
+            name: "&bPlaceholder"
+            lore:
+              - "&7Atual: &e%value%"
+              - "&7Clique para definir"
+            prompt: "&eDigite a expressão do placeholder no chat: &b(digite &6##CANCEL &bpara cancelar)"
+          placeholder_compare:
+            name: "&bValor Esperado"
+            lore:
+              - "&7Atual: &e%value%"
+              - "&7Clique para definir"
+            prompt: "&eDigite o valor esperado do placeholder no chat: &b(digite &6##CANCEL &bpara cancelar)"
+          placeholder_parse_type:
+            name: "&bProvedor de Placeholder"
+            lore:
+              - "&7Atual: &e%value%"
+              - "&7Clique para trocar o provedor"
         and:
           title: "&aTodos (E)"
         or:
@@ -349,3 +389,60 @@ gui:
       lore:
         - "&7Clique para definir o nível do cargo"
         - "&7Atual: &b%level%"
+  regenpoints:
+    title: "&d&lPontos de Regeneração"
+    info:
+      - "&7Mundo: &a%world%"
+      - "&7Posição: &e%pos%"
+      - "&7Bloco: &b%block%"
+      - "&7Blocos no grupo: &b%blocks%"
+      - "&7Recompensas independentes: &e%rewards%"
+      - "&7Segundos para regenerar: &b%seconds%"
+      - "&7Status: %status% &7(%remaining%s)"
+    status:
+      ready: "&aPRONTO"
+      respawning: "&eREGENERANDO"
+  regen-point-management:
+    title: "&d&lGerenciar Ponto &8&l- &d%point%"
+    set_respawn_seconds:
+      prompt: "&eDigite os novos segundos de regeneração no chat: &b(digite &6##CANCEL &bpara cancelar)"
+      name: "&bDefinir Segundos de Regeneração"
+      lore:
+        - "&7Clique para definir o atraso do ponto"
+        - "&7Unidade: Segundos"
+        - "&7Atual: &b%seconds%"
+    set_block:
+      name: "&dGrupo de Blocos"
+      lore:
+        - "&7Clique para gerenciar blocos com peso"
+    blocks:
+      title: "&d&lGrupo de Blocos"
+      weight_prompt: "&eDigite o peso de &d%block%&e: &b(digite &6##CANCEL &bpara cancelar)"
+      each_lore:
+        - "&7Peso: &e%weight%"
+        - "&7Probabilidade: &b%probability%"
+        - "&7Clique esquerdo para alterar"
+        - "&7Clique direito para remover"
+    rewards:
+      name: "&6Recompensas Independentes"
+      lore:
+        - "&7Clique para gerenciar tesouros independentes"
+      title: "&6&lRecompensas Independentes"
+      chooser_title: "&6Escolha um Tesouro"
+      chance_prompt: "&eDigite a chance independente de &d%treasure% &e(0-100): &b(digite &6##CANCEL &bpara cancelar)"
+      each_lore:
+        - "&7Chance independente: &e%chance%%"
+        - "&7Clique esquerdo para alterar"
+        - "&7Clique direito para remover"
+    respawn_now:
+      name: "&aRegenerar Agora"
+      lore:
+        - "&7Restaura este ponto imediatamente"
+    remove:
+      name: "&cRemover Ponto"
+      lore:
+        - "&7Remove este ponto permanentemente"
+    tp:
+      name: "&6Teleportar para o Ponto"
+      lore:
+        - "&7Clique para teleportar para o ponto"

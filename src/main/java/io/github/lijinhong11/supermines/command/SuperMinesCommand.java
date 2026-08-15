@@ -6,6 +6,7 @@ import dev.jorel.commandapi.executors.CommandExecutor;
 import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
+import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.NumberUtils;
 import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
@@ -13,10 +14,10 @@ import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
-import io.github.lijinhong11.supermines.api.events.MineCreateEvent;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
+import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import io.github.lijinhong11.supermines.gui.GuiManager;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
 import io.github.lijinhong11.supermines.utils.Constants;
@@ -706,6 +707,371 @@ public class SuperMinesCommand {
                                                                         "%rank%", rank.getRawDisplayName()));
                                             }
                                         })))
+                // Regen Points
+                .withSubcommand(new CommandAPICommand("regenpoints")
+                        .withPermission(Constants.Permission.REGEN_POINTS)
+                        .executes((sender, args) -> {
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessages(sender, "command.help.regenpoints");
+                        })
+                        .withSubcommands(
+                                new CommandAPICommand("list")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .executes((sender, args) -> {
+                                            list(
+                                                    sender,
+                                                    SuperMines.getInstance()
+                                                            .getRegenPointManager()
+                                                            .getAllRegenPoints()
+                                                            .toArray(new RegenPoint[0]));
+                                        }),
+                                new CommandAPICommand("create")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(new StringArgument("id"), new BlockArgument("block"))
+                                        .withOptionalArguments(
+                                                new IntegerArgument("seconds", 0, Integer.MAX_VALUE),
+                                                new DisplayNameArgument())
+                                        .executesPlayer((player, args) -> {
+                                            String id = args.getByClassOrDefault("id", String.class, "");
+                                            PackedBlock block = (PackedBlock) args.get("block");
+                                            int seconds = args.getByClassOrDefault(
+                                                    "seconds",
+                                                    int.class,
+                                                    SuperMines.getInstance()
+                                                            .getRegenPointManager()
+                                                            .getDefaultRespawnSeconds());
+                                            if (!id.matches(Constants.ID_PATTERN)) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessages(player, "command.invalid-id");
+                                                return;
+                                            }
+
+                                            if (block == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(player, "command.invalid-block");
+                                                return;
+                                            }
+
+                                            if (SuperMines.getInstance()
+                                                            .getRegenPointManager()
+                                                            .getRegenPoint(id)
+                                                    != null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessages(player, "command.regenpoints.create.exists");
+                                                return;
+                                            }
+
+                                            var target = player.getTargetBlockExact(5);
+                                            if (target == null
+                                                    || target.getType().isAir()) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(player, "command.regenpoints.no-target-block");
+                                                return;
+                                            }
+
+                                            Location loc = target.getLocation();
+                                            if (SuperMines.getInstance()
+                                                            .getRegenPointManager()
+                                                            .getRegenPoint(loc)
+                                                    != null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(player, "command.regenpoints.already-exists");
+                                                return;
+                                            }
+
+                                            Optional<Component> displayName =
+                                                    args.getOptionalByClass("displayName", Component.class);
+                                            RegenPoint point = new RegenPoint(
+                                                    id,
+                                                    loc.getWorld(),
+                                                    BlockPos.fromLocation(loc),
+                                                    block,
+                                                    Math.max(1, seconds));
+                                            if (displayName.isPresent()) {
+                                                point.setDisplayName(displayName.get());
+                                            }
+
+                                            SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .addRegenPoint(point);
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            player,
+                                                            "command.regenpoints.create.success",
+                                                            MessageReplacement.replace(
+                                                                    "%point%", point.getRawDisplayName()));
+                                        }),
+                                new CommandAPICommand("remove")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(new StringArgument("id")
+                                                .includeSuggestions(ArgumentSuggestions.strings(getRegenPointsList())))
+                                        .executesPlayer((player, args) -> {
+                                            String id = (String) args.getOrDefault("id", "");
+                                            RegenPoint point = SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .getRegenPoint(id);
+                                            if (point == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessages(player, "command.regenpoints.point-not-exists");
+                                                return;
+                                            }
+
+                                            SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .removeRegenPoint(point.getId());
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            player,
+                                                            "command.regenpoints.remove.success",
+                                                            MessageReplacement.replace(
+                                                                    "%point%", point.getRawDisplayName()));
+                                        }),
+                                new CommandAPICommand("setRespawnSeconds")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(
+                                                new StringArgument("id")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getRegenPointsList())),
+                                                new IntegerArgument("seconds", 0, Integer.MAX_VALUE))
+                                        .executes((sender, args) -> {
+                                            String id = (String) args.getOrDefault("id", "");
+                                            int seconds = args.getByClassOrDefault("seconds", int.class, 1);
+                                            RegenPoint point = SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .getRegenPoint(id);
+                                            if (point == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.regenpoints.point-not-exists");
+                                                return;
+                                            }
+
+                                            SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .setRespawnSeconds(point, seconds);
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            sender,
+                                                            "command.regenpoints.set-respawn-seconds",
+                                                            MessageReplacement.replace(
+                                                                    "%point%", point.getRawDisplayName()),
+                                                            MessageReplacement.replace(
+                                                                    "%seconds%", String.valueOf(seconds)));
+                                        }),
+                                new CommandAPICommand("setBlock")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(
+                                                new StringArgument("id")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getRegenPointsList())),
+                                                new BlockArgument("block"))
+                                        .executes((sender, args) -> {
+                                            String id = (String) args.getOrDefault("id", "");
+                                            PackedBlock block = (PackedBlock) args.get("block");
+                                            RegenPoint point = SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .getRegenPoint(id);
+                                            if (point == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.regenpoints.point-not-exists");
+                                                return;
+                                            }
+
+                                            if (block == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.invalid-block");
+                                                return;
+                                            }
+
+                                            point.setBlock(block);
+                                            SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .saveRegenPoint(point);
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            sender,
+                                                            "command.regenpoints.set-block",
+                                                            MessageReplacement.replace(
+                                                                    "%point%", point.getRawDisplayName()),
+                                                            MessageReplacement.replace("%block%", block.getId()));
+                                        }),
+                                new CommandAPICommand("addBlock")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(
+                                                new StringArgument("id")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getRegenPointsList())),
+                                                new BlockArgument("block"),
+                                                new DoubleArgument("weight", Constants.WEIGHT_MIN))
+                                        .executes((sender, args) -> {
+                                            RegenPoint point = getRegenPoint(sender, (String) args.get("id"));
+                                            if (point == null) return;
+                                            PackedBlock block = (PackedBlock) args.get("block");
+                                            double weight = args.getByClassOrDefault("weight", double.class, 1D);
+                                            if (block == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.invalid-block");
+                                                return;
+                                            }
+                                            point.addBlock(block, weight);
+                                            SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .saveRegenPoint(point);
+                                        }),
+                                new CommandAPICommand("removeBlock")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(
+                                                new StringArgument("id")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getRegenPointsList())),
+                                                new BlockArgument("block"))
+                                        .executes((sender, args) -> {
+                                            RegenPoint point = getRegenPoint(sender, (String) args.get("id"));
+                                            if (point == null) return;
+                                            PackedBlock block = (PackedBlock) args.get("block");
+                                            if (block == null
+                                                    || !point.getBlocks().containsKey(block)) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.invalid-block");
+                                                return;
+                                            }
+                                            if (point.getBlocks().size() <= 1) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.regenpoints.last-block");
+                                                return;
+                                            }
+                                            point.removeBlock(block);
+                                            SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .saveRegenPoint(point);
+                                        }),
+                                new CommandAPICommand("addReward")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(
+                                                new StringArgument("id")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getRegenPointsList())),
+                                                new StringArgument("treasure")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getTreasuresList())),
+                                                new DoubleArgument("chance", Constants.WEIGHT_MIN, 100D))
+                                        .executes((sender, args) -> {
+                                            RegenPoint point = getRegenPoint(sender, (String) args.get("id"));
+                                            if (point == null) return;
+                                            String treasureId = (String) args.get("treasure");
+                                            if (SuperMines.getInstance()
+                                                            .getTreasureManager()
+                                                            .getTreasure(treasureId)
+                                                    == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.treasure-not-exists");
+                                                return;
+                                            }
+                                            point.setRewardChance(
+                                                    treasureId, args.getByClassOrDefault("chance", double.class, 1D));
+                                            SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .saveRegenPoint(point);
+                                        }),
+                                new CommandAPICommand("removeReward")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(
+                                                new StringArgument("id")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getRegenPointsList())),
+                                                new StringArgument("treasure")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getTreasuresList())))
+                                        .executes((sender, args) -> {
+                                            RegenPoint point = getRegenPoint(sender, (String) args.get("id"));
+                                            if (point == null) return;
+                                            point.removeReward((String) args.get("treasure"));
+                                            SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .saveRegenPoint(point);
+                                        }),
+                                new CommandAPICommand("respawnNow")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(new StringArgument("id")
+                                                .includeSuggestions(ArgumentSuggestions.strings(getRegenPointsList())))
+                                        .executes((sender, args) -> {
+                                            RegenPoint point = getRegenPoint(sender, (String) args.get("id"));
+                                            if (point != null) {
+                                                SuperMines.getInstance()
+                                                        .getRegenPointManager()
+                                                        .respawnNow(point);
+                                            }
+                                        }),
+                                new CommandAPICommand("setDisplayName")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(
+                                                new StringArgument("id")
+                                                        .includeSuggestions(
+                                                                ArgumentSuggestions.strings(getRegenPointsList())),
+                                                new DisplayNameArgument())
+                                        .executes((sender, args) -> {
+                                            String id = (String) args.getOrDefault("id", "");
+                                            Component displayName = (Component) args.get("displayName");
+                                            RegenPoint point = SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .getRegenPoint(id);
+                                            if (point == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.regenpoints.point-not-exists");
+                                                return;
+                                            }
+
+                                            point.setDisplayName(displayName);
+                                            SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .saveRegenPoint(point);
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            sender,
+                                                            "command.regenpoints.set-display-name",
+                                                            MessageReplacement.replace(
+                                                                    "%point%", point.getRawDisplayName()),
+                                                            MessageReplacement.replace(
+                                                                    "%displayName%", point.getRawDisplayName()));
+                                        }),
+                                new CommandAPICommand("tp")
+                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withArguments(new StringArgument("id")
+                                                .includeSuggestions(ArgumentSuggestions.strings(getRegenPointsList())))
+                                        .executesPlayer((player, args) -> {
+                                            String id = (String) args.getOrDefault("id", "");
+                                            RegenPoint point = SuperMines.getInstance()
+                                                    .getRegenPointManager()
+                                                    .getRegenPoint(id);
+                                            if (point == null) {
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(player, "command.regenpoints.point-not-exists");
+                                                return;
+                                            }
+
+                                            player.teleportAsync(
+                                                    point.getLocation().clone().add(0.5, 0, 0.5));
+                                        })))
                 // Other
                 .withSubcommand(new CommandAPICommand("pos1")
                         .withPermission(Constants.Permission.POS_SET)
@@ -1368,10 +1734,8 @@ public class SuperMinesCommand {
         if (area == null) return;
         Component name = displayName == null ? ComponentUtils.text(id) : displayName;
         Mine mine = new Mine(id, name, player.getWorld(), area, new WeightedRandomMap<>(), 0, false);
-        SuperMines.getInstance().getMineManager().addMine(mine);
+        if (!SuperMines.getInstance().getMineManager().tryAddMine(mine)) return;
         SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.success");
-
-        new MineCreateEvent(mine).callEvent();
     }
 
     private void redefineMine(Player player, String id) {
@@ -1393,9 +1757,9 @@ public class SuperMinesCommand {
             return;
         }
 
-        SuperMines.getInstance().getTaskMaker().cancelMineResetTask(mine);
-        SuperMines.getInstance().getMineManager().removeMine(id);
-        SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.remove.success");
+        if (SuperMines.getInstance().getMineManager().tryRemoveMine(id)) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.remove.success");
+        }
     }
 
     private void resetMine(CommandSender sender, String id) {
@@ -1433,5 +1797,17 @@ public class SuperMinesCommand {
 
     private Set<String> getRankList() {
         return SuperMines.getInstance().getRankManager().getAllRankIds();
+    }
+
+    private Set<String> getRegenPointsList() {
+        return SuperMines.getInstance().getRegenPointManager().getAllRegenPointIds();
+    }
+
+    private RegenPoint getRegenPoint(CommandSender sender, String id) {
+        RegenPoint point = SuperMines.getInstance().getRegenPointManager().getRegenPoint(id);
+        if (point == null) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.regenpoints.point-not-exists");
+        }
+        return point;
     }
 }

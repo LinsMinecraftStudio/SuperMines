@@ -26,7 +26,9 @@ import io.github.lijinhong11.supermines.api.mine.generation.conditions.BorderGen
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.MineYGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.NotGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.OrGenerateCondition;
+import io.github.lijinhong11.supermines.api.mine.generation.conditions.PlaceholderGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.SurfaceGenerateCondition;
+import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import io.github.lijinhong11.supermines.utils.Constants;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -48,8 +51,12 @@ public class GuiManager {
         ChestGUI gui = MittelGUI.chestBuilder()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.general.title"))
                 .size(27)
-                .structure("xxxxxxxxx", "xxMxTxRxx", "xxxxxxxxx")
-                .bind('x', ButtonItem.BACKGROUND)
+                .structure("XXXXXXXXX", "XPXMXTXRX", "XXXXXXXXX")
+                .bind('X', ButtonItem.BACKGROUND)
+                .bind('P', ButtonItem.clickable(Constants.Items.REGEN_POINTS.apply(p), (g, e) -> {
+                    openRegenPointList(p);
+                    return false;
+                }))
                 .bind('M', ButtonItem.clickable(Constants.Items.MINES.apply(p), (g, e) -> {
                     openMineList(p);
                     return false;
@@ -412,24 +419,311 @@ public class GuiManager {
         gui.open(p);
     }
 
+    public static void openRegenPointList(Player p) {
+        PaginatedChestGUI gui = buildPagedGUI(p, "gui.regenpoints.title", () -> openGeneral(p));
+
+        gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
+            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+            openAddRegenPoint(p);
+            return false;
+        }));
+
+        for (RegenPoint point : SuperMines.getInstance().getRegenPointManager().getAllRegenPoints()) {
+            ItemStack item = point.getBlock().toItem();
+            item.editMeta(meta -> {
+                meta.displayName(point.getDisplayName());
+                meta.lore(getRegenPointInfo(p, point));
+            });
+            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
+                openRegenPointManagementGui(p, point);
+                return false;
+            }));
+        }
+
+        gui.open(p);
+    }
+
+    public static void openRegenPointManagementGui(Player p, RegenPoint point) {
+        MessageReplacement pointName = MessageReplacement.replace("%point%", point.getRawDisplayName());
+        ChestGUI gui = buildManagementGUI(p, "gui.regen-point-management.title", pointName);
+        Runnable reopen = () -> openRegenPointManagementGui(p, point);
+        Runnable back = () -> openRegenPointList(p);
+
+        placeCommon(p, gui, point, point.getBlock().toItem().getType(), reopen, back);
+
+        // Respawn Seconds
+        gui.putItem(
+                slot(3, 4),
+                ButtonItem.clickable(
+                        Constants.Items.SET_RESPAWN_SECONDS.apply(p, point.getRespawnSeconds()), (g, e) -> {
+                            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+                            p.closeInventory();
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(p, "gui.regen-point-management.set_respawn_seconds.prompt");
+                            handleIntegerInput(p, result -> {
+                                SuperMines.getInstance().getRegenPointManager().setRespawnSeconds(point, result);
+                                reopen.run();
+                            });
+                            return false;
+                        }));
+
+        // Block Pool
+        gui.putItem(slot(3, 5), ButtonItem.clickable(Constants.Items.SET_REGEN_BLOCK.apply(p), (g, e) -> {
+            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+            openRegenPointBlocks(p, point);
+            return false;
+        }));
+
+        // Independent Rewards
+        gui.putItem(slot(3, 7), ButtonItem.clickable(Constants.Items.REGEN_REWARDS.apply(p), (g, e) -> {
+            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+            openRegenPointRewards(p, point);
+            return false;
+        }));
+
+        // Teleport
+        gui.putItem(slot(4, 3), ButtonItem.clickable(Constants.Items.TP_TO_POINT.apply(p), (g, e) -> {
+            if (!checkPermission(p, Constants.Permission.TELEPORT)) return false;
+            p.teleportAsync(point.getLocation().clone().add(0.5, 0, 0.5));
+            return false;
+        }));
+
+        gui.putItem(slot(4, 5), ButtonItem.clickable(Constants.Items.RESPAWN_NOW.apply(p), (g, e) -> {
+            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+            SuperMines.getInstance().getRegenPointManager().respawnNow(point);
+            reopen.run();
+            return false;
+        }));
+
+        gui.putItem(slot(4, 7), ButtonItem.clickable(Constants.Items.REMOVE_REGEN_POINT.apply(p), (g, e) -> {
+            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+            SuperMines.getInstance().getRegenPointManager().removeRegenPoint(point.getId());
+            back.run();
+            return false;
+        }));
+
+        gui.open(p);
+    }
+
+    private static void openRegenPointBlocks(Player p, RegenPoint point) {
+        PaginatedChestGUI gui = buildPagedGUI(
+                p, "gui.regen-point-management.blocks.title", () -> openRegenPointManagementGui(p, point));
+
+        gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
+            MaterialChooser.openUsableBlockChooser(p, chosen -> promptRegenBlockWeight(p, point, chosen));
+            return false;
+        }));
+
+        for (Map.Entry<PackedBlock, Double> entry : point.getBlocks().entrySet()) {
+            PackedBlock block = entry.getKey();
+            ItemStack item = block.toItem();
+            item.editMeta(meta -> meta.lore(SuperMines.getInstance()
+                    .getLanguageManager()
+                    .getMsgComponentList(
+                            p,
+                            "gui.regen-point-management.blocks.each_lore",
+                            MessageReplacement.replace("%weight%", String.valueOf(entry.getValue())),
+                            MessageReplacement.replace(
+                                    "%probability%", point.getBlocks().getDisplayProbability(block)))));
+            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
+                if (e.getClick().isRightClick()) {
+                    if (point.getBlocks().size() > 1) {
+                        point.removeBlock(block);
+                        SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+                    }
+                    openRegenPointBlocks(p, point);
+                } else {
+                    promptRegenBlockWeight(p, point, block);
+                }
+                return false;
+            }));
+        }
+
+        gui.open(p);
+    }
+
+    private static void promptRegenBlockWeight(Player p, RegenPoint point, PackedBlock block) {
+        p.closeInventory();
+        SuperMines.getInstance()
+                .getLanguageManager()
+                .sendMessage(
+                        p,
+                        "gui.regen-point-management.blocks.weight_prompt",
+                        MessageReplacement.replace("%block%", block.getId()));
+        handleDoubleInput(
+                p,
+                Constants.WEIGHT_MIN,
+                weight -> {
+                    point.addBlock(block, weight);
+                    SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+                    openRegenPointBlocks(p, point);
+                },
+                "gui.input.invalid-number");
+    }
+
+    private static void openRegenPointRewards(Player p, RegenPoint point) {
+        PaginatedChestGUI gui = buildPagedGUI(
+                p, "gui.regen-point-management.rewards.title", () -> openRegenPointManagementGui(p, point));
+
+        gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
+            openRegenRewardChooser(p, point);
+            return false;
+        }));
+
+        for (Map.Entry<String, Double> entry : point.getRewardChances().entrySet()) {
+            Treasure treasure = SuperMines.getInstance().getTreasureManager().getTreasure(entry.getKey());
+            if (treasure == null) continue;
+            ItemStack item = treasure.getItemStack() == null
+                    ? new ItemStack(Material.CHEST)
+                    : treasure.getItemStack().clone();
+            item.editMeta(meta -> {
+                meta.displayName(treasure.getDisplayName());
+                meta.lore(SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMsgComponentList(
+                                p,
+                                "gui.regen-point-management.rewards.each_lore",
+                                MessageReplacement.replace("%chance%", String.valueOf(entry.getValue()))));
+            });
+            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
+                if (e.getClick().isRightClick()) {
+                    point.removeReward(treasure.getId());
+                    SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+                    openRegenPointRewards(p, point);
+                } else {
+                    promptRegenRewardChance(p, point, treasure);
+                }
+                return false;
+            }));
+        }
+
+        gui.open(p);
+    }
+
+    private static void openRegenRewardChooser(Player p, RegenPoint point) {
+        PaginatedChestGUI gui = buildPagedGUI(
+                p, "gui.regen-point-management.rewards.chooser_title", () -> openRegenPointRewards(p, point));
+        for (Treasure treasure : SuperMines.getInstance().getTreasureManager().getAllTreasures()) {
+            ItemStack item = treasure.getItemStack() == null
+                    ? new ItemStack(Material.CHEST)
+                    : treasure.getItemStack().clone();
+            item.editMeta(meta -> meta.displayName(treasure.getDisplayName()));
+            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
+                promptRegenRewardChance(p, point, treasure);
+                return false;
+            }));
+        }
+        gui.open(p);
+    }
+
+    private static void promptRegenRewardChance(Player p, RegenPoint point, Treasure treasure) {
+        p.closeInventory();
+        SuperMines.getInstance()
+                .getLanguageManager()
+                .sendMessage(
+                        p,
+                        "gui.regen-point-management.rewards.chance_prompt",
+                        MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+        handleDoubleInput(
+                p,
+                Constants.WEIGHT_MIN,
+                chance -> {
+                    if (chance > 100) {
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.input.invalid-percent");
+                        openRegenPointRewards(p, point);
+                        return;
+                    }
+                    point.setRewardChance(treasure.getId(), chance);
+                    SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+                    openRegenPointRewards(p, point);
+                },
+                "gui.input.invalid-percent");
+    }
+
+    private static void openAddRegenPoint(Player p) {
+        var target = p.getTargetBlockExact(5);
+        if (target == null || target.getType().isAir()) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.regenpoints.no-target-block");
+            openRegenPointList(p);
+            return;
+        }
+
+        Location loc = target.getLocation();
+        if (SuperMines.getInstance().getRegenPointManager().getRegenPoint(loc) != null) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.regenpoints.already-exists");
+            openRegenPointList(p);
+            return;
+        }
+
+        MaterialChooser.openUsableBlockChooser(p, chosen -> {
+            String id = "rp_" + loc.getWorld().getName() + "_" + loc.getBlockX() + "_" + loc.getBlockY() + "_"
+                    + loc.getBlockZ();
+            RegenPoint point = new RegenPoint(
+                    id,
+                    loc.getWorld(),
+                    BlockPos.fromLocation(loc),
+                    chosen,
+                    SuperMines.getInstance().getRegenPointManager().getDefaultRespawnSeconds());
+            SuperMines.getInstance().getRegenPointManager().addRegenPoint(point);
+            openRegenPointManagementGui(p, point);
+        });
+    }
+
+    private static List<Component> getRegenPointInfo(@NotNull Player p, @NotNull RegenPoint point) {
+        MessageReplacement world =
+                MessageReplacement.replace("%world%", point.getWorld().getName());
+        MessageReplacement pos =
+                MessageReplacement.replace("%pos%", point.getPos().toString());
+        MessageReplacement block =
+                MessageReplacement.replace("%block%", point.getBlock().getId());
+        MessageReplacement seconds = MessageReplacement.replace("%seconds%", String.valueOf(point.getRespawnSeconds()));
+        boolean pending = SuperMines.getInstance().getRegenPointManager().isPending(point);
+        long remaining =
+                pending ? Math.max(0L, (point.getRespawnAt() - System.currentTimeMillis() + 999L) / 1000L) : 0L;
+        MessageReplacement blocks = MessageReplacement.replace(
+                "%blocks%", String.valueOf(point.getBlocks().size()));
+        MessageReplacement rewards = MessageReplacement.replace(
+                "%rewards%", String.valueOf(point.getRewardChances().size()));
+        MessageReplacement status = MessageReplacement.replace(
+                "%status%",
+                SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMsg(p, pending ? "gui.regenpoints.status.respawning" : "gui.regenpoints.status.ready"));
+        MessageReplacement remainingSeconds = MessageReplacement.replace("%remaining%", String.valueOf(remaining));
+        return SuperMines.getInstance()
+                .getLanguageManager()
+                .getMsgComponentList(
+                        p,
+                        "gui.regenpoints.info",
+                        world,
+                        pos,
+                        block,
+                        seconds,
+                        blocks,
+                        rewards,
+                        status,
+                        remainingSeconds);
+    }
+
     /* Helper methods */
     private static PaginatedChestGUI buildPagedGUI(Player p, String titleKey, Runnable back) {
         MittelGUI.PagedChestBuilder builder = MittelGUI.pagedChestBuilder()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, titleKey))
                 .size(54)
-                .structure("xxxxxxxxx", "xcccccccx", "xcccccccx", "xcccccccx", "xcccccccx", "xxxpxnxbx")
-                .content('c')
-                .previousPage('p', ButtonItem.unclickable(Constants.Items.PREVIOUS_PAGE.apply(p)))
-                .nextPage('n', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))
-                .bind('x', ButtonItem.BACKGROUND);
+                .structure("XXXXXXXXX", "XCCCCCCCX", "XCCCCCCCX", "XCCCCCCCX", "XCCCCCCCX", "XXXPXNXBX")
+                .content('C')
+                .previousPage('P', ButtonItem.unclickable(Constants.Items.PREVIOUS_PAGE.apply(p)))
+                .nextPage('N', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))
+                .bind('X', ButtonItem.BACKGROUND);
 
         if (back != null) {
-            builder = builder.bind('b', ButtonItem.clickable(Constants.Items.BACK.apply(p), (g, e) -> {
+            builder = builder.bind('B', ButtonItem.clickable(Constants.Items.BACK.apply(p), (g, e) -> {
                 back.run();
                 return false;
             }));
         } else {
-            builder.bind('b', ButtonItem.BACKGROUND);
+            builder.bind('B', ButtonItem.BACKGROUND);
         }
 
         return builder.build();
@@ -439,8 +733,8 @@ public class GuiManager {
         return MittelGUI.chestBuilder()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, titleKey, replacements))
                 .size(54)
-                .structure("xxxxxxxxx", "x       x", "x       x", "x       x", "x       x", "xxxxxxxxx")
-                .bind('x', ButtonItem.BACKGROUND)
+                .structure("XXXXXXXXX", "X       X", "X       X", "X       X", "X       X", "XXXXXXXXX")
+                .bind('X', ButtonItem.BACKGROUND)
                 .build();
     }
 
@@ -509,6 +803,9 @@ public class GuiManager {
                     return;
                 }
                 object.setDisplayName(ComponentUtils.deserialize(result));
+                if (object instanceof RegenPoint point) {
+                    SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+                }
                 reopen.run();
             });
             return false;
@@ -613,7 +910,7 @@ public class GuiManager {
         PaginatedChestGUI gui =
                 buildPagedGUI(p, "gui.mine-management.block_spawn_entries.conditions.chooser_title", back);
 
-        for (String key : new String[] {"surface", "mineY", "border", "biome", "and", "or", "not"}) {
+        for (String key : new String[] {"surface", "mineY", "border", "biome", "placeholder", "and", "or", "not"}) {
             IGenerateCondition condition = createDefaultCondition(key);
             gui.addPageItem(ButtonItem.clickable(getConditionTypeItem(p, condition), (g, e) -> {
                 onPick.accept(condition);
@@ -644,6 +941,9 @@ public class GuiManager {
             case "and" -> new AndGenerateCondition(new ArrayList<>());
             case "or" -> new OrGenerateCondition(new ArrayList<>());
             case "not" -> new NotGenerateCondition(new AndGenerateCondition(new ArrayList<>()));
+            case "placeholder" ->
+                new PlaceholderGenerateCondition(
+                        "%player_name%", "", PlaceholderGenerateCondition.ParseType.PLACEHOLDERAPI);
             default -> throw new IllegalArgumentException("Unknown condition type: " + typeKey);
         };
     }
@@ -677,6 +977,7 @@ public class GuiManager {
                         new ArrayList<>(or.conditions()),
                         back);
             case NotGenerateCondition not -> openNotEditor(p, mine, entry, not, onSave, back);
+            case PlaceholderGenerateCondition placeholder -> openPlaceholderEditor(p, placeholder, onSave, back);
             case null, default -> openLeafEditor(p, node, onSave, back);
         }
     }
@@ -938,6 +1239,74 @@ public class GuiManager {
                                 }));
             default -> {}
         }
+
+        gui.open(p);
+    }
+
+    private static void openPlaceholderEditor(
+            Player p, PlaceholderGenerateCondition condition, Consumer<IGenerateCondition> onSave, Runnable back) {
+        ChestGUI gui = buildManagementGUI(
+                p,
+                "gui.mine-management.block_spawn_entries.conditions.leaf.title",
+                MessageReplacement.replace("%type%", condition.key()));
+
+        gui.putItem(slot(1, 9), ButtonItem.clickable(Constants.Items.BACK.apply(p), (g, e) -> {
+            back.run();
+            return false;
+        }));
+
+        gui.putItem(
+                slot(3, 3),
+                ButtonItem.clickable(getMessagedLeafItem(p, "placeholder", condition.getPlaceholder()), (g, e) -> {
+                    p.closeInventory();
+                    SuperMines.getInstance()
+                            .getLanguageManager()
+                            .sendMessage(
+                                    p, "gui.mine-management.block_spawn_entries.conditions.leaf.placeholder.prompt");
+                    ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
+                        if (result.equalsIgnoreCase(CANCEL_COMMAND)) return;
+                        PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
+                                result, condition.getCompareContent(), condition.getParseType());
+                        onSave.accept(updated);
+                        openPlaceholderEditor(p, updated, onSave, back);
+                    });
+                    return false;
+                }));
+
+        gui.putItem(
+                slot(3, 5),
+                ButtonItem.clickable(
+                        getMessagedLeafItem(p, "placeholder_compare", condition.getCompareContent()), (g, e) -> {
+                            p.closeInventory();
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(
+                                            p,
+                                            "gui.mine-management.block_spawn_entries.conditions.leaf.placeholder_compare.prompt");
+                            ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
+                                if (result.equalsIgnoreCase(CANCEL_COMMAND)) return;
+                                PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
+                                        condition.getPlaceholder(), result, condition.getParseType());
+                                onSave.accept(updated);
+                                openPlaceholderEditor(p, updated, onSave, back);
+                            });
+                            return false;
+                        }));
+
+        gui.putItem(
+                slot(3, 7),
+                ButtonItem.clickable(
+                        getMessagedLeafItem(p, "placeholder_parse_type", condition.getParseType()), (g, e) -> {
+                            PlaceholderGenerateCondition.ParseType[] values =
+                                    PlaceholderGenerateCondition.ParseType.values();
+                            PlaceholderGenerateCondition.ParseType next =
+                                    values[(condition.getParseType().ordinal() + 1) % values.length];
+                            PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
+                                    condition.getPlaceholder(), condition.getCompareContent(), next);
+                            onSave.accept(updated);
+                            openPlaceholderEditor(p, updated, onSave, back);
+                            return false;
+                        }));
 
         gui.open(p);
     }

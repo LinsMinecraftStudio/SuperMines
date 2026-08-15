@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
-public class MineYGenerateCondition implements IGenerateCondition, ReadWriteObject {
+public final class MineYGenerateCondition implements IGenerateCondition, ReadWriteObject {
     private final int minYInMine;
     private final int maxYInMine;
 

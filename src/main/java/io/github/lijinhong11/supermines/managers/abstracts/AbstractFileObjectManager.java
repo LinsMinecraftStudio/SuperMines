@@ -59,9 +59,24 @@ public abstract class AbstractFileObjectManager<T> {
     protected abstract T getObject(@NotNull ConfigurationSection section);
 
     protected final void putObject(String key, T object) {
+        writeObject(key, object);
+        saveConfig();
+    }
+
+    /**
+     * Writes the object into the in-memory configuration without saving to the
+     * disk. Call {@link #saveConfig()} to flush all pending writes at once.
+     */
+    protected final void writeObject(String key, T object) {
         ConfigurationSection section = config.createSection(key);
         putObject(section, object);
+    }
 
+    /**
+     * Saves the in-memory configuration to the disk. Useful to batch several
+     * {@link #writeObject(String, Object)} calls into a single disk write.
+     */
+    protected final void saveConfig() {
         try {
             config.save(configFile);
         } catch (Exception e) {

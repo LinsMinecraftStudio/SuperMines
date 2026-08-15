@@ -55,6 +55,14 @@ command:
       - "&e/sm ranks takeRank <玩家> <等級> [提示] &7- &a移除等級"
       - "&e/sm ranks setDisplayName <等級> <顯示名> &7- &a設定等級顯示名"
       - "&e/sm ranks setLevel <等級> <數值> &7- &a設定等級數值"
+    regenpoints:
+      - "&e/sm regenpoints list &7- &a列出所有再生礦點"
+      - "&e/sm regenpoints create <id> <方塊> [秒數] [顯示名] &7- &a在你注視的方塊處建立再生礦點"
+      - "&e/sm regenpoints remove <礦點> &7- &a刪除再生礦點"
+      - "&e/sm regenpoints setRespawnSeconds <礦點> <秒數> &7- &a設定再生礦點的復生時間"
+      - "&e/sm regenpoints setBlock <礦點> <方塊> &7- &a設定復生的方塊"
+      - "&e/sm regenpoints setDisplayName <礦點> <顯示名> &7- &a設定顯示名"
+      - "&e/sm regenpoints tp <礦點> &7- &a傳送到再生礦點"
   pos:
     invalid-height: "&c選擇的位置超出世界高度限制。"
     outside-border: "&c選擇的位置在世界邊界之外。"
@@ -127,21 +135,34 @@ command:
       empty: "&e寶藏 &d%treasure% &e沒有控制台指令。"
       head: "&6寶藏 &d%treasure% &6的指令:"
       line: "&7%index%. &f%command%"
-  ranks:
-    set-display-name: "&a等級 &d%rank% &a的顯示名設為 &b%displayName%"
-    set-level: "&a等級 &d%rank% &a的數值設為 &b%level%"
-    give-rank: "&a已給予 &b%player% &a等級 &d%rank%"
-    give-rank-notify: "&a你獲得了等級 &d%rank%"
-    take-rank: "&c已移除 &b%player% &c的等級 &d%rank%"
-    take-rank-notify: "&c你的等級 &d%rank% &c被移除"
-    allowed: "&a礦區 &b%mine% &a現在允許等級 &d%rank% &a進入"
-    disallowed: "&a礦區 &b%mine% &a不再允許等級 &d%rank%"
-    level-less-than-1: "&c等級必須大於等於 1！"
+    ranks:
+      set-display-name: "&a等級 &d%rank% &a的顯示名設為 &b%displayName%"
+      set-level: "&a等級 &d%rank% &a的數值設為 &b%level%"
+      give-rank: "&a已給予 &b%player% &a等級 &d%rank%"
+      give-rank-notify: "&a你獲得了等級 &d%rank%"
+      take-rank: "&c已移除 &b%player% &c的等級 &d%rank%"
+      take-rank-notify: "&c你的等級 &d%rank% &c被移除"
+      allowed: "&a礦區 &b%mine% &a現在允許等級 &d%rank% &a進入"
+      disallowed: "&a礦區 &b%mine% &a不再允許等級 &d%rank%"
+      level-less-than-1: "&c等級必須大於等於 1！"
+      create:
+        exists: "&c該 ID 的等級已存在！"
+        success: "&a等級 &b%rank% &a建立成功！"
+      remove:
+        success: "&a等級 &b%rank% &a已刪除！"
+  regenpoints:
+    no-target-block: "&c你必須注視一個方塊才能建立再生礦點！"
+    already-exists: "&c該位置已存在再生礦點！"
     create:
-      exists: "&c該 ID 的等級已存在！"
-      success: "&a等級 &b%rank% &a建立成功！"
+      exists: "&c該 ID 的再生礦點已存在！"
+      success: "&a再生礦點 &d%point% &a建立成功！"
     remove:
-      success: "&a等級 &b%rank% &a已刪除！"
+      success: "&a再生礦點 &d%point% &a已刪除！"
+    set-respawn-seconds: "&a再生礦點 &d%point% &a的復生時間設為 &b%seconds%"
+    set-block: "&a再生礦點 &d%point% &a的復生方塊設為 &b%block%"
+    set-display-name: "&a再生礦點 &d%point% &a的顯示名設為 &b%displayName%"
+    point-not-exists: "&c該再生礦點不存在！"
+    last-block: "&c再生礦點必須至少保留一個復生方塊！"
   reload:
     safe-tip: "&c注意：為確保安全，只會重載配置與消息"
     success: "&a重載成功！"
@@ -158,6 +179,8 @@ mine:
   no-place: "&c你不能在礦區內放置方塊！"
   reset: "&a礦區 &b%mine% &a已重置！"
   reset_warning: "&c礦區 &b%mine% &c將在 &b%time% &c後重置"
+regen-point:
+  no-place: "&c你不能在再生礦點上放置方塊！"
 gui:
   previous: "&e上一頁"
   next: "&e下一頁"
@@ -305,6 +328,23 @@ gui:
               - "&7目前: &e%value%"
               - "&7點擊設定"
             prompt: "&e請在聊天中輸入用逗號分隔的生態域名稱: &b(輸入 &6##CANCEL &b取消)"
+          placeholder:
+            name: "&b佔位符"
+            lore:
+              - "&7目前: &e%value%"
+              - "&7點擊設定"
+            prompt: "&e在聊天中輸入佔位符表達式：&b(輸入 &6##CANCEL &b取消)"
+          placeholder_compare:
+            name: "&b期望值"
+            lore:
+              - "&7目前: &e%value%"
+              - "&7點擊設定"
+            prompt: "&e在聊天中輸入佔位符期望值：&b(輸入 &6##CANCEL &b取消)"
+          placeholder_parse_type:
+            name: "&b佔位符提供器"
+            lore:
+              - "&7目前: &e%value%"
+              - "&7點擊切換提供器"
         and:
           title: "&a全部滿足 (AND)"
         or:
@@ -349,3 +389,60 @@ gui:
       lore:
         - "&7點擊設定等級數值"
         - "&7目前: &b%level%"
+  regenpoints:
+    title: "&d&l再生礦點"
+    info:
+      - "&7世界: &a%world%"
+      - "&7位置: &e%pos%"
+      - "&7方塊: &b%block%"
+      - "&7方塊池數量: &b%blocks%"
+      - "&7獨立獎勵數量: &e%rewards%"
+      - "&7復生時間: &b%seconds%"
+      - "&7狀態: %status% &7(%remaining%秒)"
+    status:
+      ready: "&a可挖掘"
+      respawning: "&e復生中"
+  regen-point-management:
+    title: "&d&l再生礦點管理 &8&l- &d%point%"
+    set_respawn_seconds:
+      prompt: "&e在聊天輸入新的復生時間：&b(輸入 &6##CANCEL &b取消)"
+      name: "&b設定復生時間"
+      lore:
+        - "&7點擊設定復生延遲"
+        - "&7單位: 秒"
+        - "&7目前: &b%seconds%"
+    set_block:
+      name: "&d復生方塊池"
+      lore:
+        - "&7點擊管理帶權重的復生方塊"
+    blocks:
+      title: "&d&l復生方塊池"
+      weight_prompt: "&e輸入方塊 &d%block% &e的權重：&b(輸入 &6##CANCEL &b取消)"
+      each_lore:
+        - "&7權重: &e%weight%"
+        - "&7機率: &b%probability%"
+        - "&7左鍵修改權重"
+        - "&7右鍵移除"
+    rewards:
+      name: "&6獨立獎勵"
+      lore:
+        - "&7點擊管理獨立判定的寶藏獎勵"
+      title: "&6&l獨立獎勵"
+      chooser_title: "&6選擇寶藏"
+      chance_prompt: "&e輸入寶藏 &d%treasure% &e的獨立機率 (0-100)：&b(輸入 &6##CANCEL &b取消)"
+      each_lore:
+        - "&7獨立機率: &e%chance%%"
+        - "&7左鍵修改機率"
+        - "&7右鍵移除"
+    respawn_now:
+      name: "&a立即復生"
+      lore:
+        - "&7立即恢復此資源節點"
+    remove:
+      name: "&c刪除再生礦點"
+      lore:
+        - "&7永久刪除此資源節點"
+    tp:
+      name: "&6傳送到礦點"
+      lore:
+        - "&7點擊傳送到此礦點"

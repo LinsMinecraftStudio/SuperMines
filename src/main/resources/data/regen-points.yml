@@ -1,0 +1,16 @@
+# Global regenerable ore points, fully independent from mines.
+# Each entry defines a single block that respawns on a delay after being broken.
+#
+# Example:
+# example_point:
+#   displayName: "&bDiamond Point"
+#   world: world
+#   x: 100
+#   y: 64
+#   z: -200
+#   blocks:
+#     minecraft:diamond_ore: 70
+#     minecraft:deepslate_diamond_ore: 30
+#   respawnSeconds: 30
+#   rewards:
+#     diamond_bonus: 5.0

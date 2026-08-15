@@ -7,6 +7,7 @@ import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineResetEvent;
+import io.github.lijinhong11.supermines.api.events.MineResetStartEvent;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
@@ -52,6 +53,13 @@ class MineResetTask extends AbstractTask {
     }
 
     private void doReset() {
+        MineResetStartEvent event = new MineResetStartEvent(mine, manualReset);
+        event.callEvent();
+        if (event.isCancelled()) {
+            refreshNextResetTime();
+            return;
+        }
+
         List<BlockPos> blockPosList = mine.getArea().asPosList();
         WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries = mine.getBlockSpawnEntries();
         Map<BlockPos, PackedBlock> generated = new HashMap<>();

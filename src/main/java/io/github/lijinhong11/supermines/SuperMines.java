@@ -16,6 +16,7 @@ import io.github.lijinhong11.supermines.listeners.WorldEditListener;
 import io.github.lijinhong11.supermines.managers.MineManager;
 import io.github.lijinhong11.supermines.managers.PlayerDataManager;
 import io.github.lijinhong11.supermines.managers.RankManager;
+import io.github.lijinhong11.supermines.managers.RegenPointManager;
 import io.github.lijinhong11.supermines.managers.TreasureManager;
 import io.github.lijinhong11.supermines.task.TaskMaker;
 import io.github.lijinhong11.supermines.utils.Constants;
@@ -31,6 +32,7 @@ public class SuperMines extends JavaPlugin {
     private MineManager mineManager;
     private TreasureManager treasureManager;
     private RankManager rankManager;
+    private RegenPointManager regenPointManager;
     private PlayerDataManager playerDataManager;
 
     private SyncLanguageManager languageManager;
@@ -90,6 +92,7 @@ public class SuperMines extends JavaPlugin {
 
         treasureManager = new TreasureManager();
         rankManager = new RankManager();
+        regenPointManager = new RegenPointManager();
         mineManager = new MineManager();
         taskMaker = new TaskMaker();
 
@@ -102,6 +105,7 @@ public class SuperMines extends JavaPlugin {
         new Metrics(this, 28631);
 
         taskMaker.startup();
+        regenPointManager.startup();
     }
 
     @Override
@@ -111,6 +115,7 @@ public class SuperMines extends JavaPlugin {
         mineManager.saveAndClose();
         treasureManager.saveAndClose();
         rankManager.saveAndClose();
+        regenPointManager.saveAndClose();
         playerDataManager.saveAndClose();
     }
 
@@ -169,6 +174,10 @@ public class SuperMines extends JavaPlugin {
 
     public RankManager getRankManager() {
         return rankManager;
+    }
+
+    public RegenPointManager getRegenPointManager() {
+        return regenPointManager;
     }
 
     public PlayerDataManager getPlayerDataManager() {

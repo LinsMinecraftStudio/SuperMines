@@ -1,0 +1,61 @@
+# SuperMines 1.6.2
+
+## 重点更新
+
+- 新增全局可再生矿点：资源节点可存在于任意世界、任意位置，并完全独立于矿区整区重置。
+- 新增加权复生方块池：一个矿点可以配置多个原版或自定义方块，并按权重随机复生。
+- 新增独立 Treasure 奖励：每个奖励单独进行 `0-100%` 概率判定，一次挖掘可以触发多个奖励。
+
+## 可再生矿点
+
+- 持久化复生截止时间，服务器重启后会按照正确的剩余时间继续复生。
+- 防止同一矿点重复创建复生任务。
+- 删除矿点、手动复生和插件关闭时会正确取消相关任务。
+- 支持可配置的复生粒子和音效。
+- 新增矿点位置的放置、爆炸、活塞和流体保护。
+- 复生方块支持 mcMMO 和 AuraSkills 技能经验。
+- 兼容旧版单方块配置，并可迁移到新的加权方块池格式。
+- 删除 Treasure 时自动清理矿点中对应的无效引用。
+
+示例配置：
+
+```yaml
+diamond_point:
+  displayName: "&b钻石资源点"
+  world: world
+  x: 100
+  y: 64
+  z: 100
+  blocks:
+    minecraft:diamond_ore: 70
+    minecraft:deepslate_diamond_ore: 30
+  respawnSeconds: 30
+  rewards:
+    diamond_bonus: 5.0
+    rare_crate: 0.5
+```
+
+## GUI 与命令
+
+- 主管理 GUI 新增可再生矿点入口。
+- 新增矿点创建、列表、改名、传送、立即复生和删除 GUI 流程。
+- 新增加权复生方块池编辑器。
+- 新增独立 Treasure 奖励编辑器和奖励选择器。
+- 矿点列表显示 `READY` / `RESPAWNING` 状态、剩余复生时间、方块池数量和奖励数量。
+- 新增 `/sm regenpoints` 矿点管理命令。
+- 新增 `addBlock`、`removeBlock`、`addReward`、`removeReward` 和 `respawnNow` 子命令。
+- 新增权限节点 `supermines.regen_points`。
+- 生成条件 GUI 现在支持 Placeholder 条件，可编辑占位符表达式、期望值并切换 PlaceholderAPI / MiniPlaceholders。
+- 所有 GUI `structure` 占位字符已统一使用大写格式。
+- 创建可再生矿点时复生时间改为可选参数；未指定时默认为 `0`，与矿区默认重置时间语义一致，不会自动复生。
+- 可在 GUI 或通过 `setRespawnSeconds` 后续设置正数来启用自动复生；设置为 `0` 会关闭自动复生。
+
+## 事件 API
+
+- `MineCreateEvent` 现在支持取消，并统一从 MineManager 创建入口触发。
+- 新增可取消的 `MineRemoveEvent` 和 `MineEditEvent`。
+- 新增可取消的 `MineResetStartEvent`，原有 `MineResetEvent` 继续作为重置完成通知。
+- 新增可取消的 `BlockBreakInMineEvent` 和 `TreasureFoundEvent`。
+- 新增可取消的 `RegenPointBreakEvent` 和 `RegenPointRespawnEvent`。
+- `RegenPointRespawnEvent` 可以修改本次复生实际使用的方块。
+- 如果定时复生事件被取消，矿点会在可配置的延迟后自动重试，避免资源节点永久卡住。

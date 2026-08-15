@@ -11,6 +11,8 @@ import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.math.SphereArea;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
+import io.github.lijinhong11.supermines.api.events.MineCreateEvent;
+import io.github.lijinhong11.supermines.api.events.MineRemoveEvent;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
@@ -225,14 +227,25 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
     }
 
     public void addMine(@NotNull Mine mine) {
+        tryAddMine(mine);
+    }
+
+    public boolean tryAddMine(@NotNull Mine mine) {
         Preconditions.checkNotNull(mine, "mine cannot be null");
 
         if (mines.containsKey(mine.getId())) {
             throw new IllegalArgumentException("mine with ID " + mine.getId() + " already exists");
         }
 
+        MineCreateEvent event = new MineCreateEvent(mine);
+        event.callEvent();
+        if (event.isCancelled()) {
+            return false;
+        }
+
         mines.put(mine.getId(), mine);
         super.putObject(mine.getId(), mine);
+        return true;
     }
 
     public @Nullable Mine getMine(@Nullable String id) {
@@ -256,10 +269,27 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
     }
 
     public void removeMine(@NotNull String id) {
+        tryRemoveMine(id);
+    }
+
+    public boolean tryRemoveMine(@NotNull String id) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "mine ID cannot be null or empty");
 
+        Mine mine = mines.get(id);
+        if (mine == null) {
+            return false;
+        }
+
+        MineRemoveEvent event = new MineRemoveEvent(mine);
+        event.callEvent();
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        SuperMines.getInstance().getTaskMaker().cancelMineResetTask(mine);
         mines.remove(id);
         super.remove(id);
+        return true;
     }
 
     public Collection<Mine> getAllMines() {

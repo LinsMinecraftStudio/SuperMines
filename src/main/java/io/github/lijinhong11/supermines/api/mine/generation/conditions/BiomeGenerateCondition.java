@@ -35,7 +35,7 @@ import org.jspecify.annotations.NonNull;
  *   - minecraft:plains
  * }</pre>
  */
-public class BiomeGenerateCondition implements IGenerateCondition, ReadWriteObject {
+public final class BiomeGenerateCondition implements IGenerateCondition, ReadWriteObject {
     private final Set<Key> biomes;
 
     public BiomeGenerateCondition(ConfigurationSection cs) {

@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.task;
 
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,14 @@ public class TaskMaker {
         }
 
         Bukkit.getRegionScheduler().run(SuperMines.getInstance(), loc, t -> runnable.run());
+    }
+
+    public ScheduledTask runSyncDelayed(Location loc, long delayTicks, Runnable runnable) {
+        if (loc.getWorld() == null) {
+            return null;
+        }
+
+        return Bukkit.getRegionScheduler().runDelayed(SuperMines.getInstance(), loc, t -> runnable.run(), delayTicks);
     }
 
     public void startMineWarningTask(Mine mine, int warningSeconds) {

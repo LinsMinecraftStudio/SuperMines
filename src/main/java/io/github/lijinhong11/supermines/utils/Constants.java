@@ -89,6 +89,13 @@ public class Constants {
             return item;
         };
 
+        public static final Function<Player, ItemStack> REGEN_POINTS = player -> {
+            ItemStack item = new ItemStack(Material.DIAMOND_ORE);
+            item.editMeta(meta -> meta.displayName(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(player, "gui.regenpoints.title")));
+            return item;
+        };
+
         public static final BiFunction<Player, Identified, ItemStack> SET_DISPLAY_NAME =
                 (p, i) -> SuperMines.getInstance()
                         .getLanguageManager()
@@ -180,6 +187,35 @@ public class Constants {
                         p,
                         MessageReplacement.replace("level", String.valueOf(i)));
 
+        public static final BiFunction<Player, Integer, ItemStack> SET_RESPAWN_SECONDS =
+                (p, i) -> SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMessagedItem(
+                                Material.CLOCK,
+                                "gui.regen-point-management.set_respawn_seconds",
+                                p,
+                                MessageReplacement.replace("%seconds%", String.valueOf(i)));
+
+        public static final Function<Player, ItemStack> SET_REGEN_BLOCK = p -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(Material.COAL_ORE, "gui.regen-point-management.set_block", p);
+
+        public static final Function<Player, ItemStack> REGEN_REWARDS = p -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(Material.CHEST, "gui.regen-point-management.rewards", p);
+
+        public static final Function<Player, ItemStack> RESPAWN_NOW = p -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(Material.BONE_MEAL, "gui.regen-point-management.respawn_now", p);
+
+        public static final Function<Player, ItemStack> REMOVE_REGEN_POINT = p -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(Material.BARRIER, "gui.regen-point-management.remove", p);
+
+        public static final Function<Player, ItemStack> TP_TO_POINT = p -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(Material.ENDER_PEARL, "gui.regen-point-management.tp", p);
+
         private static ItemStack createItem(Material material, Component displayName, Component... lore) {
             ItemStack item = new ItemStack(material);
             item.editMeta(meta -> {
@@ -217,6 +253,8 @@ public class Constants {
         public static final String SET_RESET_TIME = "supermines.set_reset_time";
         public static final String SET_TELEPORT = "supermines.set_teleport";
         public static final String TELEPORT = "supermines.teleport";
+
+        public static final String REGEN_POINTS = "supermines.regen_points";
 
         public static final String BYPASS_RANK = "supermines.bypass.rank";
 
