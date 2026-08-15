@@ -5,6 +5,7 @@ import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
+import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import java.util.Collection;
 import java.util.UUID;
 import org.bukkit.Location;
@@ -87,6 +88,30 @@ public class SuperMinesAPI {
      */
     public static @NotNull Collection<Rank> getRanks() {
         return SuperMines.getInstance().getRankManager().getAllRanks();
+    }
+
+    public static @Nullable RegenPoint getRegenPoint(@NotNull String id) {
+        return SuperMines.getInstance().getRegenPointManager().getRegenPoint(id);
+    }
+
+    public static @Nullable RegenPoint getRegenPoint(@NotNull Location location) {
+        return SuperMines.getInstance().getRegenPointManager().getRegenPoint(location);
+    }
+
+    public static @NotNull Collection<RegenPoint> getRegenPoints() {
+        return SuperMines.getInstance().getRegenPointManager().getAllRegenPoints();
+    }
+
+    public static void addRegenPoint(@NotNull RegenPoint point) {
+        SuperMines.getInstance().getRegenPointManager().addRegenPoint(point);
+    }
+
+    public static void removeRegenPoint(@NotNull String id) {
+        SuperMines.getInstance().getRegenPointManager().removeRegenPoint(id);
+    }
+
+    public static void setRegenPointRespawnSeconds(@NotNull RegenPoint point, int seconds) {
+        SuperMines.getInstance().getRegenPointManager().setRespawnSeconds(point, seconds);
     }
 
     /**

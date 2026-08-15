@@ -121,7 +121,14 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
                     for (String key : condSection.getKeys(false)) {
                         ConfigurationSection cond = condSection.getConfigurationSection(key);
                         if (cond != null) {
-                            conditions.add(ConditionLoader.deserialize(cond));
+                            try {
+                                conditions.add(ConditionLoader.deserialize(cond));
+                            } catch (IllegalArgumentException ex) {
+                                SuperMines.getInstance()
+                                        .getLogger()
+                                        .warning("Skipping invalid condition at '%s': %s"
+                                                .formatted(cond.getCurrentPath(), ex.getMessage()));
+                            }
                         }
                     }
                 }
@@ -230,6 +237,11 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         tryAddMine(mine);
     }
 
+    public void saveMine(@NotNull Mine mine) {
+        Preconditions.checkArgument(mines.get(mine.getId()) == mine, "mine is not managed by this manager");
+        super.putObject(mine.getId(), mine);
+    }
+
     public boolean tryAddMine(@NotNull Mine mine) {
         Preconditions.checkNotNull(mine, "mine cannot be null");
 
@@ -293,10 +305,10 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
     }
 
     public Collection<Mine> getAllMines() {
-        return mines.values();
+        return List.copyOf(mines.values());
     }
 
     public Set<String> getAllMineIds() {
-        return mines.keySet();
+        return Set.copyOf(mines.keySet());
     }
 }

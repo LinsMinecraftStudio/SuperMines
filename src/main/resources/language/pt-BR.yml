@@ -57,12 +57,17 @@ command:
       - "&e/sm ranks setLevel <rank> <level> &7- &aDefinir nível do cargo"
     regenpoints:
       - "&e/sm regenpoints list &7- &aListar todos os pontos de regeneração"
-      - "&e/sm regenpoints create <id> <block> [seconds] [displayName] &7- &aCriar um ponto no bloco que você está olhando"
+      - "&e/sm regenpoints create <id> <block> &7- &aCriar um ponto no bloco que você está olhando"
       - "&e/sm regenpoints remove <point> &7- &aRemover um ponto de regeneração"
       - "&e/sm regenpoints setRespawnSeconds <point> <seconds> &7- &aDefinir o atraso de regeneração"
       - "&e/sm regenpoints setBlock <point> <block> &7- &aDefinir o bloco que regenera"
       - "&e/sm regenpoints setDisplayName <point> <displayName> &7- &aDefinir o nome de exibição"
       - "&e/sm regenpoints tp <point> &7- &aTeleportar para um ponto de regeneração"
+      - "&e/sm regenpoints addBlock <point> <block> <weight> &7- &aAdicionar bloco com peso"
+      - "&e/sm regenpoints removeBlock <point> <block> &7- &aRemover bloco de regeneração"
+      - "&e/sm regenpoints addReward <point> <treasure> <chance> &7- &aAdicionar recompensa independente"
+      - "&e/sm regenpoints removeReward <point> <treasure> &7- &aRemover recompensa independente"
+      - "&e/sm regenpoints respawnNow <point> &7- &aRegenerar ponto imediatamente"
   pos:
     invalid-height: "&cA posição selecionada está fora do limite de altura do mundo."
     outside-border: "&cA posição selecionada está fora da borda do mundo."
@@ -86,6 +91,8 @@ command:
   auto-pickup:
     enabled: "&aColeta automática ativada. Itens minerados irão direto para o inventário."
     disabled: "&aColeta automática desativada. Itens minerados cairão no chão."
+    unavailable: "&cA coleta automática está desativada neste servidor."
+    no-permission: "&cVocê não tem permissão para usar a coleta automática."
   redefine:
     success: "&aA área da mina foi redefinida com sucesso!"
   remove:
@@ -163,6 +170,16 @@ command:
     set-display-name: "&aO nome do ponto &d%point% &afoi definido para &b%displayName%"
     point-not-exists: "&cO ponto de regeneração não existe!"
     last-block: "&cUm ponto deve manter pelo menos um bloco de regeneração!"
+    respawn-now:
+      success: "&aRegeneração imediata do ponto solicitada."
+    add-block:
+      success: "&aBloco de regeneração adicionado."
+    remove-block:
+      success: "&aBloco de regeneração removido."
+    add-reward:
+      success: "&aRecompensa independente adicionada."
+    remove-reward:
+      success: "&aRecompensa independente removida."
   reload:
     safe-tip: "&cNota: para segurança, apenas arquivos de configuração e mensagens serão recarregados"
     success: "&aRecarregado com sucesso!"
@@ -198,7 +215,7 @@ gui:
     prompt: "&eDigite o novo nome de exibição no chat: &b(Suporta códigos de cor, digite &6##CANCEL &bpara cancelar)"
     name: "&6Definir Nome de Exibição"
     lore:
-      - "&7Clique para definir o nome de exibição da mina"
+      - "&7Clique para definir o nome de exibição"
       - "&7Atual: &b%name%"
   general:
     title: "&eSuper&aMines"
@@ -402,6 +419,7 @@ gui:
     status:
       ready: "&aPRONTO"
       respawning: "&eREGENERANDO"
+      disabled: "&cDESATIVADO"
   regen-point-management:
     title: "&d&lGerenciar Ponto &8&l- &d%point%"
     set_respawn_seconds:
@@ -441,7 +459,7 @@ gui:
     remove:
       name: "&cRemover Ponto"
       lore:
-        - "&7Remove este ponto permanentemente"
+        - "&7Shift + clique direito para remover permanentemente"
     tp:
       name: "&6Teleportar para o Ponto"
       lore:

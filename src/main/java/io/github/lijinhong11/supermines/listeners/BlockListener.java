@@ -16,19 +16,25 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class BlockListener implements Listener {
 
     public static boolean isPlayerAutoPickupActive(Player player) {
-        String perm = SuperMines.getInstance().getConfig().getString("auto-pickup.permission", "");
+        if (!SuperMines.getInstance().getConfig().getBoolean("mine.auto-pickup.enabled", false)) return false;
+        String perm = SuperMines.getInstance().getConfig().getString("mine.auto-pickup.permission", "");
         if (!perm.isEmpty() && !player.hasPermission(perm)) return false;
 
         PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
@@ -95,10 +101,18 @@ public class BlockListener implements Listener {
             }
         }
 
-        if (!SuperMines.getInstance().getRegenPointManager().onPointBlockBroken(loc, player)) {
+        if (!SuperMines.getInstance().getRegenPointManager().canBreakPoint(loc, player)) {
             e.setCancelled(true);
-            return;
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void commitBlockBreak(BlockBreakEvent e) {
+        Location loc = e.getBlock().getLocation();
+        Player player = e.getPlayer();
+        Mine mine = SuperMines.getInstance().getMineManager().getMine(loc);
+
+        SuperMines.getInstance().getRegenPointManager().commitPointBlockBroken(loc, player);
 
         if (mine == null) {
             return;
@@ -114,6 +128,7 @@ public class BlockListener implements Listener {
 
         List<Treasure> treasures = mine.getTreasures();
         if (!treasures.isEmpty()) {
+            var brokenBlock = ContentProviders.getBlockByLocation(loc);
             WeightedRandomMap<Treasure> weightedTreasures = new WeightedRandomMap<>();
             for (Treasure treasure : treasures) {
                 if (treasure.getMatchedBlocks().contains(brokenBlock) && treasure.getWeight() > 0) {
@@ -197,7 +212,8 @@ public class BlockListener implements Listener {
                 || e.getBlocks().stream()
                         .anyMatch(block -> SuperMines.getInstance()
                                         .getRegenPointManager()
-                                        .getRegenPoint(block.getRelative(e.getDirection())
+                                        .getRegenPoint(block.getRelative(
+                                                        e.getDirection().getOppositeFace())
                                                 .getLocation())
                                 != null)) {
             e.setCancelled(true);
@@ -214,5 +230,54 @@ public class BlockListener implements Listener {
                 != null) {
             e.setCancelled(true);
         }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void protectRegenPointsFromPhysics(BlockPhysicsEvent e) {
+        if (SuperMines.getInstance().getConfig().getBoolean("regen-point.protection.environmental", true)
+                && SuperMines.getInstance()
+                                .getRegenPointManager()
+                                .getRegenPoint(e.getBlock().getLocation())
+                        != null) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void protectRegenPointsFromBurning(BlockBurnEvent e) {
+        if (SuperMines.getInstance().getConfig().getBoolean("regen-point.protection.environmental", true)
+                && SuperMines.getInstance()
+                                .getRegenPointManager()
+                                .getRegenPoint(e.getBlock().getLocation())
+                        != null) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void protectRegenPointsFromFading(BlockFadeEvent e) {
+        if (SuperMines.getInstance().getConfig().getBoolean("regen-point.protection.environmental", true)
+                && SuperMines.getInstance()
+                                .getRegenPointManager()
+                                .getRegenPoint(e.getBlock().getLocation())
+                        != null) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void protectRegenPointsFromEntityChanges(EntityChangeBlockEvent e) {
+        if (SuperMines.getInstance().getConfig().getBoolean("regen-point.protection.environmental", true)
+                && SuperMines.getInstance()
+                                .getRegenPointManager()
+                                .getRegenPoint(e.getBlock().getLocation())
+                        != null) {
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void loadDeferredRegenPoints(WorldLoadEvent e) {
+        SuperMines.getInstance().getRegenPointManager().loadDeferredPoints(e.getWorld());
     }
 }

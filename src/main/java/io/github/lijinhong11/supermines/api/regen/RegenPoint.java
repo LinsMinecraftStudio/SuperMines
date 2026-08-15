@@ -6,6 +6,7 @@ import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.api.iface.Identified;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import net.kyori.adventure.text.Component;
@@ -121,7 +122,15 @@ public final class RegenPoint implements Identified {
     }
 
     public WeightedRandomMap<PackedBlock> getBlocks() {
-        return blocks;
+        return new WeightedRandomMap<>(blocks);
+    }
+
+    public void replaceBlocks(@NotNull WeightedRandomMap<PackedBlock> updated) {
+        Preconditions.checkNotNull(updated, "blocks cannot be null");
+        Preconditions.checkArgument(!updated.isEmpty(), "a regen point must contain at least one block");
+        updated.forEach((block, weight) -> Preconditions.checkArgument(weight > 0, "weight must be greater than 0"));
+        blocks.clear();
+        blocks.putAll(updated);
     }
 
     public void addBlock(@NotNull PackedBlock block, double weight) {
@@ -138,7 +147,7 @@ public final class RegenPoint implements Identified {
     }
 
     public Map<String, Double> getRewardChances() {
-        return rewardChances;
+        return Collections.unmodifiableMap(new HashMap<>(rewardChances));
     }
 
     public void setRewardChance(@NotNull String treasureId, double chance) {
@@ -168,7 +177,6 @@ public final class RegenPoint implements Identified {
      */
     public void setRespawnSeconds(int respawnSeconds) {
         Preconditions.checkArgument(respawnSeconds >= 0, "respawnSeconds cannot be negative");
-
         this.respawnSeconds = respawnSeconds;
     }
 

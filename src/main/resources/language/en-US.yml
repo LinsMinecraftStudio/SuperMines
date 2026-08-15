@@ -57,12 +57,17 @@ command:
       - "&e/sm ranks setLevel <rank> <level> &7- &aSet a rank's level"
     regenpoints:
       - "&e/sm regenpoints list &7- &aList all regen points"
-      - "&e/sm regenpoints create <id> <block> [seconds] [displayName] &7- &aAdd a regen point at the block you are looking at"
+      - "&e/sm regenpoints create <id> <block> &7- &aAdd a regen point at the block you are looking at"
       - "&e/sm regenpoints remove <point> &7- &aRemove a regen point"
       - "&e/sm regenpoints setRespawnSeconds <point> <seconds> &7- &aSet the respawn delay of a regen point"
       - "&e/sm regenpoints setBlock <point> <block> &7- &aSet the block that respawns"
       - "&e/sm regenpoints setDisplayName <point> <displayName> &7- &aSet the display name"
       - "&e/sm regenpoints tp <point> &7- &aTeleport to a regen point"
+      - "&e/sm regenpoints addBlock <point> <block> <weight> &7- &aAdd a weighted respawn block"
+      - "&e/sm regenpoints removeBlock <point> <block> &7- &aRemove a respawn block"
+      - "&e/sm regenpoints addReward <point> <treasure> <chance> &7- &aAdd an independent reward"
+      - "&e/sm regenpoints removeReward <point> <treasure> &7- &aRemove an independent reward"
+      - "&e/sm regenpoints respawnNow <point> &7- &aRespawn a point immediately"
   pos:
     invalid-height: "&cThe selected position is outside the world height limit."
     outside-border: "&cThe selected position is outside the world border."
@@ -86,6 +91,8 @@ command:
   auto-pickup:
     enabled: "&aAuto pickup enabled. Mined items will go directly to your inventory."
     disabled: "&aAuto pickup disabled. Mined items will drop on the ground."
+    unavailable: "&cAuto pickup is disabled on this server."
+    no-permission: "&cYou do not have permission to use auto pickup."
   redefine:
     success: "&aThe mine's area is redefined successfully!"
   remove:
@@ -163,6 +170,16 @@ command:
     set-display-name: "&aThe display name of regen point &d%point% &ais set to &b%displayName%"
     point-not-exists: "&cThe regen point does not exist!"
     last-block: "&cA regen point must contain at least one respawn block!"
+    respawn-now:
+      success: "&aRegen point respawn requested."
+    add-block:
+      success: "&aRespawn block added."
+    remove-block:
+      success: "&aRespawn block removed."
+    add-reward:
+      success: "&aIndependent reward added."
+    remove-reward:
+      success: "&aIndependent reward removed."
   reload:
     safe-tip: "&cNote: To ensure the plugin works safely, it will only reload config and message files"
     success: "&aReload successfully!"
@@ -198,7 +215,7 @@ gui:
     prompt: "&eEnter the new display name in the chat: &b(Support color codes, type &6##CANCEL &bto cancel)"
     name: "&6Set Display Name"
     lore:
-      - "&7Click to set the display name of the mine"
+      - "&7Click to set the display name"
       - "&7Current: &b%name%"
   general:
     title: "&eSuper&aMines"
@@ -402,6 +419,7 @@ gui:
     status:
       ready: "&aREADY"
       respawning: "&eRESPAWNING"
+      disabled: "&cDISABLED"
   regen-point-management:
     title: "&d&lRegen Point Management &8&l- &d%point%"
     set_respawn_seconds:
@@ -441,7 +459,7 @@ gui:
     remove:
       name: "&cRemove Regen Point"
       lore:
-        - "&7Permanently remove this resource node"
+        - "&7Shift + right-click to permanently remove this resource node"
     tp:
       name: "&6Teleport To Point"
       lore:

@@ -13,7 +13,7 @@ import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,37 +61,51 @@ class MineResetTask extends AbstractTask {
         }
 
         List<BlockPos> blockPosList = mine.getArea().asPosList();
-        WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries = mine.getBlockSpawnEntries();
-        Map<BlockPos, PackedBlock> generated = new HashMap<>();
-        List<BlockPos> toDestroy = new ArrayList<>();
-
+        WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries = new WeightedRandomMap<>(mine.getBlockSpawnEntries());
         if (blockSpawnEntries.isEmpty()) {
             finishReset();
             return;
         }
 
-        for (BlockPos pos : blockPosList) {
-            Location loc = pos.toLocation(mine.getWorld());
-            Material material = loc.getBlock().getType();
-            if (mine.isOnlyFillAirWhenRegenerate() && !material.isAir()) continue;
+        scanBlocks(blockPosList, blockSpawnEntries);
+    }
 
-            BlockSpawnEntry selected = selectEntry(blockSpawnEntries, pos);
-            if (selected == null) {
-                selected = blockSpawnEntries.randomOne();
-            }
-
-            generated.put(pos, selected);
-            if (!material.isAir()) {
-                toDestroy.add(pos);
-            }
-        }
-
-        if (!mine.isOnlyFillAirWhenRegenerate() || !toDestroy.isEmpty()) {
-            runDestroyPhase(toDestroy, generated);
+    private void scanBlocks(List<BlockPos> blockPosList, WeightedRandomMap<BlockSpawnEntry> blockSpawnEntries) {
+        if (blockPosList.isEmpty()) {
+            finishReset();
             return;
         }
 
-        runPlacePhase(generated);
+        Map<BlockPos, PackedBlock> generated = new java.util.concurrent.ConcurrentHashMap<>();
+        List<BlockPos> toDestroy = Collections.synchronizedList(new ArrayList<>());
+        AtomicInteger pending = new AtomicInteger(blockPosList.size());
+        TaskMaker tm = SuperMines.getInstance().getTaskMaker();
+
+        for (BlockPos pos : blockPosList) {
+            Location loc = pos.toLocation(mine.getWorld());
+            tm.runSync(loc, () -> {
+                Material material = loc.getBlock().getType();
+                if (!mine.isOnlyFillAirWhenRegenerate() || material.isAir()) {
+                    BlockSpawnEntry selected = selectEntry(blockSpawnEntries, pos);
+                    if (selected == null) {
+                        selected = blockSpawnEntries.randomOne();
+                    }
+
+                    generated.put(pos, selected);
+                    if (!material.isAir()) {
+                        toDestroy.add(pos);
+                    }
+                }
+
+                if (pending.decrementAndGet() == 0) {
+                    if (!mine.isOnlyFillAirWhenRegenerate() || !toDestroy.isEmpty()) {
+                        runDestroyPhase(toDestroy, generated);
+                    } else {
+                        runPlacePhase(generated);
+                    }
+                }
+            });
+        }
     }
 
     private BlockSpawnEntry selectEntry(WeightedRandomMap<BlockSpawnEntry> entries, BlockPos pos) {
@@ -150,23 +164,37 @@ class MineResetTask extends AbstractTask {
     }
 
     private void finishReset() {
-        boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (mine.isPlayerInMine(p)) {
-                p.teleportAsync(
-                        mine.getTeleportLocation() != null ? mine.getTeleportLocation() : mine.getSafeTopLocation());
-            }
+        Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), task -> {
+            boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
+            mine.setBlocksBroken(0);
+            refreshNextResetTime();
+            new MineResetEvent(mine).callEvent();
 
-            if (broadcast || mine.isPlayerInMine(p)) {
-                SuperMines.getInstance()
-                        .getLanguageManager()
-                        .sendMessage(p, "mine.reset", MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
-            }
-        }
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.getScheduler()
+                        .run(
+                                SuperMines.getInstance(),
+                                playerTask -> {
+                                    boolean inside = mine.isPlayerInMine(player);
+                                    if (inside) {
+                                        player.teleportAsync(
+                                                mine.getTeleportLocation() != null
+                                                        ? mine.getTeleportLocation()
+                                                        : mine.getSafeTopLocation());
+                                    }
 
-        mine.setBlocksBroken(0);
-        refreshNextResetTime();
-        new MineResetEvent(mine).callEvent();
+                                    if (broadcast || inside) {
+                                        SuperMines.getInstance()
+                                                .getLanguageManager()
+                                                .sendMessage(
+                                                        player,
+                                                        "mine.reset",
+                                                        MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
+                                    }
+                                },
+                                null);
+            }
+        });
     }
 
     public void refreshNextResetTime() {

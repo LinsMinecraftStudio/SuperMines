@@ -22,15 +22,22 @@ class MineResetWarningTask extends AbstractTask {
         boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
         MessageReplacement mineName = MessageReplacement.replace("%mine%", mine.getRawDisplayName());
         for (Player p : Bukkit.getOnlinePlayers()) {
-            if (broadcast || mine.isPlayerInMine(p)) {
-                SuperMines.getInstance()
-                        .getLanguageManager()
-                        .sendMessage(
-                                p,
-                                "mine.reset_warning",
-                                mineName,
-                                MessageReplacement.replace("%time%", NumberUtils.formatSeconds(p, second)));
-            }
+            p.getScheduler()
+                    .run(
+                            SuperMines.getInstance(),
+                            task -> {
+                                if (broadcast || mine.isPlayerInMine(p)) {
+                                    SuperMines.getInstance()
+                                            .getLanguageManager()
+                                            .sendMessage(
+                                                    p,
+                                                    "mine.reset_warning",
+                                                    mineName,
+                                                    MessageReplacement.replace(
+                                                            "%time%", NumberUtils.formatSeconds(p, second)));
+                                }
+                            },
+                            null);
         }
     }
 }

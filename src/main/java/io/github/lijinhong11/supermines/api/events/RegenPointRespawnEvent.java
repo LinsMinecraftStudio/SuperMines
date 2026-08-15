@@ -1,8 +1,8 @@
 package io.github.lijinhong11.supermines.api.events;
 
+import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -27,7 +27,7 @@ public final class RegenPointRespawnEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     public RegenPointRespawnEvent(@NotNull RegenPoint regenPoint, @NotNull PackedBlock block, @NotNull Cause cause) {
-        super(!Bukkit.isPrimaryThread());
+        super(false);
         this.regenPoint = regenPoint;
         this.block = block;
         this.cause = cause;
@@ -42,6 +42,7 @@ public final class RegenPointRespawnEvent extends Event implements Cancellable {
     }
 
     public void setBlock(@NotNull PackedBlock block) {
+        Preconditions.checkNotNull(block, "block cannot be null");
         this.block = block;
     }
 

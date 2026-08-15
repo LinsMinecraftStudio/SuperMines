@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -228,6 +229,7 @@ public class GuiManager {
                     addBlockSpawnEntry(p, mine, block);
                 } else if (e.getClick().isRightClick()) {
                     mine.removeBlockSpawnEntry(block);
+                    SuperMines.getInstance().getMineManager().saveMine(mine);
                     openBlockSpawnEntries(p, mine);
                 }
                 return false;
@@ -243,6 +245,7 @@ public class GuiManager {
                 Constants.WEIGHT_MIN,
                 result -> {
                     mine.addBlockSpawnEntry(material, result);
+                    SuperMines.getInstance().getMineManager().saveMine(mine);
                     openBlockSpawnEntries(p, mine);
                 },
                 "gui.input.invalid-number");
@@ -461,10 +464,15 @@ public class GuiManager {
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(p, "gui.regen-point-management.set_respawn_seconds.prompt");
-                            handleIntegerInput(p, result -> {
-                                SuperMines.getInstance().getRegenPointManager().setRespawnSeconds(point, result);
-                                reopen.run();
-                            });
+                            handleIntegerInput(
+                                    p,
+                                    result -> {
+                                        SuperMines.getInstance()
+                                                .getRegenPointManager()
+                                                .setRespawnSeconds(point, result);
+                                        reopen.run();
+                                    },
+                                    reopen);
                             return false;
                         }));
 
@@ -498,6 +506,7 @@ public class GuiManager {
 
         gui.putItem(slot(4, 7), ButtonItem.clickable(Constants.Items.REMOVE_REGEN_POINT.apply(p), (g, e) -> {
             if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+            if (!e.getClick().isShiftClick() || !e.getClick().isRightClick()) return false;
             SuperMines.getInstance().getRegenPointManager().removeRegenPoint(point.getId());
             back.run();
             return false;
@@ -559,7 +568,8 @@ public class GuiManager {
                     SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
                     openRegenPointBlocks(p, point);
                 },
-                "gui.input.invalid-number");
+                "gui.input.invalid-number",
+                () -> openRegenPointBlocks(p, point));
     }
 
     private static void openRegenPointRewards(Player p, RegenPoint point) {
@@ -638,7 +648,8 @@ public class GuiManager {
                     SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
                     openRegenPointRewards(p, point);
                 },
-                "gui.input.invalid-percent");
+                "gui.input.invalid-percent",
+                () -> openRegenPointRewards(p, point));
     }
 
     private static void openAddRegenPoint(Player p) {
@@ -657,7 +668,7 @@ public class GuiManager {
         }
 
         MaterialChooser.openUsableBlockChooser(p, chosen -> {
-            String id = "rp_" + loc.getWorld().getName() + "_" + loc.getBlockX() + "_" + loc.getBlockY() + "_"
+            String id = "rp_" + loc.getWorld().getUID() + "_" + loc.getBlockX() + "_" + loc.getBlockY() + "_"
                     + loc.getBlockZ();
             RegenPoint point = new RegenPoint(
                     id,
@@ -689,7 +700,13 @@ public class GuiManager {
                 "%status%",
                 SuperMines.getInstance()
                         .getLanguageManager()
-                        .getMsg(p, pending ? "gui.regenpoints.status.respawning" : "gui.regenpoints.status.ready"));
+                        .getMsg(
+                                p,
+                                pending
+                                        ? "gui.regenpoints.status.respawning"
+                                        : point.getRespawnSeconds() == 0
+                                                ? "gui.regenpoints.status.disabled"
+                                                : "gui.regenpoints.status.ready"));
         MessageReplacement remainingSeconds = MessageReplacement.replace("%remaining%", String.valueOf(remaining));
         return SuperMines.getInstance()
                 .getLanguageManager()
@@ -751,8 +768,13 @@ public class GuiManager {
     }
 
     private static void handleIntegerInput(Player p, Consumer<Integer> onSuccess) {
+        handleIntegerInput(p, onSuccess, null);
+    }
+
+    private static void handleIntegerInput(Player p, Consumer<Integer> onSuccess, Runnable recovery) {
         ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
             if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
+                if (recovery != null) SuperMines.getInstance().getTaskMaker().runSync(recovery);
                 return;
             }
 
@@ -761,13 +783,20 @@ public class GuiManager {
                 SuperMines.getInstance().getTaskMaker().runSync(() -> onSuccess.accept(value));
             } catch (NumberFormatException ex) {
                 SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.input.invalid-number");
+                if (recovery != null) SuperMines.getInstance().getTaskMaker().runSync(recovery);
             }
         });
     }
 
     private static void handleDoubleInput(Player p, double min, Consumer<Double> onSuccess, String errorKey) {
+        handleDoubleInput(p, min, onSuccess, errorKey, null);
+    }
+
+    private static void handleDoubleInput(
+            Player p, double min, Consumer<Double> onSuccess, String errorKey, Runnable recovery) {
         ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
             if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
+                if (recovery != null) SuperMines.getInstance().getTaskMaker().runSync(recovery);
                 return;
             }
 
@@ -779,6 +808,7 @@ public class GuiManager {
                 SuperMines.getInstance().getTaskMaker().runSync(() -> onSuccess.accept(value));
             } catch (NumberFormatException ex) {
                 SuperMines.getInstance().getLanguageManager().sendMessage(p, errorKey);
+                if (recovery != null) SuperMines.getInstance().getTaskMaker().runSync(recovery);
             }
         });
     }
@@ -800,13 +830,14 @@ public class GuiManager {
             SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.set_display_name.prompt");
             ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
                 if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
+                    SuperMines.getInstance().getTaskMaker().runSync(reopen);
                     return;
                 }
                 object.setDisplayName(ComponentUtils.deserialize(result));
                 if (object instanceof RegenPoint point) {
                     SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
                 }
-                reopen.run();
+                SuperMines.getInstance().getTaskMaker().runSync(reopen);
             });
             return false;
         }));
@@ -869,11 +900,13 @@ public class GuiManager {
                     p,
                     condition -> {
                         entry.addGenerateCondition(condition);
+                        SuperMines.getInstance().getMineManager().saveMine(mine);
                         IGenerateCondition[] holder = new IGenerateCondition[] {condition};
                         Consumer<IGenerateCondition> replace = updated -> {
                             entry.removeGenerateCondition(holder[0]);
                             entry.addGenerateCondition(updated);
                             holder[0] = updated;
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                         };
                         openConditionNodeEditor(p, mine, entry, condition, replace, reopen);
                     },
@@ -888,6 +921,7 @@ public class GuiManager {
 
                 if (e.getClick().isRightClick()) {
                     entry.removeGenerateCondition(condition);
+                    SuperMines.getInstance().getMineManager().saveMine(mine);
                     reopen.run();
                     return false;
                 }
@@ -897,6 +931,7 @@ public class GuiManager {
                     entry.removeGenerateCondition(holder[0]);
                     entry.addGenerateCondition(updated);
                     holder[0] = updated;
+                    SuperMines.getInstance().getMineManager().saveMine(mine);
                 };
                 openConditionNodeEditor(p, mine, entry, condition, replace, reopen);
                 return false;
@@ -910,7 +945,11 @@ public class GuiManager {
         PaginatedChestGUI gui =
                 buildPagedGUI(p, "gui.mine-management.block_spawn_entries.conditions.chooser_title", back);
 
-        for (String key : new String[] {"surface", "mineY", "border", "biome", "placeholder", "and", "or", "not"}) {
+        List<String> keys = new ArrayList<>(List.of("surface", "mineY", "border", "biome", "and", "or", "not"));
+        if (!availablePlaceholderTypes().isEmpty()) {
+            keys.add(4, "placeholder");
+        }
+        for (String key : keys) {
             IGenerateCondition condition = createDefaultCondition(key);
             gui.addPageItem(ButtonItem.clickable(getConditionTypeItem(p, condition), (g, e) -> {
                 onPick.accept(condition);
@@ -943,7 +982,7 @@ public class GuiManager {
             case "not" -> new NotGenerateCondition(new AndGenerateCondition(new ArrayList<>()));
             case "placeholder" ->
                 new PlaceholderGenerateCondition(
-                        "%player_name%", "", PlaceholderGenerateCondition.ParseType.PLACEHOLDERAPI);
+                        "%player_name%", "", availablePlaceholderTypes().get(0));
             default -> throw new IllegalArgumentException("Unknown condition type: " + typeKey);
         };
     }
@@ -1215,6 +1254,9 @@ public class GuiManager {
                                                             + ".prompt");
                                     ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
                                         if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
+                                            SuperMines.getInstance()
+                                                    .getTaskMaker()
+                                                    .runSync(() -> openLeafEditor(p, biome, onSave, back));
                                             return;
                                         }
 
@@ -1227,6 +1269,9 @@ public class GuiManager {
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(p, "gui.input.invalid-number");
+                                            SuperMines.getInstance()
+                                                    .getTaskMaker()
+                                                    .runSync(() -> openLeafEditor(p, biome, onSave, back));
                                             return;
                                         }
                                         BiomeGenerateCondition updated = new BiomeGenerateCondition(parsed);
@@ -1264,11 +1309,18 @@ public class GuiManager {
                             .sendMessage(
                                     p, "gui.mine-management.block_spawn_entries.conditions.leaf.placeholder.prompt");
                     ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-                        if (result.equalsIgnoreCase(CANCEL_COMMAND)) return;
+                        if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
+                            SuperMines.getInstance()
+                                    .getTaskMaker()
+                                    .runSync(() -> openPlaceholderEditor(p, condition, onSave, back));
+                            return;
+                        }
                         PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
                                 result, condition.getCompareContent(), condition.getParseType());
                         onSave.accept(updated);
-                        openPlaceholderEditor(p, updated, onSave, back);
+                        SuperMines.getInstance()
+                                .getTaskMaker()
+                                .runSync(() -> openPlaceholderEditor(p, updated, onSave, back));
                     });
                     return false;
                 }));
@@ -1284,11 +1336,18 @@ public class GuiManager {
                                             p,
                                             "gui.mine-management.block_spawn_entries.conditions.leaf.placeholder_compare.prompt");
                             ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-                                if (result.equalsIgnoreCase(CANCEL_COMMAND)) return;
+                                if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
+                                    SuperMines.getInstance()
+                                            .getTaskMaker()
+                                            .runSync(() -> openPlaceholderEditor(p, condition, onSave, back));
+                                    return;
+                                }
                                 PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
                                         condition.getPlaceholder(), result, condition.getParseType());
                                 onSave.accept(updated);
-                                openPlaceholderEditor(p, updated, onSave, back);
+                                SuperMines.getInstance()
+                                        .getTaskMaker()
+                                        .runSync(() -> openPlaceholderEditor(p, updated, onSave, back));
                             });
                             return false;
                         }));
@@ -1297,10 +1356,10 @@ public class GuiManager {
                 slot(3, 7),
                 ButtonItem.clickable(
                         getMessagedLeafItem(p, "placeholder_parse_type", condition.getParseType()), (g, e) -> {
-                            PlaceholderGenerateCondition.ParseType[] values =
-                                    PlaceholderGenerateCondition.ParseType.values();
-                            PlaceholderGenerateCondition.ParseType next =
-                                    values[(condition.getParseType().ordinal() + 1) % values.length];
+                            List<PlaceholderGenerateCondition.ParseType> values = availablePlaceholderTypes();
+                            if (values.isEmpty()) return false;
+                            int current = Math.max(0, values.indexOf(condition.getParseType()));
+                            PlaceholderGenerateCondition.ParseType next = values.get((current + 1) % values.size());
                             PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
                                     condition.getPlaceholder(), condition.getCompareContent(), next);
                             onSave.accept(updated);
@@ -1309,6 +1368,17 @@ public class GuiManager {
                         }));
 
         gui.open(p);
+    }
+
+    private static List<PlaceholderGenerateCondition.ParseType> availablePlaceholderTypes() {
+        List<PlaceholderGenerateCondition.ParseType> available = new ArrayList<>();
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            available.add(PlaceholderGenerateCondition.ParseType.PLACEHOLDERAPI);
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders")) {
+            available.add(PlaceholderGenerateCondition.ParseType.MINIPLACEHOLDERS);
+        }
+        return available;
     }
 
     private static ItemStack getMessagedLeafItem(Player p, String paramKey, Object value) {

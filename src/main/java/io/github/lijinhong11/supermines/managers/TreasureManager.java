@@ -125,7 +125,8 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         Treasure treasure = treasures.remove(key);
         SuperMines.getInstance().getMineManager().getAllMines().forEach(m -> m.removeTreasure(treasure));
         SuperMines.getInstance().getRegenPointManager().getAllRegenPoints().forEach(point -> {
-            if (point.getRewardChances().remove(key) != null) {
+            if (point.getRewardChances().containsKey(key)) {
+                point.removeReward(key);
                 SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
             }
         });
@@ -134,10 +135,10 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     }
 
     public Collection<Treasure> getAllTreasures() {
-        return treasures.values();
+        return java.util.List.copyOf(treasures.values());
     }
 
     public Set<String> getAllTreasureIds() {
-        return treasures.keySet();
+        return Set.copyOf(treasures.keySet());
     }
 }

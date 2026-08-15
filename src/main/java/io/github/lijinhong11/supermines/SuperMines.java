@@ -64,30 +64,6 @@ public class SuperMines extends JavaPlugin {
                 """
                                 .formatted(getDescription().getVersion()));
 
-        try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler");
-        } catch (Exception e) {
-            getLogger()
-                    .info(
-                            """
-
-                    ==============================
-                    SuperMines detected that you are using Spigot server software.
-                    Some important features will not work!!!!
-                    You may experience some errors, but I'm sorry.
-                    SuperMines suggest you to change to Paper.
-
-                    Why?
-                    Paper has a lot of performance improvements and a lot benefits.
-                    Some developers are changed to use Paper to develop their plugins.
-
-                    Download Paper and improve your server!
-
-                    You can download Paper @ https://papermc.io/downloads/paper
-                    ==============================
-                    """);
-        }
-
         languageManager = MittelLib.getInstance().getLanguageManager(this);
 
         treasureManager = new TreasureManager();

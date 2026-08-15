@@ -25,13 +25,27 @@ public final class PlaceholderGenerateCondition implements IGenerateCondition, R
     private final ParseType parseType;
 
     public PlaceholderGenerateCondition(ConfigurationSection cs) {
-        this(cs.getString("placeholder"), cs.getString("compareContent"), ParseType.valueOf(cs.getString("parseType")));
+        this(cs.getString("placeholder", ""), cs.getString("compareContent", ""), parseType(cs.getString("parseType")));
     }
 
     public PlaceholderGenerateCondition(String placeholder, String compareContent, ParseType parseType) {
+        if (placeholder == null || compareContent == null || parseType == null) {
+            throw new IllegalArgumentException("placeholder, compareContent, and parseType cannot be null");
+        }
         this.placeholder = placeholder;
         this.compareContent = compareContent;
         this.parseType = parseType;
+    }
+
+    private static ParseType parseType(String value) {
+        if (value == null) {
+            return ParseType.PLACEHOLDERAPI;
+        }
+        try {
+            return ParseType.valueOf(value.toUpperCase(java.util.Locale.ROOT));
+        } catch (IllegalArgumentException ignored) {
+            return ParseType.PLACEHOLDERAPI;
+        }
     }
 
     @Override
@@ -42,13 +56,23 @@ public final class PlaceholderGenerateCondition implements IGenerateCondition, R
     @Override
     public boolean canGenerate(@NotNull Mine mine, @NotNull BlockPos target) {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && parseType == ParseType.PLACEHOLDERAPI) {
-            return PlaceholderAPI.setPlaceholders(null, placeholder).equals(compareContent);
+            try {
+                return PlaceholderAPI.setPlaceholders(null, placeholder).equals(compareContent);
+            } catch (RuntimeException ignored) {
+                return false;
+            }
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders") && parseType == ParseType.MINIPLACEHOLDERS) {
-            Component component =
-                    MiniMessage.miniMessage().deserialize(placeholder, MiniPlaceholders.getGlobalPlaceholders());
-            return PlainTextComponentSerializer.plainText().serialize(component).equals(compareContent);
+            try {
+                Component component =
+                        MiniMessage.miniMessage().deserialize(placeholder, MiniPlaceholders.getGlobalPlaceholders());
+                return PlainTextComponentSerializer.plainText()
+                        .serialize(component)
+                        .equals(compareContent);
+            } catch (RuntimeException ignored) {
+                return false;
+            }
         }
 
         return false;

@@ -729,18 +729,9 @@ public class SuperMinesCommand {
                                 new CommandAPICommand("create")
                                         .withPermission(Constants.Permission.REGEN_POINTS)
                                         .withArguments(new StringArgument("id"), new BlockArgument("block"))
-                                        .withOptionalArguments(
-                                                new IntegerArgument("seconds", 0, Integer.MAX_VALUE),
-                                                new DisplayNameArgument())
                                         .executesPlayer((player, args) -> {
                                             String id = args.getByClassOrDefault("id", String.class, "");
                                             PackedBlock block = (PackedBlock) args.get("block");
-                                            int seconds = args.getByClassOrDefault(
-                                                    "seconds",
-                                                    int.class,
-                                                    SuperMines.getInstance()
-                                                            .getRegenPointManager()
-                                                            .getDefaultRespawnSeconds());
                                             if (!id.matches(Constants.ID_PATTERN)) {
                                                 SuperMines.getInstance()
                                                         .getLanguageManager()
@@ -785,17 +776,14 @@ public class SuperMinesCommand {
                                                 return;
                                             }
 
-                                            Optional<Component> displayName =
-                                                    args.getOptionalByClass("displayName", Component.class);
                                             RegenPoint point = new RegenPoint(
                                                     id,
                                                     loc.getWorld(),
                                                     BlockPos.fromLocation(loc),
                                                     block,
-                                                    Math.max(1, seconds));
-                                            if (displayName.isPresent()) {
-                                                point.setDisplayName(displayName.get());
-                                            }
+                                                    SuperMines.getInstance()
+                                                            .getRegenPointManager()
+                                                            .getDefaultRespawnSeconds());
 
                                             SuperMines.getInstance()
                                                     .getRegenPointManager()
@@ -931,6 +919,9 @@ public class SuperMinesCommand {
                                             SuperMines.getInstance()
                                                     .getRegenPointManager()
                                                     .saveRegenPoint(point);
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(sender, "command.regenpoints.add-block.success");
                                         }),
                                 new CommandAPICommand("removeBlock")
                                         .withPermission(Constants.Permission.REGEN_POINTS)
@@ -960,6 +951,9 @@ public class SuperMinesCommand {
                                             SuperMines.getInstance()
                                                     .getRegenPointManager()
                                                     .saveRegenPoint(point);
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(sender, "command.regenpoints.remove-block.success");
                                         }),
                                 new CommandAPICommand("addReward")
                                         .withPermission(Constants.Permission.REGEN_POINTS)
@@ -989,6 +983,9 @@ public class SuperMinesCommand {
                                             SuperMines.getInstance()
                                                     .getRegenPointManager()
                                                     .saveRegenPoint(point);
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(sender, "command.regenpoints.add-reward.success");
                                         }),
                                 new CommandAPICommand("removeReward")
                                         .withPermission(Constants.Permission.REGEN_POINTS)
@@ -1006,6 +1003,9 @@ public class SuperMinesCommand {
                                             SuperMines.getInstance()
                                                     .getRegenPointManager()
                                                     .saveRegenPoint(point);
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(sender, "command.regenpoints.remove-reward.success");
                                         }),
                                 new CommandAPICommand("respawnNow")
                                         .withPermission(Constants.Permission.REGEN_POINTS)
@@ -1017,6 +1017,9 @@ public class SuperMinesCommand {
                                                 SuperMines.getInstance()
                                                         .getRegenPointManager()
                                                         .respawnNow(point);
+                                                SuperMines.getInstance()
+                                                        .getLanguageManager()
+                                                        .sendMessage(sender, "command.regenpoints.respawn-now.success");
                                             }
                                         }),
                                 new CommandAPICommand("setDisplayName")
@@ -1054,7 +1057,7 @@ public class SuperMinesCommand {
                                                                     "%displayName%", point.getRawDisplayName()));
                                         }),
                                 new CommandAPICommand("tp")
-                                        .withPermission(Constants.Permission.REGEN_POINTS)
+                                        .withPermission(Constants.Permission.TELEPORT)
                                         .withArguments(new StringArgument("id")
                                                 .includeSuggestions(ArgumentSuggestions.strings(getRegenPointsList())))
                                         .executesPlayer((player, args) -> {
@@ -1127,9 +1130,22 @@ public class SuperMinesCommand {
                                                 enabled ? "command.pos.sphere.disabled" : "command.pos.sphere.enabled");
                             }
                         }))
-                .withSubcommand(new CommandAPICommand("auto-pickup")
-                        .withPermission(Constants.Permission.POS_SET)
-                        .executesPlayer((PlayerCommandExecutor) (player, args) -> {
+                .withSubcommand(
+                        new CommandAPICommand("auto-pickup").executesPlayer((PlayerCommandExecutor) (player, args) -> {
+                            if (!SuperMines.getInstance().getConfig().getBoolean("mine.auto-pickup.enabled", false)) {
+                                SuperMines.getInstance()
+                                        .getLanguageManager()
+                                        .sendMessage(player, "command.auto-pickup.unavailable");
+                                return;
+                            }
+                            String permission =
+                                    SuperMines.getInstance().getConfig().getString("mine.auto-pickup.permission", "");
+                            if (!permission.isEmpty() && !player.hasPermission(permission)) {
+                                SuperMines.getInstance()
+                                        .getLanguageManager()
+                                        .sendMessage(player, "command.auto-pickup.no-permission");
+                                return;
+                            }
                             BlockListener.togglePlayerAutoPickup(player);
                             boolean state = BlockListener.getPlayerAutoPickup(player);
                             SuperMines.getInstance()

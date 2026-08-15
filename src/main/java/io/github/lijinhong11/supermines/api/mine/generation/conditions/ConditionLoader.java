@@ -16,7 +16,7 @@ public final class ConditionLoader {
     private static final Map<String, Function<ConfigurationSection, IGenerateCondition>> LOADERS = new HashMap<>();
 
     static {
-        LOADERS.put("mineY", MineYGenerateCondition::new);
+        LOADERS.put("miney", MineYGenerateCondition::new);
         LOADERS.put("placeholder", PlaceholderGenerateCondition::new);
         LOADERS.put("surface", SurfaceGenerateCondition::new);
         LOADERS.put("border", BorderGenerateCondition::new);
@@ -39,7 +39,7 @@ public final class ConditionLoader {
         Preconditions.checkArgument(!key.isEmpty(), "key cannot be empty");
         Preconditions.checkNotNull(loader, "loader cannot be null");
 
-        LOADERS.put(key, loader);
+        LOADERS.put(key.toLowerCase(java.util.Locale.ROOT), loader);
     }
 
     /**
@@ -56,7 +56,7 @@ public final class ConditionLoader {
             throw new IllegalArgumentException("condition key is missing");
         }
 
-        Function<ConfigurationSection, IGenerateCondition> loader = LOADERS.get(key.toLowerCase());
+        Function<ConfigurationSection, IGenerateCondition> loader = LOADERS.get(key.toLowerCase(java.util.Locale.ROOT));
         if (loader == null) {
             throw new IllegalArgumentException("Unknown generation condition type: " + key);
         }

@@ -3,7 +3,6 @@ package io.github.lijinhong11.supermines.api.events;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -40,7 +39,7 @@ public final class TreasureFoundEvent extends Event implements Cancellable {
     }
 
     private TreasureFoundEvent(Treasure treasure, Player player, Source source, Mine mine, RegenPoint regenPoint) {
-        super(!Bukkit.isPrimaryThread());
+        super(false);
         this.treasure = treasure;
         this.player = player;
         this.source = source;

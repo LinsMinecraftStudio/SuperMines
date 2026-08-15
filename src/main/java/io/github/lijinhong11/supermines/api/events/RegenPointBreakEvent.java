@@ -1,7 +1,6 @@
 package io.github.lijinhong11.supermines.api.events;
 
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -21,7 +20,7 @@ public final class RegenPointBreakEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     public RegenPointBreakEvent(@NotNull RegenPoint regenPoint, @NotNull Player player) {
-        super(!Bukkit.isPrimaryThread());
+        super(false);
         this.regenPoint = regenPoint;
         this.player = player;
     }

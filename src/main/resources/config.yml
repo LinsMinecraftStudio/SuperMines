@@ -29,7 +29,7 @@ mine:
     auto-enable: false
 
 # Regen point settings
-# Regen points are single regenerable ore blocks, independent from mines
+# Regen points are single regenerable ore blocks, independent of mines
 regen-point:
   # Allow place blocks on a regen point location
   # When false, only operators can place blocks on regen point locations
@@ -51,6 +51,8 @@ regen-point:
     pistons: true
     # Prevent fluids from flowing into regen point locations
     fluids: true
+    # Prevent physics, burning, fading, falling blocks, and entity transformations
+    environmental: true
 
 # Storage settings
 # Require restart

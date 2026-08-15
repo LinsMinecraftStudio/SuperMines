@@ -57,12 +57,17 @@ command:
       - "&e/sm ranks setLevel <等级> <数值> &7- &a设置等级数值"
     regenpoints:
       - "&e/sm regenpoints list &7- &a列出所有再生矿点"
-      - "&e/sm regenpoints create <id> <方块> [秒数] [显示名] &7- &a在你注视的方块处创建再生矿点"
+      - "&e/sm regenpoints create <id> <方块> &7- &a在你注视的方块处创建再生矿点"
       - "&e/sm regenpoints remove <矿点> &7- &a删除再生矿点"
       - "&e/sm regenpoints setRespawnSeconds <矿点> <秒数> &7- &a设置再生矿点的复生时间"
       - "&e/sm regenpoints setBlock <矿点> <方块> &7- &a设置复生的方块"
       - "&e/sm regenpoints setDisplayName <矿点> <显示名> &7- &a设置显示名"
       - "&e/sm regenpoints tp <矿点> &7- &a传送到再生矿点"
+      - "&e/sm regenpoints addBlock <矿点> <方块> <权重> &7- &a添加加权复生方块"
+      - "&e/sm regenpoints removeBlock <矿点> <方块> &7- &a移除复生方块"
+      - "&e/sm regenpoints addReward <矿点> <宝藏> <概率> &7- &a添加独立奖励"
+      - "&e/sm regenpoints removeReward <矿点> <宝藏> &7- &a移除独立奖励"
+      - "&e/sm regenpoints respawnNow <矿点> &7- &a立即复生矿点"
   pos:
     invalid-height: "&c所选位置超出世界高度限制。"
     outside-border: "&c所选位置在世界边界之外。"
@@ -86,6 +91,8 @@ command:
   auto-pickup:
     enabled: "&a自动拾取已启用。挖掘的物品将直接进入背包。"
     disabled: "&a自动拾取已禁用。挖掘的物品将掉落在地面。"
+    unavailable: "&c服务器已禁用自动拾取。"
+    no-permission: "&c你没有使用自动拾取的权限。"
   redefine:
     success: "&a矿区区域重新定义成功！"
   remove:
@@ -163,6 +170,16 @@ command:
     set-display-name: "&a再生矿点 &d%point% &a的显示名设为 &b%displayName%"
     point-not-exists: "&c该再生矿点不存在！"
     last-block: "&c再生矿点必须至少保留一个复生方块！"
+    respawn-now:
+      success: "&a已请求立即复生矿点。"
+    add-block:
+      success: "&a复生方块已添加。"
+    remove-block:
+      success: "&a复生方块已移除。"
+    add-reward:
+      success: "&a独立奖励已添加。"
+    remove-reward:
+      success: "&a独立奖励已移除。"
   reload:
     safe-tip: "&c注意：为保证安全，仅重载配置与消息文件"
     success: "&a重载成功！"
@@ -198,7 +215,7 @@ gui:
     prompt: "&e在聊天输入新的显示名：&b(输入 &6##CANCEL &b取消)"
     name: "&6设置显示名"
     lore:
-      - "&7点击设置矿区显示名"
+      - "&7点击设置显示名"
       - "&7当前: &b%name%"
   general:
     title: "&eSuper&aMines"
@@ -402,6 +419,7 @@ gui:
     status:
       ready: "&a可挖掘"
       respawning: "&e复生中"
+      disabled: "&c已禁用自动复生"
   regen-point-management:
     title: "&d&l再生矿点管理 &8&l- &d%point%"
     set_respawn_seconds:
@@ -441,7 +459,7 @@ gui:
     remove:
       name: "&c删除再生矿点"
       lore:
-        - "&7永久删除此资源节点"
+        - "&7按住 Shift 并右键永久删除此资源节点"
     tp:
       name: "&6传送到矿点"
       lore:

@@ -1,7 +1,6 @@
 package io.github.lijinhong11.supermines.api.events;
 
 import io.github.lijinhong11.supermines.api.mine.Mine;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -17,7 +16,7 @@ public class MineCreateEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     public MineCreateEvent(Mine mine) {
-        super(!Bukkit.isPrimaryThread());
+        super(false);
 
         this.mine = mine;
     }

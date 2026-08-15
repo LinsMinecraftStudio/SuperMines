@@ -5,7 +5,6 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -70,45 +69,42 @@ public class TaskMaker {
 
         long delayMillis = resetTask.getNextResetTime() - System.currentTimeMillis() - warningSeconds * 1000L;
         if (delayMillis <= 0) {
-            Bukkit.getAsyncScheduler().runNow(SuperMines.getInstance(), task);
-            Bukkit.getAsyncScheduler()
+            Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), task);
+            Bukkit.getGlobalRegionScheduler()
                     .runDelayed(
                             SuperMines.getInstance(),
                             t -> {
-                                Bukkit.getAsyncScheduler()
+                                Bukkit.getGlobalRegionScheduler()
                                         .runAtFixedRate(
                                                 SuperMines.getInstance(),
                                                 task,
-                                                delayMillis / 50L,
-                                                mine.getRegenerateSeconds(),
-                                                TimeUnit.SECONDS);
+                                                1L,
+                                                Math.max(1L, mine.getRegenerateSeconds() * 20L));
                                 warningMap.put(warningSeconds, task);
                             },
-                            delayMillis / 50,
-                            TimeUnit.SECONDS);
+                            1L);
             return;
         }
 
         warningMap.put(warningSeconds, task);
-        Bukkit.getAsyncScheduler()
+        Bukkit.getGlobalRegionScheduler()
                 .runAtFixedRate(
                         SuperMines.getInstance(),
                         task,
-                        delayMillis / 50L,
-                        mine.getRegenerateSeconds(),
-                        TimeUnit.SECONDS);
+                        Math.max(1L, delayMillis / 50L),
+                        Math.max(1L, mine.getRegenerateSeconds() * 20L));
     }
 
     public void startMineResetTask(Mine mine) {
         MineResetTask task = new MineResetTask(mine);
-        Bukkit.getAsyncScheduler()
-                .runAtFixedRate(SuperMines.getInstance(), task, 1L, mine.getRegenerateSeconds(), TimeUnit.SECONDS);
+        Bukkit.getGlobalRegionScheduler()
+                .runAtFixedRate(SuperMines.getInstance(), task, 1L, Math.max(1L, mine.getRegenerateSeconds() * 20L));
         resetTasks.put(mine.getId(), task);
     }
 
     public void runMineResetTaskNow(Mine mine) {
         MineResetTask mrt = new MineResetTask(mine, true);
-        Bukkit.getAsyncScheduler().runNow(SuperMines.getInstance(), mrt);
+        Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), t -> mrt.run(t));
     }
 
     public void cancelMineResetTask(Mine mine) {

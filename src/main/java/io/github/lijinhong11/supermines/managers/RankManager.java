@@ -73,10 +73,10 @@ public class RankManager extends AbstractFileObjectManager<Rank> {
     }
 
     public Collection<Rank> getAllRanks() {
-        return ranks.values();
+        return java.util.List.copyOf(ranks.values());
     }
 
     public Set<String> getAllRankIds() {
-        return ranks.keySet();
+        return Set.copyOf(ranks.keySet());
     }
 }
