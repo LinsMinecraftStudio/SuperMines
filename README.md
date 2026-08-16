@@ -3,18 +3,20 @@
 
 <a href="https://hangar.papermc.io/lijinhong11/SuperMines"><img alt="hangar" height="40" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg"></a>
 
-A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
+A free, open-source mine plugin for Paper servers.
 </div>
 
 [简体中文](README_CN.md)
 
 ## Why SuperMines
 
-- **Always full, always fresh** — mines are always completely filled after every reset; regeneration time is fully customizable, so players always have something to mine
-- **Every block, finely tuned** — ItemsAdder / Oraxen / Nexo / CraftEngine custom block support; ore placement is decided by generation conditions: surface layer, random chance, in-mine Y range, mine border, or biomes — chain them freely
-- **Mining that hooks players** — auto-pickup drops items straight into your inventory; a rank & XP system built on blocks broken (with optional mcMMO / AuraSkills XP), giving upgrades a clear goal
-- **Manage at a glance** — a full GUI to edit mines, and one command creates a spherical mine
-- **Plug & play** — 4 languages auto-matched to each player's client; Folia-friendly, stays smooth under load
+- **Automatic refill** — mines refill on a configurable schedule with configurable generation
+- **Auto pickup** — drops go straight to the inventory, togglable per mine and per player
+- **Mining progression** — ranks based on blocks broken, with optional mcMMO / AuraSkills XP
+- **Regenerable ore points** — global points respawn on a set delay, with weighted block pools and independent treasure rewards
+- **Generation conditions** — surface, Y-level, border, biome, and placeholder conditions decide block placement
+- **GUI management** — edit mines through the GUI; `/sm sphere` creates spherical mines
+- **Compatibility** — ItemsAdder / Oraxen / Nexo / CraftEngine blocks, Folia, and 4 languages auto-matched
 
 ## Features
 * MiniPlaceholders/PlaceholdersAPI support
@@ -33,13 +35,19 @@ A powerful, easy-to-use, and free-to-use mine plugin for Paper servers.
    * You can set these messages to be seen by all players in the server or players in the mine
 * Generation conditions for per-block fill logic
 * GUI to edit mines
+* Global regen points — single blocks independent of mines that respawn on a delay, with weighted pools and independent treasure rewards
+* Event API — covers mine create/remove/edit/reset, block break, treasure, and regen point events for extensions
+* Generation conditions — control per-block generation logic, freely combinable
+   * surface / Y-level range / mine border / biome / placeholder (PlaceholdersAPI / MiniPlaceholders), and more
 * More coming soon…
 
 ## Road Map
 
-Nested generation conditions, global regen points, weighted block pools, and independent rewards are implemented.
+- Random events: lucky periods, double drops, vein bursts
+- ActionBar / BossBar countdowns, status holograms
+- Update check
 
-See the maintained [development roadmap](ROADMAP.md) for structure generation, mine events, ownership, visualization, and integrations.
+See the maintained [development roadmap](ROADMAP.md) for details.
 
 ## Screenshots
 
