@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.gui;
 
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mittellib.gui.inventory.MittelGUI;
+import io.github.lijinhong11.mittellib.gui.inventory.choosers.BiomeChooser;
 import io.github.lijinhong11.mittellib.gui.inventory.choosers.MaterialChooser;
 import io.github.lijinhong11.mittellib.gui.inventory.impl.ChestGUI;
 import io.github.lijinhong11.mittellib.gui.inventory.impl.PaginatedChestGUI;
@@ -31,7 +32,6 @@ import io.github.lijinhong11.supermines.api.mine.generation.conditions.SurfaceGe
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import io.github.lijinhong11.supermines.utils.Constants;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -908,7 +908,12 @@ public class GuiManager {
                             holder[0] = updated;
                             SuperMines.getInstance().getMineManager().saveMine(mine);
                         };
-                        openConditionNodeEditor(p, mine, entry, condition, replace, reopen);
+                        Runnable remove = () -> {
+                            entry.removeGenerateCondition(holder[0]);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
+                            reopen.run();
+                        };
+                        openConditionNodeEditor(p, mine, entry, condition, replace, remove, reopen);
                     },
                     reopen);
             return false;
@@ -933,7 +938,12 @@ public class GuiManager {
                     holder[0] = updated;
                     SuperMines.getInstance().getMineManager().saveMine(mine);
                 };
-                openConditionNodeEditor(p, mine, entry, condition, replace, reopen);
+                Runnable remove = () -> {
+                    entry.removeGenerateCondition(holder[0]);
+                    SuperMines.getInstance().getMineManager().saveMine(mine);
+                    reopen.run();
+                };
+                openConditionNodeEditor(p, mine, entry, condition, replace, remove, reopen);
                 return false;
             }));
         }
@@ -993,6 +1003,7 @@ public class GuiManager {
             BlockSpawnEntry entry,
             IGenerateCondition node,
             Consumer<IGenerateCondition> onSave,
+            Runnable onDelete,
             Runnable back) {
         switch (node) {
             case AndGenerateCondition and ->
@@ -1015,7 +1026,8 @@ public class GuiManager {
                         OrGenerateCondition::new,
                         new ArrayList<>(or.conditions()),
                         back);
-            case NotGenerateCondition not -> openNotEditor(p, mine, entry, not, onSave, back);
+            case NotGenerateCondition not -> openNotEditor(p, mine, entry, not, onSave, onDelete, back);
+            case BiomeGenerateCondition biome -> openBiomeEditor(p, biome, onSave, onDelete, back);
             case PlaceholderGenerateCondition placeholder -> openPlaceholderEditor(p, placeholder, onSave, back);
             case null, default -> openLeafEditor(p, node, onSave, back);
         }
@@ -1097,7 +1109,12 @@ public class GuiManager {
             list.set(index, updated);
             onSave.accept(build.apply(new ArrayList<>(list)));
         };
-        openConditionNodeEditor(p, mine, entry, sub, subReplace, back);
+        Runnable subDelete = () -> {
+            list.remove(index);
+            onSave.accept(build.apply(new ArrayList<>(list)));
+            back.run();
+        };
+        openConditionNodeEditor(p, mine, entry, sub, subReplace, subDelete, back);
     }
 
     private static void openNotEditor(
@@ -1106,6 +1123,7 @@ public class GuiManager {
             BlockSpawnEntry entry,
             NotGenerateCondition not,
             Consumer<IGenerateCondition> onSave,
+            Runnable onDelete,
             Runnable back) {
         ChestGUI gui = buildManagementGUI(p, "gui.mine-management.block_spawn_entries.conditions.not.title");
 
@@ -1124,9 +1142,9 @@ public class GuiManager {
                         newInner -> {
                             holder[0] = new NotGenerateCondition(newInner);
                             onSave.accept(holder[0]);
-                            openNotEditor(p, mine, entry, holder[0], onSave, back);
+                            openNotEditor(p, mine, entry, holder[0], onSave, onDelete, back);
                         },
-                        () -> openNotEditor(p, mine, entry, holder[0], onSave, back));
+                        () -> openNotEditor(p, mine, entry, holder[0], onSave, onDelete, back));
                 return false;
             }
 
@@ -1138,11 +1156,64 @@ public class GuiManager {
                     newInner -> {
                         holder[0] = new NotGenerateCondition(newInner);
                         onSave.accept(holder[0]);
-                        openNotEditor(p, mine, entry, holder[0], onSave, back);
+                        openNotEditor(p, mine, entry, holder[0], onSave, onDelete, back);
                     },
-                    () -> openNotEditor(p, mine, entry, holder[0], onSave, back));
+                    onDelete,
+                    () -> openNotEditor(p, mine, entry, holder[0], onSave, onDelete, back));
             return false;
         }));
+
+        gui.open(p);
+    }
+
+    private static void openBiomeEditor(
+            Player p,
+            BiomeGenerateCondition condition,
+            Consumer<IGenerateCondition> onSave,
+            Runnable onDelete,
+            Runnable back) {
+        PaginatedChestGUI gui =
+                buildPagedGUI(p, "gui.mine-management.block_spawn_entries.conditions.biome.title", back);
+
+        gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
+            BiomeChooser.openBiomeChooser(p, chosen -> {
+                List<String> biomes = new ArrayList<>(condition.getStringBiomes());
+                String biomeKey = chosen.key().asString();
+                if (!biomes.contains(biomeKey)) {
+                    biomes.add(biomeKey);
+                    BiomeGenerateCondition updated = new BiomeGenerateCondition(biomes);
+                    onSave.accept(updated);
+                    openBiomeEditor(p, updated, onSave, onDelete, back);
+                    return;
+                }
+                openBiomeEditor(p, condition, onSave, onDelete, back);
+            });
+            return false;
+        }));
+
+        condition.getStringBiomes().stream().sorted().forEach(biomeKey -> {
+            ItemStack item = new ItemStack(Material.OAK_SAPLING);
+            item.editMeta(meta -> {
+                meta.displayName(Component.text(biomeKey));
+                meta.lore(SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMsgComponentList(p, "gui.mine-management.block_spawn_entries.conditions.biome.each_lore"));
+            });
+            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
+                if (!e.getClick().isRightClick()) return false;
+                if (condition.getStringBiomes().size() <= 1) {
+                    onDelete.run();
+                    return false;
+                }
+
+                List<String> biomes = new ArrayList<>(condition.getStringBiomes());
+                biomes.remove(biomeKey);
+                BiomeGenerateCondition updated = new BiomeGenerateCondition(biomes);
+                onSave.accept(updated);
+                openBiomeEditor(p, updated, onSave, onDelete, back);
+                return false;
+            }));
+        });
 
         gui.open(p);
     }
@@ -1238,48 +1309,6 @@ public class GuiManager {
                                     BorderGenerateCondition updated = new BorderGenerateCondition(next);
                                     onSave.accept(updated);
                                     openLeafEditor(p, updated, onSave, back);
-                                    return false;
-                                }));
-            case BiomeGenerateCondition biome ->
-                gui.putItem(
-                        slot(3, 5),
-                        ButtonItem.clickable(
-                                getMessagedLeafItem(p, "biome", String.join(", ", biome.getStringBiomes())), (g, e) -> {
-                                    p.closeInventory();
-                                    SuperMines.getInstance()
-                                            .getLanguageManager()
-                                            .sendMessage(
-                                                    p,
-                                                    "gui.mine-management.block_spawn_entries.conditions.leaf.biome"
-                                                            + ".prompt");
-                                    ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-                                        if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
-                                            SuperMines.getInstance()
-                                                    .getTaskMaker()
-                                                    .runSync(() -> openLeafEditor(p, biome, onSave, back));
-                                            return;
-                                        }
-
-                                        List<String> parsed = Arrays.stream(result.split(","))
-                                                .map(String::trim)
-                                                .map(String::toUpperCase)
-                                                .filter(name -> !name.isEmpty())
-                                                .toList();
-                                        if (parsed.isEmpty()) {
-                                            SuperMines.getInstance()
-                                                    .getLanguageManager()
-                                                    .sendMessage(p, "gui.input.invalid-number");
-                                            SuperMines.getInstance()
-                                                    .getTaskMaker()
-                                                    .runSync(() -> openLeafEditor(p, biome, onSave, back));
-                                            return;
-                                        }
-                                        BiomeGenerateCondition updated = new BiomeGenerateCondition(parsed);
-                                        onSave.accept(updated);
-                                        SuperMines.getInstance()
-                                                .getTaskMaker()
-                                                .runSync(() -> openLeafEditor(p, updated, onSave, back));
-                                    });
                                     return false;
                                 }));
             default -> {}

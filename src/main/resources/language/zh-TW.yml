@@ -273,6 +273,10 @@ gui:
       conditions:
         title: "&d生成條件"
         chooser_title: "&d選擇條件類型"
+        biome:
+          title: "&d生態域條件"
+          each_lore:
+            - "&7右鍵移除"
         each_lore:
           - "&7左鍵編輯"
           - "&7右鍵移除"

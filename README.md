@@ -10,13 +10,13 @@ A free, open-source mine plugin for Paper servers.
 
 ## Why SuperMines
 
-- **Automatic refill** — mines refill on a configurable schedule with configurable generation
-- **Auto pickup** — drops go straight to the inventory, togglable per mine and per player
-- **Mining progression** — ranks based on blocks broken, with optional mcMMO / AuraSkills XP
-- **Regenerable ore points** — global points respawn on a set delay, with weighted block pools and independent treasure rewards
-- **Generation conditions** — surface, Y-level, border, biome, and placeholder conditions decide block placement
-- **GUI management** — edit mines through the GUI; `/sm sphere` creates spherical mines
-- **Compatibility** — ItemsAdder / Oraxen / Nexo / CraftEngine blocks, Folia, and 4 languages auto-matched
+- **Place every block with rules, not just randomness** — control generation by surface depth, Y-level, border, biome, and placeholders
+- **Go beyond full-mine resets with regenerable points** — run independent global ore points with weighted pools and treasure rewards
+- **Send drops straight to the inventory** — configure auto pickup per mine while allowing players to toggle their own setting
+- **Turn every block broken into progress** — level players by mined blocks with optional mcMMO / AuraSkills XP integration
+- **Manage it in-game instead of editing every file** — use GUIs for mines, block pools, generation conditions, and regen points
+- **Create both standard and spherical mines quickly** — define regular selections or use `/sm sphere` for a spherical mine
+- **Fit into common server stacks** — supports Folia, ItemsAdder / Oraxen / Nexo / CraftEngine blocks
 
 ## Features
 * MiniPlaceholders/PlaceholdersAPI support
@@ -25,7 +25,7 @@ A free, open-source mine plugin for Paper servers.
 * Rank system
 * Allow/Disallow earn xp from mine blocks
 * Great I18n for players — Translation based on Client language
-   * Supported Translations: en-US pt-BR zh-CN zh-TW
+   * Supported Translations: en-US fr-FR pt-BR zh-CN zh-TW
    * *Some translations uses AI*, you can make a PR if you encounter some wrong usages about translations.
 * Item Serialization System using MittelLib
 * Create spherical mines via `/sm sphere <radius>`
@@ -51,11 +51,23 @@ See the maintained [development roadmap](ROADMAP.md) for details.
 
 ## Screenshots
 
-![image.png](https://www.nexusmc.cn/uploads/images/i9Fj9queNK_gxqUdzX-yO.webp)
+### Command Help
 
-![image.png](https://www.nexusmc.cn/uploads/images/LALclEe1BsYf72To81QWy.webp)
+![/sm help](./media/command_help.png)
 
-![2026-06-10_00.22.08.png](https://www.nexusmc.cn/uploads/images/2c1yaj_pV9PQNe65R87y2.webp)
+### Cuboid Mine
+
+![cuboid mine](./media/cuboid_mine.png)
+
+### Sphere Mine
+
+![sphere mine](./media/sphere_mine.png)
+
+### Border Condition: Core
+
+The iron ore in the picture below restricted to the interior of the mine.
+
+![iron ore inside](./media/border_condition_core_in_mine.png)
 
 ## Downloads
 

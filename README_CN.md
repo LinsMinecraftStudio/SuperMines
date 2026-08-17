@@ -10,13 +10,13 @@
 
 ## 为什么选择 SuperMines
 
-- **矿区自动刷新** — 挖空后按设定时间重新填满，生成内容可配置
-- **自动拾取** — 掉落物直接进背包，可分别按矿井和玩家开关
-- **挖掘成长** — 按挖掘方块数升级，可选联动 mcMMO / AuraSkills 经验
-- **可再生矿点** — 全局独立矿点定时复生，支持加权方块池与独立宝藏奖励
-- **生成条件** — 表层、Y 层、边缘、生物群系、Placeholder 等条件组合决定方块生成
-- **图形化管理** — GUI 编辑矿区，`/sm sphere` 指令创建球形矿区
-- **兼容性** — ItemsAdder / Oraxen / Nexo / CraftEngine 方块、Folia、4 种语言自动适配
+- **方块生成有规则，不再只靠随机** — 通过表层、Y 层、边界、生物群系和占位符条件控制生成位置
+- **不只整区重置，单个矿点也能复生** — 全局可再生矿点独立计时，支持加权方块池与宝藏奖励
+- **挖完直接进背包，减少重复操作** — 自动拾取可按矿区统一设置，也可由玩家单独开关
+- **每一镐都有进度，挖矿不再只是刷方块** — 按挖掘数量提升等级，可选联动 mcMMO / AuraSkills 经验
+- **不用反复改配置，游戏内就能管理** — 通过 GUI 编辑矿区、方块池、生成条件与可再生矿点
+- **普通矿坑和球形矿区都能快速创建** — 支持选区创建，并可用 `/sm sphere` 直接生成球形矿区
+- **兼容常用服务端生态** — 支持 Folia、ItemsAdder / Oraxen / Nexo / CraftEngine
 
 ## 特点
 
@@ -26,7 +26,7 @@
 - 等级系统
 - 可设置是否允许通过挖掘矿井方块获得 mcMMO / AuraSkills 经验值
 - 为玩家提供出色的 I18n 本地化 — 根据客户端语言自动翻译
-  - 目前已支持的语言：en-US、pt-BR、zh-CN、zh-TW
+  - 目前已支持的语言：en-US、fr-FR、pt-BR、zh-CN、zh-TW
   - *部分翻译使用了 AI，如果你发现翻译有误，欢迎提交 PR 进行修正。*
 - 使用 MittelLib 实现物品序列化系统
 - 通过 `/sm sphere <半径>` 创建球形矿井
@@ -51,11 +51,23 @@
 
 ## 截图
 
-![image.png](https://www.nexusmc.cn/uploads/images/i9Fj9queNK_gxqUdzX-yO.webp)
+### 指令帮助
 
-![image.png](https://www.nexusmc.cn/uploads/images/LALclEe1BsYf72To81QWy.webp)
+![指令帮助](./media/command_help.png)
 
-![2026-06-10_00.22.08.png](https://www.nexusmc.cn/uploads/images/2c1yaj_pV9PQNe65R87y2.webp)
+### 长方体矿区
+
+![长方体矿区](./media/cuboid_mine.png)
+
+### 球形矿区
+
+![球形矿区](./media/sphere_mine.png)
+
+### 边界条件：内部
+
+下图中的铁矿仅生成在矿区内部。
+
+![矿区内部的铁矿](./media/border_condition_core_in_mine.png)
 
 ## API
 

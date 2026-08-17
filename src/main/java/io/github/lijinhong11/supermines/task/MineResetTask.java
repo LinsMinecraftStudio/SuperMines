@@ -87,11 +87,10 @@ class MineResetTask extends AbstractTask {
                 Material material = loc.getBlock().getType();
                 if (!mine.isOnlyFillAirWhenRegenerate() || material.isAir()) {
                     BlockSpawnEntry selected = selectEntry(blockSpawnEntries, pos);
-                    if (selected == null) {
-                        selected = blockSpawnEntries.randomOne();
+                    if (selected != null) {
+                        generated.put(pos, selected);
                     }
 
-                    generated.put(pos, selected);
                     if (!material.isAir()) {
                         toDestroy.add(pos);
                     }

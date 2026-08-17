@@ -273,6 +273,10 @@ gui:
       conditions:
         title: "&d生成条件"
         chooser_title: "&d选择条件类型"
+        biome:
+          title: "&d生物群系条件"
+          each_lore:
+            - "&7右键移除"
         each_lore:
           - "&7左键编辑"
           - "&7右键移除"

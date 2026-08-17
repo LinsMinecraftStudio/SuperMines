@@ -1,0 +1,470 @@
+wand:
+  name: "&eSuper&aMine &dBaguette de sélection de position"
+  lore:
+    - "&aClic gauche pour définir la position 1"
+    - "&aClic droit pour définir la position 2"
+command:
+  help:
+    general:
+      - "&aAide de SuperMines"
+      - "&e/sm create <id> [displayName] &7- &aCréer une mine"
+      - "&e/sm help &7- &aAfficher ce message d'aide"
+      - "&e/sm info <mine> &7- &aAfficher les informations d'une mine"
+      - "&e/sm list &7- &aAfficher la liste de toutes les mines"
+      - "&e/sm gui &7- &aAfficher l'interface graphique"
+      - "&e/sm treasures &7- &aAfficher l'aide sur les trésors"
+      - "&e/sm ranks &7- &aAfficher l'aide sur les rangs"
+      - "&e/sm addTreasure <mine> <treasure> &7- &aAjouter un trésor à la mine"
+      - "&e/sm removeTreasure <mine> <treasure> &7- &aRetirer un trésor de la mine"
+      - "&e/sm setRequiredLevel <mine> <rankLevel> &7- &aDéfinir le niveau de rang requis pour une mine"
+      - "&e/sm addAllowedRank <mine> <rank> &7- &aAjouter un rang autorisé à la mine"
+      - "&e/sm removeAllowedRank <mine> <rank> &7- &aRetirer un rang autorisé de la mine"
+      - "&e/sm setBlockGenerate <mine> <weight> <block> &7- &aPermettre la génération du bloc dans la mine"
+      - "&e/sm setDisplayName <mine> <displayName> &7- &aDéfinir le nom d'affichage de la mine"
+      - "&e/sm setDisplayIcon <mine> <item> &7- &aDéfinir l'icône d'affichage de la mine"
+      - "&e/sm removeBlockGenerate <mine> <block> &7- &aArrêter la génération du bloc dans la mine"
+      - "&e/sm addResetWarning <mine> <restSeconds> &7- &aAjouter un avertissement de réinitialisation"
+      - "&e/sm removeResetWarning <mine> <restSeconds> &7- &aRetirer un avertissement de réinitialisation"
+      - "&e/sm setResetTime <mine> <resetSeconds> &7- &aDéfinir le délai de réinitialisation d'une mine"
+      - "&e/sm settp/setteleport <mine> &7- &aDéfinir le point de téléportation de la mine"
+      - "&e/sm tp/teleport <mine> &7- &aSe téléporter à la mine"
+      - "&e/sm setOnlyFillAir <mine> <onlyFillAir> &7- &aNe remplir que l'air lors de la réinitialisation"
+      - "&e/sm reset <mine> &7- &aRéinitialiser une mine"
+      - "&e/sm pos1 [position] &7- &aDéfinir la position 1 d'une zone"
+      - "&e/sm pos2 [position] &7- &aDéfinir la position 2 d'une zone"
+      - "&e/sm wand &7- &aObtenir une baguette"
+      - "&e/sm remove <mine> &7- &aSupprimer une mine"
+      - "&e/sm reload &7- &aRecharger le plugin"
+    treasures:
+      - "&e/sm treasures list &7- &aAfficher tous les trésors"
+      - "&e/sm treasures create <id> <displayName> <weight> &7- &aAjouter un trésor (objet tenu en main)"
+      - "&e/sm treasures remove <treasure> &7- &aSupprimer un trésor"
+      - "&e/sm treasures setItem <treasure> &7- &aDéfinir l'objet de récompense (objet tenu en main)"
+      - "&e/sm treasures setWeight <treasure> <weight> &7- &aDéfinir le poids d'un trésor"
+      - "&e/sm treasures setDisplayName <treasure> <displayName> &7- &aDéfinir le nom d'affichage"
+      - "&e/sm treasures addMatch <treasure> <block> &7- &aAjouter un bloc correspondant"
+      - "&e/sm treasures removeMatch <treasure> <block> &7- &aRetirer un bloc correspondant"
+      - "&e/sm treasures addCommand <treasure> <command> &7- &aAjouter une commande console avec placeholders"
+      - "&e/sm treasures removeCommand <treasure> <command> &7- &aRetirer une commande"
+      - "&e/sm treasures listCommands <treasure> &7- &aAfficher les commandes d'un trésor"
+    ranks:
+      - "&e/sm ranks list &7- &aAfficher tous les rangs"
+      - "&e/sm ranks create <id> <displayName> <level> &7- &aAjouter un rang"
+      - "&e/sm ranks remove <rank> &7- &aSupprimer un rang"
+      - "&e/sm ranks giveRank <player> <rank> [notify] &7- &aAttribuer un rang à un joueur"
+      - "&e/sm ranks takeRank <player> <rank> [notify] &7- &aRetirer le rang d'un joueur"
+      - "&e/sm ranks setDisplayName <rank> <displayName> &7- &aDéfinir le nom d'affichage d'un rang"
+      - "&e/sm ranks setLevel <rank> <level> &7- &aDéfinir le niveau d'un rang"
+    regenpoints:
+      - "&e/sm regenpoints list &7- &aAfficher tous les points de régénération"
+      - "&e/sm regenpoints create <id> <block> &7- &aAjouter un point sur le bloc regardé"
+      - "&e/sm regenpoints remove <point> &7- &aSupprimer un point de régénération"
+      - "&e/sm regenpoints setRespawnSeconds <point> <seconds> &7- &aDéfinir le délai de réapparition"
+      - "&e/sm regenpoints setBlock <point> <block> &7- &aDéfinir le bloc qui réapparaît"
+      - "&e/sm regenpoints setDisplayName <point> <displayName> &7- &aDéfinir le nom d'affichage"
+      - "&e/sm regenpoints tp <point> &7- &aSe téléporter à un point"
+      - "&e/sm regenpoints addBlock <point> <block> <weight> &7- &aAjouter un bloc pondéré"
+      - "&e/sm regenpoints removeBlock <point> <block> &7- &aRetirer un bloc de réapparition"
+      - "&e/sm regenpoints addReward <point> <treasure> <chance> &7- &aAjouter une récompense indépendante"
+      - "&e/sm regenpoints removeReward <point> <treasure> &7- &aRetirer une récompense indépendante"
+      - "&e/sm regenpoints respawnNow <point> &7- &aFaire réapparaître un point immédiatement"
+  pos:
+    invalid-height: "&cLa position sélectionnée dépasse la hauteur limite du monde."
+    outside-border: "&cLa position sélectionnée se trouve hors de la bordure du monde."
+    different-world: "&cLes positions 1 et 2 doivent être dans le même monde."
+    in-mine: "&cVous ne pouvez pas sélectionner une position dans une mine existante."
+    set:
+      pos1: "&aPosition 1 définie sur &e%pos%&a."
+      pos2: "&aPosition 2 définie sur &e%pos%&a."
+    sphere:
+      enabled: "&aMode sphère activé. pos1 sera le centre et pos2 définira le rayon."
+      disabled: "&aMode sphère désactivé. pos1 et pos2 définiront une zone cuboïde."
+      radius-set: "&aSphère définie ! Centre : &e%center%&a, rayon : &b%radius%"
+  create:
+    exists: "&cUne mine avec cet identifiant existe déjà !"
+    success: "&aLa mine a été créée avec succès !"
+    no-selection: "&cVous n'avez sélectionné aucune position !"
+    selection-not-finished: "&cVous n'avez pas terminé la sélection de la zone !"
+  fillair:
+    enabled: "&aLa mine &b%mine% &ane remplira que l'air lors de sa réinitialisation"
+    disabled: "&aLa mine &b%mine% &aeffectuera une réinitialisation complète"
+  auto-pickup:
+    enabled: "&aRamassage automatique activé. Les objets iront directement dans votre inventaire."
+    disabled: "&aRamassage automatique désactivé. Les objets tomberont au sol."
+    unavailable: "&cLe ramassage automatique est désactivé sur ce serveur."
+    no-permission: "&cVous n'avez pas la permission d'utiliser le ramassage automatique."
+  redefine:
+    success: "&aLa zone de la mine a été redéfinie avec succès !"
+  remove:
+    success: "&aLa mine a été supprimée avec succès !"
+  reset:
+    time-set: "&aLe délai de réinitialisation de &b%mine% &aest défini sur &b%time%"
+    success: "&aLa mine a été réinitialisée avec succès !"
+    stop-reset: "&aLa mine &b%mine% &ane sera plus réinitialisée"
+  resetwarning:
+    time-too-long: "&cL'avertissement ne doit pas dépasser le délai de réinitialisation !"
+    started: "&aLa tâche d'avertissement va démarrer !"
+    stopped: "&aLa tâche d'avertissement a été arrêtée !"
+  block-generate:
+    success: "&aLe bloc &d%block% &asera généré dans &b%mine% &aavec un poids de &b%weight%"
+    removed: "&aLa génération du bloc a été retirée de &b%mine% &aavec succès !"
+  list:
+    head:
+      mine: "&6Mines : "
+    separator: "&7, "
+    color: "&b"
+    ordered: "&e%order%. &a%content%"
+  teleport:
+    set: "&aLe point de téléportation de &b%mine% &aa été défini sur &d%loc%"
+    no-loc: "&cLe point de téléportation n'est pas défini. Contactez un opérateur."
+  treasures:
+    no-item-in-hand: "&cVous devez tenir un objet en main !"
+    set-item: "&aLe trésor &d%treasure% &aa été modifié"
+    set-weight: "&aLe poids de &d%treasure% &aest défini sur &b%weight%"
+    set-display-name: "&aLe nom de &d%treasure% &aest défini sur &b%displayName%"
+    create:
+      exists: "&cUn trésor avec cet identifiant existe déjà !"
+      success: "&aLe trésor &d%treasure% &aa été créé avec succès !"
+    remove:
+      success: "&aLe trésor &d%treasure% &aa été supprimé avec succès !"
+    matched_blocks:
+      exists: "&cLe bloc figure déjà dans la liste !"
+      not_exists: "&cLe bloc ne figure pas dans la liste !"
+      add_success: "&aLe bloc &b%block% &aa été ajouté au trésor &d%treasure%"
+      remove_success: "&aLe bloc &b%block% &aa été retiré du trésor &d%treasure%"
+    command-empty: "&cLa commande ne peut pas être vide !"
+    add-command:
+      success: "&aCommande ajoutée au trésor &d%treasure%&a."
+    remove-command:
+      success: "&aCommande retirée du trésor &d%treasure%&a."
+      not-found: "&cCette commande ne figure pas dans la liste du trésor."
+    list-commands:
+      empty: "&eLe trésor &d%treasure% &ene possède aucune commande console."
+      head: "&6Commandes console de &d%treasure%&6 :"
+      line: "&7%index%. &f%command%"
+    ranks:
+      set-display-name: "&aLe nom du rang &d%rank% &aest défini sur &b%displayName%"
+      set-level: "&aLe niveau du rang &d%rank% &aest défini sur &b%level%"
+      give-rank: "&aLe rang &d%rank% &aa été attribué à &b%player%"
+      give-rank-notify: "&aLe rang &d%rank% vous a été attribué"
+      take-rank: "&cLe rang &d%rank% &ca été retiré à &b%player%"
+      take-rank-notify: "&cVotre rang &d%rank% &cvous a été retiré"
+      allowed: "&aLa mine &b%mine% &aautorise désormais le rang &d%rank%"
+      disallowed: "&aLa mine &b%mine% &an'autorise plus le rang &d%rank%"
+      level-less-than-1: "&cLe niveau ne doit pas être inférieur à 1 !"
+      create:
+        exists: "&cUn rang avec cet identifiant existe déjà !"
+        success: "&aLe rang &b%rank% &aa été créé avec succès !"
+      remove:
+        success: "&aLe rang &b%rank% &aa été supprimé avec succès !"
+  regenpoints:
+    no-target-block: "&cVous devez regarder un bloc pour créer un point de régénération !"
+    already-exists: "&cUn point de régénération existe déjà à cet emplacement !"
+    create:
+      exists: "&cUn point avec cet identifiant existe déjà !"
+      success: "&aLe point de régénération &d%point% &aa été créé avec succès !"
+    remove:
+      success: "&aLe point de régénération &d%point% &aa été supprimé avec succès !"
+    set-respawn-seconds: "&aLe délai de réapparition de &d%point% &aest défini sur &b%seconds%"
+    set-block: "&aLe bloc de &d%point% &aest défini sur &b%block%"
+    set-display-name: "&aLe nom de &d%point% &aest défini sur &b%displayName%"
+    point-not-exists: "&cLe point de régénération n'existe pas !"
+    last-block: "&cUn point doit contenir au moins un bloc de réapparition !"
+    respawn-now:
+      success: "&aRéapparition du point demandée."
+    add-block:
+      success: "&aBloc de réapparition ajouté."
+    remove-block:
+      success: "&aBloc de réapparition retiré."
+    add-reward:
+      success: "&aRécompense indépendante ajoutée."
+    remove-reward:
+      success: "&aRécompense indépendante retirée."
+  reload:
+    safe-tip: "&cRemarque : seuls les fichiers de configuration et de messages seront rechargés"
+    success: "&aRechargement réussi !"
+  set-display-name: "&aLe nom de la mine &d%mine% &aest défini sur &b%displayName%"
+  set-display-icon: "&aL'icône de la mine &d%mine% &aest définie sur &b%item%"
+  mine-not-exists: "&cLa mine n'existe pas !"
+  rank-not-exists: "&cLe rang n'existe pas !"
+  treasure-not-exists: "&cLe trésor n'existe pas !"
+  invalid-material: "&cMatériau invalide !"
+  invalid-block: "&cBloc invalide !"
+  invalid-id: "&cL'identifiant contient des caractères invalides !"
+  pos-in-mine: "&cL'emplacement choisi se trouve déjà dans une mine !"
+mine:
+  no-place: "&cVous ne pouvez pas placer de blocs dans la mine !"
+  reset: "&aLa mine &b%mine% &aa été réinitialisée !"
+  reset_warning: "&cLa mine &b%mine% &csera réinitialisée dans &b%time%"
+regen-point:
+  no-place: "&cVous ne pouvez pas placer de blocs sur un point de régénération !"
+gui:
+  previous: "&ePage précédente"
+  next: "&ePage suivante"
+  back: "&cRetour"
+  close: "&cFermer"
+  add: "&dAjouter"
+  material-chooser:
+    title: "&dChoisir un matériau"
+  block-chooser:
+    title: "&dChoisir un bloc"
+  input:
+    invalid-number: "&cNombre invalide ! Le nombre ne peut pas être inférieur à 0 !"
+    invalid-percent: "&cPourcentage invalide ! La valeur doit être positive et inférieure ou égale à 100"
+  set_display_name:
+    prompt: "&eSaisissez le nouveau nom dans le chat : &b(codes couleur acceptés, saisissez &6##CANCEL &bpour annuler)"
+    name: "&6Définir le nom d'affichage"
+    lore:
+      - "&7Cliquez pour définir le nom d'affichage"
+      - "&7Actuel : &b%name%"
+  general:
+    title: "&eSuper&aMines"
+  mines:
+    title: "&7&lMines"
+    info:
+      - "&7Monde : &a%world%"
+      - "&7Délai de réinitialisation : &b%regenerate_seconds%"
+      - "&7Position : &ede %pos1% à %pos2%"
+    info-sphere:
+      - "&7Monde : &a%world%"
+      - "&7Délai de réinitialisation : &b%regenerate_seconds%"
+      - "&7Centre : &e%center%"
+      - "&7Rayon : &b%radius%"
+  mine-management:
+    title: "&7&lGestion de la mine &8&l- &7%mine%"
+    set_display_icon:
+      name: "&6Définir l'icône d'affichage"
+      lore:
+        - "&7Cliquez pour définir l'icône d'affichage de la mine"
+        - "&7Actuelle : &b%material%"
+    set_regen_seconds:
+      prompt: "&eSaisissez le nouveau délai dans le chat : &b(saisissez &6##CANCEL &bpour annuler)"
+      name: "&bDéfinir le délai de réinitialisation"
+      lore:
+        - "&7Cliquez pour définir le délai de réinitialisation"
+        - "&7Unité : seconde(s)"
+        - "&7Actuel : &b%seconds%"
+    set_required_lvl:
+      prompt: "&eSaisissez le niveau de rang requis : &b(saisissez &6##CANCEL &bpour annuler)"
+      name: "&bDéfinir le niveau de rang requis"
+      lore:
+        - "&7Cliquez pour définir le niveau requis"
+        - "&7Actuel : &b%level%"
+    only_fill_air:
+      name: "&aRemplir uniquement l'air"
+      lore:
+        - "&7Cliquez pour ne remplir que l'air lors de la réinitialisation"
+        - "&7État actuel : &b%status%"
+    auto_pickup:
+      name: "&eRamassage automatique"
+      lore:
+        - "&7Cliquez pour activer ou désactiver le ramassage automatique"
+        - "&7Les objets minés vont directement dans votre inventaire"
+        - "&7État actuel : &b%status%"
+    block_spawn_entries:
+      name: "&bListe des blocs générés"
+      set_weight_prompt: "&eSaisissez le poids de &d%material% &edans le chat : &b(saisissez &6##CANCEL &bpour annuler)"
+      add_prompt: "&eSaisissez le poids du bloc : &b(saisissez &6##CANCEL &bpour annuler)"
+      each_lore:
+        - "&7Poids : &e%weight%"
+        - "&7Clic gauche pour modifier le poids"
+        - "&7Maj + clic gauche pour modifier les conditions"
+        - "&7Clic droit pour supprimer"
+      conditions:
+        title: "&dConditions de génération"
+        chooser_title: "&dChoisir un type de condition"
+        biome:
+          title: "&dConditions de biome"
+          each_lore:
+            - "&7Clic droit pour supprimer"
+        each_lore:
+          - "&7Clic gauche pour modifier"
+          - "&7Clic droit pour supprimer"
+        types:
+          add_lore:
+            - "&7Cliquez pour ajouter cette condition"
+          surface:
+            name: "&bSurface"
+          mineY:
+            name: "&bY de la mine"
+          border:
+            name: "&bBordure"
+          biome:
+            name: "&bBiome"
+          and:
+            name: "&aToutes (ET)"
+          or:
+            name: "&6Au moins une (OU)"
+          not:
+            name: "&cNon (Inverse)"
+          placeholder:
+            name: "&bPlaceholder"
+        description:
+          surface:
+            - "&7Profondeur : &b%depth%"
+          mineY:
+            - "&7Y : &b%min%&7 ~ &b%max%"
+          border:
+            - "&7Mode : &b%mode%"
+          biome:
+            - "&7Biomes : &b%biomes%"
+          and:
+            - "&7Sous-conditions : &b%amount%"
+          or:
+            - "&7Sous-conditions : &b%amount%"
+          not:
+            - "&7Condition interne : &b%inner%"
+          placeholder:
+            - "&7Placeholder : &b%placeholder%"
+            - "&7Comparaison : &b%compareContent%"
+            - "&7Type d'analyse : &b%parseType%"
+        leaf:
+          title: "&dCondition : &b%type%"
+          surface:
+            name: "&bProfondeur sous la surface"
+            lore:
+              - "&7Actuelle : &e%value%"
+              - "&7Cliquez pour définir"
+            prompt: "&eSaisissez la profondeur dans le chat : &b(saisissez &6##CANCEL &bpour annuler)"
+          mineY_min:
+            name: "&bY minimum dans la mine"
+            lore:
+              - "&7Actuel : &e%value%"
+              - "&7Cliquez pour définir"
+            prompt: "&eSaisissez le Y minimum depuis le fond : &b(saisissez &6##CANCEL &bpour annuler)"
+          mineY_max:
+            name: "&bY maximum dans la mine"
+            lore:
+              - "&7Actuel : &e%value%"
+              - "&7Cliquez pour définir"
+            prompt: "&eSaisissez le Y maximum depuis le fond : &b(saisissez &6##CANCEL &bpour annuler)"
+          border:
+            name: "&bMode de bordure"
+            lore:
+              - "&7Actuel : &e%value%"
+              - "&7Cliquez pour basculer entre RIM / CORE"
+          biome:
+            name: "&bBiomes"
+            lore:
+              - "&7Actuels : &e%value%"
+              - "&7Cliquez pour définir"
+            prompt: "&eSaisissez les biomes séparés par des virgules : &b(saisissez &6##CANCEL &bpour annuler)"
+          placeholder:
+            name: "&bPlaceholder"
+            lore:
+              - "&7Actuel : &e%value%"
+              - "&7Cliquez pour définir"
+            prompt: "&eSaisissez l'expression du placeholder : &b(saisissez &6##CANCEL &bpour annuler)"
+          placeholder_compare:
+            name: "&bValeur attendue"
+            lore:
+              - "&7Actuelle : &e%value%"
+              - "&7Cliquez pour définir"
+            prompt: "&eSaisissez la valeur attendue : &b(saisissez &6##CANCEL &bpour annuler)"
+          placeholder_parse_type:
+            name: "&bFournisseur de placeholders"
+            lore:
+              - "&7Actuel : &e%value%"
+              - "&7Cliquez pour changer de fournisseur"
+        and:
+          title: "&aToutes (ET)"
+        or:
+          title: "&6Au moins une (OU)"
+        not:
+          title: "&cNon (Inverse)"
+  treasures:
+    title: "&e&lTrésors"
+    info:
+      - "&7Poids : &e%weight%"
+      - "&7Nombre de matériaux correspondants : &a%matched_materials%"
+  treasure-management:
+    title: "&e&lGestion du trésor &8&l- &e%treasure%"
+    set_weight:
+      name: "&aDéfinir le poids"
+      lore:
+        - "&7Cliquez pour définir le poids"
+        - "&7Actuel : &b%weight%"
+      prompt: "&eSaisissez le nouveau poids dans le chat : &b(saisissez &6##CANCEL &bpour annuler)"
+    itemstack:
+      name: "&dDéfinir la pile d'objets"
+      lore:
+        - "&7Clic gauche pour utiliser l'objet du curseur"
+        - "&7Clic droit pour récupérer l'objet"
+      none: "&cAucun objet en récompense (exécute uniquement les commandes)"
+      none_lore:
+        - "&7Ce trésor ne contient aucun objet en récompense"
+        - "&7Clic gauche avec un objet sur le curseur pour le définir"
+    matched_materials:
+      title: "&bMatériaux correspondants"
+      each_lore:
+        - "&7Cliquez pour supprimer"
+  ranks:
+    title: "&b&lRangs"
+    info:
+      - "&7Niveau : &b%level%"
+  rank-management:
+    title: "&b&lGestion du rang &8&l- &b%rank%"
+    setlevel:
+      prompt: "&eSaisissez le nouveau niveau dans le chat : &b(saisissez &6##CANCEL &bpour annuler)"
+      name: "&6Définir le niveau du rang"
+      lore:
+        - "&7Cliquez pour définir le niveau du rang"
+        - "&7Actuel : &b%level%"
+  regenpoints:
+    title: "&d&lPoints de régénération"
+    info:
+      - "&7Monde : &a%world%"
+      - "&7Position : &e%pos%"
+      - "&7Bloc : &b%block%"
+      - "&7Taille du groupe de blocs : &b%blocks%"
+      - "&7Récompenses indépendantes : &e%rewards%"
+      - "&7Délai de réapparition : &b%seconds% secondes"
+      - "&7Statut : %status% &7(%remaining%s)"
+    status:
+      ready: "&aPRÊT"
+      respawning: "&eRÉAPPARITION"
+      disabled: "&cDÉSACTIVÉ"
+  regen-point-management:
+    title: "&d&lGestion du point de régénération &8&l- &d%point%"
+    set_respawn_seconds:
+      prompt: "&eSaisissez le délai de réapparition : &b(saisissez &6##CANCEL &bpour annuler)"
+      name: "&bDéfinir le délai de réapparition"
+      lore:
+        - "&7Cliquez pour définir le délai de réapparition"
+        - "&7Unité : seconde(s)"
+        - "&7Actuel : &b%seconds%"
+    set_block:
+      name: "&dGroupe de blocs"
+      lore:
+        - "&7Cliquez pour gérer les blocs de réapparition pondérés"
+    blocks:
+      title: "&d&lGroupe de blocs de réapparition"
+      weight_prompt: "&eSaisissez le poids de &d%block%&e : &b(saisissez &6##CANCEL &bpour annuler)"
+      each_lore:
+        - "&7Poids : &e%weight%"
+        - "&7Probabilité : &b%probability%"
+        - "&7Clic gauche pour modifier le poids"
+        - "&7Clic droit pour supprimer"
+    rewards:
+      name: "&6Récompenses indépendantes"
+      lore:
+        - "&7Cliquez pour gérer les trésors tirés indépendamment"
+      title: "&6&lRécompenses indépendantes"
+      chooser_title: "&6Choisissez un trésor"
+      chance_prompt: "&eSaisissez la probabilité de &d%treasure% &e(0-100) : &b(saisissez &6##CANCEL &bpour annuler)"
+      each_lore:
+        - "&7Probabilité indépendante : &e%chance%%"
+        - "&7Clic gauche pour modifier la probabilité"
+        - "&7Clic droit pour supprimer"
+    respawn_now:
+      name: "&aFaire réapparaître maintenant"
+      lore:
+        - "&7Restaure immédiatement ce point de ressources"
+    remove:
+      name: "&cSupprimer le point de régénération"
+      lore:
+        - "&7Maj + clic droit pour supprimer définitivement ce point"
+    tp:
+      name: "&6Se téléporter au point"
+      lore:
+        - "&7Cliquez pour vous téléporter au point"

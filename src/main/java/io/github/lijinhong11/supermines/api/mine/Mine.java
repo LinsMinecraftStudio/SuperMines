@@ -241,9 +241,7 @@ public final class Mine implements Identified {
      * @throws IllegalArgumentException if weight is not greater than 0
      */
     public void addBlockSpawnEntry(@NotNull Material material, double weight) {
-        Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
-
-        blockSpawnEntries.put(new BlockSpawnEntry(new MinecraftContentProvider.PackedMinecraftBlock(material)), weight);
+        addBlockSpawnEntry(new MinecraftContentProvider.PackedMinecraftBlock(material), weight);
     }
 
     /**
@@ -255,6 +253,15 @@ public final class Mine implements Identified {
      */
     public void addBlockSpawnEntry(@NotNull PackedBlock block, double weight) {
         Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
+
+        BlockSpawnEntry existing = blockSpawnEntries.keySet().stream()
+                .filter(entry -> entry.getId().equals(block.getId()))
+                .findFirst()
+                .orElse(null);
+        if (existing != null) {
+            blockSpawnEntries.put(existing, weight);
+            return;
+        }
 
         BlockSpawnEntry entry = block instanceof BlockSpawnEntry b ? b : new BlockSpawnEntry(block);
         blockSpawnEntries.put(entry, weight);

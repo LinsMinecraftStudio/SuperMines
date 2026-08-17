@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mittellib.configuration.ReadWriteObject;
 import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
 import io.github.lijinhong11.mittellib.math.BlockPos;
+import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
@@ -72,8 +73,21 @@ public record BorderGenerateCondition(Mode mode) implements IGenerateCondition, 
     }
 
     private static boolean isOnRim(AreaOfBlocks area, BlockPos target) {
+        if (area instanceof CuboidArea cuboid) {
+            BlockPos min = cuboid.getMin();
+            BlockPos max = cuboid.getMax();
+            return target.x() == min.x()
+                    || target.x() == max.x()
+                    || target.y() == min.y()
+                    || target.y() == max.y()
+                    || target.z() == min.z()
+                    || target.z() == max.z();
+        }
+
         return !area.contains(target.plus(1, 0, 0))
                 || !area.contains(target.plus(-1, 0, 0))
+                || !area.contains(target.plus(0, 1, 0))
+                || !area.contains(target.plus(0, -1, 0))
                 || !area.contains(target.plus(0, 0, 1))
                 || !area.contains(target.plus(0, 0, -1));
     }

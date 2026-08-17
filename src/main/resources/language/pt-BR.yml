@@ -273,6 +273,10 @@ gui:
       conditions:
         title: "&dCondições de Geração"
         chooser_title: "&dEscolha um tipo de condição"
+        biome:
+          title: "&dCondições de bioma"
+          each_lore:
+            - "&7Clique direito para remover"
         each_lore:
           - "&7Clique esquerdo para editar"
           - "&7Clique direito para remover"
