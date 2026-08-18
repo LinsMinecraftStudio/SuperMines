@@ -43,8 +43,7 @@ A free, open-source mine plugin for Paper servers.
 
 ## Road Map
 
-- Random events: lucky periods, double drops, vein bursts
-- ActionBar / BossBar countdowns, status holograms
+- Random events: lucky periods, double drops
 - Update check
 
 See the maintained [development roadmap](ROADMAP.md) for details.
