@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.listeners;
 
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
+import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
@@ -8,7 +9,10 @@ import io.github.lijinhong11.supermines.api.events.BlockBreakInMineEvent;
 import io.github.lijinhong11.supermines.api.events.TreasureFoundEvent;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import org.bukkit.Location;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -31,6 +35,7 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class BlockListener implements Listener {
+    private final Map<BlockBreakEvent, PackedBlock> brokenBlocks = Collections.synchronizedMap(new WeakHashMap<>());
 
     public static boolean isPlayerAutoPickupActive(Player player) {
         if (!SuperMines.getInstance().getConfig().getBoolean("mine.auto-pickup.enabled", false)) return false;
@@ -98,6 +103,7 @@ public class BlockListener implements Listener {
                 e.setCancelled(true);
                 return;
             }
+            brokenBlocks.put(e, brokenBlock);
         }
 
         if (!SuperMines.getInstance().getRegenPointManager().canBreakPoint(loc, player)) {
@@ -127,16 +133,19 @@ public class BlockListener implements Listener {
 
         List<Treasure> treasures = mine.getTreasures();
         if (!treasures.isEmpty()) {
-            var brokenBlock = ContentProviders.getBlockByLocation(loc);
+            var brokenBlock = brokenBlocks.remove(e);
+            if (brokenBlock == null) {
+                brokenBlock = ContentProviders.getBlockByLocation(loc);
+            }
             WeightedRandomMap<Treasure> weightedTreasures = new WeightedRandomMap<>();
             for (Treasure treasure : treasures) {
-                if (treasure.getMatchedBlocks().contains(brokenBlock) && treasure.getWeight() > 0) {
+                if (treasure.matchesBlock(brokenBlock) && treasure.getWeight() > 0) {
                     weightedTreasures.put(treasure, treasure.getWeight());
                 }
             }
 
-            Treasure selected = weightedTreasures.randomOne();
-            if (selected != null) {
+            if (!weightedTreasures.isEmpty()) {
+                Treasure selected = weightedTreasures.randomOne();
                 TreasureFoundEvent event = new TreasureFoundEvent(selected, player, mine);
                 event.callEvent();
                 if (!event.isCancelled()) {

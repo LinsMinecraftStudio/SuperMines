@@ -48,11 +48,11 @@ import org.jetbrains.annotations.NotNull;
 public class GuiManager {
     private static final String CANCEL_COMMAND = "##CANCEL";
 
-    public static void openGeneral(Player p) {
+    public static void openMain(Player p) {
         ChestGUI gui = MittelGUI.chestBuilder()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.general.title"))
                 .size(27)
-                .structure("XXXXXXXXX", "XPXMXTXRX", "XXXXXXXXX")
+                .structure("XXXXXXXC", "XPXMXTXRX", "XXXXXXXXX")
                 .bind('X', ButtonItem.BACKGROUND)
                 .bind('P', ButtonItem.clickable(Constants.Items.REGEN_POINTS.apply(p), (g, e) -> {
                     openRegenPointList(p);
@@ -70,13 +70,17 @@ public class GuiManager {
                     openRankList(p);
                     return false;
                 }))
+                .bind('C', ButtonItem.clickable(Constants.Items.CLOSE.apply(p), (g, e) -> {
+                    p.closeInventory();
+                    return false;
+                }))
                 .build();
 
         gui.open(p);
     }
 
     public static void openMineList(Player p) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui.mines.title", () -> openGeneral(p));
+        PaginatedChestGUI gui = buildPagedGUI(p, "gui.mines.title", () -> openMain(p));
 
         for (Mine mine : SuperMines.getInstance().getMineManager().getAllMines()) {
             Material mat = mine.getDisplayIcon() == null ? Constants.Items.DEFAULT_MINE_ICON : mine.getDisplayIcon();
@@ -252,7 +256,7 @@ public class GuiManager {
     }
 
     public static void openTreasureList(Player p) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui.treasures.title", () -> openGeneral(p));
+        PaginatedChestGUI gui = buildPagedGUI(p, "gui.treasures.title", () -> openMain(p));
 
         for (Treasure treasure : SuperMines.getInstance().getTreasureManager().getAllTreasures()) {
             ItemStack item = new ItemStack(Material.CHEST);
@@ -260,6 +264,7 @@ public class GuiManager {
                 meta.displayName(treasure.getDisplayName());
                 meta.lore(getTreasureInfo(p, treasure));
             });
+
             gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
                 openTreasureManagementGui(p, treasure);
                 return false;
@@ -303,6 +308,8 @@ public class GuiManager {
         }));
 
         putTreasureItemStack(gui, p, treasure);
+
+        gui.open(p);
     }
 
     private static void putTreasureItemStack(ChestGUI gui, Player p, Treasure t) {
@@ -324,16 +331,22 @@ public class GuiManager {
 
         if (display.getItemMeta() != null && base != null) {
             ItemMeta meta = display.getItemMeta();
+            Component itemName = meta.displayName() == null
+                    ? Component.translatable(base.getType().translationKey())
+                    : meta.displayName();
+
             Component newName = SuperMines.getInstance()
                     .getLanguageManager()
-                    .getMsgComponent(
-                            p,
-                            "gui.treasure-management.itemstack.name",
-                            MessageReplacement.replace("%name%", ComponentUtils.serialize(meta.displayName())));
+                    .getMsgComponent(p, "gui.treasure-management.itemstack.name");
+
+            newName = newName.replaceText(b -> b.matchLiteral("%name%").replacement(itemName));
+
             meta.displayName(newName);
+
             meta.lore(SuperMines.getInstance()
                     .getLanguageManager()
                     .getMsgComponentList(p, "gui.treasure-management.itemstack.lore"));
+
             display.setItemMeta(meta);
         }
 
@@ -382,7 +395,7 @@ public class GuiManager {
     }
 
     public static void openRankList(Player p) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui.ranks.title", () -> openGeneral(p));
+        PaginatedChestGUI gui = buildPagedGUI(p, "gui.ranks.title", () -> openMain(p));
 
         for (Rank rank : SuperMines.getInstance().getRankManager().getAllRanks()) {
             ItemStack item = new ItemStack(Material.NAME_TAG);
@@ -423,10 +436,12 @@ public class GuiManager {
     }
 
     public static void openRegenPointList(Player p) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui.regenpoints.title", () -> openGeneral(p));
+        PaginatedChestGUI gui = buildPagedGUI(p, "gui.regenpoints.title", () -> openMain(p));
 
         gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
-            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) {
+                return false;
+            }
             openAddRegenPoint(p);
             return false;
         }));
@@ -524,7 +539,7 @@ public class GuiManager {
             return false;
         }));
 
-        for (Map.Entry<PackedBlock, Double> entry : point.getBlocks().entrySet()) {
+        for (Map.Entry<PackedBlock, Double> entry : point.getBlocks().object2DoubleEntrySet()) {
             PackedBlock block = entry.getKey();
             ItemStack item = block.toItem();
             item.editMeta(meta -> meta.lore(SuperMines.getInstance()
@@ -805,6 +820,7 @@ public class GuiManager {
                 if (value < min) {
                     throw new NumberFormatException();
                 }
+
                 SuperMines.getInstance().getTaskMaker().runSync(() -> onSuccess.accept(value));
             } catch (NumberFormatException ex) {
                 SuperMines.getInstance().getLanguageManager().sendMessage(p, errorKey);

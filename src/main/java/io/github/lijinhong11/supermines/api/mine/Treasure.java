@@ -6,6 +6,7 @@ import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.item.MittelItem;
 import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
+import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -107,20 +108,22 @@ public final class Treasure implements Identified {
      * @param dropItem determine whether to drop item directly
      */
     public void giveToPlayer(@NotNull Player player, boolean dropItem) {
-        if (this.itemStack != null) {
-            if (player.getInventory().firstEmpty() == -1 || dropItem) {
-                player.getWorld().dropItemNaturally(player.getLocation(), this.itemStack);
-            } else {
-                player.getInventory().addItem(this.itemStack);
+        SuperMines.getInstance().getTaskMaker().runSync(() -> {
+            if (this.itemStack != null) {
+                if (player.getInventory().firstEmpty() == -1 || dropItem) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), this.itemStack);
+                } else {
+                    player.getInventory().addItem(this.itemStack);
+                }
             }
-        }
 
-        if (this.consoleCommands != null) {
-            for (String consoleCommand : this.consoleCommands) {
-                Bukkit.dispatchCommand(
-                        Bukkit.getConsoleSender(), StringUtils.parsePlaceholders(player, consoleCommand));
+            if (this.consoleCommands != null) {
+                for (String consoleCommand : this.consoleCommands) {
+                    Bukkit.dispatchCommand(
+                            Bukkit.getConsoleSender(), StringUtils.parsePlaceholders(player, consoleCommand));
+                }
             }
-        }
+        });
     }
 
     /**
@@ -234,7 +237,18 @@ public final class Treasure implements Identified {
      * @param block the block to remove
      */
     public void removeMatchedBlock(PackedBlock block) {
-        matchedMaterials.remove(block);
+        matchedMaterials.removeIf(matched -> matched.getId().equals(block.getId()));
+    }
+
+    /**
+     * Checks whether this treasure can be triggered by a block ID.
+     *
+     * <p>Content providers may return different wrapper instances for the same block, so matching
+     * by object identity or implementation-specific equality is not reliable.
+     */
+    public boolean matchesBlock(@Nullable PackedBlock block) {
+        return block != null
+                && matchedMaterials.stream().anyMatch(matched -> matched.getId().equals(block.getId()));
     }
 
     /**

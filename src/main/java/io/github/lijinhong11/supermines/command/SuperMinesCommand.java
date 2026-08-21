@@ -1196,7 +1196,7 @@ public class SuperMinesCommand {
                 .withSubcommand(new CommandAPICommand("gui")
                         .withPermission(Constants.Permission.GUI)
                         .executesPlayer((player, args) -> {
-                            GuiManager.openGeneral(player);
+                            GuiManager.openMain(player);
                         }))
                 .withSubcommand(new CommandAPICommand("addTreasure")
                         .withPermission(Constants.Permission.TREASURES)
@@ -1228,6 +1228,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.addTreasure(treasure);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                         }))
                 .withSubcommand(new CommandAPICommand("removeTreasure")
                         .withPermission(Constants.Permission.TREASURES)
@@ -1259,6 +1260,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.removeTreasure(treasure);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                         }))
                 .withSubcommand(new CommandAPICommand("setRequiredLevel")
                         .withPermission(Constants.Permission.SET_REQUIRED_LEVEL)

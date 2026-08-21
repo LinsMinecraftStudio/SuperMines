@@ -41,7 +41,7 @@ regen-point:
   # Whether to play a sound when a regen point respawns
   sound: true
   # The sound played when a regen point respawns
-  sound-name: BLOCK_NOTE_BLOCK_PLING
+  sound-name: minecraft:block.note_block.pling
   # Delay before retrying when another plugin cancels a scheduled respawn event
   cancelled-respawn-retry-seconds: 5
   protection:

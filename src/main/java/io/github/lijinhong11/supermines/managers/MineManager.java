@@ -174,11 +174,11 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("world", object.getWorld().getName());
         AreaOfBlocks area = object.getArea();
         if (area instanceof SphereArea(BlockPos center, int radius)) {
-            section.set("areaType", AreaType.SPHERE);
+            section.set("areaType", AreaType.SPHERE.toString());
             center.write(section.createSection("center"));
             section.set("radius", radius);
         } else if (area instanceof CuboidArea(BlockPos pos1, BlockPos pos2)) {
-            section.set("areaType", AreaType.CUBOID);
+            section.set("areaType", AreaType.CUBOID.toString());
             pos1.write(section.createSection("pos1"));
             pos2.write(section.createSection("pos2"));
         }

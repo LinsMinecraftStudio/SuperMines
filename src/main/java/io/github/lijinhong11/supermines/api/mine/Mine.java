@@ -212,7 +212,9 @@ public final class Mine implements Identified {
      * @param treasure the treasure to add
      */
     public void addTreasure(Treasure treasure) {
-        treasures.add(treasure);
+        if (treasures.stream().noneMatch(existing -> existing.getId().equals(treasure.getId()))) {
+            treasures.add(treasure);
+        }
     }
 
     /**
@@ -463,7 +465,7 @@ public final class Mine implements Identified {
      * @return a list of treasures
      */
     public List<Treasure> getTreasures() {
-        return treasures;
+        return List.copyOf(treasures);
     }
 
     /**

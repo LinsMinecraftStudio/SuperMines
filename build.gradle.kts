@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.lijinhong11"
-version = "1.6.3"
+version = project.findProperty("version") as String
 
 repositories {
     mavenCentral()

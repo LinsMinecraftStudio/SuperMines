@@ -1,4 +1,4 @@
-# Global regenerable ore points, fully independent from mines.
+# Global regenerable ore points, fully independent of mines.
 # Each entry defines a single block that respawns on a delay after being broken.
 #
 # Example:

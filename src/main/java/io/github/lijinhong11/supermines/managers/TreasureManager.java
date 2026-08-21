@@ -73,6 +73,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
                 weight,
                 section.getStringList("matchedBlocks").stream()
                         .map(ContentProviders::getBlock)
+                        .filter(java.util.Objects::nonNull)
                         .collect(Collectors.toSet()),
                 section.getStringList("commands"));
     }

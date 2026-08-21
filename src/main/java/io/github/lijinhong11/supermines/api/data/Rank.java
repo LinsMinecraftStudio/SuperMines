@@ -32,7 +32,7 @@ public final class Rank implements Identified {
      * @throws NullPointerException     if id is null
      */
     @ParametersAreNonnullByDefault
-    public Rank(int level, String id, @NotNull Component displayName) {
+    public Rank(int level, String id, Component displayName) {
         Preconditions.checkArgument(level > 0, "Rank level must be greater than 0");
         Preconditions.checkNotNull(id, "Rank ID must not be null");
         Preconditions.checkNotNull(displayName, "Rank display name must not be null");

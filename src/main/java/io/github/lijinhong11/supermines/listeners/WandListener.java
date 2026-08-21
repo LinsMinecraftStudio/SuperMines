@@ -46,6 +46,6 @@ public class WandListener implements Listener {
 
         ItemMeta meta = item.getItemMeta();
 
-        return meta.getPersistentDataContainer().has(Constants.Keys.WAND_KEY);
+        return meta != null && meta.getPersistentDataContainer().has(Constants.Keys.WAND_KEY);
     }
 }
