@@ -49,7 +49,7 @@ command:
       - "&e/sm treasures listCommands <宝藏> &7- &a列出指令"
     ranks:
       - "&e/sm ranks list &7- &a列出所有等级"
-      - "&e/sm ranks create <id> <显示名> <等级> &7- &a创建等级"
+      - "&e/sm ranks create <id> <等级> [显示名] &7- &a创建等级"
       - "&e/sm ranks remove <等级> &7- &a删除等级"
       - "&e/sm ranks giveRank <玩家> <等级> [提示] &7- &a赋予等级"
       - "&e/sm ranks takeRank <玩家> <等级> [提示] &7- &a移除等级"

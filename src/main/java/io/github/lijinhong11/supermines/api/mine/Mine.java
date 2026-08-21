@@ -173,7 +173,7 @@ public final class Mine implements Identified {
         Preconditions.checkArgument(id.matches(Constants.ID_PATTERN), "Mine ID cannot contain special characters");
 
         this.id = id;
-        this.displayName = displayName;
+        this.displayName = Preconditions.checkNotNull(displayName, "Mine display name must not be null");
         this.displayIcon = displayIcon;
         this.world = world;
         this.area = area;
@@ -193,7 +193,7 @@ public final class Mine implements Identified {
      * @param player the player to check
      * @return true if the player is inside the mine, false otherwise
      */
-    public boolean isPlayerInMine(@NotNull Player player) {
+    public boolean isPlayerInMine(Player player) {
         return area.contains(BlockPos.fromLocation(player.getLocation()));
     }
 
@@ -202,7 +202,7 @@ public final class Mine implements Identified {
      *
      * @param id the treasure ID to add
      */
-    public void addTreasure(@NotNull String id) {
+    public void addTreasure(String id) {
         treasures.add(SuperMinesAPI.getTreasure(id));
     }
 
@@ -211,7 +211,7 @@ public final class Mine implements Identified {
      *
      * @param treasure the treasure to add
      */
-    public void addTreasure(@NotNull Treasure treasure) {
+    public void addTreasure(Treasure treasure) {
         treasures.add(treasure);
     }
 
@@ -220,7 +220,7 @@ public final class Mine implements Identified {
      *
      * @param id the treasure ID to remove
      */
-    public void removeTreasure(@NotNull String id) {
+    public void removeTreasure(String id) {
         treasures.removeIf(treasure -> treasure.getId().equals(id));
     }
 
@@ -229,7 +229,7 @@ public final class Mine implements Identified {
      *
      * @param treasure the treasure to remove
      */
-    public void removeTreasure(@NotNull Treasure treasure) {
+    public void removeTreasure(Treasure treasure) {
         treasures.remove(treasure);
     }
 
@@ -240,7 +240,7 @@ public final class Mine implements Identified {
      * @param weight   the spawn weight (> 0)
      * @throws IllegalArgumentException if weight is not greater than 0
      */
-    public void addBlockSpawnEntry(@NotNull Material material, double weight) {
+    public void addBlockSpawnEntry(Material material, double weight) {
         addBlockSpawnEntry(new MinecraftContentProvider.PackedMinecraftBlock(material), weight);
     }
 
@@ -251,7 +251,7 @@ public final class Mine implements Identified {
      * @param weight the spawn weight (> 0)
      * @throws IllegalArgumentException if weight is not greater than 0
      */
-    public void addBlockSpawnEntry(@NotNull PackedBlock block, double weight) {
+    public void addBlockSpawnEntry(PackedBlock block, double weight) {
         Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
 
         BlockSpawnEntry existing = blockSpawnEntries.keySet().stream()
@@ -281,7 +281,7 @@ public final class Mine implements Identified {
      *
      * @param material the material to remove
      */
-    public void removeBlockSpawnEntry(@NotNull Material material) {
+    public void removeBlockSpawnEntry(Material material) {
         removeBlockSpawnEntry(new MinecraftContentProvider.PackedMinecraftBlock(material));
     }
 
@@ -290,7 +290,7 @@ public final class Mine implements Identified {
      *
      * @param block the addon block to remove
      */
-    public void removeBlockSpawnEntry(@NotNull PackedBlock block) {
+    public void removeBlockSpawnEntry(PackedBlock block) {
         blockSpawnEntries.keySet().stream()
                 .filter(entry -> entry.getId().equals(block.getId()))
                 .findFirst()
@@ -358,7 +358,7 @@ public final class Mine implements Identified {
      * @param tpLoc the teleport location (cannot be null)
      * @throws NullPointerException if tpLoc is null
      */
-    public void setTeleportLocation(@NotNull Location tpLoc) {
+    public void setTeleportLocation(Location tpLoc) {
         Preconditions.checkNotNull(tpLoc, "teleport location cannot be null");
 
         if (!allowEdit(MineEditEvent.Property.TELEPORT_LOCATION, this.tpLoc, tpLoc)) return;
@@ -379,11 +379,7 @@ public final class Mine implements Identified {
      *
      * @return the serialized display name
      */
-    public String getRawDisplayName() {
-        if (displayName == null) {
-            return id;
-        }
-
+    public @NotNull String getRawDisplayName() {
         return ComponentUtils.serialize(displayName);
     }
 
@@ -392,8 +388,8 @@ public final class Mine implements Identified {
      *
      * @return the display name component, or a default name if not set
      */
-    public Component getDisplayName() {
-        return displayName == null ? ComponentUtils.text(id) : displayName;
+    public @NotNull Component getDisplayName() {
+        return displayName;
     }
 
     /**
@@ -401,7 +397,7 @@ public final class Mine implements Identified {
      *
      * @param displayName the display name component (cannot be null)
      */
-    public void setDisplayName(@Nullable Component displayName) {
+    public void setDisplayName(@NotNull Component displayName) {
         Preconditions.checkNotNull(displayName, "display name cannot be null");
 
         if (!allowEdit(MineEditEvent.Property.DISPLAY_NAME, this.displayName, displayName)) return;
@@ -454,7 +450,7 @@ public final class Mine implements Identified {
      * @param area the area (cannot be null)
      * @throws NullPointerException if area is null
      */
-    public void setArea(@NotNull AreaOfBlocks area) {
+    public void setArea(AreaOfBlocks area) {
         Preconditions.checkNotNull(area, "area cannot be null");
 
         if (!allowEdit(MineEditEvent.Property.AREA, this.area, area)) return;
@@ -475,7 +471,7 @@ public final class Mine implements Identified {
      *
      * @param treasures the list of treasures to set
      */
-    public void setTreasures(@NotNull List<Treasure> treasures) {
+    public void setTreasures(List<Treasure> treasures) {
         this.treasures.clear();
         this.treasures.addAll(treasures);
     }
@@ -564,7 +560,7 @@ public final class Mine implements Identified {
      *
      * @param requiredRank the rank to use for the required level
      */
-    public void setRequiredRankLevel(Rank requiredRank) {
+    public void setRequiredRankLevel(@NotNull Rank requiredRank) {
         setRequiredRankLevel(requiredRank.getLevel());
     }
 

@@ -49,7 +49,7 @@ command:
       - "&e/sm treasures listCommands <treasure> &7- &aListar comandos do tesouro"
     ranks:
       - "&e/sm ranks list &7- &aListar todos os cargos"
-      - "&e/sm ranks create <id> <displayName> <level> &7- &aAdicionar um cargo"
+      - "&e/sm ranks create <id> <level> [displayName] &7- &aAdicionar um cargo"
       - "&e/sm ranks remove <rank> &7- &aRemover um cargo"
       - "&e/sm ranks giveRank <player> <rank> [notify] &7- &aDefinir cargo de um jogador"
       - "&e/sm ranks takeRank <player> <rank> [notify] &7- &aRemover cargo de um jogador"

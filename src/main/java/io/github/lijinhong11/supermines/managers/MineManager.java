@@ -2,13 +2,9 @@ package io.github.lijinhong11.supermines.managers;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import io.github.lijinhong11.mittellib.configuration.ReadWriteObject;
 import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
-import io.github.lijinhong11.mittellib.math.AreaOfBlocks;
-import io.github.lijinhong11.mittellib.math.BlockPos;
-import io.github.lijinhong11.mittellib.math.CuboidArea;
-import io.github.lijinhong11.mittellib.math.SphereArea;
+import io.github.lijinhong11.mittellib.math.*;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineCreateEvent;
@@ -177,14 +173,14 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("displayName", MiniMessage.miniMessage().serialize(object.getDisplayName()));
         section.set("world", object.getWorld().getName());
         AreaOfBlocks area = object.getArea();
-        if (area instanceof SphereArea sa) {
-            section.set("areaType", "SPHERE");
-            sa.center().write(section.createSection("center"));
-            section.set("radius", sa.radius());
-        } else if (area instanceof CuboidArea ca) {
-            section.set("areaType", "CUBOID");
-            ca.pos1().write(section.createSection("pos1"));
-            ca.pos2().write(section.createSection("pos2"));
+        if (area instanceof SphereArea(BlockPos center, int radius)) {
+            section.set("areaType", AreaType.SPHERE);
+            center.write(section.createSection("center"));
+            section.set("radius", radius);
+        } else if (area instanceof CuboidArea(BlockPos pos1, BlockPos pos2)) {
+            section.set("areaType", AreaType.CUBOID);
+            pos1.write(section.createSection("pos1"));
+            pos2.write(section.createSection("pos2"));
         }
         section.set("regenerateSeconds", object.getRegenerateSeconds());
         section.set("onlyFillAirWhenRegenerate", object.isOnlyFillAirWhenRegenerate());
@@ -214,9 +210,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
                 for (IGenerateCondition condition : conditions) {
                     ConfigurationSection cond = condSection.createSection(String.valueOf(i++));
                     cond.set("condition", condition.key());
-                    if (condition instanceof ReadWriteObject rw) {
-                        rw.write(cond);
-                    }
+                    condition.write(cond);
                 }
             }
         }

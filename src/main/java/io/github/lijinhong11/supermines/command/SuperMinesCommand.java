@@ -32,6 +32,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
 
 public class SuperMinesCommand {
     private static final Map<UUID, AreaSelection> selectionMap = new ConcurrentHashMap<>();
@@ -487,8 +488,8 @@ public class SuperMinesCommand {
                                         .withPermission(Constants.Permission.RANKS)
                                         .withArguments(
                                                 new StringArgument("rankId"),
-                                                new DisplayNameArgument(),
                                                 new IntegerArgument("level", 1, Integer.MAX_VALUE))
+                                        .withOptionalArguments(new DisplayNameArgument())
                                         .executesPlayer((player, args) -> {
                                             String id = (String) args.getOrDefault("rankId", "");
                                             Component displayName = args.getByClassOrDefault(
@@ -1745,11 +1746,10 @@ public class SuperMinesCommand {
         return sel.toArea();
     }
 
-    private void createMine(Player player, String id, Component displayName) {
+    private void createMine(@NotNull Player player, @NotNull String id, @NotNull Component displayName) {
         AreaOfBlocks area = getSelectedArea(player, id, true);
         if (area == null) return;
-        Component name = displayName == null ? ComponentUtils.text(id) : displayName;
-        Mine mine = new Mine(id, name, player.getWorld(), area, new WeightedRandomMap<>(), 0, false);
+        Mine mine = new Mine(id, displayName, player.getWorld(), area, new WeightedRandomMap<>(), 0, false);
         if (!SuperMines.getInstance().getMineManager().tryAddMine(mine)) return;
         SuperMines.getInstance().getLanguageManager().sendMessage(player, "command.create.success");
     }

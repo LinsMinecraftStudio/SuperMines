@@ -49,7 +49,7 @@ command:
       - "&e/sm treasures listCommands <treasure> &7- &aList all commands for a treasure"
     ranks:
       - "&e/sm ranks list &7- &aList all ranks"
-      - "&e/sm ranks create <id> <displayName> <level> &7- &aAdd a rank"
+      - "&e/sm ranks create <id> <level> [displayName] &7- &aAdd a rank"
       - "&e/sm ranks remove <rank> &7- &aRemove a rank"
       - "&e/sm ranks giveRank <player> <rank> [notify] &7- &aSet a player's rank (default notify is false)"
       - "&e/sm ranks takeRank <player> <rank> [notify] &7- &aTake away a player's rank (default notify is false)"

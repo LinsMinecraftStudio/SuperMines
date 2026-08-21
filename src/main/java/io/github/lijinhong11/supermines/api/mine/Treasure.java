@@ -29,7 +29,7 @@ public final class Treasure implements Identified {
     private final String id;
     private double weight;
 
-    private Component displayName;
+    private @NotNull Component displayName;
     private @Nullable ItemStack itemStack;
     private @Nullable List<String> consoleCommands;
 
@@ -41,7 +41,7 @@ public final class Treasure implements Identified {
      * @param itemStack   the item stack to drop
      * @param weight      the selection weight (> 0)
      */
-    public Treasure(@NotNull String id, @Nullable Component displayName, @Nullable ItemStack itemStack, double weight) {
+    public Treasure(@NotNull String id, @NotNull Component displayName, @Nullable ItemStack itemStack, double weight) {
         this(id, displayName, itemStack, weight, new HashSet<>(), new ArrayList<>());
     }
 
@@ -55,7 +55,7 @@ public final class Treasure implements Identified {
      */
     public Treasure(
             @NotNull String id,
-            @Nullable Component displayName,
+            @NotNull Component displayName,
             @Nullable ItemStack itemStack,
             double weight,
             @Nullable List<String> consoleCommands) {
@@ -73,12 +73,13 @@ public final class Treasure implements Identified {
      */
     public Treasure(
             @NotNull String id,
-            @Nullable Component displayName,
+            @NotNull Component displayName,
             @Nullable ItemStack itemStack,
             double weight,
             @NotNull Set<PackedBlock> matchedMaterials,
             @Nullable List<String> consoleCommands) {
         Preconditions.checkNotNull(id, "id");
+        Preconditions.checkNotNull(displayName, "displayName");
         Preconditions.checkNotNull(matchedMaterials, "matchedMaterials");
         Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
 
@@ -95,7 +96,7 @@ public final class Treasure implements Identified {
      *
      * @return the treasure ID
      */
-    public String getId() {
+    public @NotNull String getId() {
         return id;
     }
 
@@ -127,11 +128,7 @@ public final class Treasure implements Identified {
      *
      * @return the serialized display name
      */
-    public String getRawDisplayName() {
-        if (displayName == null) {
-            return id;
-        }
-
+    public @NotNull String getRawDisplayName() {
         return ComponentUtils.serialize(displayName);
     }
 
@@ -140,8 +137,8 @@ public final class Treasure implements Identified {
      *
      * @return the display name component
      */
-    public Component getDisplayName() {
-        return displayName == null ? ComponentUtils.text(id) : displayName;
+    public @NotNull Component getDisplayName() {
+        return displayName;
     }
 
     /**
@@ -149,7 +146,7 @@ public final class Treasure implements Identified {
      *
      * @param displayName the display name component (cannot be null)
      */
-    public void setDisplayName(@Nullable Component displayName) {
+    public void setDisplayName(@NotNull Component displayName) {
         Preconditions.checkNotNull(displayName, "display name cannot be null");
 
         this.displayName = displayName;

@@ -34,7 +34,7 @@ public class BlockSpawnEntry implements PackedBlock {
     }
 
     @Override
-    public String getId() {
+    public @NotNull String getId() {
         return block.getId();
     }
 

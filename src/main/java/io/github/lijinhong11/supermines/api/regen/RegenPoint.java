@@ -6,14 +6,12 @@ import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.api.iface.Identified;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * A single regenerable block that respawns on a delay after being mined.
@@ -29,7 +27,7 @@ public final class RegenPoint implements Identified {
     private final WeightedRandomMap<PackedBlock> blocks = new WeightedRandomMap<>();
     private final Map<String, Double> rewardChances = new HashMap<>();
     private int respawnSeconds;
-    private Component displayName;
+    private @NotNull Component displayName;
     private long respawnAt;
 
     /**
@@ -54,6 +52,7 @@ public final class RegenPoint implements Identified {
         Preconditions.checkArgument(respawnSeconds >= 0, "respawnSeconds cannot be negative");
 
         this.id = id;
+        this.displayName = ComponentUtils.text(id);
         this.world = world;
         this.pos = pos;
         this.blocks.put(block, 1D);
@@ -65,7 +64,7 @@ public final class RegenPoint implements Identified {
      *
      * @return the id
      */
-    public String getId() {
+    public @NotNull String getId() {
         return id;
     }
 
@@ -147,7 +146,7 @@ public final class RegenPoint implements Identified {
     }
 
     public Map<String, Double> getRewardChances() {
-        return Collections.unmodifiableMap(new HashMap<>(rewardChances));
+        return Map.copyOf(rewardChances);
     }
 
     public void setRewardChance(@NotNull String treasureId, double chance) {
@@ -205,11 +204,7 @@ public final class RegenPoint implements Identified {
      *
      * @return the serialized display name
      */
-    public String getRawDisplayName() {
-        if (displayName == null) {
-            return id;
-        }
-
+    public @NotNull String getRawDisplayName() {
         return ComponentUtils.serialize(displayName);
     }
 
@@ -218,8 +213,8 @@ public final class RegenPoint implements Identified {
      *
      * @return the display name component
      */
-    public Component getDisplayName() {
-        return displayName == null ? ComponentUtils.text(id) : displayName;
+    public @NotNull Component getDisplayName() {
+        return displayName;
     }
 
     /**
@@ -227,7 +222,7 @@ public final class RegenPoint implements Identified {
      *
      * @param displayName the display name component (cannot be null)
      */
-    public void setDisplayName(@Nullable Component displayName) {
+    public void setDisplayName(@NotNull Component displayName) {
         Preconditions.checkNotNull(displayName, "display name cannot be null");
 
         this.displayName = displayName;

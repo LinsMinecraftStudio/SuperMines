@@ -16,6 +16,7 @@ import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import io.github.lijinhong11.supermines.utils.Constants;
+import io.github.lijinhong11.supermines.utils.Sounds;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.util.Collection;
 import java.util.Map;
@@ -35,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Manages global regenerable ore points.
  *
- * <p>Regen points are fully independent from the mine reset system: each point
+ * <p>Regen points are fully independent of the mine reset system: each point
  * is a single block that respawns on a fixed delay after being broken. Lookups
  * are O(1) through a location-keyed map, and only the affected block position
  * is ever touched (no area-wide scanning or reset).
@@ -152,16 +153,14 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
             respawnSeconds = getDefaultRespawnSeconds();
         }
 
-        String displayName = section.getString("displayName");
-        Component name = displayName == null ? null : ComponentUtils.deserialize(displayName);
+        String displayName = section.getString("displayName", id);
+        Component name = ComponentUtils.deserialize(displayName);
 
         RegenPoint point = new RegenPoint(id, world, new BlockPos(x, y, z), block, respawnSeconds);
         if (!blocks.isEmpty()) {
             point.replaceBlocks(blocks);
         }
-        if (name != null) {
-            point.setDisplayName(name);
-        }
+        point.setDisplayName(name);
         point.setRespawnAt(section.getLong("respawnAt", 0L));
         ConfigurationSection rewardsSection = section.getConfigurationSection("rewards");
         if (rewardsSection != null) {
@@ -184,7 +183,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         section.set("y", object.getPos().y());
         section.set("z", object.getPos().z());
         ConfigurationSection blocks = section.createSection("blocks");
-        for (Map.Entry<PackedBlock, Double> entry : object.getBlocks().entrySet()) {
+        for (Map.Entry<PackedBlock, Double> entry : object.getBlocks().object2DoubleEntrySet()) {
             blocks.set(entry.getKey().getId(), entry.getValue());
         }
         section.set("respawnSeconds", object.getRespawnSeconds());
@@ -340,11 +339,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
 
         RegenPointBreakEvent event = new RegenPointBreakEvent(point, player);
         event.callEvent();
-        if (event.isCancelled()) {
-            return false;
-        }
-
-        return true;
+        return !event.isCancelled();
     }
 
     public void commitPointBlockBroken(@NotNull Location loc, @NotNull org.bukkit.entity.Player player) {
@@ -509,11 +504,12 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         }
 
         if (section.getBoolean("sound", true)) {
-            try {
-                Sound sound = Sound.valueOf(section.getString("sound-name", "BLOCK_NOTE_BLOCK_PLING"));
-                loc.getWorld().playSound(loc, sound, 0.5f, 1.2f);
-            } catch (IllegalArgumentException ignored) {
+            Sound sound = Sounds.getSound(section.getString("sound-name", ""));
+            if (sound == null) {
+                sound = Sound.BLOCK_NOTE_BLOCK_PLING;
             }
+
+            loc.getWorld().playSound(loc, sound, 0.5f, 1.2f);
         }
     }
 

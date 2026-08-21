@@ -37,8 +37,7 @@ public class BlockListener implements Listener {
         String perm = SuperMines.getInstance().getConfig().getString("mine.auto-pickup.permission", "");
         if (!perm.isEmpty() && !player.hasPermission(perm)) return false;
 
-        PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
-        return data.isAutoPickup();
+        return getPlayerAutoPickup(player);
     }
 
     public static void togglePlayerAutoPickup(Player player) {

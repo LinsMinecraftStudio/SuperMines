@@ -1,10 +1,7 @@
 package io.github.lijinhong11.supermines.api.data;
 
 import com.google.common.base.Preconditions;
-import io.github.lijinhong11.mdatabase.serialization.annotations.Column;
-import io.github.lijinhong11.mdatabase.serialization.annotations.Converter;
-import io.github.lijinhong11.mdatabase.serialization.annotations.PrimaryKey;
-import io.github.lijinhong11.mdatabase.serialization.annotations.Table;
+import io.github.lijinhong11.mdatabase.serialization.annotations.*;
 import io.github.lijinhong11.supermines.managers.database.RankConverter;
 import io.github.lijinhong11.supermines.managers.database.StringRankSet;
 import java.util.UUID;
@@ -17,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * Note: This is an important database object. So do not use reflection to edit
  * it anyway.
  */
+@AutoMigrate
 @Table(name = "player_data")
 public final class PlayerData {
     @Column(name = "player_uuid")

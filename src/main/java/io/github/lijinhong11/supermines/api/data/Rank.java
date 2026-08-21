@@ -7,7 +7,6 @@ import java.util.Objects;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a rank that can be assigned to players for mine access control.
@@ -21,7 +20,7 @@ public final class Rank implements Identified {
     private final String id;
 
     private int level;
-    private Component displayName;
+    private @NotNull Component displayName;
 
     /**
      * Creates a new rank with the specified parameters.
@@ -33,9 +32,10 @@ public final class Rank implements Identified {
      * @throws NullPointerException     if id is null
      */
     @ParametersAreNonnullByDefault
-    public Rank(int level, String id, Component displayName) {
+    public Rank(int level, String id, @NotNull Component displayName) {
         Preconditions.checkArgument(level > 0, "Rank level must be greater than 0");
         Preconditions.checkNotNull(id, "Rank ID must not be null");
+        Preconditions.checkNotNull(displayName, "Rank display name must not be null");
 
         this.level = level;
         this.id = id;
@@ -68,7 +68,7 @@ public final class Rank implements Identified {
      *
      * @return the rank ID
      */
-    public String getId() {
+    public @NotNull String getId() {
         return id;
     }
 
@@ -87,7 +87,7 @@ public final class Rank implements Identified {
      * @return the display name component
      */
     public @NotNull Component getDisplayName() {
-        return displayName == null ? ComponentUtils.text(id) : displayName;
+        return displayName;
     }
 
     /**
@@ -95,7 +95,8 @@ public final class Rank implements Identified {
      *
      * @param displayName the display name component to set
      */
-    public void setDisplayName(@Nullable Component displayName) {
+    public void setDisplayName(@NotNull Component displayName) {
+        Preconditions.checkNotNull(displayName, "display name cannot be null");
         this.displayName = displayName;
     }
 
