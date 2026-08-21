@@ -52,7 +52,7 @@ public class GuiManager {
         ChestGUI gui = MittelGUI.chestBuilder()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.general.title"))
                 .size(27)
-                .structure("XXXXXXXC", "XPXMXTXRX", "XXXXXXXXX")
+                .structure("XXXXXXXXC", "XPXMXTXRX", "XXXXXXXXX")
                 .bind('X', ButtonItem.BACKGROUND)
                 .bind('P', ButtonItem.clickable(Constants.Items.REGEN_POINTS.apply(p), (g, e) -> {
                     openRegenPointList(p);
