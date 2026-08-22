@@ -6,7 +6,7 @@ SuperMines is a free, open-source mine plugin for Paper servers. It combines aut
 
 [简体中文](README_CN.md)
 
-## Background & Pain Points
+## Other Plugins' Pain Points
 
 - **Limited generation rules**: many mine setups still revolve around a block-and-percentage pool, making it difficult to express surface, height, border, interior, or biome-based placement.
 - **Configuration-heavy management**: adding blocks, changing weights, or editing a mine often means editing YAML and reloading the plugin.
@@ -14,7 +14,7 @@ SuperMines is a free, open-source mine plugin for Paper servers. It combines aut
 - **Full-mine resets only**: a scheduled reset of the whole selection does not cover independent ores, resource points, or different respawn schedules very well.
 - **Limited extension points**: without combinable conditions and lifecycle events, it is harder to connect custom gameplay or let other plugins safely interact with mine operations.
 
-## Highlights
+## SuperMines's Highlights
 
 - **2 mine shapes**: cuboid selections and spherical mines, both reset on a configurable schedule.
 - **8 generation conditions**: surface, relative mine Y, border, biome, placeholder, plus AND, OR, and NOT combinations.
