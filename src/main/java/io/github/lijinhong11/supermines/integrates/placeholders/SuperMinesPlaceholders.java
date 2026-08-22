@@ -54,6 +54,15 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
             return String.valueOf(data.getMinedBlocks());
         });
 
+        registerPlaceholder("treasures", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
+            if (args.length < 2 || !args[0].equalsIgnoreCase("got")) return null;
+            OfflinePlayer p = args.length > 2 ? Bukkit.getOfflinePlayer(args[2]) : viewer;
+            if (p == null) return null;
+
+            PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
+            return String.valueOf(data.getTreasuresGot(args[1]));
+        });
+
         registerPlaceholder("hasrank", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
             if (args.length < 1) return null;
 

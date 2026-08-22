@@ -5,6 +5,7 @@ import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.bukkit.configuration.ConfigurationSection;
@@ -73,7 +74,7 @@ public class RankManager extends AbstractFileObjectManager<Rank> {
     }
 
     public Collection<Rank> getAllRanks() {
-        return java.util.List.copyOf(ranks.values());
+        return List.copyOf(ranks.values());
     }
 
     public Set<String> getAllRankIds() {

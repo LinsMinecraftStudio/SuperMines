@@ -59,6 +59,10 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
         return playerData;
     }
 
+    public void savePlayerData(@NotNull PlayerData playerData) {
+        super.saveObject(playerData);
+    }
+
     @Override
     public void saveAndClose() {
         for (PlayerData playerData : playerDataMap.values()) {

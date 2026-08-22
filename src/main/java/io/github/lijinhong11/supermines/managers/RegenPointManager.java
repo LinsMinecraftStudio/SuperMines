@@ -8,6 +8,7 @@ import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
 import io.github.lijinhong11.supermines.SuperMines;
+import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.events.RegenPointBreakEvent;
 import io.github.lijinhong11.supermines.api.events.RegenPointRespawnEvent;
 import io.github.lijinhong11.supermines.api.events.TreasureFoundEvent;
@@ -19,10 +20,12 @@ import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.Sounds;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicLong;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,6 +33,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,8 +51,10 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
     private final Map<String, RegenPoint> points = new ConcurrentHashMap<>();
     private final Map<String, RegenPoint> byLocation = new ConcurrentHashMap<>();
     private final Map<String, ScheduledTask> respawnTasks = new ConcurrentHashMap<>();
+    private final Map<String, AtomicLong> respawnGenerations = new ConcurrentHashMap<>();
     private final Set<String> deferredPointIds = ConcurrentHashMap.newKeySet();
     private ScheduledTask pendingSave;
+    private volatile boolean closing;
 
     public RegenPointManager() {
         super("data/regen-points.yml");
@@ -198,6 +204,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
 
     @Override
     public synchronized void saveAndClose() {
+        closing = true;
         cancelAllRespawns();
         if (pendingSave != null) {
             pendingSave.cancel();
@@ -257,6 +264,18 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         }
     }
 
+    public synchronized void unloadWorld(@NotNull World world) {
+        for (RegenPoint point : java.util.List.copyOf(points.values())) {
+            if (point.getWorld() != world) continue;
+
+            cancelRespawn(point);
+            nextGeneration(point);
+            points.remove(point.getId(), point);
+            byLocation.remove(keyOf(world.getName(), point.getPos()), point);
+            deferredPointIds.add(point.getId());
+        }
+    }
+
     public synchronized void removeRegenPoint(@NotNull String id) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "regen point ID cannot be null or empty");
 
@@ -266,6 +285,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         }
 
         cancelRespawn(point);
+        respawnGenerations.remove(id);
         byLocation.remove(keyOf(point.getWorld().getName(), point.getPos()));
         super.remove(id);
     }
@@ -313,7 +333,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
     }
 
     public Collection<RegenPoint> getAllRegenPoints() {
-        return java.util.List.copyOf(points.values());
+        return List.copyOf(points.values());
     }
 
     public Set<String> getAllRegenPointIds() {
@@ -327,7 +347,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
      *
      * @param loc the location of the broken block
      */
-    public boolean canBreakPoint(@NotNull Location loc, @NotNull org.bukkit.entity.Player player) {
+    public boolean canBreakPoint(@NotNull Location loc, @NotNull Player player) {
         RegenPoint point = getRegenPoint(loc);
         if (point == null) {
             return true;
@@ -342,7 +362,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         return !event.isCancelled();
     }
 
-    public void commitPointBlockBroken(@NotNull Location loc, @NotNull org.bukkit.entity.Player player) {
+    public void commitPointBlockBroken(@NotNull Location loc, @NotNull Player player) {
         RegenPoint point = getRegenPoint(loc);
         if (point == null || respawnTasks.containsKey(point.getId())) {
             return;
@@ -364,59 +384,74 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
      * @param point the regen point
      */
     public void respawn(@NotNull RegenPoint point) {
-        respawn(point, RegenPointRespawnEvent.Cause.SCHEDULED);
+        respawn(point, RegenPointRespawnEvent.Cause.SCHEDULED, currentGeneration(point));
     }
 
-    private void respawn(@NotNull RegenPoint point, @NotNull RegenPointRespawnEvent.Cause cause) {
+    private void respawn(@NotNull RegenPoint point, @NotNull RegenPointRespawnEvent.Cause cause, long generation) {
+        if (closing || points.get(point.getId()) != point || currentGeneration(point) != generation) return;
         Location loc = point.getLocation();
         if (loc.getWorld() == null) {
             return;
         }
 
-        PackedBlock selected = point.selectBlock();
-        if (selected == null) {
-            return;
-        }
+        try {
+            PackedBlock selected = point.selectBlock();
+            if (selected == null) return;
 
-        RegenPointRespawnEvent event = new RegenPointRespawnEvent(point, selected, cause);
-        event.callEvent();
-        if (event.isCancelled()) {
-            if (cause == RegenPointRespawnEvent.Cause.SCHEDULED) {
-                long retrySeconds = Math.max(
-                        1L,
-                        SuperMines.getInstance()
-                                .getConfig()
-                                .getLong("regen-point.cancelled-respawn-retry-seconds", 5L));
-                point.setRespawnAt(System.currentTimeMillis() + retrySeconds * 1000L);
-                saveRegenPoint(point);
-                scheduleRespawn(point, retrySeconds * 1000L);
+            RegenPointRespawnEvent event = new RegenPointRespawnEvent(point, selected, cause);
+            event.callEvent();
+            if (event.isCancelled()) {
+                if (cause == RegenPointRespawnEvent.Cause.SCHEDULED) {
+                    long retrySeconds = Math.max(
+                            1L,
+                            SuperMines.getInstance()
+                                    .getConfig()
+                                    .getLong("regen-point.cancelled-respawn-retry-seconds", 5L));
+                    point.setRespawnAt(System.currentTimeMillis() + retrySeconds * 1000L);
+                    saveRegenPoint(point);
+                    scheduleRespawn(point, retrySeconds * 1000L);
+                }
+                return;
             }
-            return;
+
+            cancelRespawn(point);
+
+            if (!loc.getBlock().getType().isAir()) {
+                ContentProviders.destroyBlock(loc);
+            }
+
+            event.getBlock().place(loc);
+            SkillsBlockPlace.markAsEarnable(loc);
+
+            point.setRespawnAt(0);
+            saveRegenPoint(point);
+
+            playRespawnEffect(loc);
+        } catch (RuntimeException exception) {
+            SuperMines.getInstance()
+                    .getLogger()
+                    .warning("Failed to respawn regen point '" + point.getId() + "': " + exception);
+            if (!closing && points.get(point.getId()) == point && point.getRespawnSeconds() > 0) {
+                long retryMillis = 5000L;
+                point.setRespawnAt(System.currentTimeMillis() + retryMillis);
+                saveRegenPoint(point);
+                scheduleRespawn(point, retryMillis);
+            }
         }
-
-        cancelRespawn(point);
-
-        if (!loc.getBlock().getType().isAir()) {
-            ContentProviders.destroyBlock(loc);
-        }
-
-        event.getBlock().place(loc);
-        SkillsBlockPlace.markAsEarnable(loc);
-
-        point.setRespawnAt(0);
-        saveRegenPoint(point);
-
-        playRespawnEffect(loc);
     }
 
-    private void giveIndependentRewards(RegenPoint point, org.bukkit.entity.Player player) {
+    private void giveIndependentRewards(RegenPoint point, Player player) {
         for (Map.Entry<String, Double> entry : point.getRewardChances().entrySet()) {
             Treasure treasure = SuperMines.getInstance().getTreasureManager().getTreasure(entry.getKey());
             if (treasure != null && ThreadLocalRandom.current().nextDouble(100D) < entry.getValue()) {
                 TreasureFoundEvent event = new TreasureFoundEvent(treasure, player, point);
                 event.callEvent();
                 if (!event.isCancelled()) {
-                    treasure.giveToPlayer(player, false);
+                    treasure.giveToPlayer(player, false, point.getLocation());
+                    PlayerData data =
+                            SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+                    data.addTreasureGot(treasure.getId());
+                    SuperMines.getInstance().getPlayerDataManager().savePlayerData(data);
                 }
             }
         }
@@ -427,22 +462,30 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
      *
      * @param point the point to respawn
      */
-    public void respawnNow(@NotNull RegenPoint point) {
+    public synchronized void respawnNow(@NotNull RegenPoint point) {
+        if (closing || points.get(point.getId()) != point) return;
+        cancelRespawn(point);
+        long generation = nextGeneration(point);
         SuperMines.getInstance()
                 .getTaskMaker()
-                .runSync(point.getLocation(), () -> respawn(point, RegenPointRespawnEvent.Cause.MANUAL));
+                .runSync(point.getLocation(), () -> respawn(point, RegenPointRespawnEvent.Cause.MANUAL, generation));
     }
 
     public boolean isPending(@NotNull RegenPoint point) {
         return respawnTasks.containsKey(point.getId()) || point.getRespawnAt() > 0;
     }
 
-    private void scheduleRespawn(RegenPoint point, long delayMillis) {
+    private synchronized void scheduleRespawn(RegenPoint point, long delayMillis) {
+        if (closing || points.get(point.getId()) != point) return;
         cancelRespawn(point);
+        long generation = nextGeneration(point);
         long delayTicks = Math.max(1L, (delayMillis + 49L) / 50L);
         ScheduledTask task = SuperMines.getInstance()
                 .getTaskMaker()
-                .runSyncDelayed(point.getLocation(), delayTicks, () -> respawn(point));
+                .runSyncDelayed(
+                        point.getLocation(),
+                        delayTicks,
+                        () -> respawn(point, RegenPointRespawnEvent.Cause.SCHEDULED, generation));
         if (task != null) {
             respawnTasks.put(point.getId(), task);
         }
@@ -460,9 +503,11 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
             task.cancel();
         }
         respawnTasks.clear();
+        respawnGenerations.values().forEach(AtomicLong::incrementAndGet);
     }
 
     private synchronized void scheduleSave() {
+        if (closing) return;
         if (pendingSave != null) {
             return;
         }
@@ -477,6 +522,18 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
                             }
                         },
                         20L);
+    }
+
+    private long currentGeneration(RegenPoint point) {
+        return respawnGenerations
+                .computeIfAbsent(point.getId(), id -> new AtomicLong())
+                .get();
+    }
+
+    private long nextGeneration(RegenPoint point) {
+        return respawnGenerations
+                .computeIfAbsent(point.getId(), id -> new AtomicLong())
+                .incrementAndGet();
     }
 
     private void playRespawnEffect(Location loc) {

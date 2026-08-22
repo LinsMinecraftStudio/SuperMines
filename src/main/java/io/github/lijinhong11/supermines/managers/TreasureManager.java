@@ -10,6 +10,7 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -136,7 +137,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
     }
 
     public Collection<Treasure> getAllTreasures() {
-        return java.util.List.copyOf(treasures.values());
+        return List.copyOf(treasures.values());
     }
 
     public Set<String> getAllTreasureIds() {

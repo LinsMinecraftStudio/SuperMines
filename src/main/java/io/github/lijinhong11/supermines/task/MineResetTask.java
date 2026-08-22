@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import org.bukkit.Bukkit;
@@ -26,15 +27,17 @@ import org.bukkit.entity.Player;
 class MineResetTask extends AbstractTask {
     private final Mine mine;
     private final boolean manualReset;
+    private final long generation;
     private final AtomicLong nextResetTime = new AtomicLong();
 
     MineResetTask(Mine mine) {
-        this(mine, false);
+        this(mine, false, 0L);
     }
 
-    MineResetTask(Mine mine, boolean manualReset) {
+    MineResetTask(Mine mine, boolean manualReset, long generation) {
         this.mine = mine;
         this.manualReset = manualReset;
+        this.generation = generation;
         refreshNextResetTime();
     }
 
@@ -49,14 +52,22 @@ class MineResetTask extends AbstractTask {
             return;
         }
 
-        doReset();
+        TaskMaker taskMaker = SuperMines.getInstance().getTaskMaker();
+        if (!taskMaker.tryBeginReset(mine.getId(), generation)) return;
+        if (!manualReset) refreshNextResetTime();
+        try {
+            doReset();
+        } catch (RuntimeException exception) {
+            SuperMines.getInstance().getLogger().severe("Mine reset failed for '" + mine.getId() + "': " + exception);
+            taskMaker.finishReset(mine.getId(), generation);
+        }
     }
 
     private void doReset() {
         MineResetStartEvent event = new MineResetStartEvent(mine, manualReset);
         event.callEvent();
         if (event.isCancelled()) {
-            refreshNextResetTime();
+            SuperMines.getInstance().getTaskMaker().finishReset(mine.getId(), generation);
             return;
         }
 
@@ -76,34 +87,44 @@ class MineResetTask extends AbstractTask {
             return;
         }
 
-        Map<BlockPos, PackedBlock> generated = new java.util.concurrent.ConcurrentHashMap<>();
+        Map<BlockPos, PackedBlock> generated = new ConcurrentHashMap<>();
         List<BlockPos> toDestroy = Collections.synchronizedList(new ArrayList<>());
         AtomicInteger pending = new AtomicInteger(blockPosList.size());
         TaskMaker tm = SuperMines.getInstance().getTaskMaker();
 
         for (BlockPos pos : blockPosList) {
             Location loc = pos.toLocation(mine.getWorld());
-            tm.runSync(loc, () -> {
-                Material material = loc.getBlock().getType();
-                if (!mine.isOnlyFillAirWhenRegenerate() || material.isAir()) {
-                    BlockSpawnEntry selected = selectEntry(blockSpawnEntries, pos);
-                    if (selected != null) {
-                        generated.put(pos, selected);
-                    }
+            if (!tm.runSync(loc, () -> {
+                if (!tm.isResetGenerationActive(mine.getId(), generation)) return;
+                try {
+                    Material material = loc.getBlock().getType();
+                    if (!mine.isOnlyFillAirWhenRegenerate() || material.isAir()) {
+                        BlockSpawnEntry selected = selectEntry(blockSpawnEntries, pos);
+                        if (selected != null) {
+                            generated.put(pos, selected);
+                        }
 
-                    if (!material.isAir()) {
-                        toDestroy.add(pos);
+                        if (!material.isAir()) {
+                            toDestroy.add(pos);
+                        }
+                    }
+                } catch (RuntimeException exception) {
+                    SuperMines.getInstance()
+                            .getLogger()
+                            .warning("Failed to scan block " + pos + " in mine '" + mine.getId() + "': " + exception);
+                } finally {
+                    if (pending.decrementAndGet() == 0 && tm.isResetGenerationActive(mine.getId(), generation)) {
+                        if (!mine.isOnlyFillAirWhenRegenerate() || !toDestroy.isEmpty()) {
+                            runDestroyPhase(toDestroy, generated);
+                        } else {
+                            runPlacePhase(generated);
+                        }
                     }
                 }
-
-                if (pending.decrementAndGet() == 0) {
-                    if (!mine.isOnlyFillAirWhenRegenerate() || !toDestroy.isEmpty()) {
-                        runDestroyPhase(toDestroy, generated);
-                    } else {
-                        runPlacePhase(generated);
-                    }
-                }
-            });
+            })) {
+                tm.abortReset(mine.getId(), generation);
+                return;
+            }
         }
     }
 
@@ -128,12 +149,24 @@ class MineResetTask extends AbstractTask {
         AtomicInteger pending = new AtomicInteger(blockPosList.size());
         for (BlockPos pos : blockPosList) {
             Location loc = pos.toLocation(mine.getWorld());
-            tm.runSync(loc, () -> {
-                ContentProviders.destroyBlock(loc);
-                if (pending.decrementAndGet() == 0) {
-                    runPlacePhase(generated);
+            if (!tm.runSync(loc, () -> {
+                if (!tm.isResetGenerationActive(mine.getId(), generation)) return;
+                try {
+                    ContentProviders.destroyBlock(loc);
+                } catch (RuntimeException exception) {
+                    SuperMines.getInstance()
+                            .getLogger()
+                            .warning(
+                                    "Failed to destroy block " + pos + " in mine '" + mine.getId() + "': " + exception);
+                } finally {
+                    if (pending.decrementAndGet() == 0 && tm.isResetGenerationActive(mine.getId(), generation)) {
+                        runPlacePhase(generated);
+                    }
                 }
-            });
+            })) {
+                tm.abortReset(mine.getId(), generation);
+                return;
+            }
         }
     }
 
@@ -148,50 +181,68 @@ class MineResetTask extends AbstractTask {
         for (Map.Entry<BlockPos, PackedBlock> entry : generated.entrySet()) {
             Location loc = entry.getKey().toLocation(mine.getWorld());
 
-            tm.runSync(loc, () -> {
-                if (!loc.getBlock().getType().isAir()) {
-                    ContentProviders.destroyBlock(loc);
-                }
+            if (!tm.runSync(loc, () -> {
+                if (!tm.isResetGenerationActive(mine.getId(), generation)) return;
+                try {
+                    if (!loc.getBlock().getType().isAir()) {
+                        ContentProviders.destroyBlock(loc);
+                    }
 
-                entry.getValue().place(loc);
-                SkillsBlockPlace.markAsEarnable(loc);
-                if (pending.decrementAndGet() == 0) {
-                    finishReset();
+                    entry.getValue().place(loc);
+                    SkillsBlockPlace.markAsEarnable(loc);
+                } catch (RuntimeException exception) {
+                    SuperMines.getInstance()
+                            .getLogger()
+                            .warning("Failed to place block " + entry.getKey() + " in mine '" + mine.getId() + "': "
+                                    + exception);
+                } finally {
+                    if (pending.decrementAndGet() == 0 && tm.isResetGenerationActive(mine.getId(), generation)) {
+                        finishReset();
+                    }
                 }
-            });
+            })) {
+                tm.abortReset(mine.getId(), generation);
+                return;
+            }
         }
     }
 
     private void finishReset() {
         Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), task -> {
+            TaskMaker taskMaker = SuperMines.getInstance().getTaskMaker();
+            if (!taskMaker.isResetGenerationActive(mine.getId(), generation)) return;
             boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
-            mine.setBlocksBroken(0);
-            refreshNextResetTime();
-            new MineResetEvent(mine).callEvent();
+            try {
+                mine.setBlocksBroken(0);
+                new MineResetEvent(mine).callEvent();
 
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                player.getScheduler()
-                        .run(
-                                SuperMines.getInstance(),
-                                playerTask -> {
-                                    boolean inside = mine.isPlayerInMine(player);
-                                    if (inside) {
-                                        player.teleportAsync(
-                                                mine.getTeleportLocation() != null
-                                                        ? mine.getTeleportLocation()
-                                                        : mine.getSafeTopLocation());
-                                    }
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    player.getScheduler()
+                            .run(
+                                    SuperMines.getInstance(),
+                                    playerTask -> {
+                                        boolean inside = mine.isPlayerInMine(player);
+                                        if (inside) {
+                                            player.teleportAsync(
+                                                    mine.getTeleportLocation() != null
+                                                            ? mine.getTeleportLocation()
+                                                            : mine.getSafeTopLocation());
+                                        }
 
-                                    if (broadcast || inside) {
-                                        SuperMines.getInstance()
-                                                .getLanguageManager()
-                                                .sendMessage(
-                                                        player,
-                                                        "mine.reset",
-                                                        MessageReplacement.replace("%mine%", mine.getRawDisplayName()));
-                                    }
-                                },
-                                null);
+                                        if (broadcast || inside) {
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(
+                                                            player,
+                                                            "mine.reset",
+                                                            MessageReplacement.replace(
+                                                                    "%mine%", mine.getRawDisplayName()));
+                                        }
+                                    },
+                                    null);
+                }
+            } finally {
+                taskMaker.completeReset(mine, generation, manualReset);
             }
         });
     }

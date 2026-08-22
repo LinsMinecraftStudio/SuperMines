@@ -32,6 +32,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class BlockListener implements Listener {
@@ -149,7 +150,9 @@ public class BlockListener implements Listener {
                 TreasureFoundEvent event = new TreasureFoundEvent(selected, player, mine);
                 event.callEvent();
                 if (!event.isCancelled()) {
-                    selected.giveToPlayer(player, !autoPickup);
+                    selected.giveToPlayer(player, !autoPickup, loc);
+                    playerData.addTreasureGot(selected.getId());
+                    SuperMines.getInstance().getPlayerDataManager().savePlayerData(playerData);
                 }
             }
         }
@@ -287,5 +290,12 @@ public class BlockListener implements Listener {
     @EventHandler
     public void loadDeferredRegenPoints(WorldLoadEvent e) {
         SuperMines.getInstance().getRegenPointManager().loadDeferredPoints(e.getWorld());
+        SuperMines.getInstance().getMineManager().loadDeferredMines(e.getWorld());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void unloadRegenPoints(WorldUnloadEvent e) {
+        SuperMines.getInstance().getMineManager().unloadWorld(e.getWorld());
+        SuperMines.getInstance().getRegenPointManager().unloadWorld(e.getWorld());
     }
 }

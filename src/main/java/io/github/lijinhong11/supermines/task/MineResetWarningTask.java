@@ -25,7 +25,7 @@ class MineResetWarningTask extends AbstractTask {
             p.getScheduler()
                     .run(
                             SuperMines.getInstance(),
-                            task -> {
+                            playerTask -> {
                                 if (broadcast || mine.isPlayerInMine(p)) {
                                     SuperMines.getInstance()
                                             .getLanguageManager()

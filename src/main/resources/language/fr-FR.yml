@@ -108,6 +108,12 @@ command:
   block-generate:
     success: "&aLe bloc &d%block% &asera généré dans &b%mine% &aavec un poids de &b%weight%"
     removed: "&aLa génération du bloc a été retirée de &b%mine% &aavec succès !"
+  add-treasure:
+    success: "&aLe trésor &d%treasure% &aa été ajouté à la mine &b%mine%&a."
+    exists: "&cCe trésor est déjà associé à cette mine."
+  remove-treasure:
+    success: "&aLe trésor &d%treasure% &aa été retiré de la mine &b%mine%&a."
+    not-bound: "&cCe trésor n'est pas associé à cette mine."
   list:
     head:
       mine: "&6Mines : "
@@ -117,6 +123,9 @@ command:
   teleport:
     set: "&aLe point de téléportation de &b%mine% &aa été défini sur &d%loc%"
     no-loc: "&cLe point de téléportation n'est pas défini. Contactez un opérateur."
+    success: "&aTéléportation vers la mine &b%mine% &aréussie."
+    success-other: "&aTéléportation de &b%player% &avers la mine &d%mine% &aréussie."
+    failed: "&cÉchec de la téléportation."
   treasures:
     no-item-in-hand: "&cVous devez tenir un objet en main !"
     set-item: "&aLe trésor &d%treasure% &aa été modifié"
@@ -180,6 +189,9 @@ command:
       success: "&aRécompense indépendante ajoutée."
     remove-reward:
       success: "&aRécompense indépendante retirée."
+    teleport:
+      success: "&aTéléportation vers le point &d%point% &aréussie."
+      failed: "&cÉchec de la téléportation vers le point &d%point%&c."
   reload:
     safe-tip: "&cRemarque : seuls les fichiers de configuration et de messages seront rechargés"
     success: "&aRechargement réussi !"
@@ -357,7 +369,6 @@ gui:
             lore:
               - "&7Actuels : &e%value%"
               - "&7Cliquez pour définir"
-            prompt: "&eSaisissez les biomes séparés par des virgules : &b(saisissez &6##CANCEL &bpour annuler)"
           placeholder:
             name: "&bPlaceholder"
             lore:

@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mdatabase.serialization.annotations.*;
 import io.github.lijinhong11.supermines.managers.database.RankConverter;
 import io.github.lijinhong11.supermines.managers.database.StringRankSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +35,9 @@ public final class PlayerData {
 
     @Column(name = "auto_pickup")
     private boolean autoPickup;
+
+    @Column(name = "treasures_got")
+    private Map<String, Integer> treasuresGot = new HashMap<>();
 
     public PlayerData() {}
 
@@ -83,5 +88,13 @@ public final class PlayerData {
 
     public void setAutoPickup(boolean autoPickup) {
         this.autoPickup = autoPickup;
+    }
+
+    public int getTreasuresGot(@NotNull String treasureId) {
+        return treasuresGot.getOrDefault(treasureId, 0);
+    }
+
+    public void addTreasureGot(@NotNull String treasureId) {
+        treasuresGot.merge(treasureId, 1, Integer::sum);
     }
 }

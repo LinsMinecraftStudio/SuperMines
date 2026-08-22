@@ -16,6 +16,7 @@ import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.ConditionLoader;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,7 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MineManager extends AbstractFileObjectManager<Mine> {
-    private final Map<String, Mine> mines = new HashMap<>();
+    private final Map<String, Mine> mines = new ConcurrentHashMap<>();
+    private final Set<String> deferredMineIds = ConcurrentHashMap.newKeySet();
 
     public MineManager() {
         super("data/mines.yml");
@@ -36,6 +38,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
 
     private void load() {
         for (Mine object : super.getAll()) {
+            if (object == null) continue;
             mines.put(object.getId(), object);
         }
     }
@@ -61,6 +64,10 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
 
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
+            deferredMineIds.add(id);
+            SuperMines.getInstance()
+                    .getLogger()
+                    .warning("Deferring mine '%s': world '%s' is not loaded".formatted(id, worldName));
             return null;
         }
 
@@ -234,6 +241,36 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
     public void saveMine(@NotNull Mine mine) {
         Preconditions.checkArgument(mines.get(mine.getId()) == mine, "mine is not managed by this manager");
         super.putObject(mine.getId(), mine);
+    }
+
+    public synchronized void loadDeferredMines(@NotNull World world) {
+        for (String id : Set.copyOf(deferredMineIds)) {
+            ConfigurationSection section = getConfigSection(id);
+            if (section == null || !world.getName().equals(section.getString("world"))) continue;
+
+            Mine mine = super.getObject(id);
+            if (mine == null || mine.getWorld() != world) continue;
+
+            mines.put(id, mine);
+            deferredMineIds.remove(id);
+            SuperMines.getInstance().getTaskMaker().startMineTasks(mine);
+            SuperMines.getInstance().getLogger().info("Loaded deferred mine '" + id + "'");
+        }
+    }
+
+    public synchronized void unloadWorld(@NotNull World world) {
+        for (Mine mine : List.copyOf(mines.values())) {
+            if (mine.getWorld() != world) continue;
+
+            super.putObject(mine.getId(), mine);
+            SuperMines.getInstance().getTaskMaker().cancelMineResetTask(mine);
+            mines.remove(mine.getId(), mine);
+            deferredMineIds.add(mine.getId());
+        }
+    }
+
+    private @Nullable ConfigurationSection getConfigSection(String id) {
+        return super.getConfigurationSection(id);
     }
 
     public boolean tryAddMine(@NotNull Mine mine) {

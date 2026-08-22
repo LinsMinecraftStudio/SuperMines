@@ -56,6 +56,10 @@ public abstract class AbstractFileObjectManager<T> {
         return getObject(section);
     }
 
+    protected final ConfigurationSection getConfigurationSection(@NotNull String key) {
+        return config.getConfigurationSection(key);
+    }
+
     protected abstract T getObject(@NotNull ConfigurationSection section);
 
     protected final void putObject(String key, T object) {

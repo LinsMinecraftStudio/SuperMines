@@ -108,6 +108,12 @@ command:
   block-generate:
     success: "&a方塊 &d%block% &a已加入礦區 &b%mine%&a，權重為 &b%weight%"
     removed: "&a已移除礦區 &b%mine% &a的生成方塊"
+  add-treasure:
+    success: "&a寶藏 &d%treasure% &a已加入礦區 &b%mine%&a。"
+    exists: "&c該寶藏已綁定到此礦區。"
+  remove-treasure:
+    success: "&a寶藏 &d%treasure% &a已從礦區 &b%mine% &a移除。"
+    not-bound: "&c該寶藏未綁定到此礦區。"
   list:
     head:
       mine: "&6礦區: "
@@ -117,6 +123,9 @@ command:
   teleport:
     set: "&a礦區 &b%mine% &a的傳送點已設為 &d%loc%"
     no-loc: "&c未設定傳送點，請聯絡管理員。"
+    success: "&a已傳送到礦區 &b%mine%&a。"
+    success-other: "&a已將玩家 &b%player% &a傳送到礦區 &d%mine%&a。"
+    failed: "&c傳送失敗。"
   treasures:
     no-item-in-hand: "&c你必須手持物品！"
     set-item: "&a寶藏 &d%treasure% &a的物品已更新"
@@ -180,6 +189,9 @@ command:
       success: "&a獨立獎勵已新增。"
     remove-reward:
       success: "&a獨立獎勵已移除。"
+    teleport:
+      success: "&a已傳送到再生礦點 &d%point%&a。"
+      failed: "&c傳送到再生礦點 &d%point% &c失敗。"
   reload:
     safe-tip: "&c注意：為確保安全，只會重載配置與消息"
     success: "&a重載成功！"
@@ -357,7 +369,6 @@ gui:
             lore:
               - "&7目前: &e%value%"
               - "&7點擊設定"
-            prompt: "&e請在聊天中輸入用逗號分隔的生態域名稱: &b(輸入 &6##CANCEL &b取消)"
           placeholder:
             name: "&b佔位符"
             lore:

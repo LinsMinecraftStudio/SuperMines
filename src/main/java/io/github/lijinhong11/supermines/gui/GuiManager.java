@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -120,7 +121,7 @@ public final class GuiManager {
                             p.closeInventory();
                             SuperMines.getInstance()
                                     .getLanguageManager()
-                                    .sendMessage(p, "gui.mine-management.set_reset_time.prompt");
+                                    .sendMessage(p, "gui.mine-management.set_regen_seconds.prompt");
                             handleIntegerInput(p, result -> {
                                 mine.setRegenerateSeconds(result);
                                 SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
@@ -176,7 +177,7 @@ public final class GuiManager {
 
         // Treasures
         gui.putItem(
-                slot(5, 5),
+                slot(5, 2),
                 ButtonItem.clickable(
                         Constants.Items.MINE_TREASURES.apply(
                                 p, mine.getTreasures().size()),
@@ -224,7 +225,7 @@ public final class GuiManager {
         PaginatedChestGUI gui =
                 buildPagedGUI(p, "gui.mine-management.treasures.chooser_title", () -> openMineTreasures(p, mine));
         Set<String> selectedIds =
-                mine.getTreasures().stream().map(Treasure::getId).collect(java.util.stream.Collectors.toSet());
+                mine.getTreasures().stream().map(Treasure::getId).collect(Collectors.toSet());
 
         for (Treasure treasure : SuperMines.getInstance().getTreasureManager().getAllTreasures()) {
             if (selectedIds.contains(treasure.getId())) continue;

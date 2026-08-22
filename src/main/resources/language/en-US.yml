@@ -108,6 +108,12 @@ command:
   block-generate:
     success: "&aNow the block &d%block% &awill be generated in the &b%mine% &amine with weight &b%weight%"
     removed: "&aThe block generate is removed from &b%mine% &asuccessfully!"
+  add-treasure:
+    success: "&aTreasure &d%treasure% &awas added to mine &b%mine%&a."
+    exists: "&cThat treasure is already assigned to this mine."
+  remove-treasure:
+    success: "&aTreasure &d%treasure% &awas removed from mine &b%mine%&a."
+    not-bound: "&cThat treasure is not assigned to this mine."
   list:
     head:
       mine: "&6Mines: "
@@ -117,6 +123,9 @@ command:
   teleport:
     set: "&aThe teleport location of mine &b%mine% &ahas been set to &d%loc%"
     no-loc: "&cThe teleport location is undefined, please contact operators for details."
+    success: "&aTeleported to mine &b%mine%&a."
+    success-other: "&aTeleported &b%player% &ato mine &d%mine%&a."
+    failed: "&cTeleport failed."
   treasures:
     no-item-in-hand: "&cYou must hold an item in your hand!"
     set-item: "&aThe treasure &d%treasure% &ahas been changed"
@@ -180,6 +189,9 @@ command:
       success: "&aIndependent reward added."
     remove-reward:
       success: "&aIndependent reward removed."
+    teleport:
+      success: "&aTeleported to regen point &d%point%&a."
+      failed: "&cFailed to teleport to regen point &d%point%&c."
   reload:
     safe-tip: "&cNote: To ensure the plugin works safely, it will only reload config and message files"
     success: "&aReload successfully!"
@@ -357,7 +369,6 @@ gui:
             lore:
               - "&7Current: &e%value%"
               - "&7Click to set"
-            prompt: "&eEnter biome names separated by commas in the chat: &b(type &6##CANCEL &bto cancel)"
           placeholder:
             name: "&bPlaceholder"
             lore:

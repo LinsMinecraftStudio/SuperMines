@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -106,17 +107,26 @@ public final class Treasure implements Identified {
      *
      * @param player   the player
      * @param dropItem determine whether to drop item directly
+     * @param dropLocation preferred location for dropped items; falls back to the player's location
      */
-    public void giveToPlayer(@NotNull Player player, boolean dropItem) {
-        SuperMines.getInstance().getTaskMaker().runSync(() -> {
+    public void giveToPlayer(@NotNull Player player, boolean dropItem, @Nullable Location dropLocation) {
+        SuperMines.getInstance().getTaskMaker().runSync(player, () -> {
             if (this.itemStack != null) {
                 if (player.getInventory().firstEmpty() == -1 || dropItem) {
-                    player.getWorld().dropItemNaturally(player.getLocation(), this.itemStack);
+                    Location location = dropLocation;
+                    if (location == null
+                            || location.getWorld() == null
+                            || !location.getWorld().equals(player.getWorld())) {
+                        location = player.getLocation();
+                    }
+                    player.getWorld().dropItemNaturally(location, this.itemStack);
                 } else {
                     player.getInventory().addItem(this.itemStack);
                 }
             }
+        });
 
+        SuperMines.getInstance().getTaskMaker().runSync(() -> {
             if (this.consoleCommands != null) {
                 for (String consoleCommand : this.consoleCommands) {
                     Bukkit.dispatchCommand(

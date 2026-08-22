@@ -3,31 +3,37 @@ package io.github.lijinhong11.supermines.task;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class TaskMaker {
     private final Map<String, MineResetTask> resetTasks;
     private final Map<String, Map<Integer, MineResetWarningTask>> resetWarningTasks;
+    private final Map<String, AtomicBoolean> resetInProgress = new ConcurrentHashMap<>();
+    private final Map<String, AtomicLong> resetGenerations = new ConcurrentHashMap<>();
+    private volatile boolean closing;
 
     public TaskMaker() {
-        resetTasks = new HashMap<>();
-        resetWarningTasks = new HashMap<>();
+        resetTasks = new ConcurrentHashMap<>();
+        resetWarningTasks = new ConcurrentHashMap<>();
     }
 
     public void startup() {
         for (Mine mine : SuperMines.getInstance().getMineManager().getAllMines()) {
-            if (mine.getRegenerateSeconds() < 1) {
-                continue;
-            }
+            startMineTasks(mine);
+        }
+    }
 
-            startMineResetTask(mine);
-
-            for (int second : mine.getWarningSeconds()) {
-                startMineWarningTask(mine, second);
-            }
+    public void startMineTasks(Mine mine) {
+        if (mine.getRegenerateSeconds() < 1) return;
+        startMineResetTask(mine);
+        for (int second : mine.getWarningSeconds()) {
+            startMineWarningTask(mine, second);
         }
     }
 
@@ -35,12 +41,22 @@ public class TaskMaker {
         Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), t -> runnable.run());
     }
 
-    public void runSync(Location loc, Runnable runnable) {
+    public boolean runSync(Location loc, Runnable runnable) {
         if (loc.getWorld() == null) {
-            return;
+            return false;
         }
 
-        Bukkit.getRegionScheduler().run(SuperMines.getInstance(), loc, t -> runnable.run());
+        try {
+            Bukkit.getRegionScheduler().run(SuperMines.getInstance(), loc, t -> runnable.run());
+            return true;
+        } catch (RuntimeException exception) {
+            SuperMines.getInstance().getLogger().warning("Failed to schedule region task at " + loc + ": " + exception);
+            return false;
+        }
+    }
+
+    public void runSync(Player player, Runnable runnable) {
+        player.getScheduler().run(SuperMines.getInstance(), t -> runnable.run(), null);
     }
 
     public ScheduledTask runSyncDelayed(Location loc, long delayTicks, Runnable runnable) {
@@ -59,55 +75,60 @@ public class TaskMaker {
         }
 
         Map<Integer, MineResetWarningTask> warningMap =
-                resetWarningTasks.computeIfAbsent(mine.getId(), id -> new HashMap<>());
+                resetWarningTasks.computeIfAbsent(mine.getId(), id -> new ConcurrentHashMap<>());
 
-        if (warningMap.containsKey(warningSeconds)) {
-            return;
-        }
-
+        if (warningSeconds < 1 || warningSeconds >= mine.getRegenerateSeconds()) return;
         MineResetWarningTask task = new MineResetWarningTask(mine, warningSeconds);
+        if (warningMap.putIfAbsent(warningSeconds, task) != null) return;
 
         long delayMillis = resetTask.getNextResetTime() - System.currentTimeMillis() - warningSeconds * 1000L;
         if (delayMillis <= 0) {
-            Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), task);
-            Bukkit.getGlobalRegionScheduler()
-                    .runDelayed(
-                            SuperMines.getInstance(),
-                            t -> {
-                                Bukkit.getGlobalRegionScheduler()
-                                        .runAtFixedRate(
-                                                SuperMines.getInstance(),
-                                                task,
-                                                1L,
-                                                Math.max(1L, mine.getRegenerateSeconds() * 20L));
-                                warningMap.put(warningSeconds, task);
-                            },
-                            1L);
-            return;
+            delayMillis += mine.getRegenerateSeconds() * 1000L;
         }
 
-        warningMap.put(warningSeconds, task);
-        Bukkit.getGlobalRegionScheduler()
-                .runAtFixedRate(
-                        SuperMines.getInstance(),
-                        task,
-                        Math.max(1L, delayMillis / 50L),
-                        Math.max(1L, mine.getRegenerateSeconds() * 20L));
+        try {
+            ScheduledTask handle = Bukkit.getGlobalRegionScheduler()
+                    .runAtFixedRate(
+                            SuperMines.getInstance(),
+                            task,
+                            toTicks(delayMillis),
+                            Math.max(1L, mine.getRegenerateSeconds() * 20L));
+            task.bind(handle);
+        } catch (RuntimeException exception) {
+            warningMap.remove(warningSeconds, task);
+            throw exception;
+        }
     }
 
     public void startMineResetTask(Mine mine) {
-        MineResetTask task = new MineResetTask(mine);
-        Bukkit.getGlobalRegionScheduler()
-                .runAtFixedRate(SuperMines.getInstance(), task, 1L, Math.max(1L, mine.getRegenerateSeconds() * 20L));
+        if (closing || mine.getRegenerateSeconds() < 1) return;
+        MineResetTask existing = resetTasks.remove(mine.getId());
+        if (existing != null) existing.cancel();
+        resetInProgress.computeIfAbsent(mine.getId(), id -> new AtomicBoolean()).set(false);
+        long generation = resetGenerations
+                .computeIfAbsent(mine.getId(), id -> new AtomicLong())
+                .incrementAndGet();
+        MineResetTask task = new MineResetTask(mine, false, generation);
         resetTasks.put(mine.getId(), task);
+        long periodTicks = Math.max(1L, mine.getRegenerateSeconds() * 20L);
+        ScheduledTask handle = Bukkit.getGlobalRegionScheduler()
+                .runAtFixedRate(SuperMines.getInstance(), task, periodTicks, periodTicks);
+        task.bind(handle);
     }
 
     public void runMineResetTaskNow(Mine mine) {
-        MineResetTask mrt = new MineResetTask(mine, true);
-        Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), t -> mrt.run(t));
+        if (closing) return;
+        long generation = resetGenerations
+                .computeIfAbsent(mine.getId(), id -> new AtomicLong())
+                .get();
+        MineResetTask task = new MineResetTask(mine, true, generation);
+        ScheduledTask handle = Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), task);
+        task.bind(handle);
     }
 
     public void cancelMineResetTask(Mine mine) {
+        resetGenerations.computeIfAbsent(mine.getId(), id -> new AtomicLong()).incrementAndGet();
+        resetInProgress.computeIfAbsent(mine.getId(), id -> new AtomicBoolean()).set(false);
         MineResetTask task = resetTasks.get(mine.getId());
         if (task != null) {
             task.cancel();
@@ -128,11 +149,13 @@ public class TaskMaker {
     }
 
     public void cancelMineWarningTask(Mine mine, int restSeconds) {
-        MineResetWarningTask task =
-                resetWarningTasks.getOrDefault(mine.getId(), new HashMap<>()).get(restSeconds);
+        Map<Integer, MineResetWarningTask> warningMap = resetWarningTasks.get(mine.getId());
+        if (warningMap == null) return;
+        MineResetWarningTask task = warningMap.remove(restSeconds);
         if (task != null) {
             task.cancel();
         }
+        if (warningMap.isEmpty()) resetWarningTasks.remove(mine.getId(), warningMap);
     }
 
     public void restartMineResetTask(Mine mine) {
@@ -154,6 +177,7 @@ public class TaskMaker {
     }
 
     public void close() {
+        closing = true;
         for (Map<Integer, MineResetWarningTask> task : resetWarningTasks.values()) {
             task.values().forEach(AbstractTask::cancel);
         }
@@ -164,5 +188,43 @@ public class TaskMaker {
 
         resetWarningTasks.clear();
         resetTasks.clear();
+        resetInProgress.clear();
+    }
+
+    boolean tryBeginReset(String mineId, long generation) {
+        if (closing || !isResetGenerationActive(mineId, generation)) return false;
+        return resetInProgress
+                .computeIfAbsent(mineId, id -> new AtomicBoolean())
+                .compareAndSet(false, true);
+    }
+
+    void finishReset(String mineId, long generation) {
+        if (!isResetGenerationActive(mineId, generation)) return;
+        AtomicBoolean state = resetInProgress.get(mineId);
+        if (state != null) state.set(false);
+    }
+
+    void completeReset(Mine mine, long generation, boolean manualReset) {
+        if (!isResetGenerationActive(mine.getId(), generation)) return;
+        finishReset(mine.getId(), generation);
+        if (manualReset && mine.getRegenerateSeconds() > 0) {
+            restartMineResetTask(mine);
+        }
+    }
+
+    boolean isResetGenerationActive(String mineId, long generation) {
+        AtomicLong current = resetGenerations.get(mineId);
+        return !closing && current != null && current.get() == generation;
+    }
+
+    void abortReset(String mineId, long generation) {
+        if (!isResetGenerationActive(mineId, generation)) return;
+        resetGenerations.get(mineId).incrementAndGet();
+        AtomicBoolean state = resetInProgress.get(mineId);
+        if (state != null) state.set(false);
+    }
+
+    private static long toTicks(long millis) {
+        return millis <= 0 ? 1L : (millis - 1L) / 50L + 1L;
     }
 }
