@@ -1,52 +1,70 @@
 <div align="center">
 <h1>SuperMines</h1>
 
-<a href="https://hangar.papermc.io/lijinhong11/SuperMines"><img alt="hangar" height="40" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg"></a>
-
-A free, open-source mine plugin for Paper servers.
+SuperMines is a free, open-source mine plugin for Paper servers. It combines automatic resets, rule-based generation, and in-game management to reduce the repetitive work of running mines.
 </div>
 
 [简体中文](README_CN.md)
 
-## Why SuperMines
+## Background & Pain Points
 
-- **Place every block with rules, not just randomness** — control generation by surface depth, Y-level, border, biome, and placeholders
-- **Go beyond full-mine resets with regenerable points** — run independent global ore points with weighted pools and treasure rewards
-- **Send drops straight to the inventory** — configure auto pickup per mine while allowing players to toggle their own setting
-- **Turn every block broken into progress** — level players by mined blocks with optional mcMMO / AuraSkills XP integration
-- **Manage it in-game instead of editing every file** — use GUIs for mines, block pools, generation conditions, and regen points
-- **Create both standard and spherical mines quickly** — define regular selections or use `/sm sphere` for a spherical mine
-- **Fit into common server stacks** — supports Folia, ItemsAdder / Oraxen / Nexo / CraftEngine blocks
+- **Limited generation rules**: many mine setups still revolve around a block-and-percentage pool, making it difficult to express surface, height, border, interior, or biome-based placement.
+- **Configuration-heavy management**: adding blocks, changing weights, or editing a mine often means editing YAML and reloading the plugin.
+- **Features spread across multiple plugins**: auto pickup, mining progression, treasure rewards, and individual respawn points are often handled separately, which spreads out configuration and permissions.
+- **Full-mine resets only**: a scheduled reset of the whole selection does not cover independent ores, resource points, or different respawn schedules very well.
+- **Limited extension points**: without combinable conditions and lifecycle events, it is harder to connect custom gameplay or let other plugins safely interact with mine operations.
 
-## Features
-* MiniPlaceholders/PlaceholdersAPI support
-* Folia support
-* ItemsAdder/Oraxen/Nexo/CraftEngine block support
-* Rank system
-* Allow/Disallow earn xp from mine blocks
-* Great I18n for players — Translation based on Client language
-   * Supported Translations: en-US fr-FR pt-BR zh-CN zh-TW
-   * *Some translations uses AI*, you can make a PR if you encounter some wrong usages about translations.
-* Item Serialization System using MittelLib
-* Create spherical mines via `/sm sphere <radius>`
-* Auto pickup — per-mine toggle + per-player toggle (`/sm auto-pickup`), items go directly to players' inventories
-* Broadcast control
-   * Set `mine.broadcast-reset-messages` in config.yml to set send scope for reset/warning messages
-   * You can set these messages to be seen by all players in the server or players in the mine
-* Generation conditions for per-block fill logic
-* GUI to edit mines
-* Global regen points — single blocks independent of mines that respawn on a delay, with weighted pools and independent treasure rewards
-* Event API — covers mine create/remove/edit/reset, block break, treasure, and regen point events for extensions
-* Generation conditions — control per-block generation logic, freely combinable
-   * surface / Y-level range / mine border / biome / placeholder (PlaceholdersAPI / MiniPlaceholders), and more
-* More coming soon…
+## Highlights
 
-## Road Map
+- **2 mine shapes**: cuboid selections and spherical mines, both reset on a configurable schedule.
+- **8 generation conditions**: surface, relative mine Y, border, biome, placeholder, plus AND, OR, and NOT combinations.
+- **Independent regenerable points**: each point has its own timer, weighted block pool, persisted countdown, and independent `0-100%` treasure chances.
+- **In-game management**: use GUIs to manage mines, block weights, generation conditions, treasures, ranks, and regen points.
+- **A smoother mining loop**: per-mine and per-player auto pickup, block-based progression, and optional mcMMO / AuraSkills XP.
+- **4 custom-block platforms**: ItemsAdder, Oraxen, Nexo, and CraftEngine.
 
-- Random events: lucky periods, double drops
-- Update check
+## Variables
 
-See the maintained [development roadmap](ROADMAP.md) for details.
+> `[parameter]` means an optional parameter 
+> `<parameter>` means a required parameter
+
+### PlaceholderAPI
+
+| Placeholder | Returns |
+| --- | --- |
+| `%supermines_bestrank[_player]%` | The highest rank display name; uses the current player when `player` is omitted |
+| `%supermines_biggestranklevel[_player]%` | The highest rank level; uses the current player when `player` is omitted |
+| `%supermines_minedblocks[_player]%` | The player's total mined blocks; uses the current player when `player` is omitted |
+| `%supermines_hasrank_<rank_id>[_player]%` | Whether the player has the rank, returning `true` or `false` |
+| `%supermines_mine_<mine_id>_<type>%` | Runtime data for a mine; see the type table below |
+
+### MiniPlaceholders
+
+| Placeholder | Returns |
+| --- | --- |
+| `<supermines_bestrank[:player]>` | The highest rank display name; uses the current player when `player` is omitted |
+| `<supermines_biggestranklevel[:player]>` | The highest rank level; uses the current player when `player` is omitted |
+| `<supermines_minedblocks[:player]>` | The player's total mined blocks; uses the current player when `player` is omitted |
+| `<supermines_hasrank:<rank_id>[:player]>` | Whether the player has the rank, returning `true` or `false` |
+| `<supermines_mine:<mine_id>:<type>>` | Runtime data for a mine; see the type table below |
+
+### Mine Variable Types
+
+| Type | Returns |
+| --- | --- |
+| `blocksbroken` | Blocks mined during the current reset cycle |
+| `resettime` | Formatted time until the next reset |
+| `blockpercent` | Percentage of blocks remaining in the mine |
+| `minedpercent` | Percentage of the mine that has been mined |
+| `totalblocks` | Total blocks in the mine |
+
+If the mine does not exist, the result is `MINE_NOT_FOUND`. An invalid type returns `INVALID_ARGUMENT`.
+
+## What's Next
+
+- Random mine events: lucky periods and double drops.
+- Update checks.
+- More regen point-related variables.
 
 ## Screenshots
 
@@ -64,7 +82,7 @@ See the maintained [development roadmap](ROADMAP.md) for details.
 
 ### Border Condition: Core
 
-The iron ore in the picture below restricted to the interior of the mine.
+The iron ore shown below is restricted to the interior of the mine.
 
 ![iron ore inside](./media/border_condition_core_in_mine.png)
 
