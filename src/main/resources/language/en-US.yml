@@ -232,6 +232,15 @@ gui:
       - "&7Radius: &b%radius%"
   mine-management:
     title: "&7&lMine Management &8&l- &7%mine%"
+    treasures:
+      name: "&6Mine Treasures"
+      lore:
+        - "&7Click to manage treasures for this mine"
+        - "&7Current: &b%amount%"
+      title: "&6&lMine Treasures"
+      chooser_title: "&6Choose a Treasure"
+      each_lore:
+        - "&7Right-click to remove from this mine"
     set_display_icon:
       name: "&6Set Display Icon"
       lore:

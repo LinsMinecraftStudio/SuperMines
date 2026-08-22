@@ -232,6 +232,15 @@ gui:
       - "&7Rayon : &b%radius%"
   mine-management:
     title: "&7&lGestion de la mine &8&l- &7%mine%"
+    treasures:
+      name: "&6Trésors de la mine"
+      lore:
+        - "&7Cliquez pour gérer les trésors de cette mine"
+        - "&7Actuels : &b%amount%"
+      title: "&6&lTrésors de la mine"
+      chooser_title: "&6Choisir un trésor"
+      each_lore:
+        - "&7Clic droit pour le retirer de cette mine"
     set_display_icon:
       name: "&6Définir l'icône d'affichage"
       lore:

@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class ListGUI {
+public final class ListGUI {
     public static <T> void openList(
             Player p,
             Component title,

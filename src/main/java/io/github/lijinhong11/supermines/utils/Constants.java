@@ -163,6 +163,15 @@ public class Constants {
             return item;
         };
 
+        public static final BiFunction<Player, Integer, ItemStack> MINE_TREASURES =
+                (p, amount) -> SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMessagedItem(
+                                Material.CHEST,
+                                "gui.mine-management.treasures",
+                                p,
+                                MessageReplacement.replace("%amount%", String.valueOf(amount)));
+
         public static final BiFunction<Player, Double, ItemStack> SET_WEIGHT = (p, i) -> SuperMines.getInstance()
                 .getLanguageManager()
                 .getMessagedItem(

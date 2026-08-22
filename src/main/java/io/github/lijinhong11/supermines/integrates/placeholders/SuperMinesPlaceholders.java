@@ -28,16 +28,8 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
 
     public SuperMinesPlaceholders() {
         registerPlaceholder("bestrank", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
-            PlayerData data =
-                    SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(viewer.getUniqueId());
-
-            return ComponentUtils.serialize(data.getRank().getBestValuedRank().getDisplayName());
-        });
-
-        registerPlaceholder("bestrank", PlaceholderType.GLOBAL, (viewer, target, args) -> {
-            if (args.length < 1) return null;
-
-            OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
+            OfflinePlayer p = args.length > 0 ? Bukkit.getOfflinePlayer(args[0]) : viewer;
+            if (p == null) return null;
 
             PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
 
@@ -45,16 +37,8 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
         });
 
         registerPlaceholder("biggestranklevel", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
-            PlayerData data =
-                    SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(viewer.getUniqueId());
-
-            return String.valueOf(data.getRank().getBiggestRankLevel());
-        });
-
-        registerPlaceholder("biggestranklevel", PlaceholderType.GLOBAL, (viewer, target, args) -> {
-            if (args.length < 1) return null;
-
-            OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
+            OfflinePlayer p = args.length > 0 ? Bukkit.getOfflinePlayer(args[0]) : viewer;
+            if (p == null) return null;
 
             PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
 
@@ -62,16 +46,8 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
         });
 
         registerPlaceholder("minedblocks", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
-            PlayerData data =
-                    SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(viewer.getUniqueId());
-
-            return String.valueOf(data.getMinedBlocks());
-        });
-
-        registerPlaceholder("minedblocks", PlaceholderType.GLOBAL, (viewer, target, args) -> {
-            if (args.length < 1) return null;
-
-            OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
+            OfflinePlayer p = args.length > 0 ? Bukkit.getOfflinePlayer(args[0]) : viewer;
+            if (p == null) return null;
 
             PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
 
@@ -81,17 +57,9 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
         registerPlaceholder("hasrank", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
             if (args.length < 1) return null;
 
-            PlayerData data =
-                    SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(viewer.getUniqueId());
-
-            return String.valueOf(data.getRank().matchRank(args[0]));
-        });
-
-        registerPlaceholder("hasrank", PlaceholderType.GLOBAL, (viewer, target, args) -> {
-            if (args.length < 2) return null;
-
             String rank = args[0];
-            OfflinePlayer p = Bukkit.getOfflinePlayer(args[1]);
+            OfflinePlayer p = args.length > 1 ? Bukkit.getOfflinePlayer(args[1]) : viewer;
+            if (p == null) return null;
 
             PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
 

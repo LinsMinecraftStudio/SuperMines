@@ -232,6 +232,15 @@ gui:
       - "&7半徑: &b%radius%"
   mine-management:
     title: "&7&l礦區管理 &8&l- &7%mine%"
+    treasures:
+      name: "&6礦區寶藏"
+      lore:
+        - "&7點擊管理此礦區的寶藏"
+        - "&7目前數量: &b%amount%"
+      title: "&6&l礦區寶藏"
+      chooser_title: "&6選擇寶藏"
+      each_lore:
+        - "&7右鍵從此礦區移除"
     set_display_icon:
       name: "&6設定圖示"
       lore:
