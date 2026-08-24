@@ -187,6 +187,9 @@ public class SuperMinesCommand {
 
                                             treasure.setDisplayName(displayName);
                                             SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .saveTreasure(treasure);
+                                            SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
                                                             sender,
@@ -216,6 +219,9 @@ public class SuperMinesCommand {
                                             }
 
                                             treasure.setWeight(weight);
+                                            SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .saveTreasure(treasure);
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
@@ -252,6 +258,9 @@ public class SuperMinesCommand {
                                             }
 
                                             treasure.setItemStack(itemStack);
+                                            SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .saveTreasure(treasure);
 
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
@@ -297,6 +306,9 @@ public class SuperMinesCommand {
                                             }
 
                                             treasure.addMatchedBlock(block);
+                                            SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .saveTreasure(treasure);
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
@@ -344,6 +356,9 @@ public class SuperMinesCommand {
 
                                             treasure.removeMatchedBlock(block);
                                             SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .saveTreasure(treasure);
+                                            SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
                                                             sender,
@@ -377,6 +392,9 @@ public class SuperMinesCommand {
                                                 return;
                                             }
                                             treasure.addConsoleCommand(command);
+                                            SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .saveTreasure(treasure);
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
@@ -578,6 +596,9 @@ public class SuperMinesCommand {
 
                                             rank.setLevel(level);
                                             SuperMines.getInstance()
+                                                    .getRankManager()
+                                                    .saveRank(rank);
+                                            SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
                                                             sender,
@@ -608,6 +629,9 @@ public class SuperMinesCommand {
                                             }
 
                                             rank.setDisplayName(displayName);
+                                            SuperMines.getInstance()
+                                                    .getRankManager()
+                                                    .saveRank(rank);
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(
@@ -664,6 +688,7 @@ public class SuperMinesCommand {
                                             }
                                         }),
                                 new CommandAPICommand("takeRank")
+                                        .withPermission(Constants.Permission.RANKS)
                                         .withArguments(
                                                 new EntitySelectorArgument.OnePlayer("player"),
                                                 new StringArgument("rankId")
@@ -1193,6 +1218,45 @@ public class SuperMinesCommand {
                         .withArguments(
                                 new StringArgument("id").includeSuggestions(ArgumentSuggestions.strings(getMineList())))
                         .executes((CommandExecutor) (sender, args) -> resetMine(sender, (String) args.get("id"))))
+                .withSubcommand(new CommandAPICommand("info")
+                        .withPermission(Constants.Permission.LIST)
+                        .withArguments(
+                                new StringArgument("id").includeSuggestions(ArgumentSuggestions.strings(getMineList())))
+                        .executes((sender, args) -> {
+                            Mine mine =
+                                    SuperMines.getInstance().getMineManager().getMine((String) args.get("id"));
+                            if (mine == null) {
+                                SuperMines.getInstance()
+                                        .getLanguageManager()
+                                        .sendMessage(sender, "command.mine-not-exists");
+                                return;
+                            }
+
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessages(
+                                            sender,
+                                            "command.mine-info",
+                                            MessageReplacement.replace("%mine%", mine.getRawDisplayName()),
+                                            MessageReplacement.replace(
+                                                    "%world%", mine.getWorld().getName()),
+                                            MessageReplacement.replace(
+                                                    "%reset%", String.valueOf(mine.getRegenerateSeconds())),
+                                            MessageReplacement.replace(
+                                                    "%blocks%",
+                                                    String.valueOf(
+                                                            mine.getArea().volume())),
+                                            MessageReplacement.replace(
+                                                    "%generated%",
+                                                    String.valueOf(mine.getBlockSpawnEntries()
+                                                            .size())),
+                                            MessageReplacement.replace(
+                                                    "%treasures%",
+                                                    String.valueOf(
+                                                            mine.getTreasures().size())),
+                                            MessageReplacement.replace(
+                                                    "%broken%", String.valueOf(mine.getBlocksBroken())));
+                        }))
                 .withSubcommand(new CommandAPICommand("list")
                         .withPermission(Constants.Permission.LIST)
                         .executes((sender, args) -> {
@@ -1321,6 +1385,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.setRequiredRankLevel(level);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -1358,6 +1423,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.addBlockSpawnEntry(block, weight);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -1391,6 +1457,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.removeBlockSpawnEntry(block);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -1417,6 +1484,7 @@ public class SuperMinesCommand {
 
                             mine.setDisplayName(
                                     Objects.requireNonNull(args.getByClass("displayName", Component.class)));
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -1451,6 +1519,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.setDisplayIcon(icon);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -1487,6 +1556,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.addAllowedRankId(rank.getId());
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -1523,6 +1593,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.removeAllowedRankId(rank.getId());
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -1557,6 +1628,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.getWarningSeconds().add(restSeconds);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance().getTaskMaker().startMineWarningTask(mine, restSeconds);
                             SuperMines.getInstance()
                                     .getLanguageManager()
@@ -1593,6 +1665,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.getWarningSeconds().remove(restSeconds);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance().getTaskMaker().cancelMineWarningTask(mine, restSeconds);
                             SuperMines.getInstance()
                                     .getLanguageManager()
@@ -1622,6 +1695,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.setRegenerateSeconds(resetTime);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             if (resetTime <= 0) {
                                 SuperMines.getInstance().getTaskMaker().cancelMineResetTask(mine);
                                 SuperMines.getInstance()
@@ -1658,6 +1732,7 @@ public class SuperMinesCommand {
 
                             Location loc = p.getLocation();
                             mine.setTeleportLocation(loc);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             String parsed = SuperMines.getInstance()
                                     .getLanguageManager()
                                     .getParsedBlockLocation(p, loc);
@@ -1749,6 +1824,7 @@ public class SuperMinesCommand {
                             }
 
                             mine.setOnlyFillAirWhenRegenerate(b);
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(
@@ -1773,8 +1849,16 @@ public class SuperMinesCommand {
                                     .getLanguageManager()
                                     .sendMessage(sender, "command.reload.safe-tip");
 
-                            SuperMines.getInstance().reloadConfig();
-                            SuperMines.getInstance().getLanguageManager().reload();
+                            SuperMines plugin = SuperMines.getInstance();
+                            plugin.getTaskMaker().reload();
+                            plugin.getTreasureManager().reloadData();
+                            plugin.getRankManager().reloadData();
+                            plugin.getRegenPointManager().reloadData();
+                            plugin.getMineManager().reloadData();
+                            plugin.reloadConfig();
+                            plugin.getLanguageManager().reload();
+                            plugin.getTaskMaker().startup();
+                            plugin.getRegenPointManager().startup();
 
                             SuperMines.getInstance().getLanguageManager().sendMessage(sender, "command.reload.success");
                         }))

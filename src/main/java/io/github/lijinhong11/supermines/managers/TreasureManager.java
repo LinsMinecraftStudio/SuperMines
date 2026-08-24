@@ -35,6 +35,12 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         }
     }
 
+    public synchronized void reloadData() {
+        treasures.clear();
+        reloadConfiguration();
+        load();
+    }
+
     @Override
     protected Treasure getObject(@NotNull ConfigurationSection section) {
         String id = section.getCurrentPath();
@@ -54,16 +60,6 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
             ConfigurationSection itemSection = section.getConfigurationSection("item");
             if (itemSection != null) {
                 item = MittelItem.readFromSection(itemSection).get();
-            }
-        } else if (section.contains("itemStack")) {
-            item = section.getObject("itemStack", byte[].class) == null
-                    ? null
-                    : ItemStack.deserializeBytes(section.getObject("itemStack", byte[].class));
-            if (item != null) {
-                ConfigurationSection cs = section.createSection("item");
-                new MittelItem(item).write(cs);
-
-                section.set("itemStack", null);
             }
         }
 
@@ -110,6 +106,11 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         }
 
         treasures.put(treasure.getId(), treasure);
+        super.putObject(treasure.getId(), treasure);
+    }
+
+    public void saveTreasure(@NotNull Treasure treasure) {
+        Preconditions.checkArgument(treasures.get(treasure.getId()) == treasure, "treasure is not managed");
         super.putObject(treasure.getId(), treasure);
     }
 

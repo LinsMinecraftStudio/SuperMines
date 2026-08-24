@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractFileObjectManager<T> {
     private final File configFile;
-    private final YamlConfiguration config;
+    private YamlConfiguration config;
 
     protected AbstractFileObjectManager(@NotNull String configPath) {
         if (Strings.isNullOrEmpty(configPath)) {
@@ -86,6 +86,10 @@ public abstract class AbstractFileObjectManager<T> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    protected final void reloadConfiguration() {
+        this.config = YamlConfiguration.loadConfiguration(configFile);
     }
 
     protected abstract void putObject(@NotNull ConfigurationSection section, T object);

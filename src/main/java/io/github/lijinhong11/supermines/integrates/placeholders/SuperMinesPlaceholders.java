@@ -60,7 +60,7 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
             if (p == null) return null;
 
             PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
-            return String.valueOf(data.getTreasuresGot(args[1]));
+            return String.valueOf(data.getTreasuresGot(args[0]));
         });
 
         registerPlaceholder("hasrank", PlaceholderType.AUDIENCE, (viewer, target, args) -> {

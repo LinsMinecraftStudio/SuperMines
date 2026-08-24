@@ -53,7 +53,6 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
     private final Map<String, ScheduledTask> respawnTasks = new ConcurrentHashMap<>();
     private final Map<String, AtomicLong> respawnGenerations = new ConcurrentHashMap<>();
     private final Set<String> deferredPointIds = ConcurrentHashMap.newKeySet();
-    private ScheduledTask pendingSave;
     private volatile boolean closing;
 
     public RegenPointManager() {
@@ -85,6 +84,17 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
             points.put(object.getId(), object);
             byLocation.put(locationKey, object);
         }
+    }
+
+    public synchronized void reloadData() {
+        cancelAllRespawns();
+        points.clear();
+        byLocation.clear();
+        deferredPointIds.clear();
+        respawnGenerations.clear();
+        closing = false;
+        reloadConfiguration();
+        load();
     }
 
     /**
@@ -206,10 +216,6 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
     public synchronized void saveAndClose() {
         closing = true;
         cancelAllRespawns();
-        if (pendingSave != null) {
-            pendingSave.cancel();
-            pendingSave = null;
-        }
         for (RegenPoint point : points.values()) {
             super.writeObject(point.getId(), point);
         }
@@ -299,7 +305,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         Preconditions.checkArgument(points.get(point.getId()) == point, "point is not managed by this manager");
 
         super.writeObject(point.getId(), point);
-        scheduleSave();
+        super.saveConfig();
     }
 
     public synchronized void setRespawnSeconds(@NotNull RegenPoint point, int seconds) {
@@ -504,24 +510,6 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         }
         respawnTasks.clear();
         respawnGenerations.values().forEach(AtomicLong::incrementAndGet);
-    }
-
-    private synchronized void scheduleSave() {
-        if (closing) return;
-        if (pendingSave != null) {
-            return;
-        }
-
-        pendingSave = Bukkit.getGlobalRegionScheduler()
-                .runDelayed(
-                        SuperMines.getInstance(),
-                        task -> {
-                            synchronized (this) {
-                                pendingSave = null;
-                                super.saveConfig();
-                            }
-                        },
-                        20L);
     }
 
     private long currentGeneration(RegenPoint point) {

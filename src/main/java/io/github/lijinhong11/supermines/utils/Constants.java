@@ -4,6 +4,7 @@ import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.Identified;
+import io.github.lijinhong11.supermines.api.mine.Treasure;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -187,6 +188,20 @@ public class Constants {
                     .getMsgComponent(p, "gui.treasure-management.matched_materials.title")));
             return item;
         };
+
+        public static final BiFunction<Player, Treasure, ItemStack> TREASURE_COMMANDS =
+                (p, t) -> SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMessagedItem(
+                                Material.PAPER,
+                                "gui.treasure-management.set_command.item",
+                                p,
+                                MessageReplacement.replace(
+                                        "%commands%",
+                                        String.valueOf(
+                                                t.getConsoleCommands() == null
+                                                        ? 0
+                                                        : t.getConsoleCommands().size())));
 
         public static final BiFunction<Player, Integer, ItemStack> SET_RANK_LEVEL = (p, i) -> SuperMines.getInstance()
                 .getLanguageManager()

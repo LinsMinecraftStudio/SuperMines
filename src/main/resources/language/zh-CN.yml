@@ -120,6 +120,14 @@ command:
     separator: "&7, "
     color: "&b"
     ordered: "&e%order%. &a%content%"
+  mine-info:
+    - "&6矿区: &b%mine%"
+    - "&7世界: &a%world%"
+    - "&7重置间隔: &b%reset% 秒"
+    - "&7方块总数: &b%blocks%"
+    - "&7生成方块种类: &b%generated%"
+    - "&7宝藏数量: &b%treasures%"
+    - "&7已挖方块: &b%broken%"
   teleport:
     set: "&a矿区 &b%mine% &a的传送点已设为 &d%loc%"
     no-loc: "&c未设置传送点，请联系管理员。"
@@ -418,6 +426,14 @@ gui:
       title: "&b匹配方块"
       each_lore:
         - "&7点击移除"
+    set_command:
+      item:
+        name: "&d宝藏命令"
+        lore:
+          - "&7命令数量: &b%commands%"
+          - "&7点击编辑控制台命令"
+      title: "&d宝藏命令"
+      label: "每行输入一条控制台命令"
   ranks:
     title: "&b&l等级"
     info:

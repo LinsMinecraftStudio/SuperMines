@@ -46,7 +46,7 @@ public class PlayerDataManager extends AbstractDatabaseObjectManager<PlayerData>
         PlayerData playerData = getPlayerData(playerUUID);
 
         if (playerData == null) {
-            boolean autoEnable = SuperMines.getInstance().getConfig().getBoolean("auto-pickup.auto-enable", false);
+            boolean autoEnable = SuperMines.getInstance().getConfig().getBoolean("mine.auto-pickup.auto-enable", false);
             playerData = new PlayerData(
                     Bukkit.getOfflinePlayer(playerUUID).getName(),
                     playerUUID,

@@ -1,6 +1,7 @@
 package io.github.lijinhong11.supermines.gui;
 
 import com.google.common.base.Preconditions;
+import io.github.lijinhong11.mittellib.gui.dialog.impl.input.MultiLineTextInputDialog;
 import io.github.lijinhong11.mittellib.gui.inventory.MittelGUI;
 import io.github.lijinhong11.mittellib.gui.inventory.choosers.MaterialChooser;
 import io.github.lijinhong11.mittellib.gui.inventory.impl.ChestGUI;
@@ -21,6 +22,7 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import io.github.lijinhong11.supermines.utils.Constants;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -107,6 +109,7 @@ public final class GuiManager {
                 ButtonItem.clickable(Constants.Items.SET_DISPLAY_ICON.apply(p, mine.getDisplayIcon()), (g, e) -> {
                     MaterialChooser.openVanillaChooser(p, chosen -> {
                         mine.setDisplayIcon(chosen.toItem().getType());
+                        SuperMines.getInstance().getMineManager().saveMine(mine);
                         reopen.run();
                     });
                     return false;
@@ -124,6 +127,7 @@ public final class GuiManager {
                                     .sendMessage(p, "gui.mine-management.set_regen_seconds.prompt");
                             handleIntegerInput(p, result -> {
                                 mine.setRegenerateSeconds(result);
+                                SuperMines.getInstance().getMineManager().saveMine(mine);
                                 SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
                                 reopen.run();
                             });
@@ -137,6 +141,7 @@ public final class GuiManager {
                         Constants.Items.ONLY_FILL_AIR.apply(p, mine.isOnlyFillAirWhenRegenerate()), (g, e) -> {
                             if (!checkPermission(p, Constants.Permission.SET_ONLY_FILL_AIR)) return false;
                             mine.setOnlyFillAirWhenRegenerate(!mine.isOnlyFillAirWhenRegenerate());
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
                             reopen.run();
                             return false;
                         }));
@@ -153,6 +158,7 @@ public final class GuiManager {
                                     .sendMessage(p, "gui.mine-management.set_required_lvl.prompt");
                             handleIntegerInput(p, result -> {
                                 mine.setRequiredRankLevel(result);
+                                SuperMines.getInstance().getMineManager().saveMine(mine);
                                 SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
                                 reopen.run();
                             });
@@ -171,6 +177,7 @@ public final class GuiManager {
                 slot(4, 7), ButtonItem.clickable(Constants.Items.AUTO_PICKUP.apply(p, mine.isAutoPickup()), (g, e) -> {
                     if (!checkPermission(p, Constants.Permission.SET_AUTO_PICKUP)) return false;
                     mine.setAutoPickup(!mine.isAutoPickup());
+                    SuperMines.getInstance().getMineManager().saveMine(mine);
                     reopen.run();
                     return false;
                 }));
@@ -300,9 +307,8 @@ public final class GuiManager {
     }
 
     private static void addBlockSpawnEntry(Player p, Mine mine, PackedBlock material) {
-        handleDoubleInput(
+        handleWeightInput(
                 p,
-                Constants.WEIGHT_MIN,
                 result -> {
                     mine.addBlockSpawnEntry(material, result);
                     SuperMines.getInstance().getMineManager().saveMine(mine);
@@ -346,11 +352,11 @@ public final class GuiManager {
                     SuperMines.getInstance()
                             .getLanguageManager()
                             .sendMessage(p, "gui.treasure-management.set_weight.prompt");
-                    handleDoubleInput(
+                    handleWeightInput(
                             p,
-                            Constants.WEIGHT_MIN,
                             result -> {
                                 treasure.setWeight(result);
+                                SuperMines.getInstance().getTreasureManager().saveTreasure(treasure);
                                 reopen.run();
                             },
                             "gui.input.invalid-number");
@@ -364,6 +370,28 @@ public final class GuiManager {
         }));
 
         putTreasureItemStack(gui, p, treasure);
+
+        gui.putItem(slot(4, 3), ButtonItem.clickable(Constants.Items.TREASURE_COMMANDS.apply(p, treasure), (g, e) -> {
+            MultiLineTextInputDialog dialog = MultiLineTextInputDialog.create(
+                    SuperMines.getInstance()
+                            .getLanguageManager()
+                            .getMsgComponent(p, "gui.treasure-management.set_command.title"),
+                    SuperMines.getInstance()
+                            .getLanguageManager()
+                            .getMsgComponent(p, "gui.treasure-management.set_command.label"),
+                    ls -> {
+                        treasure.setConsoleCommands(ls);
+                        SuperMines.getInstance().getTreasureManager().saveTreasure(treasure);
+                        openTreasureManagementGui(p, treasure);
+                    },
+                    2500,
+                    25,
+                    0,
+                    treasure.getConsoleCommands() == null ? new ArrayList<>() : treasure.getConsoleCommands());
+
+            dialog.show(p);
+            return false;
+        }));
 
         gui.open(p);
     }
@@ -417,6 +445,7 @@ public final class GuiManager {
                 ItemStack item = p.getItemOnCursor();
                 if (!item.getType().isAir()) {
                     t.setItemStack(item);
+                    SuperMines.getInstance().getTreasureManager().saveTreasure(t);
                     p.setItemOnCursor(null);
                     putTreasureItemStack(gui, p, t);
                 }
@@ -440,10 +469,14 @@ public final class GuiManager {
                     item.editMeta(meta -> meta.lore(lore));
                     return item;
                 },
-                treasure::removeMatchedBlock,
+                block -> {
+                    treasure.removeMatchedBlock(block);
+                    SuperMines.getInstance().getTreasureManager().saveTreasure(treasure);
+                },
                 () -> MaterialChooser.openUsableBlockChooser(p, chosen -> {
                     if (!treasure.getMatchedBlocks().contains(chosen)) {
                         treasure.addMatchedBlock(chosen);
+                        SuperMines.getInstance().getTreasureManager().saveTreasure(treasure);
                     }
                     openMatchedMaterials(p, treasure);
                 }),
@@ -483,6 +516,7 @@ public final class GuiManager {
                     SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.rank-management.setlevel.prompt");
                     handleIntegerInput(p, result -> {
                         rank.setLevel(result);
+                        SuperMines.getInstance().getRankManager().saveRank(rank);
                         reopen.run();
                     });
                     return false;
@@ -631,9 +665,8 @@ public final class GuiManager {
                         p,
                         "gui.regen-point-management.blocks.weight_prompt",
                         MessageReplacement.replace("%block%", block.getId()));
-        handleDoubleInput(
+        handleWeightInput(
                 p,
-                Constants.WEIGHT_MIN,
                 weight -> {
                     point.addBlock(block, weight);
                     SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
@@ -706,9 +739,8 @@ public final class GuiManager {
                         p,
                         "gui.regen-point-management.rewards.chance_prompt",
                         MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
-        handleDoubleInput(
+        handleWeightInput(
                 p,
-                Constants.WEIGHT_MIN,
                 chance -> {
                     if (chance > 100) {
                         SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.input.invalid-percent");
@@ -859,12 +891,11 @@ public final class GuiManager {
         });
     }
 
-    private static void handleDoubleInput(Player p, double min, Consumer<Double> onSuccess, String errorKey) {
-        handleDoubleInput(p, min, onSuccess, errorKey, null);
+    private static void handleWeightInput(Player p, Consumer<Double> onSuccess, String errorKey) {
+        handleWeightInput(p, onSuccess, errorKey, null);
     }
 
-    private static void handleDoubleInput(
-            Player p, double min, Consumer<Double> onSuccess, String errorKey, Runnable recovery) {
+    private static void handleWeightInput(Player p, Consumer<Double> onSuccess, String errorKey, Runnable recovery) {
         ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
             if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
                 if (recovery != null) SuperMines.getInstance().getTaskMaker().runSync(recovery);
@@ -873,7 +904,7 @@ public final class GuiManager {
 
             try {
                 double value = Double.parseDouble(result);
-                if (value < min) {
+                if (value < Constants.WEIGHT_MIN) {
                     throw new NumberFormatException();
                 }
 
@@ -906,8 +937,15 @@ public final class GuiManager {
                     return;
                 }
                 object.setDisplayName(ComponentUtils.deserialize(result));
-                if (object instanceof RegenPoint point) {
-                    SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+
+                switch (object) {
+                    case Mine mine -> SuperMines.getInstance().getMineManager().saveMine(mine);
+                    case Treasure treasure ->
+                        SuperMines.getInstance().getTreasureManager().saveTreasure(treasure);
+                    case Rank rank -> SuperMines.getInstance().getRankManager().saveRank(rank);
+                    case RegenPoint point ->
+                        SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+                    default -> {}
                 }
                 SuperMines.getInstance().getTaskMaker().runSync(reopen);
             });

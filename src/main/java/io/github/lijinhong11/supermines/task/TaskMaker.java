@@ -191,6 +191,12 @@ public class TaskMaker {
         resetInProgress.clear();
     }
 
+    public void reload() {
+        close();
+        resetGenerations.clear();
+        closing = false;
+    }
+
     boolean tryBeginReset(String mineId, long generation) {
         if (closing || !isResetGenerationActive(mineId, generation)) return false;
         return resetInProgress

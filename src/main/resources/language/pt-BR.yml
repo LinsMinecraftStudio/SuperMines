@@ -120,6 +120,14 @@ command:
     separator: "&7, "
     color: "&b"
     ordered: "&e%order%. &a%content%"
+  mine-info:
+    - "&6Mina: &b%mine%"
+    - "&7Mundo: &a%world%"
+    - "&7Intervalo de reset: &b%reset%s"
+    - "&7Blocos totais: &b%blocks%"
+    - "&7Tipos de bloco: &b%generated%"
+    - "&7Tesouros: &b%treasures%"
+    - "&7Blocos minerados: &b%broken%"
   teleport:
     set: "&aO local de teleporte da mina &b%mine% &afoi definido para &d%loc%"
     no-loc: "&cO local de teleporte não está definido. Contate um operador."
@@ -418,6 +426,14 @@ gui:
       title: "&bMateriais Correspondentes"
       each_lore:
         - "&7Clique para remover"
+    set_command:
+      item:
+        name: "&dComandos do tesouro"
+        lore:
+          - "&7Comandos: &b%commands%"
+          - "&7Clique para editar os comandos do console"
+      title: "&dComandos do tesouro"
+      label: "Digite um comando de console por linha"
   ranks:
     title: "&b&lCargos"
     info:

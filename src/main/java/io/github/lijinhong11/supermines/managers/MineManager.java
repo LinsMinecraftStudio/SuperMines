@@ -43,6 +43,13 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         }
     }
 
+    public synchronized void reloadData() {
+        mines.clear();
+        deferredMineIds.clear();
+        reloadConfiguration();
+        load();
+    }
+
     @Override
     protected Mine getObject(@NotNull ConfigurationSection section) {
         String id = section.getCurrentPath();

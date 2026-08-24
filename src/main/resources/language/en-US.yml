@@ -120,6 +120,14 @@ command:
     separator: "&7, "
     color: "&b"
     ordered: "&e%order%. &a%content%"
+  mine-info:
+    - "&6Mine: &b%mine%"
+    - "&7World: &a%world%"
+    - "&7Reset interval: &b%reset%s"
+    - "&7Total blocks: &b%blocks%"
+    - "&7Generated block types: &b%generated%"
+    - "&7Treasures: &b%treasures%"
+    - "&7Blocks broken: &b%broken%"
   teleport:
     set: "&aThe teleport location of mine &b%mine% &ahas been set to &d%loc%"
     no-loc: "&cThe teleport location is undefined, please contact operators for details."
@@ -418,6 +426,14 @@ gui:
       title: "&bMatched Materials"
       each_lore:
         - "&7Click to remove"
+    set_command:
+      item:
+        name: "&dTreasure Commands"
+        lore:
+          - "&7Commands: &b%commands%"
+          - "&7Click to edit console commands"
+      title: "&dTreasure Commands"
+      label: "Enter one console command per line"
   ranks:
     title: "&b&lRanks"
     info:

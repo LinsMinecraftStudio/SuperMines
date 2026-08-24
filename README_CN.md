@@ -48,7 +48,7 @@ SuperMines 是一款免费开源的 Paper 矿区插件，用自动重置、条�
 | `<supermines_biggestranklevel[:玩家名]>` | 拥有的最高等级数值；省略玩家名时读取当前玩家 |
 | `<supermines_minedblocks[:玩家名]>` | 累计挖掘方块数；省略玩家名时读取当前玩家 |
 | `<supermines_hasrank:<等级ID>[:玩家名]>` | 是否拥有指定等级；省略玩家名时读取当前玩家，返回 `true` / `false` |
-| `<supermines_treasures:got:<宝藏ID>[:玩家名]>` | 指定宝藏获取次数；省略玩家名时读取当前玩家 |
+| `<supermines_treasures_got:<宝藏ID>[:玩家名]>` | 指定宝藏获取次数；省略玩家名时读取当前玩家 |
 | `<supermines_mine:<矿区ID>:<类型>>` | 返回指定矿区的运行数据，类型见下表 |
 
 ### 注意

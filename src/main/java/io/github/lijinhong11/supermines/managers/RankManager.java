@@ -1,5 +1,6 @@
 package io.github.lijinhong11.supermines.managers;
 
+import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
@@ -25,6 +26,12 @@ public class RankManager extends AbstractFileObjectManager<Rank> {
         for (Rank object : super.getAll()) {
             ranks.put(object.getId(), object);
         }
+    }
+
+    public synchronized void reloadData() {
+        ranks.clear();
+        reloadConfiguration();
+        load();
     }
 
     @Override
@@ -53,6 +60,11 @@ public class RankManager extends AbstractFileObjectManager<Rank> {
         }
 
         ranks.put(rank.getId(), rank);
+        super.putObject(rank.getId(), rank);
+    }
+
+    public void saveRank(@NotNull Rank rank) {
+        Preconditions.checkArgument(ranks.get(rank.getId()) == rank, "rank is not managed");
         super.putObject(rank.getId(), rank);
     }
 
