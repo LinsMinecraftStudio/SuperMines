@@ -8,6 +8,7 @@ import io.github.lijinhong11.mittellib.gui.inventory.choosers.MaterialChooser;
 import io.github.lijinhong11.mittellib.gui.inventory.impl.ChestGUI;
 import io.github.lijinhong11.mittellib.gui.inventory.impl.PaginatedChestGUI;
 import io.github.lijinhong11.mittellib.gui.inventory.item.ButtonItem;
+import io.github.lijinhong11.mittellib.gui.inventory.item.MittelGUIItem;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
@@ -36,6 +37,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class GuiManager {
     static final String CANCEL_COMMAND = "##CANCEL";
@@ -319,12 +321,14 @@ public final class GuiManager {
     }
 
     public static void openTreasureList(Player p) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui.treasures.title", () -> openMain(p));
-
-        gui.addPageItem(ButtonItem.clickable(Constants.Items.COPY_TREASURE.apply(p), (g, e) -> {
-            openTreasureCopySource(p);
-            return false;
-        }));
+        PaginatedChestGUI gui = buildPagedGUI(
+                p,
+                "gui.treasures.title",
+                () -> openMain(p),
+                ButtonItem.clickable(Constants.Items.COPY_TREASURE.apply(p), (g, e) -> {
+                    openTreasureCopySource(p);
+                    return false;
+                }));
 
         for (Treasure treasure : SuperMines.getInstance().getTreasureManager().getAllTreasures()) {
             ItemStack item = new ItemStack(Material.CHEST);
@@ -526,12 +530,14 @@ public final class GuiManager {
     }
 
     public static void openRankList(Player p) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui.ranks.title", () -> openMain(p));
-
-        gui.addPageItem(ButtonItem.clickable(Constants.Items.COPY_RANK.apply(p), (g, e) -> {
-            openRankCopySource(p);
-            return false;
-        }));
+        PaginatedChestGUI gui = buildPagedGUI(
+                p,
+                "gui.ranks.title",
+                () -> openMain(p),
+                ButtonItem.clickable(Constants.Items.COPY_RANK.apply(p), (g, e) -> {
+                    openRankCopySource(p);
+                    return false;
+                }));
 
         for (Rank rank : SuperMines.getInstance().getRankManager().getAllRanks()) {
             ItemStack item = new ItemStack(Material.NAME_TAG);
@@ -539,6 +545,7 @@ public final class GuiManager {
                 meta.displayName(rank.getDisplayName());
                 meta.lore(getRankInfo(p, rank));
             });
+
             gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
                 openRankManagementGui(p, rank);
                 return false;
@@ -710,13 +717,13 @@ public final class GuiManager {
         }));
 
         gui.putItem(
-                slot(4, 1),
+                slot(5, 2),
                 ButtonItem.clickable(
                         SuperMines.getInstance()
                                 .getLanguageManager()
                                 .getMessagedItem(
                                         Material.GOLDEN_APPLE,
-                                        "gui.regen-point-management.periodic_rewards.name",
+                                        "gui.regen-point-management.periodic_rewards",
                                         p,
                                         MessageReplacement.replace(
                                                 "%amount%",
@@ -1052,14 +1059,24 @@ public final class GuiManager {
 
     /* Helper methods */
     static PaginatedChestGUI buildPagedGUI(Player p, String titleKey, Runnable back) {
+        return buildPagedGUI(p, titleKey, back, null);
+    }
+
+    static PaginatedChestGUI buildPagedGUI(Player p, String titleKey, Runnable back, @Nullable MittelGUIItem copyItem) {
         MittelGUI.PagedChestBuilder builder = MittelGUI.pagedChestBuilder()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, titleKey))
                 .size(54)
-                .structure("XXXXXXXXX", "XCCCCCCCX", "XCCCCCCCX", "XCCCCCCCX", "XCCCCCCCX", "XXXPXNXBX")
+                .structure("XXXXXXXXX", "XCCCCCCCX", "XCCCCCCCX", "XCCCCCCCX", "XCCCCCCCX", "XKXPXNXBX")
                 .content('C')
                 .previousPage('P', ButtonItem.unclickable(Constants.Items.PREVIOUS_PAGE.apply(p)))
                 .nextPage('N', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))
                 .bind('X', ButtonItem.BACKGROUND);
+
+        if (copyItem != null) {
+            builder.bind('K', copyItem);
+        } else {
+            builder.bind('K', ButtonItem.BACKGROUND);
+        }
 
         if (back != null) {
             builder = builder.bind('B', ButtonItem.clickable(Constants.Items.BACK.apply(p), (g, e) -> {

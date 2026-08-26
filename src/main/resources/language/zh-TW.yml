@@ -135,13 +135,6 @@ command:
     success-other: "&a已將玩家 &b%player% &a傳送到礦區 &d%mine%&a。"
     failed: "&c傳送失敗。"
   treasures:
-    copy:
-      name: "&d複製寶藏"
-      lore:
-        - "&7點擊複製現有寶藏"
-    copy_source_title: "&6選擇要複製的寶藏"
-    copy_title: "&6複製寶藏"
-    copy_label: "請輸入新的寶藏 ID"
     no-item-in-hand: "&c你必須手持物品！"
     set-item: "&a寶藏 &d%treasure% &a的物品已更新"
     set-weight: "&a寶藏 &d%treasure% &a的權重設為 &b%weight%"
@@ -415,6 +408,13 @@ gui:
     info:
       - "&7權重: &e%weight%"
       - "&7匹配方塊數量: &a%matched_materials%"
+    copy:
+      name: "&d複製寶藏"
+      lore:
+        - "&7點擊複製現有寶藏"
+    copy_source_title: "&6選擇要複製的寶藏"
+    copy_title: "&6複製寶藏"
+    copy_label: "請輸入新的寶藏 ID"
   treasure-management:
     title: "&e&l寶藏管理 &8&l- &e%treasure%"
     set_weight:

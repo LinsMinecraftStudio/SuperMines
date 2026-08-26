@@ -43,7 +43,7 @@ public final class PlayerData {
     private Map<String, Integer> regenPointMiningCounts = new HashMap<>();
 
     @Column(name = "regen_point_total_mining_counts")
-    private Map<String, Integer> regenPointTotalMiningCounts = new HashMap<>();
+    private Map<String, Long> regenPointTotalMiningCounts = new HashMap<>();
 
     public PlayerData() {}
 
@@ -108,16 +108,16 @@ public final class PlayerData {
 
     public int addRegenPointMining(@NotNull String pointId) {
         return regenPointMiningCounts.compute(
-                pointId, (key, value) -> value == null || value == Integer.MAX_VALUE ? Integer.MAX_VALUE : value + 1);
+                pointId, (k, value) -> value == null || value == Integer.MAX_VALUE ? 1 : value + 1);
     }
 
     public void addRegenPointTotalMining(@NotNull String pointId) {
         regenPointTotalMiningCounts.compute(
-                pointId, (key, value) -> value == null || value == Integer.MAX_VALUE ? Integer.MAX_VALUE : value + 1);
+                pointId, (k, value) -> value == null || value == Integer.MAX_VALUE ? 1 : value + 1);
     }
 
-    public int getRegenPointTotalMining(@NotNull String pointId) {
-        return regenPointTotalMiningCounts.getOrDefault(pointId, 0);
+    public long getRegenPointTotalMining(@NotNull String pointId) {
+        return regenPointTotalMiningCounts.getOrDefault(pointId, 0L);
     }
 
     public void resetRegenPointMining(@NotNull String pointId) {

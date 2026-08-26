@@ -5,10 +5,8 @@ import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.Identified;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -246,17 +244,6 @@ public class Constants {
         public static final Function<Player, ItemStack> TP_TO_POINT = p -> SuperMines.getInstance()
                 .getLanguageManager()
                 .getMessagedItem(Material.ENDER_PEARL, "gui.regen-point-management.tp", p);
-
-        private static ItemStack createItem(Material material, Component displayName, Component... lore) {
-            ItemStack item = new ItemStack(material);
-            item.editMeta(meta -> {
-                meta.displayName(displayName);
-                if (lore.length > 0) {
-                    meta.lore(List.of(lore));
-                }
-            });
-            return item;
-        }
 
         private Items() {}
     }

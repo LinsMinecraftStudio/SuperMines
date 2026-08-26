@@ -135,13 +135,6 @@ command:
     success-other: "&aTeleported &b%player% &ato mine &d%mine%&a."
     failed: "&cTeleport failed."
   treasures:
-    copy:
-      name: "&dCopy Treasure"
-      lore:
-        - "&7Click to copy an existing treasure"
-    copy_source_title: "&6Choose a treasure to copy"
-    copy_title: "&6Copy Treasure"
-    copy_label: "Enter the new treasure ID"
     no-item-in-hand: "&cYou must hold an item in your hand!"
     set-item: "&aThe treasure &d%treasure% &ahas been changed"
     set-weight: "&aThe weight of treasure &d%treasure% &ais set to &b%weight%"
@@ -415,6 +408,13 @@ gui:
     info:
       - "&7Weight: &e%weight%"
       - "&7Matched Materials Amount: &a%matched_materials%"
+    copy:
+      name: "&dCopy Treasure"
+      lore:
+        - "&7Click to copy an existing treasure"
+    copy_source_title: "&6Choose a treasure to copy"
+    copy_title: "&6Copy Treasure"
+    copy_label: "Enter the new treasure ID"
   treasure-management:
     title: "&e&lTreasure Management &8&l- &e%treasure%"
     set_weight:

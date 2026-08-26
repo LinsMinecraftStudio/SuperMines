@@ -135,13 +135,6 @@ command:
     success-other: "&aTéléportation de &b%player% &avers la mine &d%mine% &aréussie."
     failed: "&cÉchec de la téléportation."
   treasures:
-    copy:
-      name: "&dCopier le trésor"
-      lore:
-        - "&7Cliquez pour copier un trésor existant"
-    copy_source_title: "&6Choisir un trésor à copier"
-    copy_title: "&6Copier le trésor"
-    copy_label: "Saisissez le nouvel identifiant du trésor"
     no-item-in-hand: "&cVous devez tenir un objet en main !"
     set-item: "&aLe trésor &d%treasure% &aa été modifié"
     set-weight: "&aLe poids de &d%treasure% &aest défini sur &b%weight%"
@@ -415,6 +408,13 @@ gui:
     info:
       - "&7Poids : &e%weight%"
       - "&7Nombre de matériaux correspondants : &a%matched_materials%"
+    copy:
+      name: "&dCopier le trésor"
+      lore:
+        - "&7Cliquez pour copier un trésor existant"
+    copy_source_title: "&6Choisir un trésor à copier"
+    copy_title: "&6Copier le trésor"
+    copy_label: "Saisissez le nouvel identifiant du trésor"
   treasure-management:
     title: "&e&lGestion du trésor &8&l- &e%treasure%"
     set_weight:
