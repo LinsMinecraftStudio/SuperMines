@@ -135,6 +135,13 @@ command:
     success-other: "&a已將玩家 &b%player% &a傳送到礦區 &d%mine%&a。"
     failed: "&c傳送失敗。"
   treasures:
+    copy:
+      name: "&d複製寶藏"
+      lore:
+        - "&7點擊複製現有寶藏"
+    copy_source_title: "&6選擇要複製的寶藏"
+    copy_title: "&6複製寶藏"
+    copy_label: "請輸入新的寶藏 ID"
     no-item-in-hand: "&c你必須手持物品！"
     set-item: "&a寶藏 &d%treasure% &a的物品已更新"
     set-weight: "&a寶藏 &d%treasure% &a的權重設為 &b%weight%"
@@ -142,6 +149,8 @@ command:
     create:
       exists: "&c該 ID 的寶藏已存在！"
       success: "&a寶藏 &d%treasure% &a建立成功！"
+      copy:
+        success: "&a寶藏 &d%treasure% &a複製成功。"
     remove:
       success: "&a寶藏 &d%treasure% &a已刪除！"
     matched_blocks:
@@ -172,6 +181,7 @@ command:
       create:
         exists: "&c該 ID 的等級已存在！"
         success: "&a等級 &b%rank% &a建立成功！"
+        copy: "&a等級 &b%rank% &a複製成功。"
       remove:
         success: "&a等級 &b%rank% &a已刪除！"
   regenpoints:
@@ -435,6 +445,13 @@ gui:
       title: "&d寶藏指令"
       label: "每行輸入一條控制台指令"
   ranks:
+    copy:
+      name: "&d複製等級"
+      lore:
+        - "&7點擊複製現有等級"
+    copy_source_title: "&6選擇要複製的等級"
+    copy_title: "&6複製等級"
+    copy_label: "請輸入新的等級 ID"
     title: "&b&l等級"
     info:
       - "&7等級: &b%level%"
@@ -490,6 +507,26 @@ gui:
       chance_prompt: "&e輸入寶藏 &d%treasure% &e的獨立機率 (0-100)：&b(輸入 &6##CANCEL &b取消)"
       each_lore:
         - "&7獨立機率: &e%chance%%"
+        - "&7左鍵修改機率"
+        - "&7右鍵移除"
+    periodic_rewards:
+      name: "&6週期獎勵"
+      lore:
+        - "&7按玩家在此礦點的挖掘數發放獎勵"
+        - "&7已設定獎勵: &b%amount%"
+      title: "&6&l週期獎勵"
+      chooser_title: "&6選擇週期獎勵"
+      interval:
+        name: "&b挖掘週期"
+        lore:
+          - "&7每週期挖掘數: &e%blocks%"
+          - "&7本週期已挖: &e%mined%"
+          - "&7距離下週期還需: &e%remaining%"
+          - "&7點擊修改"
+      interval_prompt: "&e輸入每週期所需挖掘數: &b(輸入 &6##CANCEL &b取消)"
+      chance_prompt: "&e輸入 &d%treasure% &e的週期獎勵機率 (0-100): &b(輸入 &6##CANCEL &b取消)"
+      each_lore:
+        - "&7機率: &e%chance%%"
         - "&7左鍵修改機率"
         - "&7右鍵移除"
     respawn_now:

@@ -50,7 +50,7 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         }
 
         double weight = section.contains("weight") ? section.getDouble("weight") : section.getDouble("chance");
-        if (weight <= 0) {
+        if (!Double.isFinite(weight) || weight <= 0) {
             weight = 1;
             section.set("weight", 1);
         }
@@ -126,10 +126,17 @@ public class TreasureManager extends AbstractFileObjectManager<Treasure> {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(key), "treasure id cannot be null or empty");
 
         Treasure treasure = treasures.remove(key);
-        SuperMines.getInstance().getMineManager().getAllMines().forEach(m -> m.removeTreasure(treasure));
+        SuperMines.getInstance().getMineManager().getAllMines().forEach(m -> {
+            m.removeTreasure(treasure);
+            SuperMines.getInstance().getMineManager().saveMine(m);
+        });
         SuperMines.getInstance().getRegenPointManager().getAllRegenPoints().forEach(point -> {
             if (point.getRewardChances().containsKey(key)) {
                 point.removeReward(key);
+                SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+            }
+            if (point.getPeriodicRewardChances().containsKey(key)) {
+                point.removePeriodicReward(key);
                 SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
             }
         });

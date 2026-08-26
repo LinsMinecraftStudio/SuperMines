@@ -667,6 +667,9 @@ public class SuperMinesCommand {
                                                     .getPlayerDataManager()
                                                     .getOrCreatePlayerData(player.getUniqueId());
                                             data.addRank(rank);
+                                            SuperMines.getInstance()
+                                                    .getPlayerDataManager()
+                                                    .savePlayerData(data);
 
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
@@ -713,6 +716,9 @@ public class SuperMinesCommand {
                                                     .getPlayerDataManager()
                                                     .getOrCreatePlayerData(player.getUniqueId());
                                             data.removeRank(rank);
+                                            SuperMines.getInstance()
+                                                    .getPlayerDataManager()
+                                                    .savePlayerData(data);
 
                                             SuperMines.getInstance()
                                                     .getLanguageManager()

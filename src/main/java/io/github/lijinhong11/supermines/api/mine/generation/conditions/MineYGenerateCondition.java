@@ -61,7 +61,8 @@ public final class MineYGenerateCondition implements IGenerateCondition, ReadWri
             throw new UnsupportedOperationException("Unsupported AreaOfBlocks implementation");
         }
 
-        return target.y() - mineY >= minYInMine && target.y() - mineY <= maxYInMine;
+        long relativeY = (long) target.y() - mineY;
+        return relativeY >= minYInMine && relativeY <= maxYInMine;
     }
 
     @Override
@@ -94,7 +95,7 @@ public final class MineYGenerateCondition implements IGenerateCondition, ReadWri
     }
 
     @Override
-    public void read(ConfigurationSection cs) {
+    public void read(@NotNull ConfigurationSection cs) {
         throw new UnsupportedOperationException();
     }
 }

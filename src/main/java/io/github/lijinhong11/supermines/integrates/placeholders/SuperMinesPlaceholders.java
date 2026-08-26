@@ -54,13 +54,31 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
             return String.valueOf(data.getMinedBlocks());
         });
 
-        registerPlaceholder("treasures", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
-            if (args.length < 2 || !args[0].equalsIgnoreCase("got")) return null;
-            OfflinePlayer p = args.length > 2 ? Bukkit.getOfflinePlayer(args[2]) : viewer;
+        registerPlaceholder("treasures_got", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
+            if (args.length < 1) return null;
+            OfflinePlayer p = args.length > 1 ? Bukkit.getOfflinePlayer(args[1]) : viewer;
             if (p == null) return null;
 
             PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
             return String.valueOf(data.getTreasuresGot(args[0]));
+        });
+
+        registerPlaceholder("regenpoints_mined", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
+            if (args.length < 1) return null;
+            OfflinePlayer p = args.length > 1 ? Bukkit.getOfflinePlayer(args[1]) : viewer;
+            if (p == null) return null;
+
+            PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
+            return String.valueOf(data.getRegenPointMining(args[0]));
+        });
+
+        registerPlaceholder("regenpoints_total_mined", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
+            if (args.length < 1) return null;
+            OfflinePlayer p = args.length > 1 ? Bukkit.getOfflinePlayer(args[1]) : viewer;
+            if (p == null) return null;
+
+            PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
+            return String.valueOf(data.getRegenPointTotalMining(args[0]));
         });
 
         registerPlaceholder("hasrank", PlaceholderType.AUDIENCE, (viewer, target, args) -> {

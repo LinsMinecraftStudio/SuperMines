@@ -37,6 +37,7 @@ SuperMines is a free, open-source mine plugin for Paper servers. It combines aut
 | `%supermines_minedblocks[_player]%` | The player's total mined blocks; uses the current player when `player` is omitted |
 | `%supermines_hasrank_<rank_id>[_player]%` | Whether the player has the rank, returning `true` or `false` |
 | `%supermines_treasures_got_<treasure_id>[_player]%` | How many times the specified treasure has been obtained; uses the current player when `player` is omitted |
+| `%supermines_regenpoints_total_mined_<point_id>[_player]%` | The player's total blocks mined at the specified regen point; uses the current player when `player` is omitted |
 | `%supermines_mine_<mine_id>_<type>%` | Runtime data for a mine; see the type table below |
 
 ### MiniPlaceholders
@@ -48,6 +49,7 @@ SuperMines is a free, open-source mine plugin for Paper servers. It combines aut
 | `<supermines_minedblocks[:player]>` | The player's total mined blocks; uses the current player when `player` is omitted |
 | `<supermines_hasrank:<rank_id>[:player]>` | Whether the player has the rank, returning `true` or `false` |
 | `<supermines_treasures_got:<treasure_id>[:player]>` | How many times the specified treasure has been obtained; uses the current player when `player` is omitted |
+| `<supermines_regenpoints_total_mined:<point_id>[:player]>` | The player's total blocks mined at the specified regen point; uses the current player when `player` is omitted |
 | `<supermines_mine:<mine_id>:<type>>` | Runtime data for a mine; see the type table below |
 
 ### Mine Variable Types

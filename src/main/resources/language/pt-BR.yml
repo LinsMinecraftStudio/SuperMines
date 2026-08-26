@@ -135,6 +135,13 @@ command:
     success-other: "&aO jogador &b%player% &afoi teleportado para a mina &d%mine%&a."
     failed: "&cFalha no teleporte."
   treasures:
+    copy:
+      name: "&dCopiar Tesouro"
+      lore:
+        - "&7Clique para copiar um tesouro existente"
+    copy_source_title: "&6Escolha um tesouro para copiar"
+    copy_title: "&6Copiar Tesouro"
+    copy_label: "Digite o novo ID do tesouro"
     no-item-in-hand: "&cVocê deve segurar um item na mão!"
     set-item: "&aO tesouro &d%treasure% &afoi alterado"
     set-weight: "&aO peso do tesouro &d%treasure% &afoi definido para &b%weight%"
@@ -142,6 +149,8 @@ command:
     create:
       exists: "&cJá existe um tesouro com esse ID!"
       success: "&aO tesouro &d%treasure% &afoi criado com sucesso!"
+      copy:
+        success: "&aO tesouro &d%treasure% &afoi copiado com sucesso."
     remove:
       success: "&aO tesouro &d%treasure% &afoi removido com sucesso!"
     matched_blocks:
@@ -172,6 +181,7 @@ command:
       create:
         exists: "&cJá existe um cargo com esse ID!"
         success: "&aO cargo &b%rank% &afoi criado com sucesso!"
+        copy: "&aO cargo &b%rank% &afoi copiado com sucesso."
       remove:
         success: "&aO cargo &b%rank% &afoi removido com sucesso!"
   regenpoints:
@@ -435,6 +445,13 @@ gui:
       title: "&dComandos do tesouro"
       label: "Digite um comando de console por linha"
   ranks:
+    copy:
+      name: "&dCopiar Cargo"
+      lore:
+        - "&7Clique para copiar um cargo existente"
+    copy_source_title: "&6Escolha um cargo para copiar"
+    copy_title: "&6Copiar Cargo"
+    copy_label: "Digite o novo ID do cargo"
     title: "&b&lCargos"
     info:
       - "&7Nível: &b%level%"
@@ -490,6 +507,26 @@ gui:
       chance_prompt: "&eDigite a chance independente de &d%treasure% &e(0-100): &b(digite &6##CANCEL &bpara cancelar)"
       each_lore:
         - "&7Chance independente: &e%chance%%"
+        - "&7Clique esquerdo para alterar"
+        - "&7Clique direito para remover"
+    periodic_rewards:
+      name: "&6Recompensas Periódicas"
+      lore:
+        - "&7Recompensas baseadas na quantidade minerada"
+        - "&7Recompensas configuradas: &b%amount%"
+      title: "&6&lRecompensas Periódicas"
+      chooser_title: "&6Escolha uma Recompensa Periódica"
+      interval:
+        name: "&bIntervalo de Mineração"
+        lore:
+          - "&7Blocos por ciclo: &e%blocks%"
+          - "&7Minerados neste ciclo: &e%mined%"
+          - "&7Restantes: &e%remaining%"
+          - "&7Clique para alterar"
+      interval_prompt: "&eDigite os blocos por ciclo: &b(digite &6##CANCEL &bpara cancelar)"
+      chance_prompt: "&eDigite a chance periódica de &d%treasure% &e(0-100): &b(digite &6##CANCEL &bpara cancelar)"
+      each_lore:
+        - "&7Chance: &e%chance%%"
         - "&7Clique esquerdo para alterar"
         - "&7Clique direito para remover"
     respawn_now:

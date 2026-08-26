@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents an event when a mine is created.
  */
-public class MineCreateEvent extends Event implements Cancellable {
+public final class MineCreateEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Mine mine;

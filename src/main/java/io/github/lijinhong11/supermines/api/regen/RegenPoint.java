@@ -26,7 +26,9 @@ public final class RegenPoint implements Identified {
     private final BlockPos pos;
     private final WeightedRandomMap<PackedBlock> blocks = new WeightedRandomMap<>();
     private final Map<String, Double> rewardChances = new HashMap<>();
+    private final Map<String, Double> periodicRewardChances = new HashMap<>();
     private int respawnSeconds;
+    private int periodicRewardIntervalBlocks;
     private @NotNull Component displayName;
     private long respawnAt;
 
@@ -151,13 +153,38 @@ public final class RegenPoint implements Identified {
 
     public void setRewardChance(@NotNull String treasureId, double chance) {
         Preconditions.checkNotNull(treasureId, "treasureId cannot be null");
-        Preconditions.checkArgument(chance > 0 && chance <= 100, "chance must be greater than 0 and at most 100");
+        Preconditions.checkArgument(
+                Double.isFinite(chance) && chance > 0 && chance <= 100,
+                "chance must be finite, greater than 0, and at most 100");
 
         rewardChances.put(treasureId, chance);
     }
 
     public void removeReward(@NotNull String treasureId) {
         rewardChances.remove(treasureId);
+    }
+
+    public int getPeriodicRewardIntervalBlocks() {
+        return periodicRewardIntervalBlocks;
+    }
+
+    public void setPeriodicRewardIntervalBlocks(int intervalBlocks) {
+        Preconditions.checkArgument(intervalBlocks >= 0, "intervalBlocks cannot be negative");
+        this.periodicRewardIntervalBlocks = intervalBlocks;
+    }
+
+    public Map<String, Double> getPeriodicRewardChances() {
+        return Map.copyOf(periodicRewardChances);
+    }
+
+    public void setPeriodicRewardChance(@NotNull String treasureId, double chance) {
+        Preconditions.checkNotNull(treasureId, "treasureId cannot be null");
+        Preconditions.checkArgument(chance > 0 && chance <= 100, "chance must be greater than 0 and at most 100");
+        periodicRewardChances.put(treasureId, chance);
+    }
+
+    public void removePeriodicReward(@NotNull String treasureId) {
+        periodicRewardChances.remove(treasureId);
     }
 
     /**

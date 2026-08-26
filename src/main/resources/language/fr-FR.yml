@@ -135,6 +135,13 @@ command:
     success-other: "&aTéléportation de &b%player% &avers la mine &d%mine% &aréussie."
     failed: "&cÉchec de la téléportation."
   treasures:
+    copy:
+      name: "&dCopier le trésor"
+      lore:
+        - "&7Cliquez pour copier un trésor existant"
+    copy_source_title: "&6Choisir un trésor à copier"
+    copy_title: "&6Copier le trésor"
+    copy_label: "Saisissez le nouvel identifiant du trésor"
     no-item-in-hand: "&cVous devez tenir un objet en main !"
     set-item: "&aLe trésor &d%treasure% &aa été modifié"
     set-weight: "&aLe poids de &d%treasure% &aest défini sur &b%weight%"
@@ -142,6 +149,8 @@ command:
     create:
       exists: "&cUn trésor avec cet identifiant existe déjà !"
       success: "&aLe trésor &d%treasure% &aa été créé avec succès !"
+      copy:
+        success: "&aLe trésor &d%treasure% &aa été copié avec succès."
     remove:
       success: "&aLe trésor &d%treasure% &aa été supprimé avec succès !"
     matched_blocks:
@@ -172,6 +181,7 @@ command:
       create:
         exists: "&cUn rang avec cet identifiant existe déjà !"
         success: "&aLe rang &b%rank% &aa été créé avec succès !"
+        copy: "&aLe rang &b%rank% &aa été copié avec succès."
       remove:
         success: "&aLe rang &b%rank% &aa été supprimé avec succès !"
   regenpoints:
@@ -435,6 +445,13 @@ gui:
       title: "&dCommandes du trésor"
       label: "Saisissez une commande console par ligne"
   ranks:
+    copy:
+      name: "&dCopier le rang"
+      lore:
+        - "&7Cliquez pour copier un rang existant"
+    copy_source_title: "&6Choisir un rang à copier"
+    copy_title: "&6Copier le rang"
+    copy_label: "Saisissez le nouvel identifiant du rang"
     title: "&b&lRangs"
     info:
       - "&7Niveau : &b%level%"
@@ -491,6 +508,26 @@ gui:
       each_lore:
         - "&7Probabilité indépendante : &e%chance%%"
         - "&7Clic gauche pour modifier la probabilité"
+        - "&7Clic droit pour supprimer"
+    periodic_rewards:
+      name: "&6Récompenses périodiques"
+      lore:
+        - "&7Récompenses selon le nombre de blocs minés"
+        - "&7Récompenses configurées : &b%amount%"
+      title: "&6&lRécompenses périodiques"
+      chooser_title: "&6Choisir une récompense périodique"
+      interval:
+        name: "&bIntervalle de minage"
+        lore:
+          - "&7Blocs par cycle : &e%blocks%"
+          - "&7Mines ce cycle : &e%mined%"
+          - "&7Restants : &e%remaining%"
+          - "&7Cliquez pour modifier"
+      interval_prompt: "&eSaisissez le nombre de blocs par cycle : &b(saisissez &6##CANCEL &bpour annuler)"
+      chance_prompt: "&eSaisissez la probabilité périodique de &d%treasure% &e(0-100) : &b(saisissez &6##CANCEL &bpour annuler)"
+      each_lore:
+        - "&7Probabilité : &e%chance%%"
+        - "&7Clic gauche pour modifier"
         - "&7Clic droit pour supprimer"
     respawn_now:
       name: "&aFaire réapparaître maintenant"

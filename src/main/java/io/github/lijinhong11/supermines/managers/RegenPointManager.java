@@ -16,6 +16,7 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
+import io.github.lijinhong11.supermines.task.TaskMaker;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.Sounds;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
@@ -188,6 +189,20 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
             }
         }
 
+        ConfigurationSection periodicSection = section.getConfigurationSection("periodicRewards");
+        if (periodicSection != null) {
+            point.setPeriodicRewardIntervalBlocks(periodicSection.getInt("intervalBlocks", 0));
+            ConfigurationSection periodicRewards = periodicSection.getConfigurationSection("rewards");
+            if (periodicRewards != null) {
+                for (String treasureId : periodicRewards.getKeys(false)) {
+                    double chance = periodicRewards.getDouble(treasureId);
+                    if (chance > 0 && chance <= 100) {
+                        point.setPeriodicRewardChance(treasureId, chance);
+                    }
+                }
+            }
+        }
+
         return point;
     }
 
@@ -206,6 +221,14 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         if (!object.getRewardChances().isEmpty()) {
             ConfigurationSection rewards = section.createSection("rewards");
             object.getRewardChances().forEach(rewards::set);
+        }
+        if (object.getPeriodicRewardIntervalBlocks() > 0) {
+            ConfigurationSection periodic = section.createSection("periodicRewards");
+            periodic.set("intervalBlocks", object.getPeriodicRewardIntervalBlocks());
+            if (!object.getPeriodicRewardChances().isEmpty()) {
+                ConfigurationSection periodicRewards = periodic.createSection("rewards");
+                object.getPeriodicRewardChances().forEach(periodicRewards::set);
+            }
         }
         if (object.getRespawnAt() > 0) {
             section.set("respawnAt", object.getRespawnAt());
@@ -408,11 +431,12 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
             event.callEvent();
             if (event.isCancelled()) {
                 if (cause == RegenPointRespawnEvent.Cause.SCHEDULED) {
-                    long retrySeconds = Math.max(
-                            1L,
+                    long retrySeconds = Math.clamp(
                             SuperMines.getInstance()
                                     .getConfig()
-                                    .getLong("regen-point.cancelled-respawn-retry-seconds", 5L));
+                                    .getLong("regen-point.cancelled-respawn-retry-seconds", 5L),
+                            1L,
+                            TaskMaker.MAX_DELAY_SECONDS);
                     point.setRespawnAt(System.currentTimeMillis() + retrySeconds * 1000L);
                     saveRegenPoint(point);
                     scheduleRespawn(point, retrySeconds * 1000L);
@@ -447,6 +471,10 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
     }
 
     private void giveIndependentRewards(RegenPoint point, Player player) {
+        PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
+        data.addRegenPointTotalMining(point.getId());
+        int periodicMining = data.addRegenPointMining(point.getId());
+
         for (Map.Entry<String, Double> entry : point.getRewardChances().entrySet()) {
             Treasure treasure = SuperMines.getInstance().getTreasureManager().getTreasure(entry.getKey());
             if (treasure != null && ThreadLocalRandom.current().nextDouble(100D) < entry.getValue()) {
@@ -454,12 +482,38 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
                 event.callEvent();
                 if (!event.isCancelled()) {
                     treasure.giveToPlayer(player, false, point.getLocation());
-                    PlayerData data =
-                            SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
                     data.addTreasureGot(treasure.getId());
-                    SuperMines.getInstance().getPlayerDataManager().savePlayerData(data);
                 }
             }
+        }
+
+        givePeriodicRewards(point, player, data, periodicMining);
+        SuperMines.getInstance().getPlayerDataManager().savePlayerData(data);
+    }
+
+    private void givePeriodicRewards(RegenPoint point, Player player, PlayerData data, int count) {
+        if (point.getPeriodicRewardIntervalBlocks() <= 0
+                || point.getPeriodicRewardChances().isEmpty()) return;
+
+        if (count < point.getPeriodicRewardIntervalBlocks()) return;
+
+        boolean rewardWasGranted = false;
+        boolean rewardWasSelected = false;
+        for (Map.Entry<String, Double> entry : point.getPeriodicRewardChances().entrySet()) {
+            Treasure treasure = SuperMines.getInstance().getTreasureManager().getTreasure(entry.getKey());
+            if (treasure == null || ThreadLocalRandom.current().nextDouble(100D) >= entry.getValue()) continue;
+
+            rewardWasSelected = true;
+            TreasureFoundEvent event = new TreasureFoundEvent(treasure, player, point);
+            event.callEvent();
+            if (!event.isCancelled()) {
+                treasure.giveToPlayer(player, false, point.getLocation());
+                data.addTreasureGot(treasure.getId());
+                rewardWasGranted = true;
+            }
+        }
+        if (!rewardWasSelected || rewardWasGranted) {
+            data.resetRegenPointMining(point.getId());
         }
     }
 
@@ -485,7 +539,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         if (closing || points.get(point.getId()) != point) return;
         cancelRespawn(point);
         long generation = nextGeneration(point);
-        long delayTicks = Math.max(1L, (delayMillis + 49L) / 50L);
+        long delayTicks = delayMillis <= 0 ? 1L : (delayMillis - 1L) / 50L + 1L;
         ScheduledTask task = SuperMines.getInstance()
                 .getTaskMaker()
                 .runSyncDelayed(

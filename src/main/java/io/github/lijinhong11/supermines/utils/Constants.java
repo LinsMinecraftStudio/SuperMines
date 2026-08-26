@@ -203,6 +203,13 @@ public class Constants {
                                                         ? 0
                                                         : t.getConsoleCommands().size())));
 
+        public static final Function<Player, ItemStack> COPY_TREASURE = p -> SuperMines.getInstance()
+                .getLanguageManager()
+                .getMessagedItem(Material.CHEST_MINECART, "gui.treasures.copy", p);
+
+        public static final Function<Player, ItemStack> COPY_RANK = p ->
+                SuperMines.getInstance().getLanguageManager().getMessagedItem(Material.NAME_TAG, "gui.ranks.copy", p);
+
         public static final BiFunction<Player, Integer, ItemStack> SET_RANK_LEVEL = (p, i) -> SuperMines.getInstance()
                 .getLanguageManager()
                 .getMessagedItem(

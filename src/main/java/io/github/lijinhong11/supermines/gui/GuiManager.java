@@ -2,6 +2,7 @@ package io.github.lijinhong11.supermines.gui;
 
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mittellib.gui.dialog.impl.input.MultiLineTextInputDialog;
+import io.github.lijinhong11.mittellib.gui.dialog.impl.input.TextInputDialog;
 import io.github.lijinhong11.mittellib.gui.inventory.MittelGUI;
 import io.github.lijinhong11.mittellib.gui.inventory.choosers.MaterialChooser;
 import io.github.lijinhong11.mittellib.gui.inventory.impl.ChestGUI;
@@ -320,6 +321,11 @@ public final class GuiManager {
     public static void openTreasureList(Player p) {
         PaginatedChestGUI gui = buildPagedGUI(p, "gui.treasures.title", () -> openMain(p));
 
+        gui.addPageItem(ButtonItem.clickable(Constants.Items.COPY_TREASURE.apply(p), (g, e) -> {
+            openTreasureCopySource(p);
+            return false;
+        }));
+
         for (Treasure treasure : SuperMines.getInstance().getTreasureManager().getAllTreasures()) {
             ItemStack item = new ItemStack(Material.CHEST);
             item.editMeta(meta -> {
@@ -333,6 +339,42 @@ public final class GuiManager {
             }));
         }
 
+        gui.open(p);
+    }
+
+    private static void openTreasureCopySource(Player p) {
+        PaginatedChestGUI gui = buildPagedGUI(p, "gui.treasures.copy_source_title", () -> openTreasureList(p));
+        for (Treasure treasure : SuperMines.getInstance().getTreasureManager().getAllTreasures()) {
+            ItemStack item = new ItemStack(Material.CHEST);
+            item.editMeta(meta -> meta.displayName(treasure.getDisplayName()));
+            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
+                TextInputDialog dialog = TextInputDialog.create(
+                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.treasures.copy_title"),
+                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.treasures.copy_label"),
+                        newId -> {
+                            if (!newId.matches(Constants.ID_PATTERN)
+                                    || SuperMines.getInstance()
+                                                    .getTreasureManager()
+                                                    .getTreasure(newId)
+                                            != null) {
+                                SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.invalid-id");
+                                openTreasureCopySource(p);
+                                return;
+                            }
+                            Treasure copy = treasure.copy(newId);
+                            SuperMines.getInstance().getTreasureManager().addTreasure(copy);
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(
+                                            p,
+                                            "command.treasures.copy.success",
+                                            MessageReplacement.replace("%treasure%", copy.getRawDisplayName()));
+                            openTreasureList(p);
+                        });
+                dialog.show(p);
+                return false;
+            }));
+        }
         gui.open(p);
     }
 
@@ -486,6 +528,11 @@ public final class GuiManager {
     public static void openRankList(Player p) {
         PaginatedChestGUI gui = buildPagedGUI(p, "gui.ranks.title", () -> openMain(p));
 
+        gui.addPageItem(ButtonItem.clickable(Constants.Items.COPY_RANK.apply(p), (g, e) -> {
+            openRankCopySource(p);
+            return false;
+        }));
+
         for (Rank rank : SuperMines.getInstance().getRankManager().getAllRanks()) {
             ItemStack item = new ItemStack(Material.NAME_TAG);
             item.editMeta(meta -> {
@@ -498,6 +545,39 @@ public final class GuiManager {
             }));
         }
 
+        gui.open(p);
+    }
+
+    private static void openRankCopySource(Player p) {
+        PaginatedChestGUI gui = buildPagedGUI(p, "gui.ranks.copy_source_title", () -> openRankList(p));
+        for (Rank rank : SuperMines.getInstance().getRankManager().getAllRanks()) {
+            ItemStack item = new ItemStack(Material.NAME_TAG);
+            item.editMeta(meta -> meta.displayName(rank.getDisplayName()));
+            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
+                TextInputDialog dialog = TextInputDialog.create(
+                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.ranks.copy_title"),
+                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.ranks.copy_label"),
+                        newId -> {
+                            if (!newId.matches(Constants.ID_PATTERN)
+                                    || SuperMines.getInstance().getRankManager().getRank(newId) != null) {
+                                SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.invalid-id");
+                                openRankCopySource(p);
+                                return;
+                            }
+                            Rank copy = rank.copy(newId);
+                            SuperMines.getInstance().getRankManager().addRank(copy);
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(
+                                            p,
+                                            "command.ranks.create.copy",
+                                            MessageReplacement.replace("%rank%", copy.getRawDisplayName()));
+                            openRankList(p);
+                        });
+                dialog.show(p);
+                return false;
+            }));
+        }
         gui.open(p);
     }
 
@@ -588,12 +668,65 @@ public final class GuiManager {
             return false;
         }));
 
+        gui.putItem(
+                slot(3, 6),
+                ButtonItem.clickable(
+                        SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMessagedItem(
+                                        Material.CLOCK,
+                                        "gui.regen-point-management.periodic_rewards.interval",
+                                        p,
+                                        MessageReplacement.replace(
+                                                "%blocks%", String.valueOf(point.getPeriodicRewardIntervalBlocks())),
+                                        MessageReplacement.replace(
+                                                "%mined%", String.valueOf(getPeriodicMiningCount(p, point))),
+                                        MessageReplacement.replace(
+                                                "%remaining%", String.valueOf(getPeriodicMiningRemaining(p, point)))),
+                        (g, e) -> {
+                            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+                            p.closeInventory();
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .sendMessage(p, "gui.regen-point-management.periodic_rewards.interval_prompt");
+                            handleIntegerInput(
+                                    p,
+                                    result -> {
+                                        point.setPeriodicRewardIntervalBlocks(result);
+                                        SuperMines.getInstance()
+                                                .getRegenPointManager()
+                                                .saveRegenPoint(point);
+                                        reopen.run();
+                                    },
+                                    reopen);
+                            return false;
+                        }));
+
         // Independent Rewards
         gui.putItem(slot(3, 7), ButtonItem.clickable(Constants.Items.REGEN_REWARDS.apply(p), (g, e) -> {
             if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
             openRegenPointRewards(p, point);
             return false;
         }));
+
+        gui.putItem(
+                slot(4, 1),
+                ButtonItem.clickable(
+                        SuperMines.getInstance()
+                                .getLanguageManager()
+                                .getMessagedItem(
+                                        Material.GOLDEN_APPLE,
+                                        "gui.regen-point-management.periodic_rewards.name",
+                                        p,
+                                        MessageReplacement.replace(
+                                                "%amount%",
+                                                String.valueOf(point.getPeriodicRewardChances()
+                                                        .size()))),
+                        (g, e) -> {
+                            if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
+                            openPeriodicRewards(p, point);
+                            return false;
+                        }));
 
         // Teleport
         gui.putItem(slot(4, 3), ButtonItem.clickable(Constants.Items.TP_TO_POINT.apply(p), (g, e) -> {
@@ -755,6 +888,97 @@ public final class GuiManager {
                 () -> openRegenPointRewards(p, point));
     }
 
+    private static void openPeriodicRewards(Player p, RegenPoint point) {
+        PaginatedChestGUI gui = buildPagedGUI(
+                p, "gui.regen-point-management.periodic_rewards.title", () -> openRegenPointManagementGui(p, point));
+        gui.addPageItem(ButtonItem.clickable(Constants.Items.ADD.apply(p), (g, e) -> {
+            openPeriodicRewardChooser(p, point);
+            return false;
+        }));
+
+        for (Map.Entry<String, Double> entry : point.getPeriodicRewardChances().entrySet()) {
+            Treasure treasure = SuperMines.getInstance().getTreasureManager().getTreasure(entry.getKey());
+            if (treasure == null) continue;
+            ItemStack item = treasure.getItemStack() == null
+                    ? new ItemStack(Material.CHEST)
+                    : treasure.getItemStack().clone();
+            item.editMeta(meta -> {
+                meta.displayName(treasure.getDisplayName());
+                meta.lore(SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMsgComponentList(
+                                p,
+                                "gui.regen-point-management.periodic_rewards.each_lore",
+                                MessageReplacement.replace("%chance%", String.valueOf(entry.getValue()))));
+            });
+            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
+                if (e.getClick().isRightClick()) {
+                    point.removePeriodicReward(treasure.getId());
+                    SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+                    openPeriodicRewards(p, point);
+                } else {
+                    promptPeriodicRewardChance(p, point, treasure);
+                }
+                return false;
+            }));
+        }
+        gui.open(p);
+    }
+
+    private static int getPeriodicMiningCount(Player p, RegenPoint point) {
+        return SuperMines.getInstance()
+                .getPlayerDataManager()
+                .getOrCreatePlayerData(p.getUniqueId())
+                .getRegenPointMining(point.getId());
+    }
+
+    private static int getPeriodicMiningRemaining(Player p, RegenPoint point) {
+        int interval = point.getPeriodicRewardIntervalBlocks();
+        return interval <= 0 ? 0 : Math.max(0, interval - getPeriodicMiningCount(p, point));
+    }
+
+    private static void openPeriodicRewardChooser(Player p, RegenPoint point) {
+        PaginatedChestGUI gui = buildPagedGUI(
+                p, "gui.regen-point-management.periodic_rewards.chooser_title", () -> openPeriodicRewards(p, point));
+        Set<String> selected = point.getPeriodicRewardChances().keySet();
+        for (Treasure treasure : SuperMines.getInstance().getTreasureManager().getAllTreasures()) {
+            if (selected.contains(treasure.getId())) continue;
+            ItemStack item = treasure.getItemStack() == null
+                    ? new ItemStack(Material.CHEST)
+                    : treasure.getItemStack().clone();
+            item.editMeta(meta -> meta.displayName(treasure.getDisplayName()));
+            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
+                promptPeriodicRewardChance(p, point, treasure);
+                return false;
+            }));
+        }
+        gui.open(p);
+    }
+
+    private static void promptPeriodicRewardChance(Player p, RegenPoint point, Treasure treasure) {
+        p.closeInventory();
+        SuperMines.getInstance()
+                .getLanguageManager()
+                .sendMessage(
+                        p,
+                        "gui.regen-point-management.periodic_rewards.chance_prompt",
+                        MessageReplacement.replace("%treasure%", treasure.getRawDisplayName()));
+        handleWeightInput(
+                p,
+                chance -> {
+                    if (chance > 100) {
+                        SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.input.invalid-percent");
+                        openPeriodicRewards(p, point);
+                        return;
+                    }
+                    point.setPeriodicRewardChance(treasure.getId(), chance);
+                    SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
+                    openPeriodicRewards(p, point);
+                },
+                "gui.input.invalid-percent",
+                () -> openPeriodicRewards(p, point));
+    }
+
     private static void openAddRegenPoint(Player p) {
         var target = p.getTargetBlockExact(5);
         if (target == null || target.getType().isAir()) {
@@ -882,7 +1106,7 @@ public final class GuiManager {
             }
 
             try {
-                int value = Integer.parseUnsignedInt(result);
+                int value = Integer.parseInt(result);
                 SuperMines.getInstance().getTaskMaker().runSync(() -> onSuccess.accept(value));
             } catch (NumberFormatException ex) {
                 SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.input.invalid-number");
@@ -904,7 +1128,7 @@ public final class GuiManager {
 
             try {
                 double value = Double.parseDouble(result);
-                if (value < Constants.WEIGHT_MIN) {
+                if (!Double.isFinite(value) || value < Constants.WEIGHT_MIN) {
                     throw new NumberFormatException();
                 }
 

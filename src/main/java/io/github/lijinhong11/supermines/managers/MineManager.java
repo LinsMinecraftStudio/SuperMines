@@ -120,11 +120,15 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
 
                 ConfigurationSection entrySection = blockSpawn.getConfigurationSection(m);
                 if (entrySection == null) {
-                    blockSpawnEntries.put(new BlockSpawnEntry(block), blockSpawn.getDouble(m, 1));
+                    double legacyWeight = blockSpawn.getDouble(m, 1);
+                    if (Double.isFinite(legacyWeight) && legacyWeight > 0) {
+                        blockSpawnEntries.put(new BlockSpawnEntry(block), legacyWeight);
+                    }
                     continue;
                 }
 
                 double weight = entrySection.getDouble("weight", 1);
+                if (!Double.isFinite(weight) || weight <= 0) continue;
                 Set<IGenerateCondition> conditions = new HashSet<>();
                 ConfigurationSection condSection = entrySection.getConfigurationSection("conditions");
                 if (condSection != null) {

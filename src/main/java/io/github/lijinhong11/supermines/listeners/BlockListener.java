@@ -49,6 +49,7 @@ public class BlockListener implements Listener {
     public static void togglePlayerAutoPickup(Player player) {
         PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(player.getUniqueId());
         data.setAutoPickup(!data.isAutoPickup());
+        SuperMines.getInstance().getPlayerDataManager().savePlayerData(data);
     }
 
     public static boolean getPlayerAutoPickup(Player player) {

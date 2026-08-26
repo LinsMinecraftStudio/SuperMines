@@ -38,6 +38,8 @@ SuperMines 是一款免费开源的 Paper 矿区插件，用自动重置、条�
 | `%supermines_minedblocks[_玩家名]%` | 累计挖掘方块数；省略玩家名时读取当前玩家 |
 | `%supermines_hasrank_<等级ID>[_玩家名]%` | 是否拥有指定等级；省略玩家名时读取当前玩家，返回 `true` / `false` |
 | `%supermines_treasures_got_<宝藏ID>[_玩家名]%` | 指定宝藏获取次数；省略玩家名时读取当前玩家 |
+| `%supermines_regenpoints_mined_<矿点ID>[_玩家名]%` | 指定玩家在该矿点当前周期的挖掘数；省略玩家名时读取当前玩家 |
+| `%supermines_regenpoints_total_mined_<矿点ID>[_玩家名]%` | 指定玩家在该矿点的累计挖掘数；省略玩家名时读取当前玩家 |
 | `%supermines_mine_<矿区ID>_<类型>%` | 返回指定矿区的运行数据，类型见下表 |
 
 ### MiniPlaceholders
@@ -49,6 +51,8 @@ SuperMines 是一款免费开源的 Paper 矿区插件，用自动重置、条�
 | `<supermines_minedblocks[:玩家名]>` | 累计挖掘方块数；省略玩家名时读取当前玩家 |
 | `<supermines_hasrank:<等级ID>[:玩家名]>` | 是否拥有指定等级；省略玩家名时读取当前玩家，返回 `true` / `false` |
 | `<supermines_treasures_got:<宝藏ID>[:玩家名]>` | 指定宝藏获取次数；省略玩家名时读取当前玩家 |
+| `<supermines_regenpoints_mined:<矿点ID>[:玩家名]>` | 指定玩家在该矿点当前周期的挖掘数；省略玩家名时读取当前玩家 |
+| `<supermines_regenpoints_total_mined:<矿点ID>[:玩家名]>` | 指定玩家在该矿点的累计挖掘数；省略玩家名时读取当前玩家 |
 | `<supermines_mine:<矿区ID>:<类型>>` | 返回指定矿区的运行数据，类型见下表 |
 
 ### 注意

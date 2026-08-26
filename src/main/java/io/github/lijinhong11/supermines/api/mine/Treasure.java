@@ -83,7 +83,7 @@ public final class Treasure implements Identified {
         Preconditions.checkNotNull(id, "id");
         Preconditions.checkNotNull(displayName, "displayName");
         Preconditions.checkNotNull(matchedMaterials, "matchedMaterials");
-        Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
+        Preconditions.checkArgument(Double.isFinite(weight) && weight > 0, "weight must be finite and greater than 0");
 
         this.id = id;
         this.displayName = displayName;
@@ -91,6 +91,16 @@ public final class Treasure implements Identified {
         this.weight = weight;
         this.matchedMaterials = matchedMaterials;
         this.consoleCommands = consoleCommands;
+    }
+
+    public @NotNull Treasure copy(@NotNull String newId) {
+        return new Treasure(
+                newId,
+                displayName,
+                itemStack == null ? null : itemStack.clone(),
+                weight,
+                new HashSet<>(matchedMaterials),
+                consoleCommands == null ? null : new ArrayList<>(consoleCommands));
     }
 
     /**
@@ -209,7 +219,7 @@ public final class Treasure implements Identified {
      * @param weight the selection weight (> 0)
      */
     public void setWeight(double weight) {
-        Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
+        Preconditions.checkArgument(Double.isFinite(weight) && weight > 0, "weight must be finite and greater than 0");
 
         this.weight = weight;
     }

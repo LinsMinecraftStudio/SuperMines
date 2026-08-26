@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents an event when a mine resets.
  */
-public class MineResetEvent extends Event {
+public final class MineResetEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Mine mine;

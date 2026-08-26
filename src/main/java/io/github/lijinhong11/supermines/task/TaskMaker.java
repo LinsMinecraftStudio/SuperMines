@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class TaskMaker {
+    public static final long MAX_DELAY_SECONDS = 86400L;
     private final Map<String, MineResetTask> resetTasks;
     private final Map<String, Map<Integer, MineResetWarningTask>> resetWarningTasks;
     private final Map<String, AtomicBoolean> resetInProgress = new ConcurrentHashMap<>();
@@ -83,7 +84,7 @@ public class TaskMaker {
 
         long delayMillis = resetTask.getNextResetTime() - System.currentTimeMillis() - warningSeconds * 1000L;
         if (delayMillis <= 0) {
-            delayMillis += mine.getRegenerateSeconds() * 1000L;
+            delayMillis = safeMillis(mine.getRegenerateSeconds());
         }
 
         try {
@@ -92,7 +93,7 @@ public class TaskMaker {
                             SuperMines.getInstance(),
                             task,
                             toTicks(delayMillis),
-                            Math.max(1L, mine.getRegenerateSeconds() * 20L));
+                            safeTicks(mine.getRegenerateSeconds()));
             task.bind(handle);
         } catch (RuntimeException exception) {
             warningMap.remove(warningSeconds, task);
@@ -110,7 +111,7 @@ public class TaskMaker {
                 .incrementAndGet();
         MineResetTask task = new MineResetTask(mine, false, generation);
         resetTasks.put(mine.getId(), task);
-        long periodTicks = Math.max(1L, mine.getRegenerateSeconds() * 20L);
+        long periodTicks = safeTicks(mine.getRegenerateSeconds());
         ScheduledTask handle = Bukkit.getGlobalRegionScheduler()
                 .runAtFixedRate(SuperMines.getInstance(), task, periodTicks, periodTicks);
         task.bind(handle);
@@ -232,5 +233,13 @@ public class TaskMaker {
 
     private static long toTicks(long millis) {
         return millis <= 0 ? 1L : (millis - 1L) / 50L + 1L;
+    }
+
+    private static long safeMillis(long seconds) {
+        return Math.multiplyExact(Math.min(seconds, MAX_DELAY_SECONDS), 1000L);
+    }
+
+    private static long safeTicks(long seconds) {
+        return Math.max(1L, Math.multiplyExact(Math.min(seconds, MAX_DELAY_SECONDS), 20L));
     }
 }

@@ -100,6 +100,10 @@ public final class Rank implements Identified {
         this.displayName = displayName;
     }
 
+    public @NotNull Rank copy(@NotNull String newId) {
+        return new Rank(level, newId, displayName);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Rank r)) {

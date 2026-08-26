@@ -135,6 +135,13 @@ command:
     success-other: "&aTeleported &b%player% &ato mine &d%mine%&a."
     failed: "&cTeleport failed."
   treasures:
+    copy:
+      name: "&dCopy Treasure"
+      lore:
+        - "&7Click to copy an existing treasure"
+    copy_source_title: "&6Choose a treasure to copy"
+    copy_title: "&6Copy Treasure"
+    copy_label: "Enter the new treasure ID"
     no-item-in-hand: "&cYou must hold an item in your hand!"
     set-item: "&aThe treasure &d%treasure% &ahas been changed"
     set-weight: "&aThe weight of treasure &d%treasure% &ais set to &b%weight%"
@@ -142,6 +149,8 @@ command:
     create:
       exists: "&cA treasure with that id already existed!"
       success: "&aThe treasure &d%treasure% &ahas been created successfully!"
+      copy:
+        success: "&aTreasure &d%treasure% &acopied successfully."
     remove:
       success: "&aThe treasure &d%treasure% &ahas been removed successfully!"
     matched_blocks:
@@ -172,6 +181,7 @@ command:
       create:
         exists: "&cA rank with that id already existed!"
         success: "&aThe rank &b%rank% &ahas been created successfully!"
+        copy: "&aRank &b%rank% &acopied successfully."
       remove:
         success: "&aThe rank &b%rank% &ahas been removed successfully!"
   regenpoints:
@@ -435,6 +445,13 @@ gui:
       title: "&dTreasure Commands"
       label: "Enter one console command per line"
   ranks:
+    copy:
+      name: "&dCopy Rank"
+      lore:
+        - "&7Click to copy an existing rank"
+    copy_source_title: "&6Choose a rank to copy"
+    copy_title: "&6Copy Rank"
+    copy_label: "Enter the new rank ID"
     title: "&b&lRanks"
     info:
       - "&7Level: &b%level%"
@@ -490,6 +507,26 @@ gui:
       chance_prompt: "&eEnter the independent chance for &d%treasure% &e(0-100): &b(type &6##CANCEL &bto cancel)"
       each_lore:
         - "&7Independent chance: &e%chance%%"
+        - "&7Left-click to change chance"
+        - "&7Right-click to remove"
+    periodic_rewards:
+      name: "&6Periodic Rewards"
+      lore:
+        - "&7Configure rewards based on personal mining count"
+        - "&7Rewards configured: &b%amount%"
+      title: "&6&lPeriodic Rewards"
+      chooser_title: "&6Choose a Periodic Reward"
+      interval:
+        name: "&bMining Interval"
+        lore:
+          - "&7Blocks per cycle: &e%blocks%"
+          - "&7Mined this cycle: &e%mined%"
+          - "&7Remaining: &e%remaining%"
+          - "&7Click to change"
+      interval_prompt: "&eEnter blocks per reward cycle: &b(type &6##CANCEL &bto cancel)"
+      chance_prompt: "&eEnter the periodic chance for &d%treasure% &e(0-100): &b(type &6##CANCEL &bto cancel)"
+      each_lore:
+        - "&7Chance: &e%chance%%"
         - "&7Left-click to change chance"
         - "&7Right-click to remove"
     respawn_now:

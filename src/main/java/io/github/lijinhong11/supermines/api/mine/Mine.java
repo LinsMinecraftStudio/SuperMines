@@ -254,7 +254,7 @@ public final class Mine implements Identified {
      * @throws IllegalArgumentException if weight is not greater than 0
      */
     public void addBlockSpawnEntry(PackedBlock block, double weight) {
-        Preconditions.checkArgument(weight > 0, "weight must be greater than 0");
+        Preconditions.checkArgument(Double.isFinite(weight) && weight > 0, "weight must be finite and greater than 0");
 
         BlockSpawnEntry existing = blockSpawnEntries.keySet().stream()
                 .filter(entry -> entry.getId().equals(block.getId()))
@@ -553,6 +553,7 @@ public final class Mine implements Identified {
      * @param requiredRankLevel the minimum rank level required
      */
     public void setRequiredRankLevel(int requiredRankLevel) {
+        Preconditions.checkArgument(requiredRankLevel > 0, "required rank level must be greater than 0");
         if (!allowEdit(MineEditEvent.Property.REQUIRED_RANK_LEVEL, this.requiredRankLevel, requiredRankLevel)) return;
         this.requiredRankLevel = requiredRankLevel;
     }
@@ -601,7 +602,7 @@ public final class Mine implements Identified {
      * Increments the number of blocks broken in this mine by 1.
      */
     public void plusBlocksBroken() {
-        this.blocksBroken.incrementAndGet();
+        this.blocksBroken.updateAndGet(value -> value == Integer.MAX_VALUE ? value : value + 1);
     }
 
     /**

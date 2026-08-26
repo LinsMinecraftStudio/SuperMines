@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The main API class for SuperMines plugin.
  */
-public class SuperMinesAPI {
+public final class SuperMinesAPI {
     private SuperMinesAPI() {
         throw new IllegalStateException(); // no one loves do that, right?
     }

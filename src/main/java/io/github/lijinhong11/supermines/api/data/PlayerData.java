@@ -39,6 +39,12 @@ public final class PlayerData {
     @Column(name = "treasures_got")
     private Map<String, Integer> treasuresGot = new HashMap<>();
 
+    @Column(name = "regen_point_mining_counts")
+    private Map<String, Integer> regenPointMiningCounts = new HashMap<>();
+
+    @Column(name = "regen_point_total_mining_counts")
+    private Map<String, Integer> regenPointTotalMiningCounts = new HashMap<>();
+
     public PlayerData() {}
 
     public PlayerData(String playerName, UUID playerUUID, StringRankSet rank, boolean autoPickup) {
@@ -79,7 +85,9 @@ public final class PlayerData {
     }
 
     public void addMinedBlocks(int amount) {
-        this.minedBlocks += amount;
+        this.minedBlocks = Math.addExact((long) this.minedBlocks, amount) > Integer.MAX_VALUE
+                ? Integer.MAX_VALUE
+                : this.minedBlocks + amount;
     }
 
     public boolean isAutoPickup() {
@@ -96,5 +104,27 @@ public final class PlayerData {
 
     public void addTreasureGot(@NotNull String treasureId) {
         treasuresGot.merge(treasureId, 1, Integer::sum);
+    }
+
+    public int addRegenPointMining(@NotNull String pointId) {
+        return regenPointMiningCounts.compute(
+                pointId, (key, value) -> value == null || value == Integer.MAX_VALUE ? Integer.MAX_VALUE : value + 1);
+    }
+
+    public void addRegenPointTotalMining(@NotNull String pointId) {
+        regenPointTotalMiningCounts.compute(
+                pointId, (key, value) -> value == null || value == Integer.MAX_VALUE ? Integer.MAX_VALUE : value + 1);
+    }
+
+    public int getRegenPointTotalMining(@NotNull String pointId) {
+        return regenPointTotalMiningCounts.getOrDefault(pointId, 0);
+    }
+
+    public void resetRegenPointMining(@NotNull String pointId) {
+        regenPointMiningCounts.put(pointId, 0);
+    }
+
+    public int getRegenPointMining(@NotNull String pointId) {
+        return regenPointMiningCounts.getOrDefault(pointId, 0);
     }
 }
