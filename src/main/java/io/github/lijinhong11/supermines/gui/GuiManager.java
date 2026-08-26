@@ -669,14 +669,14 @@ public final class GuiManager {
                         }));
 
         // Block Pool
-        gui.putItem(slot(3, 5), ButtonItem.clickable(Constants.Items.SET_REGEN_BLOCK.apply(p), (g, e) -> {
+        gui.putItem(slot(3, 6), ButtonItem.clickable(Constants.Items.SET_REGEN_BLOCK.apply(p), (g, e) -> {
             if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
             openRegenPointBlocks(p, point);
             return false;
         }));
 
         gui.putItem(
-                slot(3, 6),
+                slot(3, 8),
                 ButtonItem.clickable(
                         SuperMines.getInstance()
                                 .getLanguageManager()
@@ -710,14 +710,14 @@ public final class GuiManager {
                         }));
 
         // Independent Rewards
-        gui.putItem(slot(3, 7), ButtonItem.clickable(Constants.Items.REGEN_REWARDS.apply(p), (g, e) -> {
+        gui.putItem(slot(4, 3), ButtonItem.clickable(Constants.Items.REGEN_REWARDS.apply(p), (g, e) -> {
             if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
             openRegenPointRewards(p, point);
             return false;
         }));
 
         gui.putItem(
-                slot(5, 2),
+                slot(4, 5),
                 ButtonItem.clickable(
                         SuperMines.getInstance()
                                 .getLanguageManager()
@@ -736,20 +736,20 @@ public final class GuiManager {
                         }));
 
         // Teleport
-        gui.putItem(slot(4, 3), ButtonItem.clickable(Constants.Items.TP_TO_POINT.apply(p), (g, e) -> {
+        gui.putItem(slot(4, 7), ButtonItem.clickable(Constants.Items.TP_TO_POINT.apply(p), (g, e) -> {
             if (!checkPermission(p, Constants.Permission.TELEPORT)) return false;
             p.teleportAsync(point.getLocation().clone().add(0.5, 0, 0.5));
             return false;
         }));
 
-        gui.putItem(slot(4, 5), ButtonItem.clickable(Constants.Items.RESPAWN_NOW.apply(p), (g, e) -> {
+        gui.putItem(slot(5, 2), ButtonItem.clickable(Constants.Items.RESPAWN_NOW.apply(p), (g, e) -> {
             if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
             SuperMines.getInstance().getRegenPointManager().respawnNow(point);
             reopen.run();
             return false;
         }));
 
-        gui.putItem(slot(4, 7), ButtonItem.clickable(Constants.Items.REMOVE_REGEN_POINT.apply(p), (g, e) -> {
+        gui.putItem(slot(5, 4), ButtonItem.clickable(Constants.Items.REMOVE_REGEN_POINT.apply(p), (g, e) -> {
             if (!checkPermission(p, Constants.Permission.REGEN_POINTS)) return false;
             if (!e.getClick().isShiftClick() || !e.getClick().isRightClick()) return false;
             SuperMines.getInstance().getRegenPointManager().removeRegenPoint(point.getId());
