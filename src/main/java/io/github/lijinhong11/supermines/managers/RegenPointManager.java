@@ -16,10 +16,10 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import io.github.lijinhong11.supermines.integrates.skills.SkillsBlockPlace;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
+import io.github.lijinhong11.supermines.task.RegenPointResetTask;
 import io.github.lijinhong11.supermines.task.TaskMaker;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.Sounds;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +51,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
 
     private final Map<String, RegenPoint> points = new ConcurrentHashMap<>();
     private final Map<String, RegenPoint> byLocation = new ConcurrentHashMap<>();
-    private final Map<String, ScheduledTask> respawnTasks = new ConcurrentHashMap<>();
+    private final Map<String, RegenPointResetTask> respawnTasks = new ConcurrentHashMap<>();
     private final Map<String, AtomicLong> respawnGenerations = new ConcurrentHashMap<>();
     private final Set<String> deferredPointIds = ConcurrentHashMap.newKeySet();
     private volatile boolean closing;
@@ -535,31 +535,48 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         return respawnTasks.containsKey(point.getId()) || point.getRespawnAt() > 0;
     }
 
+    public long getUntilResetTime(@NotNull RegenPoint point) {
+        RegenPointResetTask task = respawnTasks.get(point.getId());
+        if (task == null) {
+            return point.getRespawnAt() > 0 ? Math.max(0L, point.getRespawnAt() - System.currentTimeMillis()) : -1L;
+        }
+
+        return Math.max(0L, task.getNextResetTime() - System.currentTimeMillis());
+    }
+
+    public void runRespawnTask(@NotNull RegenPoint point, long generation, @NotNull RegenPointResetTask task) {
+        if (respawnTasks.get(point.getId()) != task) return;
+        respawn(point, RegenPointRespawnEvent.Cause.SCHEDULED, generation);
+    }
+
     private synchronized void scheduleRespawn(RegenPoint point, long delayMillis) {
         if (closing || points.get(point.getId()) != point) return;
         cancelRespawn(point);
         long generation = nextGeneration(point);
         long delayTicks = delayMillis <= 0 ? 1L : (delayMillis - 1L) / 50L + 1L;
-        ScheduledTask task = SuperMines.getInstance()
-                .getTaskMaker()
-                .runSyncDelayed(
-                        point.getLocation(),
-                        delayTicks,
-                        () -> respawn(point, RegenPointRespawnEvent.Cause.SCHEDULED, generation));
-        if (task != null) {
-            respawnTasks.put(point.getId(), task);
+        RegenPointResetTask task = new RegenPointResetTask(point, generation, delayMillis);
+        respawnTasks.put(point.getId(), task);
+        try {
+            task.bind(org.bukkit.Bukkit.getRegionScheduler()
+                    .runDelayed(SuperMines.getInstance(), point.getLocation(), task, delayTicks));
+        } catch (RuntimeException exception) {
+            respawnTasks.remove(point.getId(), task);
+            task.cancel();
+            SuperMines.getInstance()
+                    .getLogger()
+                    .warning("Failed to schedule regen point '" + point.getId() + "': " + exception);
         }
     }
 
     private void cancelRespawn(RegenPoint point) {
-        ScheduledTask task = respawnTasks.remove(point.getId());
+        RegenPointResetTask task = respawnTasks.remove(point.getId());
         if (task != null) {
             task.cancel();
         }
     }
 
     private void cancelAllRespawns() {
-        for (ScheduledTask task : respawnTasks.values()) {
+        for (RegenPointResetTask task : respawnTasks.values()) {
             task.cancel();
         }
         respawnTasks.clear();

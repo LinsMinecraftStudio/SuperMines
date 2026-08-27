@@ -1848,6 +1848,24 @@ public class SuperMinesCommand {
                                 inv.setItemInMainHand(Constants.Items.WAND.apply(player));
                             }
                         }))
+                .withSubcommand(new CommandAPICommand("about").executes((sender, args) -> {
+                    SuperMines plugin = SuperMines.getInstance();
+                    var description = plugin.getDescription();
+                    plugin.getLanguageManager()
+                            .sendMessages(
+                                    sender,
+                                    "command.about",
+                                    MessageReplacement.replace("%name%", description.getName()),
+                                    MessageReplacement.replace("%version%", description.getVersion()),
+                                    MessageReplacement.replace(
+                                            "%authors%", String.join(", ", description.getAuthors())),
+                                    MessageReplacement.replace("%description%", description.getDescription()),
+                                    MessageReplacement.replace(
+                                            "%website%",
+                                            description.getWebsite() == null ? "" : description.getWebsite()),
+                                    MessageReplacement.replace("%server_version%", org.bukkit.Bukkit.getVersion()),
+                                    MessageReplacement.replace("%java_version%", System.getProperty("java.version")));
+                }))
                 .withSubcommand(new CommandAPICommand("reload")
                         .withPermission(Constants.Permission.RELOAD)
                         .executes((sender, args) -> {

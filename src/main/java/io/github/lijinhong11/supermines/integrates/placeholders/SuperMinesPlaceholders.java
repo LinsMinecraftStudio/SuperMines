@@ -6,6 +6,7 @@ import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.mine.Mine;
+import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -79,6 +80,23 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
 
             PlayerData data = SuperMines.getInstance().getPlayerDataManager().getOrCreatePlayerData(p.getUniqueId());
             return String.valueOf(data.getRegenPointTotalMining(args[0]));
+        });
+
+        registerPlaceholder("regenpoints_resettime", PlaceholderType.GLOBAL, (viewer, target, args) -> {
+            if (args.length < 1) return null;
+
+            RegenPoint rp = SuperMines.getInstance().getRegenPointManager().getRegenPoint(args[0]);
+            if (rp == null) {
+                return "REGEN_POINT_NOT_FOUND";
+            }
+
+            long remaining = SuperMines.getInstance().getRegenPointManager().getUntilResetTime(rp);
+            if (remaining < 0) {
+                return SuperMines.getInstance()
+                        .getLanguageManager()
+                        .getMsg(viewer == null ? null : viewer.getPlayer(), "regen-point.generated");
+            }
+            return NumberUtils.formatSeconds(null, (int) (Math.max(0L, remaining) / 1000L));
         });
 
         registerPlaceholder("hasrank", PlaceholderType.AUDIENCE, (viewer, target, args) -> {

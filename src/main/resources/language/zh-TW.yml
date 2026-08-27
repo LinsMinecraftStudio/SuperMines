@@ -4,6 +4,12 @@
     - "&a左鍵設定位置 1"
     - "&a右鍵設定位置 2"
 command:
+  about:
+    - "&aSuperMines"
+    - "&e作者: mmmjjkx"
+    - "&7GitHub: <click:open_url:https://github.com/LinsMinecraftStudio/SuperMines>https://github.com/LinsMinecraftStudio/SuperMines</click>"
+    - "&bQQ 交流群: <click:open_url:https://qm.qq.com/q/qJEqZZxVNm>1107921027</click>"
+    - "&5Discord: <click:open_url:https://discord.gg/9YP2UaPZhE>https://discord.gg/9YP2UaPZhE</click>"
   help:
     general:
       - "&aSuperMines 幫助"
@@ -221,6 +227,7 @@ mine:
   reset_warning: "&c礦區 &b%mine% &c將在 &b%time% &c後重置"
 regen-point:
   no-place: "&c你不能在再生礦點上放置方塊！"
+  generated: "&a已生成"
 gui:
   previous: "&e上一頁"
   next: "&e下一頁"

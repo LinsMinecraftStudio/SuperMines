@@ -4,6 +4,12 @@
     - "&aLeft-Click to set position 1"
     - "&aRight-Click to set position 2"
 command:
+  about:
+    - "&aSuperMines"
+    - "&eAuthor: mmmjjkx"
+    - "&7GitHub: <click:open_url:https://github.com/LinsMinecraftStudio/SuperMines>https://github.com/LinsMinecraftStudio/SuperMines</click>"
+    - "&bQQ Group: <click:open_url:https://qm.qq.com/q/qJEqZZxVNm>1107921027</click>"
+    - "&5Discord: <click:open_url:https://discord.gg/9YP2UaPZhE>https://discord.gg/9YP2UaPZhE</click>"
   help:
     general:
       - "&aSuperMines Help"
@@ -221,6 +227,7 @@ mine:
   reset_warning: "&cMine &b%mine% &cwill reset in &b%time%"
 regen-point:
   no-place: "&cYou can't place blocks on a regen point!"
+  generated: "&aGenerated"
 gui:
   previous: "&ePrevious Page"
   next: "&eNext Page"
@@ -541,5 +548,3 @@ gui:
       name: "&6Teleport To Point"
       lore:
         - "&7Click to teleport to the point"
-
-

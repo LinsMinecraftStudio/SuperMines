@@ -40,6 +40,7 @@ SuperMines 是一款免费开源的 Paper 矿区插件，用自动重置、条�
 | `%supermines_treasures_got_<宝藏ID>[_玩家名]%` | 指定宝藏获取次数；省略玩家名时读取当前玩家 |
 | `%supermines_regenpoints_mined_<矿点ID>[_玩家名]%` | 指定玩家在该矿点当前周期的挖掘数；省略玩家名时读取当前玩家 |
 | `%supermines_regenpoints_total_mined_<矿点ID>[_玩家名]%` | 指定玩家在该矿点的累计挖掘数；省略玩家名时读取当前玩家 |
+| `%supermines_regenpoints_resettime_<矿点ID>%` | 矿点重生的格式化剩余时间；矿点已生成时返回本地化的已生成状态 |
 | `%supermines_mine_<矿区ID>_<类型>%` | 返回指定矿区的运行数据，类型见下表 |
 
 ### MiniPlaceholders
@@ -53,11 +54,24 @@ SuperMines 是一款免费开源的 Paper 矿区插件，用自动重置、条�
 | `<supermines_treasures_got:<宝藏ID>[:玩家名]>` | 指定宝藏获取次数；省略玩家名时读取当前玩家 |
 | `<supermines_regenpoints_mined:<矿点ID>[:玩家名]>` | 指定玩家在该矿点当前周期的挖掘数；省略玩家名时读取当前玩家 |
 | `<supermines_regenpoints_total_mined:<矿点ID>[:玩家名]>` | 指定玩家在该矿点的累计挖掘数；省略玩家名时读取当前玩家 |
+| `<supermines_regenpoints_resettime:<矿点ID>>` | 矿点重生的格式化剩余时间；矿点已生成时返回本地化的已生成状态 |
 | `<supermines_mine:<矿区ID>:<类型>>` | 返回指定矿区的运行数据，类型见下表 |
+
+### 矿区变量类型
+
+| 类型 | 返回内容 |
+| --- | --- |
+| `blocksbroken` | 当前重置周期内已挖掘的方块数 |
+| `resettime` | 距离下次重置的格式化剩余时间 |
+| `blockpercent` | 矿区剩余方块百分比 |
+| `minedpercent` | 矿区已挖掘百分比 |
+| `totalblocks` | 矿区总方块数 |
 
 ### 注意
 
-矿区不存在时返回 `MINE_NOT_FOUND`，类型无效时返回 `INVALID_ARGUMENT`。
+矿区不存在时返回 `MINE_NOT_FOUND`，
+类型无效时返回 `INVALID_ARGUMENT`，
+矿点不存在时返回 `REGEN_POINT_NOT_FOUND`。
 
 ## 未来
 
@@ -65,7 +79,6 @@ SuperMines 是一款免费开源的 Paper 矿区插件，用自动重置、条�
 
 - 随机矿区事件：幸运时段和双倍掉落。
 - 更新检查。
-- 重新规整变量，添加再生矿点相关变量。
 
 ## 截图
 

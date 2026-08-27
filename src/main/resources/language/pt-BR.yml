@@ -4,6 +4,12 @@ wand:
     - "&aClique esquerdo para definir posição 1"
     - "&aClique direito para definir posição 2"
 command:
+  about:
+    - "&aSuperMines"
+    - "&eAutor: mmmjjkx"
+    - "&7GitHub: <click:open_url:https://github.com/LinsMinecraftStudio/SuperMines>https://github.com/LinsMinecraftStudio/SuperMines</click>"
+    - "&bGrupo do QQ: <click:open_url:https://qm.qq.com/q/qJEqZZxVNm>1107921027</click>"
+    - "&5Discord: <click:open_url:https://discord.gg/9YP2UaPZhE>https://discord.gg/9YP2UaPZhE</click>"
   help:
     general:
       - "&aAjuda do SuperMines"
@@ -221,6 +227,7 @@ mine:
   reset_warning: "&cMina &b%mine% &cserá resetada em &b%time%"
 regen-point:
   no-place: "&cVocê não pode colocar blocos em um ponto de regeneração!"
+  generated: "&aGerado"
 gui:
   previous: "&ePágina Anterior"
   next: "&ePróxima Página"

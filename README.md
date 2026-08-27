@@ -37,7 +37,9 @@ SuperMines is a free, open-source mine plugin for Paper servers. It combines aut
 | `%supermines_minedblocks[_player]%` | The player's total mined blocks; uses the current player when `player` is omitted |
 | `%supermines_hasrank_<rank_id>[_player]%` | Whether the player has the rank, returning `true` or `false` |
 | `%supermines_treasures_got_<treasure_id>[_player]%` | How many times the specified treasure has been obtained; uses the current player when `player` is omitted |
+| `%supermines_regenpoints_mined_<point_id>[_player]%` | The player's blocks mined during the current reward cycle at the specified regen point; uses the current player when `player` is omitted |
 | `%supermines_regenpoints_total_mined_<point_id>[_player]%` | The player's total blocks mined at the specified regen point; uses the current player when `player` is omitted |
+| `%supermines_regenpoints_resettime_<point_id>%` | Formatted time until the regen point respawns, or the localized generated status when it is ready |
 | `%supermines_mine_<mine_id>_<type>%` | Runtime data for a mine; see the type table below |
 
 ### MiniPlaceholders
@@ -49,7 +51,9 @@ SuperMines is a free, open-source mine plugin for Paper servers. It combines aut
 | `<supermines_minedblocks[:player]>` | The player's total mined blocks; uses the current player when `player` is omitted |
 | `<supermines_hasrank:<rank_id>[:player]>` | Whether the player has the rank, returning `true` or `false` |
 | `<supermines_treasures_got:<treasure_id>[:player]>` | How many times the specified treasure has been obtained; uses the current player when `player` is omitted |
+| `<supermines_regenpoints_mined:<point_id>[:player]>` | The player's blocks mined during the current reward cycle at the specified regen point; uses the current player when `player` is omitted |
 | `<supermines_regenpoints_total_mined:<point_id>[:player]>` | The player's total blocks mined at the specified regen point; uses the current player when `player` is omitted |
+| `<supermines_regenpoints_resettime:<point_id>>` | Formatted time until the regen point respawns, or the localized generated status when it is ready |
 | `<supermines_mine:<mine_id>:<type>>` | Runtime data for a mine; see the type table below |
 
 ### Mine Variable Types
@@ -62,13 +66,14 @@ SuperMines is a free, open-source mine plugin for Paper servers. It combines aut
 | `minedpercent` | Percentage of the mine that has been mined |
 | `totalblocks` | Total blocks in the mine |
 
-If the mine does not exist, the result is `MINE_NOT_FOUND`. An invalid type returns `INVALID_ARGUMENT`.
+If the mine does not exist, the result is `MINE_NOT_FOUND`.  
+An invalid type returns `INVALID_ARGUMENT`.   
+If the regen point does not exist, the result is `REGEN_POINT_NOT_FOUND`.
 
 ## What's Next
 
 - Random mine events: lucky periods and double drops.
 - Update checks.
-- More regen point-related variables.
 
 ## Screenshots
 
