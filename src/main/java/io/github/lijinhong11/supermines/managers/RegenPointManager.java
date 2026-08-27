@@ -294,7 +294,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
     }
 
     public synchronized void unloadWorld(@NotNull World world) {
-        for (RegenPoint point : java.util.List.copyOf(points.values())) {
+        for (RegenPoint point : List.copyOf(points.values())) {
             if (point.getWorld() != world) continue;
 
             cancelRespawn(point);
@@ -557,7 +557,7 @@ public class RegenPointManager extends AbstractFileObjectManager<RegenPoint> {
         RegenPointResetTask task = new RegenPointResetTask(point, generation, delayMillis);
         respawnTasks.put(point.getId(), task);
         try {
-            task.bind(org.bukkit.Bukkit.getRegionScheduler()
+            task.bind(Bukkit.getRegionScheduler()
                     .runDelayed(SuperMines.getInstance(), point.getLocation(), task, delayTicks));
         } catch (RuntimeException exception) {
             respawnTasks.remove(point.getId(), task);
