@@ -472,6 +472,8 @@ gui:
         - "&7目前: &b%level%"
   regenpoints:
     title: "&d&l再生礦點"
+    create_title: "&d建立再生礦點"
+    create_label: "請輸入再生礦點 ID"
     info:
       - "&7世界: &a%world%"
       - "&7位置: &e%pos%"

@@ -1002,16 +1002,27 @@ public final class GuiManager {
         }
 
         MaterialChooser.openUsableBlockChooser(p, chosen -> {
-            String id = "rp_" + loc.getWorld().getUID() + "_" + loc.getBlockX() + "_" + loc.getBlockY() + "_"
-                    + loc.getBlockZ();
-            RegenPoint point = new RegenPoint(
-                    id,
-                    loc.getWorld(),
-                    BlockPos.fromLocation(loc),
-                    chosen,
-                    SuperMines.getInstance().getRegenPointManager().getDefaultRespawnSeconds());
-            SuperMines.getInstance().getRegenPointManager().addRegenPoint(point);
-            openRegenPointManagementGui(p, point);
+            TextInputDialog dialog = TextInputDialog.create(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.regenpoints.create_title"),
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.regenpoints.create_label"),
+                    id -> {
+                        if (!id.matches(Constants.ID_PATTERN)
+                                || SuperMines.getInstance().getRegenPointManager().getRegenPoint(id) != null) {
+                            SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.invalid-id");
+                            openRegenPointList(p);
+                            return;
+                        }
+
+                        RegenPoint point = new RegenPoint(
+                                id,
+                                loc.getWorld(),
+                                BlockPos.fromLocation(loc),
+                                chosen,
+                                SuperMines.getInstance().getRegenPointManager().getDefaultRespawnSeconds());
+                        SuperMines.getInstance().getRegenPointManager().addRegenPoint(point);
+                        openRegenPointManagementGui(p, point);
+                    });
+            dialog.show(p);
         });
     }
 

@@ -472,6 +472,8 @@ gui:
         - "&7Current: &b%level%"
   regenpoints:
     title: "&d&lRegen Points"
+    create_title: "&dCreate Regen Point"
+    create_label: "Enter the regen point ID"
     info:
       - "&7World: &a%world%"
       - "&7Position: &e%pos%"

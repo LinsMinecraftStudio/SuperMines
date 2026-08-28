@@ -472,6 +472,8 @@ gui:
         - "&7Actuel : &b%level%"
   regenpoints:
     title: "&d&lPoints de régénération"
+    create_title: "&dCréer un point de régénération"
+    create_label: "Entrez l'identifiant du point de régénération"
     info:
       - "&7Monde : &a%world%"
       - "&7Position : &e%pos%"
