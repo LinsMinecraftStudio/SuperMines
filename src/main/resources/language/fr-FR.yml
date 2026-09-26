@@ -244,6 +244,20 @@ gui:
   input:
     invalid-number: "&cNombre invalide ! Le nombre ne peut pas 锚tre inf茅rieur 脿 0 !"
     invalid-percent: "&cPourcentage invalide ! La valeur doit 锚tre positive et inf茅rieure ou 茅gale 脿 100"
+    integer:
+      title: "&eSaisissez un entier"
+      label: "&7Saisissez une valeur entre 0 et 1000000"
+    weight:
+      title: "&eSaisissez le poids"
+      label: "&7Saisissez le poids"
+    text:
+      title: "&eSaisissez le texte"
+    display-name:
+      label: "&7Saisissez le nom d'affichage"
+    placeholder:
+      label: "&7Saisissez le placeholder"
+    comparison:
+      label: "&7Saisissez la valeur de comparaison"
   set_display_name:
     prompt: "&eSaisissez le nouveau nom dans le chat : &b(codes couleur accept茅s, saisissez &6##CANCEL &bpour annuler)"
     name: "&6D茅finir le nom d'affichage"

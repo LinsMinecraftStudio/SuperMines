@@ -60,17 +60,14 @@ public class SuperMines extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger()
-                .info(
-                        """
+        getLogger().info("""
 
                 ==============================
                        SuperMines v%s
                         Author: mmmjjkx
                            Enjoy :)
                 ==============================
-                """
-                                .formatted(getDescription().getVersion()));
+                """.formatted(getDescription().getVersion()));
 
         languageManager = MittelLib.getInstance().getLanguageManager(this);
 
@@ -92,7 +89,9 @@ public class SuperMines extends JavaPlugin {
 
         SuperMinesCommand.register(this);
 
-        new NexusMCUpdateChecker(this, "56db359b-d055-42ae-93c2-6a71b43ba0b3"/*, p -> languageManager.getMsgComponent(p, "")*/).check();
+        new NexusMCUpdateChecker(
+                        this, "56db359b-d055-42ae-93c2-6a71b43ba0b3" /*, p -> languageManager.getMsgComponent(p, "")*/)
+                .check();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package io.github.lijinhong11.supermines.gui;
 
-import static io.github.lijinhong11.supermines.gui.GuiManager.CANCEL_COMMAND;
 import static io.github.lijinhong11.supermines.gui.GuiManager.buildManagementGUI;
 import static io.github.lijinhong11.supermines.gui.GuiManager.buildPagedGUI;
 import static io.github.lijinhong11.supermines.gui.GuiManager.checkPermission;
@@ -12,8 +11,8 @@ import io.github.lijinhong11.mittellib.gui.inventory.choosers.BiomeChooser;
 import io.github.lijinhong11.mittellib.gui.inventory.impl.ChestGUI;
 import io.github.lijinhong11.mittellib.gui.inventory.impl.PaginatedChestGUI;
 import io.github.lijinhong11.mittellib.gui.inventory.item.ButtonItem;
+import io.github.lijinhong11.mittellib.gui.dialog.impl.input.TextInputDialog;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
-import io.github.lijinhong11.mittellib.utils.chat.ChatInput;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
@@ -77,7 +76,8 @@ final class GenerationConditionGui {
         gui.open(p);
     }
 
-    static void startEditingCondition(Player p, Mine mine, BlockSpawnEntry entry, Runnable reopen, IGenerateCondition condition) {
+    static void startEditingCondition(
+            Player p, Mine mine, BlockSpawnEntry entry, Runnable reopen, IGenerateCondition condition) {
         IGenerateCondition[] holder = new IGenerateCondition[] {condition};
         Consumer<IGenerateCondition> replace = updated -> {
             entry.removeGenerateCondition(holder[0]);
@@ -479,20 +479,15 @@ final class GenerationConditionGui {
                             .getLanguageManager()
                             .sendMessage(
                                     p, "gui.mine-management.block_spawn_entries.conditions.leaf.placeholder.prompt");
-                    ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-                        if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
-                            SuperMines.getInstance()
-                                    .getTaskMaker()
-                                    .runSync(() -> openPlaceholderEditor(p, condition, onSave, back));
-                            return;
-                        }
+                    TextInputDialog.create(
+                            SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.text.title"),
+                            SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.placeholder.label"),
+                            result -> {
                         PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
                                 result, condition.compareContent(), condition.parseType());
                         onSave.accept(updated);
-                        SuperMines.getInstance()
-                                .getTaskMaker()
-                                .runSync(() -> openPlaceholderEditor(p, updated, onSave, back));
-                    });
+                        openPlaceholderEditor(p, updated, onSave, back);
+                            }).show(p);
                     return false;
                 }));
 
@@ -506,20 +501,15 @@ final class GenerationConditionGui {
                                     .sendMessage(
                                             p,
                                             "gui.mine-management.block_spawn_entries.conditions.leaf.placeholder_compare.prompt");
-                            ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-                                if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
-                                    SuperMines.getInstance()
-                                            .getTaskMaker()
-                                            .runSync(() -> openPlaceholderEditor(p, condition, onSave, back));
-                                    return;
-                                }
+                            TextInputDialog.create(
+                                    SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.text.title"),
+                                    SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.comparison.label"),
+                                    result -> {
                                 PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
                                         condition.placeholder(), result, condition.parseType());
                                 onSave.accept(updated);
-                                SuperMines.getInstance()
-                                        .getTaskMaker()
-                                        .runSync(() -> openPlaceholderEditor(p, updated, onSave, back));
-                            });
+                                openPlaceholderEditor(p, updated, onSave, back);
+                                    }).show(p);
                             return false;
                         }));
 

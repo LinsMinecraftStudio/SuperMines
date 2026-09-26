@@ -244,6 +244,20 @@ gui:
   input:
     invalid-number: "&cInvalid number! The number cannot be less than 0!"
     invalid-percent: "&cInvalid Percentage! The value must be a positive number and less than or equal to 100"
+    integer:
+      title: "&eEnter integer"
+      label: "&7Enter a value from 0 to 1000000"
+    weight:
+      title: "&eEnter weight"
+      label: "&7Enter the weight"
+    text:
+      title: "&eEnter text"
+    display-name:
+      label: "&7Enter the display name"
+    placeholder:
+      label: "&7Enter the placeholder"
+    comparison:
+      label: "&7Enter the comparison value"
   set_display_name:
     prompt: "&eEnter the new display name in the chat: &b(Support color codes, type &6##CANCEL &bto cancel)"
     name: "&6Set Display Name"

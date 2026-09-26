@@ -1,6 +1,8 @@
 package io.github.lijinhong11.supermines.gui;
 
 import com.google.common.base.Preconditions;
+import io.github.lijinhong11.mittellib.gui.dialog.impl.input.FloatInputDialog;
+import io.github.lijinhong11.mittellib.gui.dialog.impl.input.IntegerInputDialog;
 import io.github.lijinhong11.mittellib.gui.dialog.impl.input.MultiLineTextInputDialog;
 import io.github.lijinhong11.mittellib.gui.dialog.impl.input.TextInputDialog;
 import io.github.lijinhong11.mittellib.gui.inventory.MittelGUI;
@@ -14,7 +16,6 @@ import io.github.lijinhong11.mittellib.math.BlockPos;
 import io.github.lijinhong11.mittellib.math.CuboidArea;
 import io.github.lijinhong11.mittellib.math.SphereArea;
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
-import io.github.lijinhong11.mittellib.utils.chat.ChatInput;
 import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.Rank;
@@ -40,8 +41,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class GuiManager {
-    static final String CANCEL_COMMAND = "##CANCEL";
-
     public static void openMain(Player p) {
         ChestGUI gui = MittelGUI.chestBuilder()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.general.title"))
@@ -1061,20 +1060,14 @@ public final class GuiManager {
     }
 
     private static void handleIntegerInput(Player p, Consumer<Integer> onSuccess, Runnable recovery) {
-        ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-            if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
-                if (recovery != null) SuperMines.getInstance().getTaskMaker().runSync(recovery);
-                return;
-            }
-
-            try {
-                int value = Integer.parseInt(result);
-                SuperMines.getInstance().getTaskMaker().runSync(() -> onSuccess.accept(value));
-            } catch (NumberFormatException ex) {
-                SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.input.invalid-number");
-                if (recovery != null) SuperMines.getInstance().getTaskMaker().runSync(recovery);
-            }
-        });
+        IntegerInputDialog.create(
+                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.integer.title"),
+                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.integer.label"),
+                        0,
+                        1_000_000,
+                        onSuccess,
+                        recovery)
+                .show(p);
     }
 
     private static void handleWeightInput(Player p, Consumer<Double> onSuccess, String errorKey) {
@@ -1082,24 +1075,15 @@ public final class GuiManager {
     }
 
     private static void handleWeightInput(Player p, Consumer<Double> onSuccess, String errorKey, Runnable recovery) {
-        ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-            if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
-                if (recovery != null) SuperMines.getInstance().getTaskMaker().runSync(recovery);
-                return;
-            }
-
-            try {
-                double value = Double.parseDouble(result);
-                if (!Double.isFinite(value) || value < Constants.WEIGHT_MIN) {
-                    throw new NumberFormatException();
-                }
-
-                SuperMines.getInstance().getTaskMaker().runSync(() -> onSuccess.accept(value));
-            } catch (NumberFormatException ex) {
-                SuperMines.getInstance().getLanguageManager().sendMessage(p, errorKey);
-                if (recovery != null) SuperMines.getInstance().getTaskMaker().runSync(recovery);
-            }
-        });
+        FloatInputDialog.createWithDefaultStep(
+                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.weight.title"),
+                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.weight.label"),
+                        (float) Constants.WEIGHT_MIN,
+                        (float) Constants.WEIGHT_MIN,
+                        Float.MAX_VALUE,
+                        value -> onSuccess.accept((double) value),
+                        recovery)
+                .show(p);
     }
 
     private static <T extends Identified> void placeCommon(
@@ -1117,11 +1101,10 @@ public final class GuiManager {
             if (!checkPermission(p, Constants.Permission.SET_DISPLAY_NAME)) return false;
             p.closeInventory();
             SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.set_display_name.prompt");
-            ChatInput.waitForPlayer(SuperMines.getInstance(), p, result -> {
-                if (result.equalsIgnoreCase(CANCEL_COMMAND)) {
-                    SuperMines.getInstance().getTaskMaker().runSync(reopen);
-                    return;
-                }
+            TextInputDialog.create(
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.text.title"),
+                    SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.display-name.label"),
+                    result -> {
                 object.setDisplayName(ComponentUtils.deserialize(result));
 
                 switch (object) {
@@ -1133,8 +1116,8 @@ public final class GuiManager {
                         SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
                     default -> {}
                 }
-                SuperMines.getInstance().getTaskMaker().runSync(reopen);
-            });
+                reopen.run();
+                    }).show(p);
             return false;
         }));
 

@@ -24,15 +24,10 @@ public abstract class AbstractDatabaseObjectManager<T> {
         try {
             connection.createTableByClass(clazz);
         } catch (SQLException e) {
-            SuperMines.getInstance()
-                    .getLogger()
-                    .log(
-                            Level.SEVERE,
-                            """
+            SuperMines.getInstance().getLogger().log(Level.SEVERE, """
                                     Failed to create/load player data!
                                     The plugin will disabled...
-                                    """,
-                            e);
+                                    """, e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
         }
     }
@@ -41,15 +36,10 @@ public abstract class AbstractDatabaseObjectManager<T> {
         try {
             connection.insertObject(clazz, t, true);
         } catch (SQLException e) {
-            SuperMines.getInstance()
-                    .getLogger()
-                    .log(
-                            Level.SEVERE,
-                            """
+            SuperMines.getInstance().getLogger().log(Level.SEVERE, """
                                     Failed to save player data!
                                     The plugin will disabled...
-                                    """,
-                            e);
+                                    """, e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
         }
     }
@@ -58,15 +48,10 @@ public abstract class AbstractDatabaseObjectManager<T> {
         try {
             return connection.selectMulti(clazz);
         } catch (SQLException e) {
-            SuperMines.getInstance()
-                    .getLogger()
-                    .log(
-                            Level.SEVERE,
-                            """
+            SuperMines.getInstance().getLogger().log(Level.SEVERE, """
                                     Failed to load player data table!
                                     The plugin will disabled...
-                                    """,
-                            e);
+                                    """, e);
             Bukkit.getPluginManager().disablePlugin(SuperMines.getInstance());
         }
 

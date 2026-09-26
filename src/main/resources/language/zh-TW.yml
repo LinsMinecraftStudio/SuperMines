@@ -244,6 +244,20 @@ gui:
   input:
     invalid-number: "&c無效數字！"
     invalid-percent: "&c無效百分比！數值必須大於 0 且不超過 100"
+    integer:
+      title: "&e輸入整數"
+      label: "&7請輸入 0 到 1000000 之間的數值"
+    weight:
+      title: "&e輸入權重"
+      label: "&7請輸入權重"
+    text:
+      title: "&e輸入文字"
+    display-name:
+      label: "&7請輸入顯示名稱"
+    placeholder:
+      label: "&7請輸入佔位符"
+    comparison:
+      label: "&7請輸入比較值"
   set_display_name:
     prompt: "&e在聊天輸入新的顯示名：&b(輸入 &6##CANCEL &b取消)"
     name: "&6設定顯示名"

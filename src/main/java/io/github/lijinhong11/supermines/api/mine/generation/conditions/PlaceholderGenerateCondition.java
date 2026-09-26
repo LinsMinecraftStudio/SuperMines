@@ -9,7 +9,6 @@ import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.miniplaceholders.api.MiniPlaceholders;
 import java.util.List;
 import java.util.Locale;
-
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -21,8 +20,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
-public record PlaceholderGenerateCondition(String placeholder, String compareContent,
-                                           ParseType parseType) implements IGenerateCondition, ReadWriteObject {
+public record PlaceholderGenerateCondition(String placeholder, String compareContent, ParseType parseType)
+        implements IGenerateCondition, ReadWriteObject {
     public PlaceholderGenerateCondition(ConfigurationSection cs) {
         this(cs.getString("placeholder", ""), cs.getString("compareContent", ""), parseType(cs.getString("parseType")));
     }

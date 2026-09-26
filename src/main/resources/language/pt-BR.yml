@@ -244,6 +244,20 @@ gui:
   input:
     invalid-number: "&cN煤mero inv谩lido! O n煤mero n茫o pode ser menor que 0!"
     invalid-percent: "&cPorcentagem inv谩lida! O valor deve ser positivo e menor ou igual a 100"
+    integer:
+      title: "&eDigite um inteiro"
+      label: "&7Digite um valor entre 0 e 1000000"
+    weight:
+      title: "&eDigite o peso"
+      label: "&7Digite o peso"
+    text:
+      title: "&eDigite o texto"
+    display-name:
+      label: "&7Digite o nome de exibição"
+    placeholder:
+      label: "&7Digite o placeholder"
+    comparison:
+      label: "&7Digite o valor de comparação"
   set_display_name:
     prompt: "&eDigite o novo nome de exibi莽茫o no chat: &b(Suporta c贸digos de cor, digite &6##CANCEL &bpara cancelar)"
     name: "&6Definir Nome de Exibi莽茫o"
