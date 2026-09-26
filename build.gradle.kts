@@ -3,8 +3,8 @@ import java.nio.charset.StandardCharsets
 
 plugins {
     java
-    id("com.diffplug.spotless") version "8.0.0"
-    id("io.github.lijinhong11.nexusmcpublisher") version "1.0.3"
+    id("com.diffplug.spotless") version "8.9.0"
+    id("io.github.lijinhong11.nexusmcpublisher") version "1.0.6"
 }
 
 group = "io.github.lijinhong11"
@@ -43,9 +43,6 @@ dependencies {
     compileOnly("io.github.lijinhong11:MDatabase:1.2.1")
     compileOnly("org.bstats:bstats-bukkit:3.2.1")
 
-    compileOnly("dev.jorel:commandapi-bukkit-core:12.0.0")
-    compileOnly("com.mojang:brigadier:1.0.18")
-
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.1") {
         exclude(group = "com.google.guava")
         exclude(group = "com.google.code.gson")
@@ -57,14 +54,14 @@ dependencies {
         exclude(group = "it.unimi.dsi")
     }
 
-    compileOnly("me.clip:placeholderapi:2.12.2")
-    compileOnly("io.github.miniplaceholders:miniplaceholders-api:2.3.0")
+    compileOnly("me.clip:placeholderapi:2.12.3")
+    compileOnly("io.github.miniplaceholders:miniplaceholders-api:3.2.0")
 
-    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.2.045") {
+    compileOnly("com.gmail.nossr50.mcMMO:mcMMO:2.2.049") {
         exclude(group = "com.google.guava")
     }
 
-    compileOnly(files("libs/AuraSkills-2.3.9.jar"))
+    compileOnly(files("libs/AuraSkills-2.4.0.jar"))
 }
 
 tasks.withType<JavaCompile>().configureEach {

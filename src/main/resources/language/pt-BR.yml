@@ -1,8 +1,8 @@
-wand:
-  name: "&eSuper&aMine &dVarinha de Seleção"
+﻿wand:
+  name: "&eSuper&aMine &dVarinha de Sele莽茫o"
   lore:
-    - "&aClique esquerdo para definir posição 1"
-    - "&aClique direito para definir posição 2"
+    - "&aClique esquerdo para definir posi莽茫o 1"
+    - "&aClique direito para definir posi莽茫o 2"
 command:
   about:
     - "&aSuperMines"
@@ -12,95 +12,97 @@ command:
     - "&5Discord: <click:open_url:https://discord.gg/9YP2UaPZhE>https://discord.gg/9YP2UaPZhE</click>"
   help:
     general:
-      - "&aAjuda do SuperMines"
-      - "&e/sm create <id> [displayName] &7- &aCriar uma mina"
-      - "&e/sm help &7- &aMostrar esta mensagem de ajuda"
-      - "&e/sm info <mine> &7- &aMostrar informações de uma mina"
-      - "&e/sm list &7- &aListar todas as minas"
-      - "&e/sm gui &7- &aMostrar interface"
-      - "&e/sm treasures &7- &aMostrar ajuda sobre tesouros"
-      - "&e/sm ranks &7- &aMostrar ajuda sobre cargos"
-      - "&e/sm addTreasure <mine> <treasure> &7- &aAdicionar um tesouro à mina"
-      - "&e/sm removeTreasure <mine> <treasure> &7- &aRemover um tesouro da mina"
-      - "&e/sm setRequiredLevel <mine> <rankLevel> &7- &aDefinir o nível de cargo necessário"
-      - "&e/sm addAllowedRank <mine> <rank> &7- &aAdicionar cargos permitidos à mina"
-      - "&e/sm removeAllowedRank <mine> <rank> &7- &aRemover cargos permitidos da mina"
-      - "&e/sm setBlockGenerate <mine> <weight> <block> &7- &aFazer o bloco gerar na mina"
-      - "&e/sm setDisplayName <mine> <displayName> &7- &aDefinir o nome de exibição da mina"
-      - "&e/sm setDisplayIcon <mine> <item> &7- &aDefinir o ícone de exibição da mina"
-      - "&e/sm removeBlockGenerate <mine> <block> &7- &aParar a geração do bloco na mina"
-      - "&e/sm addResetWarning <mine> <restSeconds> &7- &aAdicionar aviso de reset"
-      - "&e/sm removeResetWarning <mine> <restSeconds> &7- &aRemover aviso de reset"
-      - "&e/sm setResetTime <mine> <resetSeconds> &7- &aDefinir tempo de reset da mina"
-      - "&e/sm settp/setteleport <mine> &7- &aDefinir local de teleporte da mina"
-      - "&e/sm tp/teleport <mine> &7- &aTeleportar para a mina"
-      - "&e/sm setOnlyFillAir <mine> <onlyFillAir> &7- &aDefinir mina para preencher só ar"
-      - "&e/sm reset <mine> &7- &aResetar uma mina"
-      - "&e/sm pos1 [position] &7- &aDefinir posição 1 de uma área"
-      - "&e/sm pos2 [position] &7- &aDefinir posição 2 de uma área"
-      - "&e/sm wand &7- &aObter uma varinha"
-      - "&e/sm remove <mine> &7- &aRemover uma mina"
-      - "&e/sm reload &7- &aRecarregar o plugin"
+      - "&6Ajuda do SuperMines"
+      - "<#E5C779>/sm create <id> [displayName] <#8EA08C>- <#A7BC9C>Criar uma mina"
+      - "<#E5C779>/sm help <#8EA08C>- <#A7BC9C>Mostrar esta mensagem de ajuda"
+      - "<#E5C779>/sm info <mine> <#8EA08C>- <#A7BC9C>Mostrar informa莽玫es de uma mina"
+      - "<#E5C779>/sm list <#8EA08C>- <#A7BC9C>Listar todas as minas"
+      - "<#E5C779>/sm gui <#8EA08C>- <#A7BC9C>Mostrar interface"
+      - "<#E5C779>/sm treasures <#8EA08C>- <#A7BC9C>Mostrar ajuda sobre tesouros"
+      - "<#E5C779>/sm ranks <#8EA08C>- <#A7BC9C>Mostrar ajuda sobre cargos"
+      - "<#E5C779>/sm bindTreasure <mine> <treasure> <#8EA08C>- <#A7BC9C>Vincular um tesouro 脿 mina"
+      - "<#E5C779>/sm unbindTreasure <mine> <treasure> <#8EA08C>- <#A7BC9C>Desvincular um tesouro da mina"
+      - "<#E5C779>/sm setRequiredLevel <mine> <rankLevel> <#8EA08C>- <#A7BC9C>Definir o n铆vel de cargo necess谩rio"
+      - "<#E5C779>/sm addAllowedRank <mine> <rank> <#8EA08C>- <#A7BC9C>Adicionar cargos permitidos 脿 mina"
+      - "<#E5C779>/sm removeAllowedRank <mine> <rank> <#8EA08C>- <#A7BC9C>Remover cargos permitidos da mina"
+      - "<#E5C779>/sm setBlockGenerate <mine> <weight> <block> <#8EA08C>- <#A7BC9C>Fazer o bloco gerar na mina"
+      - "<#E5C779>/sm setDisplayName <mine> <displayName> <#8EA08C>- <#A7BC9C>Definir o nome de exibi莽茫o da mina"
+      - "<#E5C779>/sm setDisplayIcon <mine> <item> <#8EA08C>- <#A7BC9C>Definir o 铆cone de exibi莽茫o da mina"
+      - "<#E5C779>/sm removeBlockGenerate <mine> <block> <#8EA08C>- <#A7BC9C>Parar a gera莽茫o do bloco na mina"
+      - "<#E5C779>/sm addResetWarning <mine> <restSeconds> <#8EA08C>- <#A7BC9C>Adicionar aviso de reset"
+      - "<#E5C779>/sm removeResetWarning <mine> <restSeconds> <#8EA08C>- <#A7BC9C>Remover aviso de reset"
+      - "<#E5C779>/sm setResetTime <mine> <resetSeconds> <#8EA08C>- <#A7BC9C>Definir tempo de reset da mina"
+      - "<#E5C779>/sm settp/setteleport <mine> <#8EA08C>- <#A7BC9C>Definir local de teleporte da mina"
+      - "<#E5C779>/sm tp/teleport <mine> <#8EA08C>- <#A7BC9C>Teleportar para a mina"
+      - "<#E5C779>/sm setOnlyFillAir <mine> <onlyFillAir> <#8EA08C>- <#A7BC9C>Definir mina para preencher s贸 ar"
+      - "<#E5C779>/sm reset <mine> <#8EA08C>- <#A7BC9C>Resetar uma mina"
+      - "<#E5C779>/sm pos1 [position] <#8EA08C>- <#A7BC9C>Definir posi莽茫o 1 de uma 谩rea"
+      - "<#E5C779>/sm pos2 [position] <#8EA08C>- <#A7BC9C>Definir posi莽茫o 2 de uma 谩rea"
+      - "<#E5C779>/sm wand <#8EA08C>- <#A7BC9C>Obter uma varinha"
+      - "<#E5C779>/sm remove <mine> <#8EA08C>- <#A7BC9C>Remover uma mina"
+      - "<#E5C779>/sm reload <#8EA08C>- <#A7BC9C>Recarregar o plugin"
     treasures:
-      - "&e/sm treasures list &7- &aListar todos os tesouros"
-      - "&e/sm treasures create <id> <displayName> <weight> &7- &aAdicionar um tesouro (segure o item na mão)"
-      - "&e/sm treasures remove <treasure> &7- &aRemover um tesouro"
-      - "&e/sm treasures setItem <treasure> &7- &aDefinir o item de recompensa (segure o item na mão)"
-      - "&e/sm treasures setWeight <treasure> <weight> &7- &aDefinir o peso de um tesouro"
-      - "&e/sm treasures setDisplayName <treasure> <displayName> &7- &aDefinir o nome de exibição"
-      - "&e/sm treasures addMatch <treasure> <block> &7- &aAdicionar bloco correspondente"
-      - "&e/sm treasures removeMatch <treasure> <block> &7- &aRemover bloco correspondente"
-      - "&e/sm treasures addCommand <treasure> <command> &7- &aAdicionar comando de console (pode usar placeholders)"
-      - "&e/sm treasures removeCommand <treasure> <command> &7- &aRemover um comando"
-      - "&e/sm treasures listCommands <treasure> &7- &aListar comandos do tesouro"
+      - "<#E5C779>/sm treasures list <#8EA08C>- <#A7BC9C>Listar todos os tesouros"
+      - "<#E5C779>/sm treasures copy <sourceId> <newId> <#8EA08C>- <#A7BC9C>Copiar um tesouro"
+      - "<#E5C779>/sm treasures create <id> <displayName> <weight> <#8EA08C>- <#A7BC9C>Adicionar um tesouro (segure o item na m茫o)"
+      - "<#E5C779>/sm treasures remove <treasure> <#8EA08C>- <#A7BC9C>Remover um tesouro"
+      - "<#E5C779>/sm treasures setItem <treasure> <#8EA08C>- <#A7BC9C>Definir o item de recompensa (segure o item na m茫o)"
+      - "<#E5C779>/sm treasures setWeight <treasure> <weight> <#8EA08C>- <#A7BC9C>Definir o peso de um tesouro"
+      - "<#E5C779>/sm treasures setDisplayName <treasure> <displayName> <#8EA08C>- <#A7BC9C>Definir o nome de exibi莽茫o"
+      - "<#E5C779>/sm treasures addMatch <treasure> <block> <#8EA08C>- <#A7BC9C>Adicionar bloco correspondente"
+      - "<#E5C779>/sm treasures removeMatch <treasure> <block> <#8EA08C>- <#A7BC9C>Remover bloco correspondente"
+      - "<#E5C779>/sm treasures addCommand <treasure> <command> <#8EA08C>- <#A7BC9C>Adicionar comando de console (pode usar placeholders)"
+      - "<#E5C779>/sm treasures removeCommand <treasure> <command> <#8EA08C>- <#A7BC9C>Remover um comando"
+      - "<#E5C779>/sm treasures listCommands <treasure> <#8EA08C>- <#A7BC9C>Listar comandos do tesouro"
     ranks:
-      - "&e/sm ranks list &7- &aListar todos os cargos"
-      - "&e/sm ranks create <id> <level> [displayName] &7- &aAdicionar um cargo"
-      - "&e/sm ranks remove <rank> &7- &aRemover um cargo"
-      - "&e/sm ranks giveRank <player> <rank> [notify] &7- &aDefinir cargo de um jogador"
-      - "&e/sm ranks takeRank <player> <rank> [notify] &7- &aRemover cargo de um jogador"
-      - "&e/sm ranks setDisplayName <rank> <displayName> &7- &aDefinir nome do cargo"
-      - "&e/sm ranks setLevel <rank> <level> &7- &aDefinir nível do cargo"
+      - "<#E5C779>/sm ranks list <#8EA08C>- <#A7BC9C>Listar todos os cargos"
+      - "<#E5C779>/sm ranks copy <sourceId> <newId> <#8EA08C>- <#A7BC9C>Copiar um cargo"
+      - "<#E5C779>/sm ranks create <id> <level> [displayName] <#8EA08C>- <#A7BC9C>Adicionar um cargo"
+      - "<#E5C779>/sm ranks remove <rank> <#8EA08C>- <#A7BC9C>Remover um cargo"
+      - "<#E5C779>/sm ranks giveRank <player> <rank> [notify] <#8EA08C>- <#A7BC9C>Definir cargo de um jogador"
+      - "<#E5C779>/sm ranks takeRank <player> <rank> [notify] <#8EA08C>- <#A7BC9C>Remover cargo de um jogador"
+      - "<#E5C779>/sm ranks setDisplayName <rank> <displayName> <#8EA08C>- <#A7BC9C>Definir nome do cargo"
+      - "<#E5C779>/sm ranks setLevel <rank> <level> <#8EA08C>- <#A7BC9C>Definir n铆vel do cargo"
     regenpoints:
-      - "&e/sm regenpoints list &7- &aListar todos os pontos de regeneração"
-      - "&e/sm regenpoints create <id> <block> &7- &aCriar um ponto no bloco que você está olhando"
-      - "&e/sm regenpoints remove <point> &7- &aRemover um ponto de regeneração"
-      - "&e/sm regenpoints setRespawnSeconds <point> <seconds> &7- &aDefinir o atraso de regeneração"
-      - "&e/sm regenpoints setBlock <point> <block> &7- &aDefinir o bloco que regenera"
-      - "&e/sm regenpoints setDisplayName <point> <displayName> &7- &aDefinir o nome de exibição"
-      - "&e/sm regenpoints tp <point> &7- &aTeleportar para um ponto de regeneração"
-      - "&e/sm regenpoints addBlock <point> <block> <weight> &7- &aAdicionar bloco com peso"
-      - "&e/sm regenpoints removeBlock <point> <block> &7- &aRemover bloco de regeneração"
-      - "&e/sm regenpoints addReward <point> <treasure> <chance> &7- &aAdicionar recompensa independente"
-      - "&e/sm regenpoints removeReward <point> <treasure> &7- &aRemover recompensa independente"
-      - "&e/sm regenpoints respawnNow <point> &7- &aRegenerar ponto imediatamente"
+      - "<#E5C779>/sm regenpoints list <#8EA08C>- <#A7BC9C>Listar todos os pontos de regenera莽茫o"
+      - "<#E5C779>/sm regenpoints create <id> <block> <#8EA08C>- <#A7BC9C>Criar um ponto no bloco que voc锚 est谩 olhando"
+      - "<#E5C779>/sm regenpoints remove <point> <#8EA08C>- <#A7BC9C>Remover um ponto de regenera莽茫o"
+      - "<#E5C779>/sm regenpoints setRespawnSeconds <point> <seconds> <#8EA08C>- <#A7BC9C>Definir o atraso de regenera莽茫o"
+      - "<#E5C779>/sm regenpoints setBlock <point> <block> <#8EA08C>- <#A7BC9C>Definir o bloco que regenera"
+      - "<#E5C779>/sm regenpoints setDisplayName <point> <displayName> <#8EA08C>- <#A7BC9C>Definir o nome de exibi莽茫o"
+      - "<#E5C779>/sm regenpoints tp <point> <#8EA08C>- <#A7BC9C>Teleportar para um ponto de regenera莽茫o"
+      - "<#E5C779>/sm regenpoints addBlock <point> <block> <weight> <#8EA08C>- <#A7BC9C>Adicionar bloco com peso"
+      - "<#E5C779>/sm regenpoints removeBlock <point> <block> <#8EA08C>- <#A7BC9C>Remover bloco de regenera莽茫o"
+      - "<#E5C779>/sm regenpoints addReward <point> <treasure> <chance> <#8EA08C>- <#A7BC9C>Adicionar recompensa independente"
+      - "<#E5C779>/sm regenpoints removeReward <point> <treasure> <#8EA08C>- <#A7BC9C>Remover recompensa independente"
+      - "<#E5C779>/sm regenpoints respawnNow <point> <#8EA08C>- <#A7BC9C>Regenerar ponto imediatamente"
   pos:
-    invalid-height: "&cA posição selecionada está fora do limite de altura do mundo."
-    outside-border: "&cA posição selecionada está fora da borda do mundo."
-    different-world: "&cPosição 1 e Posição 2 devem estar no mesmo mundo."
-    in-mine: "&cVocê não pode selecionar uma posição dentro de uma mina existente."
+    invalid-height: "&cA posi莽茫o selecionada est谩 fora do limite de altura do mundo."
+    outside-border: "&cA posi莽茫o selecionada est谩 fora da borda do mundo."
+    different-world: "&cPosi莽茫o 1 e Posi莽茫o 2 devem estar no mesmo mundo."
+    in-mine: "&cVoc锚 n茫o pode selecionar uma posi莽茫o dentro de uma mina existente."
     set:
-      pos1: "&aPosição 1 definida para &e%pos%&a."
-      pos2: "&aPosição 2 definida para &e%pos%&a."
+      pos1: "&aPosi莽茫o 1 definida para &e%pos%&a."
+      pos2: "&aPosi莽茫o 2 definida para &e%pos%&a."
     sphere:
-      enabled: "&aModo esfera ativado. pos1 será o centro e pos2 definirá o raio."
-      disabled: "&aModo esfera desativado. pos1 e pos2 definirão uma área cúbica."
+      enabled: "&aModo esfera ativado. pos1 ser谩 o centro e pos2 definir谩 o raio."
+      disabled: "&aModo esfera desativado. pos1 e pos2 definir茫o uma 谩rea c煤bica."
       radius-set: "&aEsfera definida! Centro: &e%center%&a, Raio: &b%radius%"
   create:
-    exists: "&cJá existe uma mina com esse ID!"
+    exists: "&cJ谩 existe uma mina com esse ID!"
     success: "&aA mina foi criada com sucesso!"
-    no-selection: "&cVocê não selecionou uma posição!"
-    selection-not-finished: "&cVocê não terminou de selecionar uma área!"
+    no-selection: "&cVoc锚 n茫o selecionou uma posi莽茫o!"
+    selection-not-finished: "&cVoc锚 n茫o terminou de selecionar uma 谩rea!"
   fillair:
-    enabled: "&aAgora a mina &b%mine% &asó preencherá ar com blocos ao resetar"
-    disabled: "&aAgora a mina &b%mine% &afará um reset completo com blocos"
+    enabled: "&aAgora a mina &b%mine% &as贸 preencher谩 ar com blocos ao resetar"
+    disabled: "&aAgora a mina &b%mine% &afar谩 um reset completo com blocos"
   auto-pickup:
-    enabled: "&aColeta automática ativada. Itens minerados irão direto para o inventário."
-    disabled: "&aColeta automática desativada. Itens minerados cairão no chão."
-    unavailable: "&cA coleta automática está desativada neste servidor."
-    no-permission: "&cVocê não tem permissão para usar a coleta automática."
+    enabled: "&aColeta autom谩tica ativada. Itens minerados ir茫o direto para o invent谩rio."
+    disabled: "&aColeta autom谩tica desativada. Itens minerados cair茫o no ch茫o."
+    unavailable: "&cA coleta autom谩tica est谩 desativada neste servidor."
+    no-permission: "&cVoc锚 n茫o tem permiss茫o para usar a coleta autom谩tica."
   redefine:
-    success: "&aA área da mina foi redefinida com sucesso!"
+    success: "&aA 谩rea da mina foi redefinida com sucesso!"
   remove:
     success: "&aA mina foi removida com sucesso!"
   reset:
@@ -108,18 +110,18 @@ command:
     success: "&aA mina foi resetada com sucesso!"
     stop-reset: "&aA mina &b%mine% &avai parar de resetar"
   resetwarning:
-    time-too-long: "&cO tempo de reset não deve exceder o tempo de reset da mina!"
-    started: "&aO aviso de reset da mina será iniciado!"
+    time-too-long: "&cO tempo de reset n茫o deve exceder o tempo de reset da mina!"
+    started: "&aO aviso de reset da mina ser谩 iniciado!"
     stopped: "&aO aviso de reset da mina foi parado!"
   block-generate:
-    success: "&aAgora o bloco &d%block% &aserá gerado na mina &b%mine% &acom peso &b%weight%"
-    removed: "&aA geração do bloco foi removida da mina &b%mine% &acom sucesso!"
+    success: "&aAgora o bloco &d%block% &aser谩 gerado na mina &b%mine% &acom peso &b%weight%"
+    removed: "&aA gera莽茫o do bloco foi removida da mina &b%mine% &acom sucesso!"
   add-treasure:
-    success: "&aO tesouro &d%treasure% &afoi adicionado à mina &b%mine%&a."
-    exists: "&cEsse tesouro já está associado a esta mina."
+    success: "&aO tesouro &d%treasure% &afoi adicionado 脿 mina &b%mine%&a."
+    exists: "&cEsse tesouro j谩 est谩 associado a esta mina."
   remove-treasure:
     success: "&aO tesouro &d%treasure% &afoi removido da mina &b%mine%&a."
-    not-bound: "&cEsse tesouro não está associado a esta mina."
+    not-bound: "&cEsse tesouro n茫o est谩 associado a esta mina."
   list:
     head:
       mine: "&6Minas: "
@@ -136,72 +138,72 @@ command:
     - "&7Blocos minerados: &b%broken%"
   teleport:
     set: "&aO local de teleporte da mina &b%mine% &afoi definido para &d%loc%"
-    no-loc: "&cO local de teleporte não está definido. Contate um operador."
+    no-loc: "&cO local de teleporte n茫o est谩 definido. Contate um operador."
     success: "&aTeleportado para a mina &b%mine%&a."
     success-other: "&aO jogador &b%player% &afoi teleportado para a mina &d%mine%&a."
     failed: "&cFalha no teleporte."
   treasures:
-    no-item-in-hand: "&cVocê deve segurar um item na mão!"
+    no-item-in-hand: "&cVoc锚 deve segurar um item na m茫o!"
     set-item: "&aO tesouro &d%treasure% &afoi alterado"
     set-weight: "&aO peso do tesouro &d%treasure% &afoi definido para &b%weight%"
     set-display-name: "&aO nome do tesouro &d%treasure% &afoi definido para &b%displayName%"
     create:
-      exists: "&cJá existe um tesouro com esse ID!"
+      exists: "&cJ谩 existe um tesouro com esse ID!"
       success: "&aO tesouro &d%treasure% &afoi criado com sucesso!"
       copy:
         success: "&aO tesouro &d%treasure% &afoi copiado com sucesso."
     remove:
       success: "&aO tesouro &d%treasure% &afoi removido com sucesso!"
     matched_blocks:
-      exists: "&cO bloco já existe na lista!"
-      not_exists: "&cO bloco não está na lista!"
+      exists: "&cO bloco j谩 existe na lista!"
+      not_exists: "&cO bloco n茫o est谩 na lista!"
       add_success: "&aO bloco &b%block% &afoi adicionado ao tesouro &d%treasure%"
       remove_success: "&aO bloco &b%block% &afoi removido do tesouro &d%treasure%"
-    command-empty: "&cO comando não pode estar vazio!"
+    command-empty: "&cO comando n茫o pode estar vazio!"
     add-command:
       success: "&aComando adicionado ao tesouro &d%treasure%&a."
     remove-command:
       success: "&aComando removido do tesouro &d%treasure%&a."
-      not-found: "&cEsse comando não está na lista do tesouro."
+      not-found: "&cEsse comando n茫o est谩 na lista do tesouro."
     list-commands:
-      empty: "&eTesouro &d%treasure% &enão tem comandos de console."
+      empty: "&eTesouro &d%treasure% &en茫o tem comandos de console."
       head: "&6Comandos de console para &d%treasure%&6:"
       line: "&7%index%. &f%command%"
     ranks:
       set-display-name: "&aO nome do cargo &d%rank% &afoi definido para &b%displayName%"
-      set-level: "&aO nível do cargo &d%rank% &afoi definido para &b%level%"
+      set-level: "&aO n铆vel do cargo &d%rank% &afoi definido para &b%level%"
       give-rank: "&aO cargo &d%rank% &afoi dado a &b%player%"
-      give-rank-notify: "&aO cargo &d%rank% foi dado a você"
+      give-rank-notify: "&aO cargo &d%rank% foi dado a voc锚"
       take-rank: "&cO cargo &d%rank% &cfoi removido de &b%player%"
       take-rank-notify: "&cSeu cargo &d%rank% &cfoi removido"
       allowed: "&aAgora a mina &b%mine% &apermite o cargo &d%rank% &ana mina"
-      disallowed: "&aAgora a mina &b%mine% &anão permite o cargo &d%rank% &ana mina"
-      level-less-than-1: "&cO nível não pode ser menor que 1!"
+      disallowed: "&aAgora a mina &b%mine% &an茫o permite o cargo &d%rank% &ana mina"
+      level-less-than-1: "&cO n铆vel n茫o pode ser menor que 1!"
       create:
-        exists: "&cJá existe um cargo com esse ID!"
+        exists: "&cJ谩 existe um cargo com esse ID!"
         success: "&aO cargo &b%rank% &afoi criado com sucesso!"
         copy: "&aO cargo &b%rank% &afoi copiado com sucesso."
       remove:
         success: "&aO cargo &b%rank% &afoi removido com sucesso!"
   regenpoints:
-    no-target-block: "&cVocê deve olhar para um bloco para criar um ponto de regeneração!"
-    already-exists: "&cJá existe um ponto de regeneração nesse local!"
+    no-target-block: "&cVoc锚 deve olhar para um bloco para criar um ponto de regenera莽茫o!"
+    already-exists: "&cJ谩 existe um ponto de regenera莽茫o nesse local!"
     create:
-      exists: "&cJá existe um ponto de regeneração com esse ID!"
-      success: "&aO ponto de regeneração &d%point% &afoi criado com sucesso!"
+      exists: "&cJ谩 existe um ponto de regenera莽茫o com esse ID!"
+      success: "&aO ponto de regenera莽茫o &d%point% &afoi criado com sucesso!"
     remove:
-      success: "&aO ponto de regeneração &d%point% &afoi removido com sucesso!"
+      success: "&aO ponto de regenera莽茫o &d%point% &afoi removido com sucesso!"
     set-respawn-seconds: "&aO atraso do ponto &d%point% &afoi definido para &b%seconds%"
     set-block: "&aO bloco do ponto &d%point% &afoi definido para &b%block%"
     set-display-name: "&aO nome do ponto &d%point% &afoi definido para &b%displayName%"
-    point-not-exists: "&cO ponto de regeneração não existe!"
-    last-block: "&cUm ponto deve manter pelo menos um bloco de regeneração!"
+    point-not-exists: "&cO ponto de regenera莽茫o n茫o existe!"
+    last-block: "&cUm ponto deve manter pelo menos um bloco de regenera莽茫o!"
     respawn-now:
-      success: "&aRegeneração imediata do ponto solicitada."
+      success: "&aRegenera莽茫o imediata do ponto solicitada."
     add-block:
-      success: "&aBloco de regeneração adicionado."
+      success: "&aBloco de regenera莽茫o adicionado."
     remove-block:
-      success: "&aBloco de regeneração removido."
+      success: "&aBloco de regenera莽茫o removido."
     add-reward:
       success: "&aRecompensa independente adicionada."
     remove-reward:
@@ -210,27 +212,28 @@ command:
       success: "&aTeleportado para o ponto &d%point%&a."
       failed: "&cFalha ao teleportar para o ponto &d%point%&c."
   reload:
-    safe-tip: "&cNota: para segurança, apenas arquivos de configuração e mensagens serão recarregados"
+    safe-tip: "&cNota: para seguran莽a, apenas arquivos de configura莽茫o e mensagens ser茫o recarregados"
     success: "&aRecarregado com sucesso!"
   set-display-name: "&aO nome da mina &d%mine% &afoi definido para &b%displayName%"
-  set-display-icon: "&aO ícone da mina &d%mine% &afoi definido para &b%item%"
-  mine-not-exists: "&cA mina não existe!"
-  rank-not-exists: "&cO cargo não existe!"
-  treasure-not-exists: "&cO tesouro não existe!"
-  invalid-material: "&cMaterial inválido!"
-  invalid-block: "&cBloco inválido!"
-  invalid-id: "&cCaracteres inválidos no ID!"
-  pos-in-mine: "&cA localização escolhida já está em uma mina!"
+  set-display-icon: "&aO 铆cone da mina &d%mine% &afoi definido para &b%item%"
+  set-required-level: "&aO n铆vel de cargo necess谩rio da mina &d%mine% &afoi definido para &b%level%"
+  mine-not-exists: "&cA mina n茫o existe!"
+  rank-not-exists: "&cO cargo n茫o existe!"
+  treasure-not-exists: "&cO tesouro n茫o existe!"
+  invalid-material: "&cMaterial inv谩lido!"
+  invalid-block: "&cBloco inv谩lido!"
+  invalid-id: "&cCaracteres inv谩lidos no ID!"
+  pos-in-mine: "&cA localiza莽茫o escolhida j谩 est谩 em uma mina!"
 mine:
-  no-place: "&cVocê não pode colocar blocos dentro da mina!"
+  no-place: "&cVoc锚 n茫o pode colocar blocos dentro da mina!"
   reset: "&aMina &b%mine% &afoi resetada!"
-  reset_warning: "&cMina &b%mine% &cserá resetada em &b%time%"
+  reset_warning: "&cMina &b%mine% &cser谩 resetada em &b%time%"
 regen-point:
-  no-place: "&cVocê não pode colocar blocos em um ponto de regeneração!"
+  no-place: "&cVoc锚 n茫o pode colocar blocos em um ponto de regenera莽茫o!"
   generated: "&aGerado"
 gui:
-  previous: "&ePágina Anterior"
-  next: "&ePróxima Página"
+  previous: "&eP谩gina Anterior"
+  next: "&ePr贸xima P谩gina"
   back: "&cVoltar"
   close: "&cFechar"
   add: "&dAdicionar"
@@ -239,13 +242,13 @@ gui:
   block-chooser:
     title: "&dEscolher um bloco"
   input:
-    invalid-number: "&cNúmero inválido! O número não pode ser menor que 0!"
-    invalid-percent: "&cPorcentagem inválida! O valor deve ser positivo e menor ou igual a 100"
+    invalid-number: "&cN煤mero inv谩lido! O n煤mero n茫o pode ser menor que 0!"
+    invalid-percent: "&cPorcentagem inv谩lida! O valor deve ser positivo e menor ou igual a 100"
   set_display_name:
-    prompt: "&eDigite o novo nome de exibição no chat: &b(Suporta códigos de cor, digite &6##CANCEL &bpara cancelar)"
-    name: "&6Definir Nome de Exibição"
+    prompt: "&eDigite o novo nome de exibi莽茫o no chat: &b(Suporta c贸digos de cor, digite &6##CANCEL &bpara cancelar)"
+    name: "&6Definir Nome de Exibi莽茫o"
     lore:
-      - "&7Clique para definir o nome de exibição"
+      - "&7Clique para definir o nome de exibi莽茫o"
       - "&7Atual: &b%name%"
   general:
     title: "&eSuper&aMines"
@@ -254,7 +257,7 @@ gui:
     info:
       - "&7Mundo: &a%world%"
       - "&7Tempo de Reset: &b%regenerate_seconds%"
-      - "&7Posição: &ede %pos1% até %pos2%"
+      - "&7Posi莽茫o: &ede %pos1% at茅 %pos2%"
     info-sphere:
       - "&7Mundo: &a%world%"
       - "&7Tempo de Reset: &b%regenerate_seconds%"
@@ -272,9 +275,9 @@ gui:
       each_lore:
         - "&7Clique direito para remover desta mina"
     set_display_icon:
-      name: "&6Definir Ícone de Exibição"
+      name: "&6Definir 脥cone de Exibi莽茫o"
       lore:
-        - "&7Clique para definir o ícone de exibição da mina"
+        - "&7Clique para definir o 铆cone de exibi莽茫o da mina"
         - "&7Atual: &b%material%"
     set_regen_seconds:
       prompt: "&eDigite o novo tempo de reset no chat: &b(digite &6##CANCEL &bpara cancelar)"
@@ -284,21 +287,21 @@ gui:
         - "&7Unidade: Segundo(s)"
         - "&7Atual: &b%seconds%"
     set_required_lvl:
-      prompt: "&eDigite o novo nível de cargo necessário no chat: &b(digite &6##CANCEL &bpara cancelar)"
-      name: "&bDefinir Nível de Cargo Necessário"
+      prompt: "&eDigite o novo n铆vel de cargo necess谩rio no chat: &b(digite &6##CANCEL &bpara cancelar)"
+      name: "&bDefinir N铆vel de Cargo Necess谩rio"
       lore:
-        - "&7Clique para definir o nível de cargo necessário da mina"
+        - "&7Clique para definir o n铆vel de cargo necess谩rio da mina"
         - "&7Atual: &b%level%"
     only_fill_air:
       name: "&aPreencher Apenas Ar ao Resetar"
       lore:
-        - "&7Clique para decidir se apenas ar será preenchido ao resetar"
+        - "&7Clique para decidir se apenas ar ser谩 preenchido ao resetar"
         - "&7Atual: &b%status%"
     auto_pickup:
-      name: "&eColeta Automática"
+      name: "&eColeta Autom谩tica"
       lore:
-        - "&7Clique para ativar/desativar a coleta automática"
-        - "&7Quando ativo, itens minerados vão direto ao inventário"
+        - "&7Clique para ativar/desativar a coleta autom谩tica"
+        - "&7Quando ativo, itens minerados v茫o direto ao invent谩rio"
         - "&7Atual: &b%status%"
     block_spawn_entries:
       name: "&bLista de Blocos Gerados"
@@ -307,13 +310,13 @@ gui:
       each_lore:
         - "&7Peso: &e%weight%"
         - "&7Clique esquerdo para alterar o peso"
-        - "&7Shift+Clique esquerdo para editar condições de geração"
+        - "&7Shift+Clique esquerdo para editar condi莽玫es de gera莽茫o"
         - "&7Clique direito para remover"
       conditions:
-        title: "&dCondições de Geração"
-        chooser_title: "&dEscolha um tipo de condição"
+        title: "&dCondi莽玫es de Gera莽茫o"
+        chooser_title: "&dEscolha um tipo de condi莽茫o"
         biome:
-          title: "&dCondições de bioma"
+          title: "&dCondi莽玫es de bioma"
           each_lore:
             - "&7Clique direito para remover"
         each_lore:
@@ -321,9 +324,9 @@ gui:
           - "&7Clique direito para remover"
         types:
           add_lore:
-            - "&7Clique para adicionar esta condição"
+            - "&7Clique para adicionar esta condi莽茫o"
           surface:
-            name: "&bSuperfície"
+            name: "&bSuperf铆cie"
           mineY:
             name: "&bY da Mina"
           border:
@@ -335,7 +338,7 @@ gui:
           or:
             name: "&6Qualquer (OU)"
           not:
-            name: "&cNegação (NÃO)"
+            name: "&cNega莽茫o (N脙O)"
           placeholder:
             name: "&bPlaceholder"
         description:
@@ -348,35 +351,35 @@ gui:
           biome:
             - "&7Biomas: &b%biomes%"
           and:
-            - "&7Sub-condições: &b%amount%"
+            - "&7Sub-condi莽玫es: &b%amount%"
           or:
-            - "&7Sub-condições: &b%amount%"
+            - "&7Sub-condi莽玫es: &b%amount%"
           not:
             - "&7Interno: &b%inner%"
           placeholder:
             - "&7Placeholder: &b%placeholder%"
             - "&7Comparar: &b%compareContent%"
-            - "&7Tipo de análise: &b%parseType%"
+            - "&7Tipo de an谩lise: &b%parseType%"
         leaf:
-          title: "&dCondição: &b%type%"
+          title: "&dCondi莽茫o: &b%type%"
           surface:
-            name: "&bProfundidade da Superfície"
+            name: "&bProfundidade da Superf铆cie"
             lore:
               - "&7Atual: &e%value%"
               - "&7Clique para definir"
-            prompt: "&eDigite a profundidade da superfície no chat: &b(digite &6##CANCEL &bpara cancelar)"
+            prompt: "&eDigite a profundidade da superf铆cie no chat: &b(digite &6##CANCEL &bpara cancelar)"
           mineY_min:
-            name: "&bY Mínimo da Mina"
+            name: "&bY M铆nimo da Mina"
             lore:
               - "&7Atual: &e%value%"
               - "&7Clique para definir"
-            prompt: "&eDigite o Y mínimo (do fundo da mina) no chat: &b(digite &6##CANCEL &bpara cancelar)"
+            prompt: "&eDigite o Y m铆nimo (do fundo da mina) no chat: &b(digite &6##CANCEL &bpara cancelar)"
           mineY_max:
-            name: "&bY Máximo da Mina"
+            name: "&bY M谩ximo da Mina"
             lore:
               - "&7Atual: &e%value%"
               - "&7Clique para definir"
-            prompt: "&eDigite o Y máximo (do fundo da mina) no chat: &b(digite &6##CANCEL &bpara cancelar)"
+            prompt: "&eDigite o Y m谩ximo (do fundo da mina) no chat: &b(digite &6##CANCEL &bpara cancelar)"
           border:
             name: "&bModo da Borda"
             lore:
@@ -392,7 +395,7 @@ gui:
             lore:
               - "&7Atual: &e%value%"
               - "&7Clique para definir"
-            prompt: "&eDigite a expressão do placeholder no chat: &b(digite &6##CANCEL &bpara cancelar)"
+            prompt: "&eDigite a express茫o do placeholder no chat: &b(digite &6##CANCEL &bpara cancelar)"
           placeholder_compare:
             name: "&bValor Esperado"
             lore:
@@ -409,7 +412,7 @@ gui:
         or:
           title: "&6Qualquer (OU)"
         not:
-          title: "&cNegação (NÃO)"
+          title: "&cNega莽茫o (N脙O)"
   treasures:
     title: "&e&lTesouros"
     info:
@@ -437,7 +440,7 @@ gui:
         - "&7Clique direito para pegar o item"
       none: "&cNenhum item de recompensa (apenas comandos se houver)"
       none_lore:
-        - "&7Tesouro atual não tem recompensa de item"
+        - "&7Tesouro atual n茫o tem recompensa de item"
         - "&7Clique esquerdo com um item no cursor para definir"
     matched_materials:
       title: "&bMateriais Correspondentes"
@@ -461,22 +464,22 @@ gui:
     copy_label: "Digite o novo ID do cargo"
     title: "&b&lCargos"
     info:
-      - "&7Nível: &b%level%"
+      - "&7N铆vel: &b%level%"
   rank-management:
     title: "&b&lGerenciar Cargo &8&l- &b%rank%"
     setlevel:
-      prompt: "&eDigite o novo nível do cargo no chat: &b(digite &6##CANCEL &bpara cancelar)"
-      name: "&6Definir Nível do Cargo"
+      prompt: "&eDigite o novo n铆vel do cargo no chat: &b(digite &6##CANCEL &bpara cancelar)"
+      name: "&6Definir N铆vel do Cargo"
       lore:
-        - "&7Clique para definir o nível do cargo"
+        - "&7Clique para definir o n铆vel do cargo"
         - "&7Atual: &b%level%"
   regenpoints:
-    title: "&d&lPontos de Regeneração"
-    create_title: "&dCriar Ponto de Regeneração"
-    create_label: "Digite o ID do ponto de regeneração"
+    title: "&d&lPontos de Regenera莽茫o"
+    create_title: "&dCriar Ponto de Regenera莽茫o"
+    create_label: "Digite o ID do ponto de regenera莽茫o"
     info:
       - "&7Mundo: &a%world%"
-      - "&7Posição: &e%pos%"
+      - "&7Posi莽茫o: &e%pos%"
       - "&7Bloco: &b%block%"
       - "&7Blocos no grupo: &b%blocks%"
       - "&7Recompensas independentes: &e%rewards%"
@@ -489,8 +492,8 @@ gui:
   regen-point-management:
     title: "&d&lGerenciar Ponto &8&l- &d%point%"
     set_respawn_seconds:
-      prompt: "&eDigite os novos segundos de regeneração no chat: &b(digite &6##CANCEL &bpara cancelar)"
-      name: "&bDefinir Segundos de Regeneração"
+      prompt: "&eDigite os novos segundos de regenera莽茫o no chat: &b(digite &6##CANCEL &bpara cancelar)"
+      name: "&bDefinir Segundos de Regenera莽茫o"
       lore:
         - "&7Clique para definir o atraso do ponto"
         - "&7Unidade: Segundos"
@@ -519,21 +522,21 @@ gui:
         - "&7Clique esquerdo para alterar"
         - "&7Clique direito para remover"
     periodic_rewards:
-      name: "&6Recompensas Periódicas"
+      name: "&6Recompensas Peri贸dicas"
       lore:
         - "&7Recompensas baseadas na quantidade minerada"
         - "&7Recompensas configuradas: &b%amount%"
-      title: "&6&lRecompensas Periódicas"
-      chooser_title: "&6Escolha uma Recompensa Periódica"
+      title: "&6&lRecompensas Peri贸dicas"
+      chooser_title: "&6Escolha uma Recompensa Peri贸dica"
       interval:
-        name: "&bIntervalo de Mineração"
+        name: "&bIntervalo de Minera莽茫o"
         lore:
           - "&7Blocos por ciclo: &e%blocks%"
           - "&7Minerados neste ciclo: &e%mined%"
           - "&7Restantes: &e%remaining%"
           - "&7Clique para alterar"
       interval_prompt: "&eDigite os blocos por ciclo: &b(digite &6##CANCEL &bpara cancelar)"
-      chance_prompt: "&eDigite a chance periódica de &d%treasure% &e(0-100): &b(digite &6##CANCEL &bpara cancelar)"
+      chance_prompt: "&eDigite a chance peri贸dica de &d%treasure% &e(0-100): &b(digite &6##CANCEL &bpara cancelar)"
       each_lore:
         - "&7Chance: &e%chance%%"
         - "&7Clique esquerdo para alterar"

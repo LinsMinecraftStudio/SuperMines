@@ -7,7 +7,6 @@ api-version: "26.1"
 folia-supported: true
 website: https://github.com/LinsMinecraftStudio/SuperMines
 depend:
-  - CommandAPI
   - MittelLib
 softdepend:
   - ItemsAdder

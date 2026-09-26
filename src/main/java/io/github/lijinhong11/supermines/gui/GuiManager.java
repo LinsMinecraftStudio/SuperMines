@@ -326,7 +326,7 @@ public final class GuiManager {
                 "gui.treasures.title",
                 () -> openMain(p),
                 ButtonItem.clickable(Constants.Items.COPY_TREASURE.apply(p), (g, e) -> {
-                    openTreasureCopySource(p);
+                    CopyGui.openTreasureCopySource(p);
                     return false;
                 }));
 
@@ -343,42 +343,6 @@ public final class GuiManager {
             }));
         }
 
-        gui.open(p);
-    }
-
-    private static void openTreasureCopySource(Player p) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui.treasures.copy_source_title", () -> openTreasureList(p));
-        for (Treasure treasure : SuperMines.getInstance().getTreasureManager().getAllTreasures()) {
-            ItemStack item = new ItemStack(Material.CHEST);
-            item.editMeta(meta -> meta.displayName(treasure.getDisplayName()));
-            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
-                TextInputDialog dialog = TextInputDialog.create(
-                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.treasures.copy_title"),
-                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.treasures.copy_label"),
-                        newId -> {
-                            if (!newId.matches(Constants.ID_PATTERN)
-                                    || SuperMines.getInstance()
-                                                    .getTreasureManager()
-                                                    .getTreasure(newId)
-                                            != null) {
-                                SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.invalid-id");
-                                openTreasureCopySource(p);
-                                return;
-                            }
-                            Treasure copy = treasure.copy(newId);
-                            SuperMines.getInstance().getTreasureManager().addTreasure(copy);
-                            SuperMines.getInstance()
-                                    .getLanguageManager()
-                                    .sendMessage(
-                                            p,
-                                            "command.treasures.copy.success",
-                                            MessageReplacement.replace("%treasure%", copy.getRawDisplayName()));
-                            openTreasureList(p);
-                        });
-                dialog.show(p);
-                return false;
-            }));
-        }
         gui.open(p);
     }
 
@@ -535,7 +499,7 @@ public final class GuiManager {
                 "gui.ranks.title",
                 () -> openMain(p),
                 ButtonItem.clickable(Constants.Items.COPY_RANK.apply(p), (g, e) -> {
-                    openRankCopySource(p);
+                    CopyGui.openRankCopySource(p);
                     return false;
                 }));
 
@@ -552,39 +516,6 @@ public final class GuiManager {
             }));
         }
 
-        gui.open(p);
-    }
-
-    private static void openRankCopySource(Player p) {
-        PaginatedChestGUI gui = buildPagedGUI(p, "gui.ranks.copy_source_title", () -> openRankList(p));
-        for (Rank rank : SuperMines.getInstance().getRankManager().getAllRanks()) {
-            ItemStack item = new ItemStack(Material.NAME_TAG);
-            item.editMeta(meta -> meta.displayName(rank.getDisplayName()));
-            gui.addPageItem(ButtonItem.clickable(item, (g, e) -> {
-                TextInputDialog dialog = TextInputDialog.create(
-                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.ranks.copy_title"),
-                        SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.ranks.copy_label"),
-                        newId -> {
-                            if (!newId.matches(Constants.ID_PATTERN)
-                                    || SuperMines.getInstance().getRankManager().getRank(newId) != null) {
-                                SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.invalid-id");
-                                openRankCopySource(p);
-                                return;
-                            }
-                            Rank copy = rank.copy(newId);
-                            SuperMines.getInstance().getRankManager().addRank(copy);
-                            SuperMines.getInstance()
-                                    .getLanguageManager()
-                                    .sendMessage(
-                                            p,
-                                            "command.ranks.create.copy",
-                                            MessageReplacement.replace("%rank%", copy.getRawDisplayName()));
-                            openRankList(p);
-                        });
-                dialog.show(p);
-                return false;
-            }));
-        }
         gui.open(p);
     }
 
@@ -1007,7 +938,10 @@ public final class GuiManager {
                     SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.regenpoints.create_label"),
                     id -> {
                         if (!id.matches(Constants.ID_PATTERN)
-                                || SuperMines.getInstance().getRegenPointManager().getRegenPoint(id) != null) {
+                                || SuperMines.getInstance()
+                                                .getRegenPointManager()
+                                                .getRegenPoint(id)
+                                        != null) {
                             SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.invalid-id");
                             openRegenPointList(p);
                             return;

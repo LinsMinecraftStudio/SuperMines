@@ -76,7 +76,7 @@ public class SuperMines extends JavaPlugin {
         setupListeners();
         setupPlaceholders();
 
-        new SuperMinesCommand().register();
+        SuperMinesCommand.register(this);
 
         new Metrics(this, 28631);
 

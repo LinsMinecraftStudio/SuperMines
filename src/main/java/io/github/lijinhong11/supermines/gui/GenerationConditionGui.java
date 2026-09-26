@@ -51,19 +51,7 @@ final class GenerationConditionGui {
                     condition -> {
                         entry.addGenerateCondition(condition);
                         SuperMines.getInstance().getMineManager().saveMine(mine);
-                        IGenerateCondition[] holder = new IGenerateCondition[] {condition};
-                        Consumer<IGenerateCondition> replace = updated -> {
-                            entry.removeGenerateCondition(holder[0]);
-                            entry.addGenerateCondition(updated);
-                            holder[0] = updated;
-                            SuperMines.getInstance().getMineManager().saveMine(mine);
-                        };
-                        Runnable remove = () -> {
-                            entry.removeGenerateCondition(holder[0]);
-                            SuperMines.getInstance().getMineManager().saveMine(mine);
-                            reopen.run();
-                        };
-                        openConditionNodeEditor(p, mine, entry, condition, replace, remove, reopen);
+                        startEditingCondition(p, mine, entry, reopen, condition);
                     },
                     reopen);
             return false;
@@ -81,24 +69,28 @@ final class GenerationConditionGui {
                     return false;
                 }
 
-                IGenerateCondition[] holder = new IGenerateCondition[] {condition};
-                Consumer<IGenerateCondition> replace = updated -> {
-                    entry.removeGenerateCondition(holder[0]);
-                    entry.addGenerateCondition(updated);
-                    holder[0] = updated;
-                    SuperMines.getInstance().getMineManager().saveMine(mine);
-                };
-                Runnable remove = () -> {
-                    entry.removeGenerateCondition(holder[0]);
-                    SuperMines.getInstance().getMineManager().saveMine(mine);
-                    reopen.run();
-                };
-                openConditionNodeEditor(p, mine, entry, condition, replace, remove, reopen);
+                startEditingCondition(p, mine, entry, reopen, condition);
                 return false;
             }));
         }
 
         gui.open(p);
+    }
+
+    static void startEditingCondition(Player p, Mine mine, BlockSpawnEntry entry, Runnable reopen, IGenerateCondition condition) {
+        IGenerateCondition[] holder = new IGenerateCondition[] {condition};
+        Consumer<IGenerateCondition> replace = updated -> {
+            entry.removeGenerateCondition(holder[0]);
+            entry.addGenerateCondition(updated);
+            holder[0] = updated;
+            SuperMines.getInstance().getMineManager().saveMine(mine);
+        };
+        Runnable remove = () -> {
+            entry.removeGenerateCondition(holder[0]);
+            SuperMines.getInstance().getMineManager().saveMine(mine);
+            reopen.run();
+        };
+        openConditionNodeEditor(p, mine, entry, condition, replace, remove, reopen);
     }
 
     private static void openConditionTypeChooser(Player p, Consumer<IGenerateCondition> onPick, Runnable back) {
@@ -481,7 +473,7 @@ final class GenerationConditionGui {
 
         gui.putItem(
                 slot(3, 3),
-                ButtonItem.clickable(getMessagedLeafItem(p, "placeholder", condition.getPlaceholder()), (g, e) -> {
+                ButtonItem.clickable(getMessagedLeafItem(p, "placeholder", condition.placeholder()), (g, e) -> {
                     p.closeInventory();
                     SuperMines.getInstance()
                             .getLanguageManager()
@@ -495,7 +487,7 @@ final class GenerationConditionGui {
                             return;
                         }
                         PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
-                                result, condition.getCompareContent(), condition.getParseType());
+                                result, condition.compareContent(), condition.parseType());
                         onSave.accept(updated);
                         SuperMines.getInstance()
                                 .getTaskMaker()
@@ -507,7 +499,7 @@ final class GenerationConditionGui {
         gui.putItem(
                 slot(3, 5),
                 ButtonItem.clickable(
-                        getMessagedLeafItem(p, "placeholder_compare", condition.getCompareContent()), (g, e) -> {
+                        getMessagedLeafItem(p, "placeholder_compare", condition.compareContent()), (g, e) -> {
                             p.closeInventory();
                             SuperMines.getInstance()
                                     .getLanguageManager()
@@ -522,7 +514,7 @@ final class GenerationConditionGui {
                                     return;
                                 }
                                 PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
-                                        condition.getPlaceholder(), result, condition.getParseType());
+                                        condition.placeholder(), result, condition.parseType());
                                 onSave.accept(updated);
                                 SuperMines.getInstance()
                                         .getTaskMaker()
@@ -534,13 +526,13 @@ final class GenerationConditionGui {
         gui.putItem(
                 slot(3, 7),
                 ButtonItem.clickable(
-                        getMessagedLeafItem(p, "placeholder_parse_type", condition.getParseType()), (g, e) -> {
+                        getMessagedLeafItem(p, "placeholder_parse_type", condition.parseType()), (g, e) -> {
                             List<PlaceholderGenerateCondition.ParseType> values = availablePlaceholderTypes();
                             if (values.isEmpty()) return false;
-                            int current = Math.max(0, values.indexOf(condition.getParseType()));
+                            int current = Math.max(0, values.indexOf(condition.parseType()));
                             PlaceholderGenerateCondition.ParseType next = values.get((current + 1) % values.size());
                             PlaceholderGenerateCondition updated = new PlaceholderGenerateCondition(
-                                    condition.getPlaceholder(), condition.getCompareContent(), next);
+                                    condition.placeholder(), condition.compareContent(), next);
                             onSave.accept(updated);
                             openPlaceholderEditor(p, updated, onSave, back);
                             return false;

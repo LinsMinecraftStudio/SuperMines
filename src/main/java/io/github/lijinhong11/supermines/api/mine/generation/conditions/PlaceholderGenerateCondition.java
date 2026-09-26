@@ -8,6 +8,8 @@ import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.miniplaceholders.api.MiniPlaceholders;
 import java.util.List;
+import java.util.Locale;
+
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -19,22 +21,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
-public final class PlaceholderGenerateCondition implements IGenerateCondition, ReadWriteObject {
-    private final String placeholder;
-    private final String compareContent;
-    private final ParseType parseType;
-
+public record PlaceholderGenerateCondition(String placeholder, String compareContent,
+                                           ParseType parseType) implements IGenerateCondition, ReadWriteObject {
     public PlaceholderGenerateCondition(ConfigurationSection cs) {
         this(cs.getString("placeholder", ""), cs.getString("compareContent", ""), parseType(cs.getString("parseType")));
     }
 
-    public PlaceholderGenerateCondition(String placeholder, String compareContent, ParseType parseType) {
+    public PlaceholderGenerateCondition {
         if (placeholder == null || compareContent == null || parseType == null) {
             throw new IllegalArgumentException("placeholder, compareContent, and parseType cannot be null");
         }
-        this.placeholder = placeholder;
-        this.compareContent = compareContent;
-        this.parseType = parseType;
     }
 
     private static ParseType parseType(String value) {
@@ -42,7 +38,7 @@ public final class PlaceholderGenerateCondition implements IGenerateCondition, R
             return ParseType.PLACEHOLDERAPI;
         }
         try {
-            return ParseType.valueOf(value.toUpperCase(java.util.Locale.ROOT));
+            return ParseType.valueOf(value.toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ignored) {
             return ParseType.PLACEHOLDERAPI;
         }
@@ -66,7 +62,7 @@ public final class PlaceholderGenerateCondition implements IGenerateCondition, R
         if (Bukkit.getPluginManager().isPluginEnabled("MiniPlaceholders") && parseType == ParseType.MINIPLACEHOLDERS) {
             try {
                 Component component =
-                        MiniMessage.miniMessage().deserialize(placeholder, MiniPlaceholders.getGlobalPlaceholders());
+                        MiniMessage.miniMessage().deserialize(placeholder, MiniPlaceholders.globalPlaceholders());
                 return PlainTextComponentSerializer.plainText()
                         .serialize(component)
                         .equals(compareContent);
@@ -112,18 +108,6 @@ public final class PlaceholderGenerateCondition implements IGenerateCondition, R
     @Override
     public void read(ConfigurationSection cs) {
         throw new UnsupportedOperationException();
-    }
-
-    public String getPlaceholder() {
-        return placeholder;
-    }
-
-    public String getCompareContent() {
-        return compareContent;
-    }
-
-    public ParseType getParseType() {
-        return parseType;
     }
 
     public enum ParseType {
