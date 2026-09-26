@@ -1,0 +1,3 @@
+1. 移除CommandAPI强依赖
+2. 新增treasures和ranks的copy指令
+3. 输入都转为dialog等其他方式，不再使用聊天框输入

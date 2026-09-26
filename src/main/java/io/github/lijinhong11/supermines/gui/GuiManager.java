@@ -25,11 +25,9 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import io.github.lijinhong11.supermines.utils.Constants;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -1016,11 +1014,7 @@ public final class GuiManager {
                 .nextPage('N', ButtonItem.unclickable(Constants.Items.NEXT_PAGE.apply(p)))
                 .bind('X', ButtonItem.BACKGROUND);
 
-        if (copyItem != null) {
-            builder.bind('K', copyItem);
-        } else {
-            builder.bind('K', ButtonItem.BACKGROUND);
-        }
+        builder.bind('K', Objects.requireNonNullElse(copyItem, ButtonItem.BACKGROUND));
 
         if (back != null) {
             builder = builder.bind('B', ButtonItem.clickable(Constants.Items.BACK.apply(p), (g, e) -> {
@@ -1055,11 +1049,11 @@ public final class GuiManager {
         return true;
     }
 
-    static void handleIntegerInput(Player p, Consumer<Integer> onSuccess) {
+    static void handleIntegerInput(Player p, IntConsumer onSuccess) {
         handleIntegerInput(p, onSuccess, null);
     }
 
-    private static void handleIntegerInput(Player p, Consumer<Integer> onSuccess, Runnable recovery) {
+    private static void handleIntegerInput(Player p, IntConsumer onSuccess, Runnable recovery) {
         IntegerInputDialog.create(
                         SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.integer.title"),
                         SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.integer.label"),
@@ -1102,22 +1096,35 @@ public final class GuiManager {
             p.closeInventory();
             SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.set_display_name.prompt");
             TextInputDialog.create(
-                    SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.text.title"),
-                    SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.display-name.label"),
-                    result -> {
-                object.setDisplayName(ComponentUtils.deserialize(result));
+                            SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.text.title"),
+                            SuperMines.getInstance()
+                                    .getLanguageManager()
+                                    .getMsgComponent(p, "gui.input.display-name.label"),
+                            result -> {
+                                object.setDisplayName(ComponentUtils.deserialize(result));
 
-                switch (object) {
-                    case Mine mine -> SuperMines.getInstance().getMineManager().saveMine(mine);
-                    case Treasure treasure ->
-                        SuperMines.getInstance().getTreasureManager().saveTreasure(treasure);
-                    case Rank rank -> SuperMines.getInstance().getRankManager().saveRank(rank);
-                    case RegenPoint point ->
-                        SuperMines.getInstance().getRegenPointManager().saveRegenPoint(point);
-                    default -> {}
-                }
-                reopen.run();
-                    }).show(p);
+                                switch (object) {
+                                    case Mine mine ->
+                                        SuperMines.getInstance()
+                                                .getMineManager()
+                                                .saveMine(mine);
+                                    case Treasure treasure ->
+                                        SuperMines.getInstance()
+                                                .getTreasureManager()
+                                                .saveTreasure(treasure);
+                                    case Rank rank ->
+                                        SuperMines.getInstance()
+                                                .getRankManager()
+                                                .saveRank(rank);
+                                    case RegenPoint point ->
+                                        SuperMines.getInstance()
+                                                .getRegenPointManager()
+                                                .saveRegenPoint(point);
+                                    default -> {}
+                                }
+                                reopen.run();
+                            })
+                    .show(p);
             return false;
         }));
 
