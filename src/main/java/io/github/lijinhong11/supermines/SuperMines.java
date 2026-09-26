@@ -1,5 +1,7 @@
 package io.github.lijinhong11.supermines;
 
+import dev.faststats.ErrorTracker;
+import dev.faststats.bukkit.BukkitContext;
 import io.github.lijinhong11.mdatabase.DatabaseConnection;
 import io.github.lijinhong11.mdatabase.DatabaseParameters;
 import io.github.lijinhong11.mdatabase.enums.DatabaseType;
@@ -7,6 +9,7 @@ import io.github.lijinhong11.mdatabase.impl.DatabaseConnections;
 import io.github.lijinhong11.mittellib.MittelLib;
 import io.github.lijinhong11.mittellib.message.SyncLanguageManager;
 import io.github.lijinhong11.mittellib.utils.ConfigFileUtils;
+import io.github.lijinhong11.mittellib.utils.updates.NexusMCUpdateChecker;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
 import io.github.lijinhong11.supermines.integrates.placeholders.SuperMinesPlaceholders;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
@@ -28,6 +31,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 @SuppressWarnings("deprecation")
 public class SuperMines extends JavaPlugin {
     private static SuperMines instance;
+
+    private final BukkitContext fastStats = new BukkitContext.Factory(this, "1ab3a44fdc5e7bf143e597438c2154ad")
+            .errorTrackerService(ErrorTracker.contextAware())
+            .metrics(dev.faststats.Metrics.Factory::create)
+            .create();
 
     private MineManager mineManager;
     private TreasureManager treasureManager;
@@ -76,16 +84,21 @@ public class SuperMines extends JavaPlugin {
         setupListeners();
         setupPlaceholders();
 
-        SuperMinesCommand.register(this);
-
-        new Metrics(this, 28631);
-
         taskMaker.startup();
         regenPointManager.startup();
+
+        new Metrics(this, 28631);
+        fastStats.ready();
+
+        SuperMinesCommand.register(this);
+
+        new NexusMCUpdateChecker(this, "56db359b-d055-42ae-93c2-6a71b43ba0b3"/*, p -> languageManager.getMsgComponent(p, "")*/).check();
     }
 
     @Override
     public void onDisable() {
+        fastStats.shutdown();
+
         taskMaker.close();
 
         mineManager.saveAndClose();

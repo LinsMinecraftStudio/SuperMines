@@ -18,6 +18,7 @@ repositories {
     maven("https://maven.enginehub.org/repo/")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.dmulloy2.net/repository/public/")
+    maven("https://repo.faststats.dev/releases")
 }
 
 java {
@@ -39,9 +40,11 @@ dependencies {
         version { strictly("33.5.0-jre") }
     }
 
-    compileOnly("io.github.lijinhong11:MittelLib:1.4.0")
+    compileOnly("io.github.lijinhong11:MittelLib:1.4.6")
     compileOnly("io.github.lijinhong11:MDatabase:1.2.1")
+
     compileOnly("org.bstats:bstats-bukkit:3.2.1")
+    compileOnly("dev.faststats.metrics:bukkit:0.30.1")
 
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.1") {
         exclude(group = "com.google.guava")
