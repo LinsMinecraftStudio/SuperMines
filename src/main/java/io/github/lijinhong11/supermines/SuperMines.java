@@ -60,15 +60,6 @@ public class SuperMines extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("""
-
-                ==============================
-                       SuperMines v%s
-                        Author: mmmjjkx
-                           Enjoy :)
-                ==============================
-                """.formatted(getDescription().getVersion()));
-
         languageManager = MittelLib.getInstance().getLanguageManager(this);
 
         treasureManager = new TreasureManager();
@@ -84,10 +75,19 @@ public class SuperMines extends JavaPlugin {
         taskMaker.startup();
         regenPointManager.startup();
 
+        SuperMinesCommand.register(this);
+
+        getLogger().info("""
+
+                ==============================
+                       SuperMines v%s
+                        Author: mmmjjkx
+                           Enjoy :)
+                ==============================
+                """.formatted(getDescription().getVersion()));
+
         new Metrics(this, 28631);
         fastStats.ready();
-
-        SuperMinesCommand.register(this);
 
         new SmartUpdateChecker(this, "56db359b-d055-42ae-93c2-6a71b43ba0b3", "WBp1pV75");
     }
