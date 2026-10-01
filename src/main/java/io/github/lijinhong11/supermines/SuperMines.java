@@ -9,7 +9,7 @@ import io.github.lijinhong11.mdatabase.impl.DatabaseConnections;
 import io.github.lijinhong11.mittellib.MittelLib;
 import io.github.lijinhong11.mittellib.message.SyncLanguageManager;
 import io.github.lijinhong11.mittellib.utils.ConfigFileUtils;
-import io.github.lijinhong11.mittellib.utils.updates.NexusMCUpdateChecker;
+import io.github.lijinhong11.mittellib.utils.updates.SmartUpdateChecker;
 import io.github.lijinhong11.supermines.command.SuperMinesCommand;
 import io.github.lijinhong11.supermines.integrates.placeholders.SuperMinesPlaceholders;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
@@ -89,9 +89,7 @@ public class SuperMines extends JavaPlugin {
 
         SuperMinesCommand.register(this);
 
-        new NexusMCUpdateChecker(
-                        this, "56db359b-d055-42ae-93c2-6a71b43ba0b3" /*, p -> languageManager.getMsgComponent(p, "")*/)
-                .check();
+        new SmartUpdateChecker(this, "56db359b-d055-42ae-93c2-6a71b43ba0b3", "WBp1pV75");
     }
 
     @Override

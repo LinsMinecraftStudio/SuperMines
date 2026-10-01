@@ -44,7 +44,7 @@ dependencies {
     compileOnly("io.github.lijinhong11:MDatabase:1.2.1")
 
     compileOnly("org.bstats:bstats-bukkit:3.2.1")
-    compileOnly("dev.faststats.metrics:bukkit:0.30.1")
+    compileOnly("dev.faststats.metrics:bukkit:0.30.2")
 
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.3.1") {
         exclude(group = "com.google.guava")
