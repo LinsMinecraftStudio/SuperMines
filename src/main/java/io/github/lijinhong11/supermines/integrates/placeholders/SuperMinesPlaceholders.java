@@ -1,7 +1,7 @@
 package io.github.lijinhong11.supermines.integrates.placeholders;
 
 import io.github.lijinhong11.mittellib.hook.placeholder.UniversalPlaceholderExpansion;
-import io.github.lijinhong11.mittellib.utils.NumberUtils;
+import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.mittellib.utils.components.ComponentUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
@@ -96,7 +96,7 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
                         .getLanguageManager()
                         .getMsg(viewer == null ? null : viewer.getPlayer(), "regen-point.generated");
             }
-            return NumberUtils.formatSeconds(null, (int) (Math.max(0L, remaining) / 1000L));
+            return StringUtils.formatCountdown(remaining / 1000L);
         });
 
         registerPlaceholder("hasrank", PlaceholderType.AUDIENCE, (viewer, target, args) -> {
@@ -126,8 +126,8 @@ public class SuperMinesPlaceholders extends UniversalPlaceholderExpansion {
                     return String.valueOf(mine.getBlocksBroken());
                 }
                 case "resettime" -> {
-                    return NumberUtils.formatSeconds(
-                            null, (int) (SuperMines.getInstance().getTaskMaker().getMineUntilResetTime(mine) / 1000));
+                    return StringUtils.formatCountdown(
+                            SuperMines.getInstance().getTaskMaker().getMineUntilResetTime(mine) / 1000);
                 }
                 case "blockpercent" -> {
                     int broken = mine.getBlocksBroken();

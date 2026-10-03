@@ -40,7 +40,7 @@ dependencies {
         version { strictly("33.5.0-jre") }
     }
 
-    compileOnly("io.github.lijinhong11:MittelLib:1.4.6")
+    compileOnly("io.github.lijinhong11:MittelLib:1.4.8")
     compileOnly("io.github.lijinhong11:MDatabase:1.2.1")
 
     compileOnly("org.bstats:bstats-bukkit:3.2.1")
