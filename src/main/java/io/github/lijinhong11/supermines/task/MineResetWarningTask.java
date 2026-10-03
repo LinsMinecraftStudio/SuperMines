@@ -1,7 +1,7 @@
 package io.github.lijinhong11.supermines.task;
 
 import io.github.lijinhong11.mittellib.message.MessageReplacement;
-import io.github.lijinhong11.mittellib.utils.NumberUtils;
+import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
@@ -34,7 +34,7 @@ class MineResetWarningTask extends AbstractTask {
                                                     "mine.reset_warning",
                                                     mineName,
                                                     MessageReplacement.replace(
-                                                            "%time%", NumberUtils.formatSeconds(p, second)));
+                                                            "%time%", StringUtils.formatCountdown(second)));
                                 }
                             },
                             null);
