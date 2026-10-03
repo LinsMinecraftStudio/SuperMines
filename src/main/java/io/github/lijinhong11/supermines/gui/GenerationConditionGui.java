@@ -383,18 +383,21 @@ final class GenerationConditionGui {
                                             p,
                                             "gui.mine-management.block_spawn_entries.conditions.leaf.surface"
                                                     + ".prompt");
-                            handleIntegerInput(p, result -> {
-                                if (result < 1) {
-                                    SuperMines.getInstance()
-                                            .getLanguageManager()
-                                            .sendMessage(p, "gui.input.invalid-number");
-                                    openLeafEditor(p, node, onSave, back);
-                                    return;
-                                }
-                                SurfaceGenerateCondition updated = new SurfaceGenerateCondition(result);
-                                onSave.accept(updated);
-                                openLeafEditor(p, updated, onSave, back);
-                            });
+                            handleIntegerInput(
+                                    p,
+                                    result -> {
+                                        if (result < 1) {
+                                            SuperMines.getInstance()
+                                                    .getLanguageManager()
+                                                    .sendMessage(p, "gui.input.invalid-number");
+                                            openLeafEditor(p, node, onSave, back);
+                                            return;
+                                        }
+                                        SurfaceGenerateCondition updated = new SurfaceGenerateCondition(result);
+                                        onSave.accept(updated);
+                                        openLeafEditor(p, updated, onSave, back);
+                                    },
+                                    () -> openLeafEditor(p, node, onSave, back));
                             return false;
                         }));
             case MineYGenerateCondition mineY -> {
@@ -408,12 +411,15 @@ final class GenerationConditionGui {
                                             p,
                                             "gui.mine-management.block_spawn_entries.conditions.leaf.mineY_min"
                                                     + ".prompt");
-                            handleIntegerInput(p, result -> {
-                                MineYGenerateCondition updated =
-                                        new MineYGenerateCondition(result, mineY.getMaxYInMine());
-                                onSave.accept(updated);
-                                openLeafEditor(p, updated, onSave, back);
-                            });
+                            handleIntegerInput(
+                                    p,
+                                    result -> {
+                                        MineYGenerateCondition updated =
+                                                new MineYGenerateCondition(result, mineY.getMaxYInMine());
+                                        onSave.accept(updated);
+                                        openLeafEditor(p, updated, onSave, back);
+                                    },
+                                    () -> openLeafEditor(p, node, onSave, back));
                             return false;
                         }));
                 gui.putItem(
@@ -426,12 +432,15 @@ final class GenerationConditionGui {
                                             p,
                                             "gui.mine-management.block_spawn_entries.conditions.leaf.mineY_max"
                                                     + ".prompt");
-                            handleIntegerInput(p, result -> {
-                                MineYGenerateCondition updated =
-                                        new MineYGenerateCondition(mineY.getMinYInMine(), result);
-                                onSave.accept(updated);
-                                openLeafEditor(p, updated, onSave, back);
-                            });
+                            handleIntegerInput(
+                                    p,
+                                    result -> {
+                                        MineYGenerateCondition updated =
+                                                new MineYGenerateCondition(mineY.getMinYInMine(), result);
+                                        onSave.accept(updated);
+                                        openLeafEditor(p, updated, onSave, back);
+                                    },
+                                    () -> openLeafEditor(p, node, onSave, back));
                             return false;
                         }));
             }

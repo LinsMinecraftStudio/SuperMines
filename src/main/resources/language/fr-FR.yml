@@ -246,7 +246,7 @@ gui:
     invalid-percent: "&cPourcentage invalide ! La valeur doit être positive et inférieure ou égale à 100"
     integer:
       title: "&eSaisissez un entier"
-      label: "&7Saisissez une valeur entre 0 et 1000000"
+      label: "&7Saisissez un entier positif ou nul (0 à 2147483647)"
     weight:
       title: "&eSaisissez le poids"
       label: "&7Saisissez le poids"

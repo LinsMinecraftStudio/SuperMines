@@ -246,7 +246,7 @@ gui:
     invalid-percent: "&c無效百分比！數值必須大於 0 且不超過 100"
     integer:
       title: "&e輸入整數"
-      label: "&7請輸入 0 到 1000000 之間的數值"
+      label: "&7請輸入非負整數（0 到 2147483647）"
     weight:
       title: "&e輸入權重"
       label: "&7請輸入權重"

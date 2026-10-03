@@ -2,7 +2,6 @@ package io.github.lijinhong11.supermines.gui;
 
 import com.google.common.base.Preconditions;
 import io.github.lijinhong11.mittellib.gui.dialog.impl.input.FloatInputDialog;
-import io.github.lijinhong11.mittellib.gui.dialog.impl.input.IntegerInputDialog;
 import io.github.lijinhong11.mittellib.gui.dialog.impl.input.MultiLineTextInputDialog;
 import io.github.lijinhong11.mittellib.gui.dialog.impl.input.TextInputDialog;
 import io.github.lijinhong11.mittellib.gui.inventory.MittelGUI;
@@ -39,6 +38,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class GuiManager {
+    private static final int MAX_NON_NEGATIVE_INTEGER_LENGTH =
+            String.valueOf(Integer.MAX_VALUE).length();
+
     public static void openMain(Player p) {
         ChestGUI gui = MittelGUI.chestBuilder()
                 .title(SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.general.title"))
@@ -125,12 +127,17 @@ public final class GuiManager {
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(p, "gui.mine-management.set_regen_seconds.prompt");
-                            handleIntegerInput(p, result -> {
-                                mine.setRegenerateSeconds(result);
-                                SuperMines.getInstance().getMineManager().saveMine(mine);
-                                SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
-                                reopen.run();
-                            });
+                            handleIntegerInput(
+                                    p,
+                                    result -> {
+                                        mine.setRegenerateSeconds(result);
+                                        SuperMines.getInstance()
+                                                .getMineManager()
+                                                .saveMine(mine);
+                                        SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
+                                        reopen.run();
+                                    },
+                                    reopen);
                             return false;
                         }));
 
@@ -156,12 +163,17 @@ public final class GuiManager {
                             SuperMines.getInstance()
                                     .getLanguageManager()
                                     .sendMessage(p, "gui.mine-management.set_required_lvl.prompt");
-                            handleIntegerInput(p, result -> {
-                                mine.setRequiredRankLevel(result);
-                                SuperMines.getInstance().getMineManager().saveMine(mine);
-                                SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
-                                reopen.run();
-                            });
+                            handleIntegerInput(
+                                    p,
+                                    result -> {
+                                        mine.setRequiredRankLevel(result);
+                                        SuperMines.getInstance()
+                                                .getMineManager()
+                                                .saveMine(mine);
+                                        SuperMines.getInstance().getTaskMaker().restartMineResetTask(mine);
+                                        reopen.run();
+                                    },
+                                    reopen);
                             return false;
                         }));
 
@@ -529,11 +541,14 @@ public final class GuiManager {
                     if (!checkPermission(p, Constants.Permission.RANKS)) return false;
                     p.closeInventory();
                     SuperMines.getInstance().getLanguageManager().sendMessage(p, "gui.rank-management.setlevel.prompt");
-                    handleIntegerInput(p, result -> {
-                        rank.setLevel(result);
-                        SuperMines.getInstance().getRankManager().saveRank(rank);
-                        reopen.run();
-                    });
+                    handleIntegerInput(
+                            p,
+                            result -> {
+                                rank.setLevel(result);
+                                SuperMines.getInstance().getRankManager().saveRank(rank);
+                                reopen.run();
+                            },
+                            reopen);
                     return false;
                 }));
 
@@ -1053,13 +1068,23 @@ public final class GuiManager {
         handleIntegerInput(p, onSuccess, null);
     }
 
-    private static void handleIntegerInput(Player p, IntConsumer onSuccess, Runnable recovery) {
-        IntegerInputDialog.create(
+    static void handleIntegerInput(Player p, IntConsumer onSuccess, Runnable recovery) {
+        TextInputDialog.create(
                         SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.integer.title"),
                         SuperMines.getInstance().getLanguageManager().getMsgComponent(p, "gui.input.integer.label"),
-                        0,
-                        1_000_000,
-                        onSuccess,
+                        input -> {
+                            try {
+                                int value = Integer.parseInt(input.trim());
+                                if (value < 0) throw new NumberFormatException("negative value");
+                                onSuccess.accept(value);
+                            } catch (NumberFormatException ex) {
+                                SuperMines.getInstance()
+                                        .getLanguageManager()
+                                        .sendMessage(p, "gui.input.invalid-number");
+                                if (recovery != null) recovery.run();
+                            }
+                        },
+                        MAX_NON_NEGATIVE_INTEGER_LENGTH,
                         recovery)
                 .show(p);
     }

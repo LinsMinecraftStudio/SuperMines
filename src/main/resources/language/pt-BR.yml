@@ -246,7 +246,7 @@ gui:
     invalid-percent: "&cPorcentagem inválida! O valor deve ser positivo e menor ou igual a 100"
     integer:
       title: "&eDigite um inteiro"
-      label: "&7Digite um valor entre 0 e 1000000"
+      label: "&7Digite um inteiro não negativo (0 a 2147483647)"
     weight:
       title: "&eDigite o peso"
       label: "&7Digite o peso"

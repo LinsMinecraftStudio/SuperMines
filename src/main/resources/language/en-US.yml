@@ -246,7 +246,7 @@ gui:
     invalid-percent: "&cInvalid Percentage! The value must be a positive number and less than or equal to 100"
     integer:
       title: "&eEnter integer"
-      label: "&7Enter a value from 0 to 1000000"
+      label: "&7Enter a non-negative integer (0 to 2147483647)"
     weight:
       title: "&eEnter weight"
       label: "&7Enter the weight"
