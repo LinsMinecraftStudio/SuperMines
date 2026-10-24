@@ -50,6 +50,7 @@ command:
       - "<#E5C779>/sm settp/setteleport <mine> <#8EA08C>- <#A7BC9C>Definir local de teleporte da mina"
       - "<#E5C779>/sm tp/teleport <mine> <#8EA08C>- <#A7BC9C>Teleportar para a mina"
       - "<#E5C779>/sm setOnlyFillAir <mine> <onlyFillAir> <#8EA08C>- <#A7BC9C>Definir mina para preencher só ar"
+      - "<#E5C779>/sm setBroadcastResetMessages <mine> <true|false> <#8EA08C>- <#A7BC9C>Definir envio das mensagens de reset da mina"
       - "<#E5C779>/sm reset <mine> <#8EA08C>- <#A7BC9C>Resetar uma mina"
       - "<#E5C779>/sm pos1 [position] <#8EA08C>- <#A7BC9C>Definir posição 1 de uma área"
       - "<#E5C779>/sm pos2 [position] <#8EA08C>- <#A7BC9C>Definir posição 2 de uma área"
@@ -124,6 +125,8 @@ command:
     time-set: "&aO tempo de reset da mina &b%mine% &afoi definido para &b%time%"
     success: "&aA mina foi resetada com sucesso!"
     stop-reset: "&aA mina &b%mine% &avai parar de resetar"
+  reset-messages:
+    set: "&aO envio das mensagens de reset da mina &b%mine% &aagora é &b%status%&a."
   resetwarning:
     time-too-long: "&cO tempo de reset não deve exceder o tempo de reset da mina!"
     started: "&aO aviso de reset da mina será iniciado!"
@@ -325,6 +328,12 @@ gui:
       name: "&aPreencher Apenas Ar ao Resetar"
       lore:
         - "&7Clique para decidir se apenas ar será preenchido ao resetar"
+        - "&7Atual: &b%status%"
+    broadcast_reset_messages:
+      name: "&eEnviar mensagens de reset"
+      lore:
+        - "&7Clique para enviar avisos e mensagens de reset a todos"
+        - "&7Desativado: apenas jogadores dentro da mina recebem"
         - "&7Atual: &b%status%"
     auto_pickup:
       name: "&eColeta Automática"

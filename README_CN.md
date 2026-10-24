@@ -43,6 +43,10 @@ SuperMines 是一款免费开源的 Paper 矿区插件，用自动重置、条�
 
 自定义掉落表、工具效率限制、按剩余比例重置、独立的重置传送位置和结构方块排除规则需要另行配置；命令会对检测到的这些设置给出提示。仅按比例重置或已停止的 CataMines 矿区迁移后不会自动定时重置。当前不支持 CataMines 3.x 的多区域格式。
 
+## 矿区重置消息
+
+配置项 `mine.broadcast-reset-messages` 现在仅作为新矿区的默认值，以及旧矿区尚未保存独立设置时的兼容默认值。每个矿区可在管理 GUI 中切换，或使用 `/sm setBroadcastResetMessages <矿区ID> <true|false>` 单独设置。设为 `true` 时重置和预警消息发送给全服玩家；设为 `false` 时仅发送给矿区内玩家。修改权限为 `supermines.set_reset_message_broadcast`，默认 OP。
+
 ## 变量
 
 > `[参数]` 表示可选参数  

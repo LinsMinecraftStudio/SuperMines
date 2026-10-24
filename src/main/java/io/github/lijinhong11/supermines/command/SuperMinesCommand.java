@@ -432,6 +432,12 @@ public final class SuperMinesCommand {
                                 .suggests((c, b) -> suggest(b, getMineList()))
                                 .then(Commands.argument("onlyFillAir", BoolArgumentType.bool())
                                         .executes(SuperMinesCommand::setOnlyFillAir))))
+                .then(Commands.literal("setBroadcastResetMessages")
+                        .requires(s -> s.getSender().hasPermission(Constants.Permission.SET_RESET_MESSAGE_BROADCAST))
+                        .then(Commands.argument("mineId", StringArgumentType.word())
+                                .suggests((c, b) -> suggest(b, getMineList()))
+                                .then(Commands.argument("broadcast", BoolArgumentType.bool())
+                                        .executes(SuperMinesCommand::setBroadcastResetMessages))))
                 .then(Commands.literal("wand")
                         .requires(playerPermission(Constants.Permission.POS_SET))
                         .executes(SuperMinesCommand::wand))
@@ -1540,6 +1546,22 @@ public final class SuperMinesCommand {
                         sender(c),
                         onlyFillAir ? "command.fillair.enabled" : "command.fillair.disabled",
                         MessageReplacement.replace("%mine%", m.getRawDisplayName()));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int setBroadcastResetMessages(CommandContext<CommandSourceStack> c) {
+        Mine m = mine(c);
+        if (m == null) return missingMine(c);
+        boolean broadcast = BoolArgumentType.getBool(c, "broadcast");
+        m.setBroadcastResetMessages(broadcast);
+        SuperMines.getInstance().getMineManager().saveMine(m);
+        SuperMines.getInstance()
+                .getLanguageManager()
+                .sendMessage(
+                        sender(c),
+                        "command.reset-messages.set",
+                        MessageReplacement.replace("%mine%", m.getRawDisplayName()),
+                        MessageReplacement.replace("%status%", String.valueOf(broadcast)));
         return Command.SINGLE_SUCCESS;
     }
 

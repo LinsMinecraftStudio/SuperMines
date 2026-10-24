@@ -206,6 +206,18 @@ public final class GuiManager {
                             return false;
                         }));
 
+        gui.putItem(
+                slot(5, 4),
+                ButtonItem.clickable(
+                        Constants.Items.BROADCAST_RESET_MESSAGES.apply(p, mine.shouldBroadcastResetMessages()),
+                        (g, e) -> {
+                            if (!checkPermission(p, Constants.Permission.SET_RESET_MESSAGE_BROADCAST)) return false;
+                            mine.setBroadcastResetMessages(!mine.shouldBroadcastResetMessages());
+                            SuperMines.getInstance().getMineManager().saveMine(mine);
+                            reopen.run();
+                            return false;
+                        }));
+
         gui.open(p);
     }
 

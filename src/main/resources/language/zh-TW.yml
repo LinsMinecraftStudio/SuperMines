@@ -50,6 +50,7 @@ command:
       - "<#E5C779>/sm settp/setteleport <礦區> <#8EA08C>- <#A7BC9C>設定礦區傳送點"
       - "<#E5C779>/sm tp/teleport <礦區> <#8EA08C>- <#A7BC9C>傳送到礦區"
       - "<#E5C779>/sm setOnlyFillAir <礦區> <true|false> <#8EA08C>- <#A7BC9C>僅填充空氣"
+      - "<#E5C779>/sm setBroadcastResetMessages <礦區> <true|false> <#8EA08C>- <#A7BC9C>設定該礦區重置訊息是否全服發送"
       - "<#E5C779>/sm reset <礦區> <#8EA08C>- <#A7BC9C>重置礦區"
       - "<#E5C779>/sm pos1 [位置] <#8EA08C>- <#A7BC9C>設定位置 1"
       - "<#E5C779>/sm pos2 [位置] <#8EA08C>- <#A7BC9C>設定位置 2"
@@ -124,6 +125,8 @@ command:
     time-set: "&a礦區 &b%mine% &a重置時間設為 &b%time%"
     success: "&a礦區已重置！"
     stop-reset: "&a礦區 &b%mine% &a將停止重置"
+  reset-messages:
+    set: "&a礦區 &b%mine% &a的重置訊息全服發送已設為 &b%status%&a。"
   resetwarning:
     time-too-long: "&c預警時間不能超過礦區重置時間！"
     started: "&a已啟動礦區重置預警任務！"
@@ -325,6 +328,12 @@ gui:
       name: "&a重置時僅填充空氣"
       lore:
         - "&7點擊切換是否僅填充空氣"
+        - "&7目前: &b%status%"
+    broadcast_reset_messages:
+      name: "&e全服發送重置訊息"
+      lore:
+        - "&7點擊切換是否向所有玩家發送重置與預警訊息"
+        - "&7關閉後僅向礦區內玩家發送"
         - "&7目前: &b%status%"
     auto_pickup:
       name: "&e自動拾取"

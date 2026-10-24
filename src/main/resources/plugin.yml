@@ -22,3 +22,6 @@ permissions:
   supermines.migrate:
     description: Import mines from CataMines or MineResetLite data files
     default: op
+  supermines.set_reset_message_broadcast:
+    description: Change whether a mine broadcasts reset messages to all players
+    default: op

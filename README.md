@@ -42,6 +42,10 @@ Existing mine IDs are skipped, including saved mines whose worlds have not loade
 
 Custom loot tables, minimum tool efficiency, percentage-based resets, separate reset teleport destinations, and structure block exclusions need separate configuration; detected settings produce migration notices. Stopped CataMines mines and mines using only percentage-based resets keep automatic time resets disabled. The CataMines 3.x multi-region format is currently unsupported.
 
+## Per-Mine Reset Messages
+
+`mine.broadcast-reset-messages` now serves as the default for new mines and as a compatibility default for older mine data without an explicit value. Each mine can override it in the management GUI or with `/sm setBroadcastResetMessages <mineId> <true|false>`. When enabled, reset and warning messages go to all players; when disabled, they are sent only to players inside the mine. The `supermines.set_reset_message_broadcast` permission is granted to operators by default.
+
 ## Variables
 
 > `[parameter]` means an optional parameter 

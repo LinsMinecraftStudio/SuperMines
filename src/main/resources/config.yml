@@ -14,8 +14,8 @@ mine:
   # Allow to players earn XP from skill plugins in mines
   # Note: support mcMMO and AuraSkills
   allow-earn-xp: true
-  # Whether to broadcast reset and warning messages to all players
-  # Set to false to only send messages to players inside the mine
+  # Default for new mines and mines without an explicit broadcastResetMessages setting.
+  # Per-mine values can be changed with /sm setBroadcastResetMessages or in the mine GUI.
   broadcast-reset-messages: true
   # Auto pickup settings
   auto-pickup:

@@ -211,7 +211,7 @@ class MineResetTask extends AbstractTask {
         Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), task -> {
             TaskMaker taskMaker = SuperMines.getInstance().getTaskMaker();
             if (!taskMaker.isResetGenerationActive(mine.getId(), generation)) return;
-            boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
+            boolean broadcast = mine.shouldBroadcastResetMessages();
             try {
                 mine.setBlocksBroken(0);
                 new MineResetEvent(mine).callEvent();

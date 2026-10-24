@@ -50,6 +50,7 @@ command:
       - "<#E5C779>/sm settp/setteleport <mine> <#8EA08C>- <#A7BC9C>Définir le point de téléportation de la mine"
       - "<#E5C779>/sm tp/teleport <mine> <#8EA08C>- <#A7BC9C>Se téléporter à la mine"
       - "<#E5C779>/sm setOnlyFillAir <mine> <onlyFillAir> <#8EA08C>- <#A7BC9C>Ne remplir que l'air lors de la réinitialisation"
+      - "<#E5C779>/sm setBroadcastResetMessages <mine> <true|false> <#8EA08C>- <#A7BC9C>Choisir la diffusion des messages pour une mine"
       - "<#E5C779>/sm reset <mine> <#8EA08C>- <#A7BC9C>Réinitialiser une mine"
       - "<#E5C779>/sm pos1 [position] <#8EA08C>- <#A7BC9C>Définir la position 1 d'une zone"
       - "<#E5C779>/sm pos2 [position] <#8EA08C>- <#A7BC9C>Définir la position 2 d'une zone"
@@ -124,6 +125,8 @@ command:
     time-set: "&aLe délai de réinitialisation de &b%mine% &aest défini sur &b%time%"
     success: "&aLa mine a été réinitialisée avec succès !"
     stop-reset: "&aLa mine &b%mine% &ane sera plus réinitialisée"
+  reset-messages:
+    set: "&aLa diffusion des messages de &b%mine% &aest maintenant &b%status%&a."
   resetwarning:
     time-too-long: "&cL'avertissement ne doit pas dépasser le délai de réinitialisation !"
     started: "&aLa tâche d'avertissement va démarrer !"
@@ -325,6 +328,12 @@ gui:
       name: "&aRemplir uniquement l'air"
       lore:
         - "&7Cliquez pour ne remplir que l'air lors de la réinitialisation"
+        - "&7État actuel : &b%status%"
+    broadcast_reset_messages:
+      name: "&eDiffuser les messages de reset"
+      lore:
+        - "&7Cliquer pour diffuser les messages de reset et d'avertissement à tous"
+        - "&7Désactivé : seuls les joueurs dans la mine les reçoivent"
         - "&7État actuel : &b%status%"
     auto_pickup:
       name: "&eRamassage automatique"

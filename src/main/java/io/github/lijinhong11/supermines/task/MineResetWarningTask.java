@@ -19,7 +19,7 @@ class MineResetWarningTask extends AbstractTask {
 
     @Override
     public void run(ScheduledTask ScheduledTask) {
-        boolean broadcast = SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true);
+        boolean broadcast = mine.shouldBroadcastResetMessages();
         MessageReplacement mineName = MessageReplacement.replace("%mine%", mine.getRawDisplayName());
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.getScheduler()

@@ -53,6 +53,7 @@ public final class Mine implements Identified {
     private int regenerateSeconds;
     private boolean onlyFillAirWhenRegenerate;
     private boolean autoPickup;
+    private boolean broadcastResetMessages = getDefaultBroadcastResetMessages();
     private int requiredRankLevel;
     private Location tpLoc;
 
@@ -536,6 +537,25 @@ public final class Mine implements Identified {
     public void setAutoPickup(boolean autoPickup) {
         if (!allowEdit(MineEditEvent.Property.AUTO_PICKUP, this.autoPickup, autoPickup)) return;
         this.autoPickup = autoPickup;
+    }
+
+    /** Returns whether this mine sends reset and warning messages to all players. */
+    public boolean shouldBroadcastResetMessages() {
+        return broadcastResetMessages;
+    }
+
+    /** Sets whether reset and warning messages are broadcast outside this mine. */
+    public void setBroadcastResetMessages(boolean broadcastResetMessages) {
+        if (!allowEdit(
+                MineEditEvent.Property.BROADCAST_RESET_MESSAGES, this.broadcastResetMessages, broadcastResetMessages)) {
+            return;
+        }
+        this.broadcastResetMessages = broadcastResetMessages;
+    }
+
+    private static boolean getDefaultBroadcastResetMessages() {
+        SuperMines plugin = SuperMines.getInstance();
+        return plugin == null || plugin.getConfig().getBoolean("mine.broadcast-reset-messages", true);
     }
 
     /**

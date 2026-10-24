@@ -184,6 +184,9 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
                 loc,
                 resetWarningSeconds);
         mine.setAutoPickup(section.getBoolean("autoPickup", false));
+        mine.setBroadcastResetMessages(section.getBoolean(
+                "broadcastResetMessages",
+                SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true)));
         return mine;
     }
 
@@ -204,6 +207,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("regenerateSeconds", object.getRegenerateSeconds());
         section.set("onlyFillAirWhenRegenerate", object.isOnlyFillAirWhenRegenerate());
         section.set("autoPickup", object.isAutoPickup());
+        section.set("broadcastResetMessages", object.shouldBroadcastResetMessages());
         section.set("displayIcon", object.getDisplayIcon().toString());
         section.set("requiredRankLevel", object.getRequiredRankLevel());
         section.set("allowedRankIds", object.getAllowedRankIds().stream().toList());

@@ -50,6 +50,7 @@ command:
       - "<#E5C779>/sm settp/setteleport <mine> <#8EA08C>- <#A7BC9C>Set the teleport location of the mine"
       - "<#E5C779>/sm tp/teleport <mine> <#8EA08C>- <#A7BC9C>Teleport to the mine"
       - "<#E5C779>/sm setOnlyFillAir <mine> <onlyFillAir> <#8EA08C>- <#A7BC9C>Set mine only fill air when reset"
+      - "<#E5C779>/sm setBroadcastResetMessages <mine> <true|false> <#8EA08C>- <#A7BC9C>Set whether reset messages are broadcast for a mine"
       - "<#E5C779>/sm reset <mine> <#8EA08C>- <#A7BC9C>Reset a mine"
       - "<#E5C779>/sm pos1 [position] <#8EA08C>- <#A7BC9C>Set the position 1 of an area"
       - "<#E5C779>/sm pos2 [position] <#8EA08C>- <#A7BC9C>Set the position 2 of an area"
@@ -124,6 +125,8 @@ command:
     time-set: "&aThe reset time of mine &b%mine% &ais set to &b%time%"
     success: "&aThe mine is reset successfully!"
     stop-reset: "&aThe mine &b%mine% &awill stop reset"
+  reset-messages:
+    set: "&aReset message broadcast for mine &b%mine% &ais now &b%status%&a."
   resetwarning:
     time-too-long: "&cThe reset time should not exceed the mine's reset time!"
     started: "&aThe mine's reset warning task will be started!"
@@ -325,6 +328,12 @@ gui:
       name: "&aOnly Fill Air When Reset"
       lore:
         - "&7Click to decide whether only fill air when the mine reset"
+        - "&7Current: &b%status%"
+    broadcast_reset_messages:
+      name: "&eBroadcast Reset Messages"
+      lore:
+        - "&7Click to toggle whether reset and warning messages are sent to everyone"
+        - "&7When disabled, only players inside the mine receive them"
         - "&7Current: &b%status%"
     auto_pickup:
       name: "&eAuto Pickup"
