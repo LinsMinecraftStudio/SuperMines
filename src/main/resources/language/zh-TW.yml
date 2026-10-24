@@ -4,6 +4,20 @@
     - "&a左鍵設定位置 1"
     - "&a右鍵設定位置 2"
 command:
+  migrate:
+    usage: "&e用法：/sm migrate <CataMines|MineResetLite>"
+    no-files: "&c在 %path% 中找不到礦區 YAML 檔案。"
+    exists: "&e已略過 %mine%：此 ID 的礦區已儲存在 SuperMines 中。"
+    cancelled: "&e已略過 %mine%：其他插件取消了礦區建立。"
+    failed: "&c無法匯入 %file%，詳細原因請查看控制台。"
+    task-failed: "&e礦區 %mine% 已儲存，但重置任務無法啟動。請查看控制台，修復後重新載入插件。"
+    complete: "&a從 %source% 遷移完成：成功匯入 %imported% 個，略過 %skipped% 個。"
+    notes:
+      percentage-reset: "&e%mine%：未遷移按剩餘比例重置功能，僅保留原先啟用的定時重置。"
+      loot-tables: "&e%mine%：未遷移自訂掉落表，請另外設定寶藏獎勵。"
+      tool-restrictions: "&e%mine%：未遷移工具最低效率附魔限制。"
+      reset-teleport: "&e%mine%：未遷移獨立的重置傳送位置。"
+      structure: "&e%mine%：未遷移結構方塊排除規則。"
   about:
     - "&aSuperMines"
     - "&e作者: mmmjjkx"
@@ -12,6 +26,7 @@ command:
     - "&5Discord: <click:open_url:https://discord.gg/9YP2UaPZhE>https://discord.gg/9YP2UaPZhE</click>"
   help:
     general:
+      - "<#E5C779>/sm migrate <CataMines|MineResetLite> <#8EA08C>- <#A7BC9C>從其他插件匯入礦區"
       - "<#D7B769>SuperMines 幫助"
       - "<#E5C779>/sm create <id> [顯示名] <#8EA08C>- <#A7BC9C>建立礦區"
       - "<#E5C779>/sm help <#8EA08C>- <#A7BC9C>顯示此幫助"

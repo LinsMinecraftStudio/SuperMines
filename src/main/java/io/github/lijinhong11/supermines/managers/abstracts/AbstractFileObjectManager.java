@@ -3,6 +3,7 @@ package io.github.lijinhong11.supermines.managers.abstracts;
 import com.google.common.base.Strings;
 import io.github.lijinhong11.supermines.SuperMines;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +66,18 @@ public abstract class AbstractFileObjectManager<T> {
     protected final void putObject(String key, T object) {
         writeObject(key, object);
         saveConfig();
+    }
+
+    /** Persists an imported object before the caller registers it as successfully migrated. */
+    protected final void putImportedObject(String key, T object) throws IOException {
+        Object previous = config.get(key);
+        try {
+            writeObject(key, object);
+            config.save(configFile);
+        } catch (IOException | RuntimeException exception) {
+            config.set(key, previous);
+            throw exception;
+        }
     }
 
     /**

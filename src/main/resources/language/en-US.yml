@@ -4,6 +4,20 @@
     - "&aLeft-Click to set position 1"
     - "&aRight-Click to set position 2"
 command:
+  migrate:
+    usage: "&eUsage: /sm migrate <CataMines|MineResetLite>"
+    no-files: "&cNo mine YAML files found in %path%."
+    exists: "&eSkipped %mine%: a mine with this ID is already saved."
+    cancelled: "&eSkipped %mine%: creation was cancelled by another plugin."
+    failed: "&cCould not import %file%. See the console for the reason."
+    task-failed: "&eMine %mine% was saved, but its reset tasks could not start. See the console and reload after fixing the cause."
+    complete: "&aMigration from %source% finished: %imported% imported, %skipped% skipped."
+    notes:
+      percentage-reset: "&e%mine%: percentage-based resets were not imported; only the enabled time-based schedule was kept."
+      loot-tables: "&e%mine%: custom loot tables were not imported. Configure treasure rewards separately."
+      tool-restrictions: "&e%mine%: minimum tool efficiency restrictions were not imported."
+      reset-teleport: "&e%mine%: the separate reset teleport destination was not imported."
+      structure: "&e%mine%: structure block exclusions were not imported."
   about:
     - "&aSuperMines"
     - "&eAuthor: mmmjjkx"
@@ -12,6 +26,7 @@ command:
     - "&5Discord: <click:open_url:https://discord.gg/9YP2UaPZhE>https://discord.gg/9YP2UaPZhE</click>"
   help:
     general:
+      - "<#E5C779>/sm migrate <CataMines|MineResetLite> <#8EA08C>- <#A7BC9C>Import mines from another plugin"
       - "<#D7B769>SuperMines Help"
       - "<#E5C779>/sm create <id> [displayName] <#8EA08C>- <#A7BC9C>Create a mine"
       - "<#E5C779>/sm help <#8EA08C>- <#A7BC9C>Show this help message"

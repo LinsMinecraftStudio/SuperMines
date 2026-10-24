@@ -250,6 +250,7 @@ public class Constants {
 
     public static class Permission {
         public static final String RELOAD = "supermines.reload";
+        public static final String MIGRATE = "supermines.migrate";
 
         public static final String TREASURES = "supermines.treasures";
         public static final String RANKS = "supermines.ranks";

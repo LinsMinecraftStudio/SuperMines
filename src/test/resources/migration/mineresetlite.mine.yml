@@ -1,0 +1,18 @@
+mine:
+  ==: com.koletar.jj.mineresetlite.Mine
+  name: quarry_B
+  world: world
+  minX: -10
+  minY: 5
+  minZ: 8
+  maxX: 10
+  maxY: 64
+  maxZ: 28
+  composition:
+    '1:0': 0.5
+    '35:14': 0.25
+  resetDelay: 10
+  resetClock: 2
+  resetWarnings: ['5', '1', '10', '0']
+  fillMode: true
+  surface: ''

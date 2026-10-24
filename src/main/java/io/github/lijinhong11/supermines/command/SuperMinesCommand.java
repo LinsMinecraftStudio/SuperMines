@@ -27,6 +27,8 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
 import io.github.lijinhong11.supermines.gui.GuiManager;
 import io.github.lijinhong11.supermines.listeners.BlockListener;
+import io.github.lijinhong11.supermines.migration.MigrationSource;
+import io.github.lijinhong11.supermines.migration.MineMigration;
 import io.github.lijinhong11.supermines.utils.Constants;
 import io.github.lijinhong11.supermines.utils.selection.AreaSelection;
 import io.github.lijinhong11.supermines.utils.selection.SelectionValidator;
@@ -434,6 +436,27 @@ public final class SuperMinesCommand {
                         .requires(playerPermission(Constants.Permission.POS_SET))
                         .executes(SuperMinesCommand::wand))
                 .then(Commands.literal("about").executes(SuperMinesCommand::about))
+                .then(Commands.literal("migrate")
+                        .requires(s -> s.getSender().hasPermission(Constants.Permission.MIGRATE))
+                        .executes(c -> {
+                            plugin.getLanguageManager().sendMessage(sender(c), "command.migrate.usage");
+                            return Command.SINGLE_SUCCESS;
+                        })
+                        .then(Commands.argument("source", StringArgumentType.word())
+                                .suggests((c, b) -> suggest(b, List.of("CataMines", "MineResetLite")))
+                                .executes(c -> {
+                                    MigrationSource source;
+                                    try {
+                                        source = MigrationSource.valueOf(StringArgumentType.getString(c, "source")
+                                                .toUpperCase(Locale.ROOT));
+                                    } catch (IllegalArgumentException exception) {
+                                        plugin.getLanguageManager().sendMessage(sender(c), "command.migrate.usage");
+                                        return 0;
+                                    }
+                                    plugin.getTaskMaker()
+                                            .runSync(() -> new MineMigration(plugin).migrate(sender(c), source));
+                                    return Command.SINGLE_SUCCESS;
+                                })))
                 .then(Commands.literal("reload")
                         .requires(s -> s.getSender().hasPermission(Constants.Permission.RELOAD))
                         .executes(SuperMinesCommand::reload))

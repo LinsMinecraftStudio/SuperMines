@@ -2,7 +2,6 @@ package io.github.lijinhong11.supermines.managers;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import io.github.lijinhong11.mittellib.hook.ContentProviders;
 import io.github.lijinhong11.mittellib.iface.block.PackedBlock;
 import io.github.lijinhong11.mittellib.math.*;
 import io.github.lijinhong11.mittellib.utils.random.WeightedRandomMap;
@@ -15,6 +14,8 @@ import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
 import io.github.lijinhong11.supermines.api.mine.generation.conditions.ConditionLoader;
 import io.github.lijinhong11.supermines.managers.abstracts.AbstractFileObjectManager;
+import io.github.lijinhong11.supermines.utils.MineBlocks;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -113,7 +114,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         ConfigurationSection blockSpawn = section.getConfigurationSection("blockSpawnEntries");
         if (blockSpawn != null) {
             for (String m : blockSpawn.getKeys(false)) {
-                PackedBlock block = ContentProviders.getBlock(m);
+                PackedBlock block = MineBlocks.resolve(m);
                 if (block == null) {
                     continue;
                 }
@@ -299,6 +300,22 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
 
         mines.put(mine.getId(), mine);
         super.putObject(mine.getId(), mine);
+        return true;
+    }
+
+    /** Includes saved mines whose worlds have not loaded yet. */
+    public boolean hasMine(@NotNull String id) {
+        return mines.containsKey(id) || getConfigSection(id) != null;
+    }
+
+    public synchronized boolean importMine(@NotNull Mine mine) throws IOException {
+        Preconditions.checkArgument(!hasMine(mine.getId()), "mine with ID %s already exists", mine.getId());
+        MineCreateEvent event = new MineCreateEvent(mine);
+        event.callEvent();
+        if (event.isCancelled()) return false;
+
+        putImportedObject(mine.getId(), mine);
+        mines.put(mine.getId(), mine);
         return true;
     }
 

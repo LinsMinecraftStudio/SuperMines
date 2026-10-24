@@ -23,6 +23,25 @@ SuperMines is a free, open-source mine plugin for Paper servers. It combines aut
 - **A smoother mining loop**: per-mine and per-player auto pickup, block-based progression, and optional mcMMO / AuraSkills XP.
 - **4 custom-block platforms**: ItemsAdder, Oraxen, Nexo, and CraftEngine.
 
+## Migrating from CataMines / MineResetLite
+
+1. Stop the server so the source plugin saves its data, then disable that plugin and keep its data directory.
+2. Start the server with SuperMines and load the worlds containing your mines.
+3. Run either command from the console or as a player with `supermines.migrate` (granted to operators by default):
+
+   ```text
+   /sm migrate CataMines
+   /sm migrate MineResetLite
+   ```
+
+The importer reads YAML files in `plugins/CataMines/mines/` or `plugins/MineResetLite/mines/`, saves mines to `plugins/SuperMines/data/mines.yml`, and starts their reset schedules. It does not immediately fill mines; use `/sm reset <mineId>` when needed. The source plugin does not need to be installed or enabled, and its files are left intact.
+
+Supported formats are CataMines 2.x (`Mine`, based on 2.5.11) and MineResetLite (`mine`). Imported settings include cuboid boundaries, block weights and states, reset intervals, warnings, air-only filling, and teleport locations. MineResetLite minutes are converted to seconds, incomplete compositions keep their remaining air percentage, and fixed surface blocks become generation conditions. Numeric block IDs such as `1:0` require WorldEdit or FAWE for conversion.
+
+Existing mine IDs are skipped, including saved mines whose worlds have not loaded. Invalid data, unknown blocks, unloaded worlds, and creation cancelled by another plugin are reported and skipped. You can fix those entries and run the command again.
+
+Custom loot tables, minimum tool efficiency, percentage-based resets, separate reset teleport destinations, and structure block exclusions need separate configuration; detected settings produce migration notices. Stopped CataMines mines and mines using only percentage-based resets keep automatic time resets disabled. The CataMines 3.x multi-region format is currently unsupported.
+
 ## Variables
 
 > `[parameter]` means an optional parameter 

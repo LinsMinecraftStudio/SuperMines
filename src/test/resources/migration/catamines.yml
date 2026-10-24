@@ -1,0 +1,41 @@
+Mine:
+  ==: de.c4t4lysm.catamines.utils.mine.mines.CuboidCataMine
+  name: quarry_A
+  region:
+    type: CUBOID
+    world: world
+    p1:
+      ==: org.bukkit.Location
+      world: world
+      x: -10.0
+      y: -32.0
+      z: 8.0
+    p2:
+      ==: org.bukkit.Location
+      world: world
+      x: 10.0
+      y: 64.0
+      z: 28.0
+  composition:
+    - block: minecraft:stone
+      chance: 75.0
+      lootTable: []
+    - block: minecraft:oak_log[axis=x]
+      chance: 25.0
+      lootTable: []
+  resetMode: TIME
+  resetDelay: 600
+  countdown: 42
+  replaceMode: true
+  isStopped: false
+  warn:
+    enableWarn: true
+    warnSeconds: [600, 60, 10, 10, 0]
+  teleportLocation:
+    ==: org.bukkit.Location
+    world: world
+    x: 0.5
+    y: 70.0
+    z: 18.5
+    yaw: 90.0
+    pitch: 15.0

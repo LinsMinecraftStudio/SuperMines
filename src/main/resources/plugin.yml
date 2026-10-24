@@ -18,3 +18,7 @@ softdepend:
   - MiniPlaceholders
   - mcMMO
   - AuraSkills
+permissions:
+  supermines.migrate:
+    description: Import mines from CataMines or MineResetLite data files
+    default: op

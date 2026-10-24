@@ -24,6 +24,25 @@ SuperMines 是一款免费开源的 Paper 矿区插件，用自动重置、条�
 - **游戏内管理**：通过 GUI 管理矿区、方块权重、生成条件、宝藏、等级和可再生矿点。
 - **玩家挖矿体验**：支持矿区/玩家两级自动拾取、按挖掘量成长的等级，以及可选 mcMMO / AuraSkills 经验。
 - **4 个自定义方块平台**：支持 ItemsAdder、Oraxen、Nexo 和 CraftEngine。
+## 从 CataMines / MineResetLite 迁移
+
+1. 停服并让旧插件保存数据，然后停用旧插件，保留其数据目录。
+2. 启动安装了 SuperMines 的服务器，确保矿区使用的世界已经加载。
+3. 在控制台或以拥有 `supermines.migrate` 权限的玩家执行（默认 OP 可用）：
+
+   ```text
+   /sm migrate CataMines
+   /sm migrate MineResetLite
+   ```
+
+迁移会读取 `plugins/CataMines/mines/` 或 `plugins/MineResetLite/mines/` 中的 YAML 文件，将矿区保存到 `plugins/SuperMines/data/mines.yml`，并启动定时重置。命令不会立即填充矿区；需要时执行 `/sm reset <矿区ID>`。旧插件无需安装或启用，源文件不会被修改。
+
+支持 CataMines 2.x（按 2.5.11 的 `Mine` 格式读取）和 MineResetLite 的 `mine` 格式：长方体范围、方块比例及方块状态、重置周期、预警时间、仅填充空气模式和传送点。MineResetLite 的分钟数会转换成秒；总比例不足 100% 时保留空气占比，固定表层方块会转换为生成条件。数字方块 ID（如 `1:0`）需要安装 WorldEdit 或 FAWE 才能转换。
+
+已有同 ID 的矿区会跳过，包括世界尚未加载的已保存矿区。无效数据、未知方块、未加载的世界及被其他插件取消的创建会跳过并报告，修正后可重新执行命令。
+
+自定义掉落表、工具效率限制、按剩余比例重置、独立的重置传送位置和结构方块排除规则需要另行配置；命令会对检测到的这些设置给出提示。仅按比例重置或已停止的 CataMines 矿区迁移后不会自动定时重置。当前不支持 CataMines 3.x 的多区域格式。
+
 ## 变量
 
 > `[参数]` 表示可选参数  

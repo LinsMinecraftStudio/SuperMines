@@ -4,6 +4,20 @@
     - "&aClic gauche pour définir la position 1"
     - "&aClic droit pour définir la position 2"
 command:
+  migrate:
+    usage: "&eUtilisation : /sm migrate <CataMines|MineResetLite>"
+    no-files: "&cAucun fichier YAML de mine dans %path%."
+    exists: "&e%mine% ignorée : une mine avec cet identifiant est déjà enregistrée."
+    cancelled: "&e%mine% ignorée : la création a été annulée par un autre plugin."
+    failed: "&cImpossible d'importer %file%. Consultez la console pour en connaître la raison."
+    task-failed: "&e%mine% a été enregistrée, mais ses tâches de réinitialisation ont échoué. Consultez la console, corrigez le problème et rechargez le plugin."
+    complete: "&aMigration depuis %source% terminée : %imported% importées, %skipped% ignorées."
+    notes:
+      percentage-reset: "&e%mine% : réinitialisations par pourcentage non importées ; seul le calendrier actif a été conservé."
+      loot-tables: "&e%mine% : tables de butin non importées. Configurez les trésors séparément."
+      tool-restrictions: "&e%mine% : restrictions d'efficacité minimale des outils non importées."
+      reset-teleport: "&e%mine% : destination de téléportation de réinitialisation distincte non importée."
+      structure: "&e%mine% : exclusions des blocs de structure non importées."
   about:
     - "&aSuperMines"
     - "&eAuteur : mmmjjkx"
@@ -12,6 +26,7 @@ command:
     - "&5Discord : <click:open_url:https://discord.gg/9YP2UaPZhE>https://discord.gg/9YP2UaPZhE</click>"
   help:
     general:
+      - "<#E5C779>/sm migrate <CataMines|MineResetLite> <#8EA08C>- <#A7BC9C>Importer les mines d'un autre plugin"
       - "&6Aide de SuperMines"
       - "<#E5C779>/sm create <id> [displayName] <#8EA08C>- <#A7BC9C>Créer une mine"
       - "<#E5C779>/sm help <#8EA08C>- <#A7BC9C>Afficher ce message d'aide"
