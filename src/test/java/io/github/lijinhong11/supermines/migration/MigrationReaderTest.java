@@ -2,16 +2,24 @@ package io.github.lijinhong11.supermines.migration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import io.github.lijinhong11.supermines.api.mine.MessageBroadcastMode;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.yaml.snakeyaml.error.YAMLException;
 
 class MigrationReaderTest {
+    private static final AbstractMineMigrator MRL = MigrationSource.MINERESETLITE.getMigrator();
+
     @Test
     void importsCataMinesWithoutLoadingSerializedPluginClasses() throws IOException {
         var mine = read(cata(), MigrationSource.CATAMINES);
@@ -27,6 +35,7 @@ class MigrationReaderTest {
         assertEquals(90, mine.teleport().yaw());
         assertEquals(15, mine.teleport().pitch());
         assertTrue(mine.notes().isEmpty());
+        assertNull(mine.messageBroadcastMode());
     }
 
     @Test
@@ -40,6 +49,65 @@ class MigrationReaderTest {
         assertEquals(0.25, mine.blocks().get("minecraft:air"));
         assertTrue(mine.onlyFillAir());
         assertNull(mine.teleport());
+        assertEquals(MessageBroadcastMode.ALL, mine.messageBroadcastMode());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "false,false,false,ALL",
+        "false,true,false,IN_MINE",
+        "false,false,true,IN_WORLD",
+        "false,true,true,IN_MINE",
+        "true,false,false,SILENT",
+        "true,true,false,SILENT",
+        "true,false,true,SILENT",
+        "true,true,true,SILENT"
+    })
+    void importsMrlMessageModeWithTheOriginalPriority(
+            boolean silent, boolean nearby, boolean worldOnly, MessageBroadcastMode expected) throws IOException {
+        var config = Map.of("broadcast-nearby-only", nearby, "broadcast-in-world-only", worldOnly);
+        var mine = MigrationReader.read(
+                new StringReader(mrl() + "  isSilent: " + silent + "\n"), MigrationSource.MINERESETLITE, config);
+        assertEquals(expected, mine.messageBroadcastMode());
+        assertEquals(silent, mine.notes().contains("silent-warnings"));
+        assertEquals(Set.of(300, 60), mine.warnings());
+    }
+
+    @Test
+    void readsMrlGlobalConfigFromTheSourceDataFolder(@TempDir Path folder) throws IOException {
+        Files.writeString(
+                folder.resolve("config.yml"), "broadcast-in-world-only: true\nbroadcast-nearby-only: false\n");
+        var config = MRL.readConfiguration(folder);
+        var mine = MigrationReader.read(new StringReader(mrl()), MigrationSource.MINERESETLITE, config);
+        assertEquals(MessageBroadcastMode.IN_WORLD, mine.messageBroadcastMode());
+    }
+
+    @Test
+    void usesMrlDefaultsWhenGlobalConfigIsMissingOrEmpty(@TempDir Path folder) throws IOException {
+        assertTrue(MRL.readConfiguration(folder).isEmpty());
+        Files.writeString(folder.resolve("config.yml"), "# empty source configuration\n");
+        var config = MRL.readConfiguration(folder);
+        assertTrue(config.isEmpty());
+        assertEquals(
+                MessageBroadcastMode.ALL,
+                MigrationReader.read(new StringReader(mrl()), MigrationSource.MINERESETLITE, config)
+                        .messageBroadcastMode());
+    }
+
+    @Test
+    void rejectsInvalidGlobalMessageConfigRatherThanBroadeningTheAudience(@TempDir Path folder) throws IOException {
+        Files.writeString(folder.resolve("config.yml"), "broadcast-nearby-only: invalid\n");
+        assertThrows(IllegalArgumentException.class, () -> MRL.readConfiguration(folder));
+        Files.writeString(
+                folder.resolve("config.yml"), "broadcast-in-world-only: true\nbroadcast-in-world-only: false\n");
+        assertThrows(YAMLException.class, () -> MRL.readConfiguration(folder));
+    }
+
+    @Test
+    void leavesCataMinesMessageModeAtTheSmDefault() throws IOException {
+        var mine = MigrationReader.read(
+                new StringReader(cata()), MigrationSource.CATAMINES, Map.of("broadcast-nearby-only", true));
+        assertNull(mine.messageBroadcastMode());
     }
 
     @Test
@@ -124,7 +192,7 @@ class MigrationReaderTest {
         assertThrows(YAMLException.class, () -> read("!!java.lang.Object {}", MigrationSource.CATAMINES));
     }
 
-    private static MigrationReader.MineData read(String yaml, MigrationSource source) {
+    private static AbstractMineMigrator.MineData read(String yaml, MigrationSource source) {
         return MigrationReader.read(new StringReader(yaml), source);
     }
 

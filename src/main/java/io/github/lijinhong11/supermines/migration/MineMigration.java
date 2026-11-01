@@ -36,7 +36,9 @@ public final class MineMigration {
         this.plugin = plugin;
     }
 
-    /** Must run on the global server thread, like other mine management operations. */
+    /**
+     * Must run on the global server thread, like other mine management operations.
+     */
     public void migrate(CommandSender sender, MigrationSource source) {
         File directory = new File(plugin.getDataFolder().getParentFile(), source.getPluginName() + "/mines");
         File[] files = directory.listFiles(file -> {
@@ -51,14 +53,28 @@ public final class MineMigration {
                             MessageReplacement.replace("%path%", directory.getPath()));
             return;
         }
+        AbstractMineMigrator migrator = source.getMigrator();
+        Map<?, ?> sourceConfig;
+        try {
+            sourceConfig = migrator.readConfiguration(directory.toPath().getParent());
+        } catch (IOException | IllegalArgumentException | YAMLException exception) {
+            plugin.getLanguageManager()
+                    .sendMessage(
+                            sender,
+                            "command.migrate.config-failed",
+                            MessageReplacement.replace("%source%", source.getPluginName()));
+            plugin.getLogger()
+                    .log(Level.WARNING, "Could not read " + source.getPluginName() + "/config.yml", exception);
+            return;
+        }
         Arrays.sort(files, Comparator.comparing(File::getName));
         int imported = 0;
         int skipped = 0;
         for (File file : files) {
-            MigrationReader.MineData data;
+            AbstractMineMigrator.MineData data;
             Mine mine;
             try (Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
-                data = MigrationReader.read(reader, source);
+                data = migrator.read(reader, sourceConfig);
                 if (plugin.getMineManager().hasMine(data.id())) {
                     skipped++;
                     plugin.getLanguageManager()
@@ -114,7 +130,7 @@ public final class MineMigration {
                         MessageReplacement.replace("%skipped%", String.valueOf(skipped)));
     }
 
-    private Mine toMine(MigrationReader.MineData data) {
+    private Mine toMine(AbstractMineMigrator.MineData data) {
         World world = world(data.world());
         Location pos1 = location(data.pos1());
         Location pos2 = location(data.pos2());
@@ -159,6 +175,7 @@ public final class MineMigration {
                 data.resetSeconds(),
                 data.onlyFillAir());
         mine.setWarningSeconds(data.warnings());
+        if (data.messageBroadcastMode() != null) mine.setMessageBroadcastMode(data.messageBroadcastMode());
         if (data.teleport() != null) mine.setTeleportLocation(location(data.teleport()));
         return mine;
     }
@@ -183,7 +200,7 @@ public final class MineMigration {
         return world;
     }
 
-    private static Location location(MigrationReader.Position position) {
+    private static Location location(AbstractMineMigrator.Position position) {
         if (Math.abs(position.x()) > 30_000_000
                 || Math.abs(position.z()) > 30_000_000
                 || position.y() < Integer.MIN_VALUE

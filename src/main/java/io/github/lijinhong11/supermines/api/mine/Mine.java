@@ -53,7 +53,7 @@ public final class Mine implements Identified {
     private int regenerateSeconds;
     private boolean onlyFillAirWhenRegenerate;
     private boolean autoPickup;
-    private boolean broadcastResetMessages = getDefaultBroadcastResetMessages();
+    private MessageBroadcastMode messageBroadcastMode = getDefaultMessageBroadcastMode();
     private int requiredRankLevel;
     private Location tpLoc;
 
@@ -195,7 +195,7 @@ public final class Mine implements Identified {
      * @return true if the player is inside the mine, false otherwise
      */
     public boolean isPlayerInMine(Player player) {
-        return area.contains(BlockPos.fromLocation(player.getLocation()));
+        return world.equals(player.getWorld()) && area.contains(BlockPos.fromLocation(player.getLocation()));
     }
 
     /**
@@ -539,23 +539,30 @@ public final class Mine implements Identified {
         this.autoPickup = autoPickup;
     }
 
-    /** Returns whether this mine sends reset and warning messages to all players. */
-    public boolean shouldBroadcastResetMessages() {
-        return broadcastResetMessages;
+    /**
+     * Returns the audience for this mine's reset and warning messages.
+     */
+    public MessageBroadcastMode getMessageBroadcastMode() {
+        return messageBroadcastMode;
     }
 
-    /** Sets whether reset and warning messages are broadcast outside this mine. */
-    public void setBroadcastResetMessages(boolean broadcastResetMessages) {
-        if (!allowEdit(
-                MineEditEvent.Property.BROADCAST_RESET_MESSAGES, this.broadcastResetMessages, broadcastResetMessages)) {
+    /**
+     * Sets the audience for reset and warning messages, including silent mode.
+     */
+    public void setMessageBroadcastMode(@NotNull MessageBroadcastMode mode) {
+        Preconditions.checkNotNull(mode, "message broadcast mode cannot be null");
+        if (!allowEdit(MineEditEvent.Property.MESSAGE_BROADCAST_MODE, this.messageBroadcastMode, mode)) {
             return;
         }
-        this.broadcastResetMessages = broadcastResetMessages;
+        this.messageBroadcastMode = mode;
     }
 
-    private static boolean getDefaultBroadcastResetMessages() {
+    private static MessageBroadcastMode getDefaultMessageBroadcastMode() {
         SuperMines plugin = SuperMines.getInstance();
-        return plugin == null || plugin.getConfig().getBoolean("mine.broadcast-reset-messages", true);
+        return plugin == null
+                ? MessageBroadcastMode.ALL
+                : MessageBroadcastMode.fromConfig(
+                        plugin.getConfig().get("mine.broadcast-reset-messages"), MessageBroadcastMode.ALL);
     }
 
     /**

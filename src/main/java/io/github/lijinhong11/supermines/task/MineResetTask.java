@@ -211,7 +211,6 @@ class MineResetTask extends AbstractTask {
         Bukkit.getGlobalRegionScheduler().run(SuperMines.getInstance(), task -> {
             TaskMaker taskMaker = SuperMines.getInstance().getTaskMaker();
             if (!taskMaker.isResetGenerationActive(mine.getId(), generation)) return;
-            boolean broadcast = mine.shouldBroadcastResetMessages();
             try {
                 mine.setBlocksBroken(0);
                 new MineResetEvent(mine).callEvent();
@@ -229,7 +228,8 @@ class MineResetTask extends AbstractTask {
                                                             : mine.getSafeTopLocation());
                                         }
 
-                                        if (broadcast || inside) {
+                                        if (mine.getMessageBroadcastMode()
+                                                .shouldSend(mine.getWorld().equals(player.getWorld()), inside)) {
                                             SuperMines.getInstance()
                                                     .getLanguageManager()
                                                     .sendMessage(

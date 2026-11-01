@@ -209,10 +209,10 @@ public final class GuiManager {
         gui.putItem(
                 slot(5, 4),
                 ButtonItem.clickable(
-                        Constants.Items.BROADCAST_RESET_MESSAGES.apply(p, mine.shouldBroadcastResetMessages()),
-                        (g, e) -> {
+                        Constants.Items.BROADCAST_RESET_MESSAGES.apply(p, mine.getMessageBroadcastMode()), (g, e) -> {
                             if (!checkPermission(p, Constants.Permission.SET_RESET_MESSAGE_BROADCAST)) return false;
-                            mine.setBroadcastResetMessages(!mine.shouldBroadcastResetMessages());
+                            mine.setMessageBroadcastMode(
+                                    mine.getMessageBroadcastMode().next());
                             SuperMines.getInstance().getMineManager().saveMine(mine);
                             reopen.run();
                             return false;

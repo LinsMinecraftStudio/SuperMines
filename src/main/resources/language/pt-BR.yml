@@ -10,9 +10,11 @@ command:
     exists: "&e%mine% ignorada: já existe uma mina salva com esse ID."
     cancelled: "&e%mine% ignorada: a criação foi cancelada por outro plugin."
     failed: "&cNão foi possível importar %file%. Consulte o console para ver o motivo."
+    config-failed: "&cNão foi possível ler %source%/config.yml. Migração interrompida; consulte o console."
     task-failed: "&e%mine% foi salva, mas as tarefas de reinicialização falharam. Consulte o console, corrija o problema e recarregue o plugin."
     complete: "&aMigração de %source% concluída: %imported% importadas, %skipped% ignoradas."
     notes:
+      silent-warnings: "&e%mine%: o modo silencioso do MRL foi convertido para SILENT, que também desativa os avisos no SuperMines."
       percentage-reset: "&e%mine%: reinicializações por porcentagem não foram importadas; apenas o agendamento ativo foi mantido."
       loot-tables: "&e%mine%: tabelas de saque não foram importadas. Configure os tesouros separadamente."
       tool-restrictions: "&e%mine%: restrições de eficiência mínima das ferramentas não foram importadas."
@@ -50,7 +52,7 @@ command:
       - "<#E5C779>/sm settp/setteleport <mine> <#8EA08C>- <#A7BC9C>Definir local de teleporte da mina"
       - "<#E5C779>/sm tp/teleport <mine> <#8EA08C>- <#A7BC9C>Teleportar para a mina"
       - "<#E5C779>/sm setOnlyFillAir <mine> <onlyFillAir> <#8EA08C>- <#A7BC9C>Definir mina para preencher só ar"
-      - "<#E5C779>/sm setBroadcastResetMessages <mine> <true|false> <#8EA08C>- <#A7BC9C>Definir envio das mensagens de reset da mina"
+      - "<#E5C779>/sm setBroadcastResetMessages <mine> <ALL|IN_WORLD|IN_MINE|SILENT> <#8EA08C>- <#A7BC9C>Definir modo das mensagens de reset da mina"
       - "<#E5C779>/sm reset <mine> <#8EA08C>- <#A7BC9C>Resetar uma mina"
       - "<#E5C779>/sm pos1 [position] <#8EA08C>- <#A7BC9C>Definir posição 1 de uma área"
       - "<#E5C779>/sm pos2 [position] <#8EA08C>- <#A7BC9C>Definir posição 2 de uma área"
@@ -126,7 +128,8 @@ command:
     success: "&aA mina foi resetada com sucesso!"
     stop-reset: "&aA mina &b%mine% &avai parar de resetar"
   reset-messages:
-    set: "&aO envio das mensagens de reset da mina &b%mine% &aagora é &b%status%&a."
+    set: "&aO modo das mensagens de reset da mina &b%mine% &aagora é &b%mode%&a."
+    invalid-mode: "&cModo inválido. Use ALL, IN_WORLD, IN_MINE ou SILENT."
   resetwarning:
     time-too-long: "&cO tempo de reset não deve exceder o tempo de reset da mina!"
     started: "&aO aviso de reset da mina será iniciado!"
@@ -330,11 +333,13 @@ gui:
         - "&7Clique para decidir se apenas ar será preenchido ao resetar"
         - "&7Atual: &b%status%"
     broadcast_reset_messages:
-      name: "&eEnviar mensagens de reset"
+      name: "&eModo das mensagens de reset"
       lore:
-        - "&7Clique para enviar avisos e mensagens de reset a todos"
-        - "&7Desativado: apenas jogadores dentro da mina recebem"
-        - "&7Atual: &b%status%"
+        - "&7Clique para alternar ALL / IN_WORLD / IN_MINE / SILENT"
+        - "&7ALL: todos; IN_WORLD: jogadores no mesmo mundo"
+        - "&7IN_MINE: jogadores dentro da mina"
+        - "&7SILENT: sem mensagens de reset ou avisos"
+        - "&7Modo atual: &b%mode%"
     auto_pickup:
       name: "&eColeta Automática"
       lore:

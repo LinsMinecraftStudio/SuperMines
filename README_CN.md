@@ -39,13 +39,40 @@ SuperMines 是一款免费开源的 Paper 矿区插件，用自动重置、条�
 
 支持 CataMines 2.x（按 2.5.11 的 `Mine` 格式读取）和 MineResetLite 的 `mine` 格式：长方体范围、方块比例及方块状态、重置周期、预警时间、仅填充空气模式和传送点。MineResetLite 的分钟数会转换成秒；总比例不足 100% 时保留空气占比，固定表层方块会转换为生成条件。数字方块 ID（如 `1:0`）需要安装 WorldEdit 或 FAWE 才能转换。
 
+MineResetLite 的消息模式也会随矿区迁移。请保留 `plugins/MineResetLite/config.yml`，迁移器会读取全局广播范围，并保存为各矿区的独立设置，优先级如下：
+
+| MRL 设置 | SM 消息模式 |
+| --- | --- |
+| 矿区 `isSilent: true` | `SILENT` |
+| `broadcast-nearby-only: true` | `IN_MINE` |
+| `broadcast-in-world-only: true` | `IN_WORLD` |
+| 以上均未启用 | `ALL` |
+
+MRL 原版的 `broadcast-nearby-only` 实际仅向矿区内玩家发送，并非按距离发送。配置文件缺失或为空时使用 MRL 原版默认值；配置无法读取或格式无效时停止迁移并报告。注意：MRL 原版的 `isSilent` 仅控制重置公告，SM 的 `SILENT` 同时关闭重置预警，迁移时会提示此差异。
+
 已有同 ID 的矿区会跳过，包括世界尚未加载的已保存矿区。无效数据、未知方块、未加载的世界及被其他插件取消的创建会跳过并报告，修正后可重新执行命令。
 
 自定义掉落表、工具效率限制、按剩余比例重置、独立的重置传送位置和结构方块排除规则需要另行配置；命令会对检测到的这些设置给出提示。仅按比例重置或已停止的 CataMines 矿区迁移后不会自动定时重置。当前不支持 CataMines 3.x 的多区域格式。
 
 ## 矿区重置消息
 
-配置项 `mine.broadcast-reset-messages` 现在仅作为新矿区的默认值，以及旧矿区尚未保存独立设置时的兼容默认值。每个矿区可在管理 GUI 中切换，或使用 `/sm setBroadcastResetMessages <矿区ID> <true|false>` 单独设置。设为 `true` 时重置和预警消息发送给全服玩家；设为 `false` 时仅发送给矿区内玩家。修改权限为 `supermines.set_reset_message_broadcast`，默认 OP。
+配置项 `mine.broadcast-reset-messages` 使用 `MessageBroadcastMode`，作为新矿区及没有独立设置的旧矿区的默认模式：
+
+- `ALL`：向全服玩家发送重置和预警消息。
+- `IN_WORLD`：仅向矿区所在世界的玩家发送。
+- `IN_MINE`：仅向该矿区所在世界、范围内的玩家发送。
+- `SILENT`：不发送重置和预警消息；重置、传送与命令执行反馈仍正常运行。
+
+每个矿区可在管理 GUI 中循环切换模式，或使用 `/sm setBroadcastResetMessages <矿区ID> <ALL|IN_WORLD|IN_MINE|SILENT>` 设置（模式参数不区分大小写）。设置保存为 `data/mines.yml` 中的 `messageBroadcastMode`。修改权限为 `supermines.set_reset_message_broadcast`，默认 OP。
+
+默认配置示例：
+
+```yaml
+mine:
+  broadcast-reset-messages: ALL
+```
+
+兼容旧布尔配置：`true` 对应 `ALL`，`false` 对应 `IN_MINE`；旧矿区的 `broadcastResetMessages` 会在保存时改写为枚举字段。无效模式回退到矿区默认值，默认配置本身无效时使用 `ALL`。
 
 ## 变量
 

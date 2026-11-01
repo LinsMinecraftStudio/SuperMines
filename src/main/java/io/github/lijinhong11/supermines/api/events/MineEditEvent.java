@@ -22,7 +22,7 @@ public final class MineEditEvent extends Event implements Cancellable {
         RESET_SECONDS,
         ONLY_FILL_AIR,
         AUTO_PICKUP,
-        BROADCAST_RESET_MESSAGES,
+        MESSAGE_BROADCAST_MODE,
         REQUIRED_RANK_LEVEL,
         TELEPORT_LOCATION
     }

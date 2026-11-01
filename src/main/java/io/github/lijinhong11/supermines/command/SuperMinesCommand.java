@@ -22,6 +22,7 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.data.PlayerData;
 import io.github.lijinhong11.supermines.api.data.Rank;
 import io.github.lijinhong11.supermines.api.iface.Identified;
+import io.github.lijinhong11.supermines.api.mine.MessageBroadcastMode;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.regen.RegenPoint;
@@ -436,7 +437,12 @@ public final class SuperMinesCommand {
                         .requires(s -> s.getSender().hasPermission(Constants.Permission.SET_RESET_MESSAGE_BROADCAST))
                         .then(Commands.argument("mineId", StringArgumentType.word())
                                 .suggests((c, b) -> suggest(b, getMineList()))
-                                .then(Commands.argument("broadcast", BoolArgumentType.bool())
+                                .then(Commands.argument("mode", StringArgumentType.word())
+                                        .suggests((c, b) -> suggest(
+                                                b,
+                                                Arrays.stream(MessageBroadcastMode.values())
+                                                        .map(Enum::name)
+                                                        .toList()))
                                         .executes(SuperMinesCommand::setBroadcastResetMessages))))
                 .then(Commands.literal("wand")
                         .requires(playerPermission(Constants.Permission.POS_SET))
@@ -1552,8 +1558,14 @@ public final class SuperMinesCommand {
     private static int setBroadcastResetMessages(CommandContext<CommandSourceStack> c) {
         Mine m = mine(c);
         if (m == null) return missingMine(c);
-        boolean broadcast = BoolArgumentType.getBool(c, "broadcast");
-        m.setBroadcastResetMessages(broadcast);
+        MessageBroadcastMode mode;
+        try {
+            mode = MessageBroadcastMode.parse(StringArgumentType.getString(c, "mode"));
+        } catch (IllegalArgumentException exception) {
+            SuperMines.getInstance().getLanguageManager().sendMessage(sender(c), "command.reset-messages.invalid-mode");
+            return 0;
+        }
+        m.setMessageBroadcastMode(mode);
         SuperMines.getInstance().getMineManager().saveMine(m);
         SuperMines.getInstance()
                 .getLanguageManager()
@@ -1561,7 +1573,8 @@ public final class SuperMinesCommand {
                         sender(c),
                         "command.reset-messages.set",
                         MessageReplacement.replace("%mine%", m.getRawDisplayName()),
-                        MessageReplacement.replace("%status%", String.valueOf(broadcast)));
+                        MessageReplacement.replace(
+                                "%mode%", m.getMessageBroadcastMode().name()));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -1582,11 +1595,11 @@ public final class SuperMinesCommand {
         SuperMines p = SuperMines.getInstance();
         p.getLanguageManager().sendMessage(sender(c), "command.reload.safe-tip");
         p.getTaskMaker().reload();
+        p.reloadConfig();
         p.getTreasureManager().reloadData();
         p.getRankManager().reloadData();
         p.getRegenPointManager().reloadData();
         p.getMineManager().reloadData();
-        p.reloadConfig();
         p.getLanguageManager().reload();
         p.getTaskMaker().startup();
         p.getRegenPointManager().startup();

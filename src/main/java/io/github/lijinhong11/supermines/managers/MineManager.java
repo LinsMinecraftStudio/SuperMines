@@ -9,6 +9,7 @@ import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.events.MineCreateEvent;
 import io.github.lijinhong11.supermines.api.events.MineRemoveEvent;
 import io.github.lijinhong11.supermines.api.iface.IGenerateCondition;
+import io.github.lijinhong11.supermines.api.mine.MessageBroadcastMode;
 import io.github.lijinhong11.supermines.api.mine.Mine;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import io.github.lijinhong11.supermines.api.mine.generation.BlockSpawnEntry;
@@ -184,9 +185,11 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
                 loc,
                 resetWarningSeconds);
         mine.setAutoPickup(section.getBoolean("autoPickup", false));
-        mine.setBroadcastResetMessages(section.getBoolean(
-                "broadcastResetMessages",
-                SuperMines.getInstance().getConfig().getBoolean("mine.broadcast-reset-messages", true)));
+        mine.setMessageBroadcastMode(MessageBroadcastMode.fromConfig(
+                section.contains("messageBroadcastMode")
+                        ? section.get("messageBroadcastMode")
+                        : section.get("broadcastResetMessages"),
+                mine.getMessageBroadcastMode()));
         return mine;
     }
 
@@ -207,7 +210,7 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         section.set("regenerateSeconds", object.getRegenerateSeconds());
         section.set("onlyFillAirWhenRegenerate", object.isOnlyFillAirWhenRegenerate());
         section.set("autoPickup", object.isAutoPickup());
-        section.set("broadcastResetMessages", object.shouldBroadcastResetMessages());
+        section.set("messageBroadcastMode", object.getMessageBroadcastMode().name());
         section.set("displayIcon", object.getDisplayIcon().toString());
         section.set("requiredRankLevel", object.getRequiredRankLevel());
         section.set("allowedRankIds", object.getAllowedRankIds().stream().toList());
@@ -307,7 +310,9 @@ public class MineManager extends AbstractFileObjectManager<Mine> {
         return true;
     }
 
-    /** Includes saved mines whose worlds have not loaded yet. */
+    /**
+     * Includes saved mines whose worlds have not loaded yet.
+     */
     public boolean hasMine(@NotNull String id) {
         return mines.containsKey(id) || getConfigSection(id) != null;
     }

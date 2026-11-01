@@ -68,7 +68,9 @@ public abstract class AbstractFileObjectManager<T> {
         saveConfig();
     }
 
-    /** Persists an imported object before the caller registers it as successfully migrated. */
+    /**
+     * Persists an imported object before the caller registers it as successfully migrated.
+     */
     protected final void putImportedObject(String key, T object) throws IOException {
         Object previous = config.get(key);
         try {

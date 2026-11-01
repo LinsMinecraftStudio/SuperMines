@@ -38,13 +38,40 @@ The importer reads YAML files in `plugins/CataMines/mines/` or `plugins/MineRese
 
 Supported formats are CataMines 2.x (`Mine`, based on 2.5.11) and MineResetLite (`mine`). Imported settings include cuboid boundaries, block weights and states, reset intervals, warnings, air-only filling, and teleport locations. MineResetLite minutes are converted to seconds, incomplete compositions keep their remaining air percentage, and fixed surface blocks become generation conditions. Numeric block IDs such as `1:0` require WorldEdit or FAWE for conversion.
 
+MineResetLite message modes are also imported. Keep `plugins/MineResetLite/config.yml` so its global broadcast settings can be saved as independent per-mine modes. Priority is:
+
+| MRL setting | SM mode |
+| --- | --- |
+| Mine's `isSilent: true` | `SILENT` |
+| `broadcast-nearby-only: true` | `IN_MINE` |
+| `broadcast-in-world-only: true` | `IN_WORLD` |
+| None enabled | `ALL` |
+
+Original MRL's nearby option checks mine boundaries, not a distance radius. A missing or empty configuration uses MRL's original defaults; unreadable or invalid configuration stops migration with an error. Original MRL's `isSilent` only suppresses reset announcements, whereas SM's `SILENT` also suppresses warnings; migration reports this difference.
+
 Existing mine IDs are skipped, including saved mines whose worlds have not loaded. Invalid data, unknown blocks, unloaded worlds, and creation cancelled by another plugin are reported and skipped. You can fix those entries and run the command again.
 
 Custom loot tables, minimum tool efficiency, percentage-based resets, separate reset teleport destinations, and structure block exclusions need separate configuration; detected settings produce migration notices. Stopped CataMines mines and mines using only percentage-based resets keep automatic time resets disabled. The CataMines 3.x multi-region format is currently unsupported.
 
 ## Per-Mine Reset Messages
 
-`mine.broadcast-reset-messages` now serves as the default for new mines and as a compatibility default for older mine data without an explicit value. Each mine can override it in the management GUI or with `/sm setBroadcastResetMessages <mineId> <true|false>`. When enabled, reset and warning messages go to all players; when disabled, they are sent only to players inside the mine. The `supermines.set_reset_message_broadcast` permission is granted to operators by default.
+`mine.broadcast-reset-messages` uses `MessageBroadcastMode` as the default for new mines and older mines without an explicit setting:
+
+- `ALL`: send reset and warning messages to all players.
+- `IN_WORLD`: send only to players in the mine's world.
+- `IN_MINE`: send only to players within the mine's world and boundaries.
+- `SILENT`: send no reset or warning messages. Resets, teleports, and command feedback still work.
+
+Cycle modes in the management GUI or run `/sm setBroadcastResetMessages <mineId> <ALL|IN_WORLD|IN_MINE|SILENT>` (case-insensitive). Each mine saves its mode as `messageBroadcastMode` in `data/mines.yml`. The `supermines.set_reset_message_broadcast` permission is granted to operators by default.
+
+Default configuration:
+
+```yaml
+mine:
+  broadcast-reset-messages: ALL
+```
+
+Legacy boolean configurations are accepted: `true` maps to `ALL`, and `false` maps to `IN_MINE`. The old per-mine `broadcastResetMessages` field is replaced by the enum field when saved. Invalid mine modes fall back to the default; an invalid global default falls back to `ALL`.
 
 ## Variables
 

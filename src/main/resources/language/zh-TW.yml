@@ -10,9 +10,11 @@ command:
     exists: "&e已略過 %mine%：此 ID 的礦區已儲存在 SuperMines 中。"
     cancelled: "&e已略過 %mine%：其他插件取消了礦區建立。"
     failed: "&c無法匯入 %file%，詳細原因請查看控制台。"
+    config-failed: "&c無法讀取 %source%/config.yml，已停止遷移，詳細原因請查看控制台。"
     task-failed: "&e礦區 %mine% 已儲存，但重置任務無法啟動。請查看控制台，修復後重新載入插件。"
     complete: "&a從 %source% 遷移完成：成功匯入 %imported% 個，略過 %skipped% 個。"
     notes:
+      silent-warnings: "&e%mine%：MRL 靜默設定已轉為 SILENT，在 SuperMines 中也會關閉重置預警。"
       percentage-reset: "&e%mine%：未遷移按剩餘比例重置功能，僅保留原先啟用的定時重置。"
       loot-tables: "&e%mine%：未遷移自訂掉落表，請另外設定寶藏獎勵。"
       tool-restrictions: "&e%mine%：未遷移工具最低效率附魔限制。"
@@ -50,7 +52,7 @@ command:
       - "<#E5C779>/sm settp/setteleport <礦區> <#8EA08C>- <#A7BC9C>設定礦區傳送點"
       - "<#E5C779>/sm tp/teleport <礦區> <#8EA08C>- <#A7BC9C>傳送到礦區"
       - "<#E5C779>/sm setOnlyFillAir <礦區> <true|false> <#8EA08C>- <#A7BC9C>僅填充空氣"
-      - "<#E5C779>/sm setBroadcastResetMessages <礦區> <true|false> <#8EA08C>- <#A7BC9C>設定該礦區重置訊息是否全服發送"
+      - "<#E5C779>/sm setBroadcastResetMessages <礦區> <ALL|IN_WORLD|IN_MINE|SILENT> <#8EA08C>- <#A7BC9C>設定礦區重置訊息發送模式"
       - "<#E5C779>/sm reset <礦區> <#8EA08C>- <#A7BC9C>重置礦區"
       - "<#E5C779>/sm pos1 [位置] <#8EA08C>- <#A7BC9C>設定位置 1"
       - "<#E5C779>/sm pos2 [位置] <#8EA08C>- <#A7BC9C>設定位置 2"
@@ -126,7 +128,8 @@ command:
     success: "&a礦區已重置！"
     stop-reset: "&a礦區 &b%mine% &a將停止重置"
   reset-messages:
-    set: "&a礦區 &b%mine% &a的重置訊息全服發送已設為 &b%status%&a。"
+    set: "&a礦區 &b%mine% &a的重置訊息發送模式已設為 &b%mode%&a。"
+    invalid-mode: "&c無效的訊息模式，請使用 ALL、IN_WORLD、IN_MINE 或 SILENT。"
   resetwarning:
     time-too-long: "&c預警時間不能超過礦區重置時間！"
     started: "&a已啟動礦區重置預警任務！"
@@ -330,11 +333,13 @@ gui:
         - "&7點擊切換是否僅填充空氣"
         - "&7目前: &b%status%"
     broadcast_reset_messages:
-      name: "&e全服發送重置訊息"
+      name: "&e重置訊息發送模式"
       lore:
-        - "&7點擊切換是否向所有玩家發送重置與預警訊息"
-        - "&7關閉後僅向礦區內玩家發送"
-        - "&7目前: &b%status%"
+        - "&7點擊循環切換 ALL / IN_WORLD / IN_MINE / SILENT"
+        - "&7ALL：全服；IN_WORLD：僅礦區所在世界"
+        - "&7IN_MINE：僅礦區內玩家"
+        - "&7SILENT：不發送重置與預警訊息"
+        - "&7目前: &b%mode%"
     auto_pickup:
       name: "&e自動拾取"
       lore:

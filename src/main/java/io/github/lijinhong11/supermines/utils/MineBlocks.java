@@ -10,7 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Resolves mine entries, including vanilla block states and air from migrated mines. */
+/**
+ * Resolves mine entries, including vanilla block states and air from migrated mines.
+ */
 public final class MineBlocks {
     private MineBlocks() {}
 

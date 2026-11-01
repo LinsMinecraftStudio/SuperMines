@@ -10,9 +10,11 @@ command:
     exists: "&e%mine% ignorée : une mine avec cet identifiant est déjà enregistrée."
     cancelled: "&e%mine% ignorée : la création a été annulée par un autre plugin."
     failed: "&cImpossible d'importer %file%. Consultez la console pour en connaître la raison."
+    config-failed: "&cImpossible de lire %source%/config.yml. Migration arrêtée ; consultez la console."
     task-failed: "&e%mine% a été enregistrée, mais ses tâches de réinitialisation ont échoué. Consultez la console, corrigez le problème et rechargez le plugin."
     complete: "&aMigration depuis %source% terminée : %imported% importées, %skipped% ignorées."
     notes:
+      silent-warnings: "&e%mine% : le mode silencieux de MRL devient SILENT, qui désactive aussi les avertissements dans SuperMines."
       percentage-reset: "&e%mine% : réinitialisations par pourcentage non importées ; seul le calendrier actif a été conservé."
       loot-tables: "&e%mine% : tables de butin non importées. Configurez les trésors séparément."
       tool-restrictions: "&e%mine% : restrictions d'efficacité minimale des outils non importées."
@@ -50,7 +52,7 @@ command:
       - "<#E5C779>/sm settp/setteleport <mine> <#8EA08C>- <#A7BC9C>Définir le point de téléportation de la mine"
       - "<#E5C779>/sm tp/teleport <mine> <#8EA08C>- <#A7BC9C>Se téléporter à la mine"
       - "<#E5C779>/sm setOnlyFillAir <mine> <onlyFillAir> <#8EA08C>- <#A7BC9C>Ne remplir que l'air lors de la réinitialisation"
-      - "<#E5C779>/sm setBroadcastResetMessages <mine> <true|false> <#8EA08C>- <#A7BC9C>Choisir la diffusion des messages pour une mine"
+      - "<#E5C779>/sm setBroadcastResetMessages <mine> <ALL|IN_WORLD|IN_MINE|SILENT> <#8EA08C>- <#A7BC9C>Choisir le mode des messages de la mine"
       - "<#E5C779>/sm reset <mine> <#8EA08C>- <#A7BC9C>Réinitialiser une mine"
       - "<#E5C779>/sm pos1 [position] <#8EA08C>- <#A7BC9C>Définir la position 1 d'une zone"
       - "<#E5C779>/sm pos2 [position] <#8EA08C>- <#A7BC9C>Définir la position 2 d'une zone"
@@ -126,7 +128,8 @@ command:
     success: "&aLa mine a été réinitialisée avec succès !"
     stop-reset: "&aLa mine &b%mine% &ane sera plus réinitialisée"
   reset-messages:
-    set: "&aLa diffusion des messages de &b%mine% &aest maintenant &b%status%&a."
+    set: "&aLe mode des messages de &b%mine% &aest maintenant &b%mode%&a."
+    invalid-mode: "&cMode invalide. Utilisez ALL, IN_WORLD, IN_MINE ou SILENT."
   resetwarning:
     time-too-long: "&cL'avertissement ne doit pas dépasser le délai de réinitialisation !"
     started: "&aLa tâche d'avertissement va démarrer !"
@@ -330,11 +333,13 @@ gui:
         - "&7Cliquez pour ne remplir que l'air lors de la réinitialisation"
         - "&7État actuel : &b%status%"
     broadcast_reset_messages:
-      name: "&eDiffuser les messages de reset"
+      name: "&eMode des messages de reset"
       lore:
-        - "&7Cliquer pour diffuser les messages de reset et d'avertissement à tous"
-        - "&7Désactivé : seuls les joueurs dans la mine les reçoivent"
-        - "&7État actuel : &b%status%"
+        - "&7Cliquer pour parcourir ALL / IN_WORLD / IN_MINE / SILENT"
+        - "&7ALL : tous ; IN_WORLD : joueurs dans le même monde"
+        - "&7IN_MINE : joueurs dans la mine"
+        - "&7SILENT : aucun message de reset ou d'avertissement"
+        - "&7Mode actuel : &b%mode%"
     auto_pickup:
       name: "&eRamassage automatique"
       lore:

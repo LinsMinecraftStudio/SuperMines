@@ -4,6 +4,7 @@ import io.github.lijinhong11.mittellib.message.MessageReplacement;
 import io.github.lijinhong11.mittellib.utils.StringUtils;
 import io.github.lijinhong11.supermines.SuperMines;
 import io.github.lijinhong11.supermines.api.iface.Identified;
+import io.github.lijinhong11.supermines.api.mine.MessageBroadcastMode;
 import io.github.lijinhong11.supermines.api.mine.Treasure;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -137,14 +138,14 @@ public class Constants {
                         p,
                         MessageReplacement.replace("%status%", StringUtils.toBooleanStatus(p, b)));
 
-        public static final BiFunction<Player, Boolean, ItemStack> BROADCAST_RESET_MESSAGES =
-                (p, b) -> SuperMines.getInstance()
+        public static final BiFunction<Player, MessageBroadcastMode, ItemStack> BROADCAST_RESET_MESSAGES =
+                (p, mode) -> SuperMines.getInstance()
                         .getLanguageManager()
                         .getMessagedItem(
                                 Material.BELL,
                                 "gui.mine-management.broadcast_reset_messages",
                                 p,
-                                MessageReplacement.replace("%status%", StringUtils.toBooleanStatus(p, b)));
+                                MessageReplacement.replace("%mode%", mode.name()));
 
         public static final BiFunction<Player, Boolean, ItemStack> AUTO_PICKUP = (p, b) -> SuperMines.getInstance()
                 .getLanguageManager()

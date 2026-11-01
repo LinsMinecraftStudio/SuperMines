@@ -2,7 +2,9 @@ package io.github.lijinhong11.supermines.migration;
 
 import com.sk89q.worldedit.world.registry.LegacyMapper;
 
-/** Loaded only when WorldEdit or FAWE is available. */
+/**
+ * Loaded only when WorldEdit or FAWE is available.
+ */
 final class LegacyMineBlocks {
     private LegacyMineBlocks() {}
 
