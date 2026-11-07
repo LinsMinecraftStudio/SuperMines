@@ -46,6 +46,7 @@ public class SuperMines extends JavaPlugin {
     private SyncLanguageManager languageManager;
 
     private TaskMaker taskMaker;
+    private WorldEditListener worldEditListener;
 
     public static SuperMines getInstance() {
         return instance;
@@ -96,6 +97,10 @@ public class SuperMines extends JavaPlugin {
     public void onDisable() {
         fastStats.shutdown();
 
+        if (worldEditListener != null) {
+            worldEditListener.close();
+        }
+
         taskMaker.close();
 
         mineManager.saveAndClose();
@@ -142,7 +147,7 @@ public class SuperMines extends JavaPlugin {
 
         if (getServer().getPluginManager().isPluginEnabled("WorldEdit")
                 || getServer().getPluginManager().isPluginEnabled("FastAsyncWorldEdit")) {
-            new WorldEditListener();
+            worldEditListener = new WorldEditListener();
         }
     }
 

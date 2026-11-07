@@ -523,6 +523,11 @@ public final class SuperMinesCommand {
                                 SuperMines.getInstance().getLanguageManager().getParsedBlockLocation(p, loc)));
     }
 
+    public static void setWorldEditSelection(Player player, Location pos1, Location pos2) {
+        selectionMap.put(
+                player.getUniqueId(), new AreaSelection(pos1, pos2, sphereModePlayers.contains(player.getUniqueId())));
+    }
+
     private static int pos(CommandContext<CommandSourceStack> c, boolean pos1, Location loc) {
         handlePos(player(c), pos1, loc);
         return Command.SINGLE_SUCCESS;
@@ -1163,6 +1168,9 @@ public final class SuperMinesCommand {
             SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.create.selection-not-finished");
             return null;
         }
+        if (!SelectionValidator.validateAll(p, null, s.pos1()) || !SelectionValidator.validateAll(p, s, s.pos2())) {
+            return null;
+        }
         if (s.isAnyMineIn()) {
             SuperMines.getInstance().getLanguageManager().sendMessage(p, "command.pos.in-mine");
             return null;
@@ -1180,7 +1188,7 @@ public final class SuperMinesCommand {
                 named
                         ? ComponentUtils.deserialize(StringArgumentType.getString(c, "displayName"))
                         : ComponentUtils.text(id),
-                p.getWorld(),
+                selectionMap.get(p.getUniqueId()).pos1().getWorld(),
                 a,
                 new WeightedRandomMap<>(),
                 0,
